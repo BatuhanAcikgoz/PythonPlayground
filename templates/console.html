@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Python Console</title>
+    <style>
+        body {
+            font-family: monospace;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        #console-container {
+            width: 100%;
+            height: 500px;
+            background-color: #282c34;
+            color: #abb2bf;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #console-output {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        #console-input-line {
+            display: flex;
+            padding: 5px 10px;
+            border-top: 1px solid #444;
+            background-color: #21252b;
+        }
+        #console-prompt {
+            color: #98c379;
+            margin-right: 5px;
+        }
+        #console-input {
+            flex-grow: 1;
+            background-color: transparent;
+            color: #abb2bf;
+            border: none;
+            outline: none;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .error { color: #e06c75; }
+        .info { color: #56b6c2; }
+        .command { color: #c678dd; }
+        .output { color: #abb2bf; }
+        #status { margin-top: 10px; color: #666; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Interactive Python Console</h1>
+    <div id="console-container">
+        <div id="console-output">
+            <span class="info">Welcome to Python Console. Type Python code and press Enter to execute.</span>
+            <span class="info">Try: print("Hello, World!")</span>
+        </div>
+        <div id="console-input-line">
+            <div id="console-prompt">>>></div>
+            <input id="console-input" type="text" autocomplete="off" spellcheck="false" autofocus>
+        </div>
+    </div>
+    <div id="status">Ready</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const consoleOutput = document.getElementById('console-output');
+            const consoleInput = document.getElementById('console-input');
+            const status = document.getElementById('status');
+            const commandHistory = [];
+            let historyIndex = -1;
+            let initialCodeExecuted = false;
+            window.isInputMode = false;
+
+            // Connect to Socket.IO
+            const socket = io();
+
+            socket.on('connect', () => {
+                appendToConsole("Connected to server", "info");
+                status.textContent = "Connected";
+
+                // Auto-execute initial code after connection
+                const initialCode = {{ code|tojson|safe }};
+                if (initialCode && initialCode.trim() !== '' && !initialCodeExecuted) {
+                    initialCodeExecuted = true;
+                    consoleInput.value = initialCode;
+                    executeCode(initialCode);
+                }
+            });
+
+            // Add this event handler in console.html
+            socket.on('partial_output', (data) => {
+                if (data.output.trim() !== '') {
+                    appendToConsole(data.output, "output");
+                }
+                consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            });
+
+            socket.on('input_request', (data) => {
+                const prompt = data.prompt || '';
+                appendToConsole(prompt, "info");
+
+                // Change the console prompt to indicate input mode
+                const consolePrompt = document.getElementById('console-prompt');
+                consolePrompt.textContent = "input>";
+
+                // Enable input mode
+                window.isInputMode = true;
+                consoleInput.disabled = false;
+                consoleInput.focus();
+            });
+
+            socket.on('code_output', (data) => {
+                if (data.output.trim() !== '') {
+                    appendToConsole(data.output, "output");
+                }
+                status.textContent = "Ready";
+                consoleInput.disabled = false;
+                consoleInput.focus();
+            });
+
+            socket.on('connect_error', (error) => {
+                appendToConsole("Connection error: " + error, "error");
+                status.textContent = "Connection failed";
+            });
+
+            // Function to execute code
+            function executeCode(code) {
+                if (code.trim() !== '') {
+                    // Add to history and reset history navigation
+                    commandHistory.push(code);
+                    historyIndex = commandHistory.length;
+
+                    // Display the command
+                    appendToConsole(">>> " + code, "command");
+
+                    // Execute the code
+                    status.textContent = "Running...";
+                    consoleInput.disabled = true;
+                    socket.emit('run_code', { code });
+
+                    // Clear the input
+                    consoleInput.value = '';
+                }
+            }
+
+            // Handle keyboard events - SINGLE event listener for all keyboard actions
+            consoleInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const value = consoleInput.value;
+
+                    if (window.isInputMode) {
+                        // Handle input mode
+                        appendToConsole(value, "output");
+                        socket.emit('input_response', { value: value });
+
+                        // Reset input mode
+                        window.isInputMode = false;
+                        document.getElementById('console-prompt').textContent = ">>>";
+                        consoleInput.value = '';
+                    } else {
+                        // Handle code execution
+                        executeCode(value);
+                    }
+                } else if (event.key === 'ArrowUp') {
+                    // Navigate command history (up)
+                    if (historyIndex > 0) {
+                        historyIndex--;
+                        consoleInput.value = commandHistory[historyIndex];
+                    }
+                    event.preventDefault();
+                } else if (event.key === 'ArrowDown') {
+                    // Navigate command history (down)
+                    if (historyIndex < commandHistory.length - 1) {
+                        historyIndex++;
+                        consoleInput.value = commandHistory[historyIndex];
+                    } else {
+                        historyIndex = commandHistory.length;
+                        consoleInput.value = '';
+                    }
+                    event.preventDefault();
+                }
+            });
+
+            // Function to append text to the console
+            function appendToConsole(text, className) {
+                const element = document.createElement('div');
+                element.className = className;
+                element.textContent = text;
+                consoleOutput.appendChild(element);
+                consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            }
+
+            // Always focus the input field when clicking anywhere in the console
+            consoleContainer.addEventListener('click', () => {
+                if (!consoleInput.disabled) {
+                    consoleInput.focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

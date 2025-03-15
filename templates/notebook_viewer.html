@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notebook Viewer</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        h1, h2, h3, h4, h5, h6 { color: #333; }
+        pre { background-color: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        .cell { margin-bottom: 20px; border-left: 3px solid #ccc; padding-left: 15px; }
+        .code-cell { border-left-color: #3572A5; }
+        .markdown-cell { border-left-color: #5cb85c; }
+        .run-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .output { background-color: #f9f9f9; padding: 10px; border-left: 3px solid #ff9800; margin-top: 5px; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        function runCode(codeElement) {
+            const code = codeElement.textContent;
+
+            fetch('/run_code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code: code }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.open('/console/' + data.code_id, '_blank');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error sending code to execute');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Render markdown cells
+            document.querySelectorAll('.markdown-content').forEach(function(el) {
+                el.innerHTML = marked.parse(el.textContent);
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>{{ notebook_path }}</h1>
+    <a href="/">Back to Notebooks List</a>
+
+    <div id="notebook-content">
+            {% for cell in notebook.cells %}
+                {% if cell.cell_type == 'code' %}
+                    <div class="cell code-cell">
+                        <pre><code class="python">{{ cell.source }}</code></pre>
+                        <button class="run-button" onclick="runCode(this.previousElementSibling.firstChild)">Run</button>
+
+                        {% if cell.outputs %}
+                            <div class="output">
+                                {% for output in cell.outputs %}
+                                    {% if output.output_type == 'stream' %}
+                                        <pre>{{ output.text }}</pre>
+                                    {% elif output.output_type == 'execute_result' and output.data['text/plain'] %}
+                                        <pre>{{ output.data['text/plain'] }}</pre>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% elif cell.cell_type == 'markdown' %}
+                    <div class="cell markdown-cell">
+                        <div class="markdown-content">{{ cell.source }}</div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+</body>
+</html>
