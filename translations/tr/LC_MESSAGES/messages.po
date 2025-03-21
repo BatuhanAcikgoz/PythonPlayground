@@ -1,0 +1,161 @@
+# Turkish translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-03-21 17:41+0300\n"
+"PO-Revision-Date: 2025-03-21 17:41+0300\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: tr\n"
+"Language-Team: tr <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+# App name and common elements
+msgid "app_name"
+msgstr "PythonPlayground"
+
+msgid "app_tagline"
+msgstr "Etkileşimli Python defterleriyle öğrenin"
+
+# Navigation
+msgid "home"
+msgstr "Ana Sayfa"
+
+msgid "courses"
+msgstr "Kurslar"
+
+msgid "about"
+msgstr "Hakkında"
+
+msgid "login"
+msgstr "Giriş Yap"
+
+msgid "logout"
+msgstr "Çıkış"
+
+msgid "register"
+msgstr "Kayıt Ol"
+
+# Admin panel
+msgid "admin_panel"
+msgstr "Yönetici Paneli"
+
+msgid "admin_access"
+msgstr "Sistem yönetici ayrıcalıklarına sahipsiniz."
+
+msgid "go_to_admin"
+msgstr "Yönetici Paneline Git"
+
+# Index page
+msgid "notebook_lib"
+msgstr "Python Defter Kütüphanesi"
+
+msgid "no_notebooks"
+msgstr "Henüz notebook mevcut değil."
+
+msgid "refresh_repo"
+msgstr "Depoyu Yenile"
+
+# Footer
+msgid "all_rights"
+msgstr "Tüm hakları saklıdır."
+
+msgid "platform_desc"
+msgstr "Bu platform eğitim amaçlı interaktif notebooklar sunar."
+
+# Flash messages
+msgid "user_created"
+msgstr "Kullanıcı başarıyla oluşturuldu"
+
+msgid "invalid_login"
+msgstr "Geçersiz kullanıcı adı veya şifre"
+
+# Admin actions
+msgid "edit"
+msgstr "Düzenle"
+
+msgid "delete"
+msgstr "Sil"
+
+msgid "delete_confirm"
+msgstr "Kullanıcıyı silmek istediğinizden emin misiniz"
+
+# Registration page
+msgid "username"
+msgstr "Kullanıcı Adı"
+
+msgid "email"
+msgstr "E-posta Adresi"
+
+msgid "password"
+msgstr "Şifre"
+
+msgid "min_password"
+msgstr "Şifreniz en az 8 karakter olmalıdır"
+
+# Admin panel
+msgid "user_management"
+msgstr "Kullanıcı Yönetimi"
+
+msgid "user_roles"
+msgstr "Kullanıcı Rolleri"
+
+msgid "save_roles"
+msgstr "Rolleri Kaydet"
+
+msgid "cancel"
+msgstr "İptal"
+
+msgid "roles"
+msgstr "Roller"
+
+msgid "registration_date"
+msgstr "Kayıt Tarihi"
+
+msgid "actions"
+msgstr "İşlemler"
+
+# Error pages
+msgid "access_denied"
+msgstr "Erişim Reddedildi"
+
+msgid "no_permission"
+msgstr "Bu sayfaya erişim için gerekli yetkiye sahip değilsiniz."
+
+msgid "return_home"
+msgstr "Ana Sayfaya Dön"
+
+# Login page
+msgid "login_title"
+msgstr "Giriş Yap"
+
+msgid "login_subtitle"
+msgstr "Hesabınıza giriş yaparak devam edin"
+
+# Register page
+msgid "register_title"
+msgstr "Kayıt Ol"
+
+msgid "register_subtitle"
+msgstr "Hesabınızı oluşturun ve öğrenmeye başlayın"
+
+msgid "have_account"
+msgstr "Zaten hesabınız var mı?"
+
+msgid "no_account"
+msgstr "Hesabınız yok mu?"
+
+# Notebook viewer
+msgid "back_to_notebooks"
+msgstr "Notebook Listesine Dön"
+
+msgid "run"
+msgstr "Çalıştır"

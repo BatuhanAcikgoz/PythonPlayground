@@ -290,7 +290,7 @@
 <body>
     <div class="header">
         <h1>{{ notebook_path }}</h1>
-        <a href="/">Back to Notebooks List</a>
+        <a href="/">{{ _('back_to_notebooks') }}</a>
     </div>
 
     <div class="main-container">
@@ -299,8 +299,7 @@
                 {% if cell.cell_type == 'code' %}
                     <div class="cell code-cell">
                         <pre><code class="python">{{ cell.source }}</code></pre>
-                        <button class="run-button" onclick="runCode(this.previousElementSibling.firstChild)">Run</button>
-
+                        <button class="run-button" onclick="runCode(this.previousElementSibling.firstChild)">{{ _('run') }}</button>
                         {% if cell.outputs %}
                             <div class="output">
                                 {% for output in cell.outputs %}

@@ -147,7 +147,7 @@ def edit_user_roles(user_id):
                 user.roles.append(role)
 
         db.session.commit()
-        flash(f'{user.username} kullanıcısının rolleri güncellendi.')
+        flash(_('user_roles_updated'))
         return redirect(url_for('admin_panel'))
 
     return render_template('edit_roles.html', user=user, roles=roles)
@@ -158,12 +158,12 @@ def edit_user_roles(user_id):
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     if user.username == 'admin':
-        flash('Admin kullanıcısı silinemez!', 'error')
+        flash(_('admin_cannot_delete'), 'error')
     else:
         username = user.username
         db.session.delete(user)
         db.session.commit()
-        flash(f'{username} kullanıcısı başarıyla silindi.', 'success')
+        flash(_('user_deleted_success'), 'success')
     return redirect(url_for('admin_panel'))
 
 @app.route('/admin/user/new', methods=['GET', 'POST'])
@@ -189,7 +189,7 @@ def new_user():
 
         db.session.add(user)
         db.session.commit()
-        flash(f'Kullanıcı {username} başarıyla oluşturuldu.')
+        flash(_('user_created'))
         return redirect(url_for('admin_panel'))
 
     return render_template('new_user.html', roles=roles)
@@ -298,18 +298,6 @@ def run_code():
     return jsonify({'code_id': code_id})
 
 
-@app.route('/console/<code_id>')
-@login_required
-def python_console(code_id):
-    """Show Python console with the specified code"""
-    code_data = app.config.get('CODE_STORAGE', {}).get(code_id, {})
-
-    # Check if code exists and belongs to this user
-    if not code_data or code_data.get('user_id') != current_user.id:
-        abort(403)
-
-    return render_template('console.html', code=code_data.get('code', ''))
-
 # Authentication routes
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -327,7 +315,7 @@ def login():
             next_page = request.args.get('next')
             return redirect(next_page or url_for('index'))
         else:
-            flash('Geçersiz kullanıcı adı veya şifre')
+            flash(_('invalid_login'))
 
     return render_template('login.html')
 
@@ -347,9 +335,9 @@ def register():
         email_exists = User.query.filter_by(email=email).first()
 
         if user_exists:
-            flash('Bu kullanıcı adı zaten kullanılıyor')
+            flash(_('username_exists'))
         elif email_exists:
-            flash('Bu e-posta adresi zaten kullanılıyor')
+            flash(_('email_exists'))
         else:
             user = User(username=username, email=email)
             user.set_password(password)
@@ -459,5 +447,5 @@ if __name__ == '__main__':
             db.session.add(admin)
             db.session.commit()
 
-    # Start the Flask server with Socket.IO
+    # Start the Flask server
     socketio.run(app, debug=True, port=5000, allow_unsafe_werkzeug=True)
