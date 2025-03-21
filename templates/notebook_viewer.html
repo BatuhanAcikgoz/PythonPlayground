@@ -3,10 +3,42 @@
 <head>
     <title>Notebook Viewer</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
         h1, h2, h3, h4, h5, h6 { color: #333; }
         pre { background-color: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
-        .cell { margin-bottom: 20px; border-left: 3px solid #ccc; padding-left: 15px; }
+
+        /* Split view layout */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 80px);
+            width: 100%;
+        }
+
+        #notebook-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            border-right: 2px solid #ccc;
+        }
+
+        #console-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* Cell styling */
+        .cell {
+            margin-bottom: 20px;
+            border-left: 3px solid #ccc;
+            padding-left: 15px;
+        }
         .code-cell { border-left-color: #3572A5; }
         .markdown-cell { border-left-color: #5cb85c; }
         .run-button {
@@ -22,28 +54,178 @@
             cursor: pointer;
             border-radius: 4px;
         }
-        .output { background-color: #f9f9f9; padding: 10px; border-left: 3px solid #ff9800; margin-top: 5px; }
+        .output {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 3px solid #ff9800;
+            margin-top: 5px;
+        }
+
+        .output-console {
+            padding: 10px;
+            border-left: 3px solid #f4bb66;
+            margin-top: 5px;
+        }
+
+        .input {
+            padding: 10px;
+            border-left: 3px solid #98c379;
+            margin-top: 5px;
+        }
+
+        .command {
+            padding: 10px;
+            border-left: 3px solid #6abcef;
+            margin-top: 5px;
+        }
+
+        /* Console styles */
+        #console-container {
+            width: 100%;
+            flex-grow: 1;
+            background-color: #282c34;
+            color: #abb2bf;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #console-input-line {
+            display: flex;
+            padding: 5px 10px;
+            border-top: 1px solid #444;
+            background-color: #21252b;
+            border-left: 3px solid #00b7ff;
+            margin-top: 5px;
+        }
+        #console-prompt {
+            color: #98c379;
+            margin-right: 5px;
+        }
+        #console-output {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        #console-input {
+            flex-grow: 1;
+            background-color: transparent;
+            color: #abb2bf;
+            border: none;
+            outline: none;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .error { color: #e06c75; }
+        .info { color: #56b6c2; }
+        #status { margin-top: 10px; color: #666; }
+
+        /* Header styles */
+        .header {
+            padding: 15px 20px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ccc;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .header a {
+            margin-top: 5px;
+            display: inline-block;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
     <script>
+        let socket;
+        let currentCode = '';
+        const commandHistory = [];
+        let historyIndex = -1;
+        let initialCodeExecuted = false;
+        window.isInputMode = false;
+
+        function initializeConsole() {
+            if (!socket) {
+                socket = io();
+
+                socket.on('partial_output', (data) => {
+                    if (data.output.trim() !== '') {
+                        appendToConsole(data.output, "output-console");
+                    }
+                    const consoleOutput = document.getElementById('console-output');
+                    consoleOutput.scrollTop = consoleOutput.scrollHeight;
+                });
+
+                socket.on('input_request', (data) => {
+                    const prompt = data.prompt || '';
+                    appendToConsole(prompt, "output-console");
+
+                    // Change the console prompt to indicate input mode
+                    const consolePrompt = document.getElementById('console-prompt');
+                    consolePrompt.textContent = "input>";
+
+                    // Enable input mode
+                    window.isInputMode = true;
+                    const consoleInput = document.getElementById('console-input');
+                    consoleInput.disabled = false;
+                    consoleInput.focus();
+                });
+
+                socket.on('code_output', (data) => {
+                    if (data.output.trim() !== '') {
+                        appendToConsole(data.output, "output-console");
+                    }
+                    const consoleInput = document.getElementById('console-input');
+                    consoleInput.disabled = false;
+                    consoleInput.focus();
+                });
+
+                socket.on('connect_error', (error) => {
+                    appendToConsole("Connection error: " + error, "error");
+                });
+            }
+        }
+
         function runCode(codeElement) {
             const code = codeElement.textContent;
 
-            fetch('/run_code', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code: code }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                window.open('/console/' + data.code_id, '_blank');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error sending code to execute');
-            });
+            // Initialize console if not already done
+            if (!socket) {
+                initializeConsole();
+            }
+
+            if (socket && socket.connected) {
+                executeCodeInConsole(code);
+            } else {
+                currentCode = code;
+            }
+        }
+
+        function executeCodeInConsole(code) {
+            if (code.trim() !== '') {
+                // Add to history and reset history navigation
+                commandHistory.push(code);
+                historyIndex = commandHistory.length;
+
+                // Display the command
+                appendToConsole(code, "command");
+
+                // Execute the code
+                document.getElementById('console-input').disabled = true;
+                socket.emit('run_code', { code });
+            }
+        }
+
+        function appendToConsole(text, className) {
+            const consoleOutput = document.getElementById('console-output');
+            const element = document.createElement('div');
+            element.className = className;
+            element.textContent = text;
+            consoleOutput.appendChild(element);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -51,14 +233,68 @@
             document.querySelectorAll('.markdown-content').forEach(function(el) {
                 el.innerHTML = marked.parse(el.textContent);
             });
+
+            // Initialize console immediately on page load
+            initializeConsole();
+
+            // Set up console input key handling
+            const consoleInput = document.getElementById('console-input');
+            consoleInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const value = consoleInput.value;
+
+                    if (window.isInputMode) {
+                        // Handle input mode
+                        appendToConsole(value, "input");
+                        socket.emit('input_response', { value: value });
+
+                        // Reset input mode
+                        window.isInputMode = false;
+                        document.getElementById('console-prompt').textContent = ">>>";
+                        consoleInput.value = '';
+                    } else {
+                        // Handle code execution
+                        executeCodeInConsole(value);
+                        consoleInput.value = '';
+                    }
+                } else if (event.key === 'ArrowUp') {
+                    // Navigate command history (up)
+                    if (historyIndex > 0) {
+                        historyIndex--;
+                        consoleInput.value = commandHistory[historyIndex];
+                    }
+                    event.preventDefault();
+                } else if (event.key === 'ArrowDown') {
+                    // Navigate command history (down)
+                    if (historyIndex < commandHistory.length - 1) {
+                        historyIndex++;
+                        consoleInput.value = commandHistory[historyIndex];
+                    } else {
+                        historyIndex = commandHistory.length;
+                        consoleInput.value = '';
+                    }
+                    event.preventDefault();
+                }
+            });
+
+            // Focus input when clicking in console
+            document.getElementById('console-container').addEventListener('click', () => {
+                if (!consoleInput.disabled) {
+                    consoleInput.focus();
+                }
+            });
         });
     </script>
 </head>
 <body>
-    <h1>{{ notebook_path }}</h1>
-    <a href="/">Back to Notebooks List</a>
+    <div class="header">
+        <h1>{{ notebook_path }}</h1>
+        <a href="/">Back to Notebooks List</a>
+    </div>
 
-    <div id="notebook-content">
+    <div class="main-container">
+        <div id="notebook-content">
             {% for cell in notebook.cells %}
                 {% if cell.cell_type == 'code' %}
                     <div class="cell code-cell">
@@ -84,5 +320,17 @@
                 {% endif %}
             {% endfor %}
         </div>
+
+        <!-- Console Section (always visible) -->
+        <div id="console-section">
+            <div id="console-container">
+                <div id="console-output"></div>
+                <div id="console-input-line">
+                    <div id="console-prompt">>>></div>
+                    <input id="console-input" type="text" autocomplete="off" spellcheck="false">
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

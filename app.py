@@ -1,5 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, session
 from flask_socketio import SocketIO, emit
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
 import uuid
@@ -8,14 +11,188 @@ import subprocess
 import sys
 import io
 import builtins
+from datetime import datetime
+from flask_babel import Babel, gettext as _, lazy_gettext as _l
+from functools import wraps
+from flask import abort
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://radome:12345@localhost/python_platform'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Initialize Babel
+babel = Babel(app)
+
+# Configure supported languages
+app.config['BABEL_DEFAULT_LOCALE'] = 'tr'  # Default language (Turkish)
+app.config['BABEL_SUPPORTED_LOCALES'] = ['tr', 'en']  # Supported languages
+
+# Initialize extensions
+db = SQLAlchemy(app)
+socketio = SocketIO(app, async_mode='threading')
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+
 input_response = None
+
+# New approach using init app
+def get_locale():
+    if 'language' in session:
+        return session['language']
+    return request.accept_languages.best_match(app.config['BABEL_SUPPORTED_LOCALES'])
+
+babel.init_app(app, locale_selector=get_locale)
+
+@app.route('/language/<lang>')
+def set_language(lang):
+    if lang in app.config['BABEL_SUPPORTED_LOCALES']:
+        session['language'] = lang
+    return redirect(request.referrer or url_for('index'))
+
+# Role model definitions
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    description = db.Column(db.String(255))
+
+    def __repr__(self):
+        return f'<Role {self.name}>'
+
+
+# User-role association table for many-to-many relationship
+user_roles = db.Table('user_roles',
+                      db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+                      db.Column('role_id', db.Integer, db.ForeignKey('role.id'), primary_key=True)
+                      )
+
+
+# Update User model with role relationship
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # Add roles relationship
+    roles = db.relationship('Role', secondary=user_roles, backref=db.backref('users', lazy='dynamic'))
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    # Add permission check methods
+    def has_role(self, role_name):
+        return any(role.name == role_name for role in self.roles)
+
+    def is_admin(self):
+        return self.has_role('admin')
+
+    def is_teacher(self):
+        return self.has_role('teacher') or self.is_admin()
+
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
 # URL of the GitHub repository
 REPO_URL = 'https://github.com/msy-bilecik/ist204_2025'
 
+def role_required(role_name):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not current_user.is_authenticated:
+                return redirect(url_for('login', next=request.url))
+            if not current_user.has_role(role_name):
+                abort(403)
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+
+def init_roles():
+    """Initialize default roles if they don't exist"""
+    roles = {
+        'student': 'Basic access to view notebooks',
+        'teacher': 'Can manage notebooks and view student progress',
+        'admin': 'Full administrative access'
+    }
+
+    for role_name, description in roles.items():
+        role = Role.query.filter_by(name=role_name).first()
+        if not role:
+            role = Role(name=role_name, description=description)
+            db.session.add(role)
+
+    db.session.commit()
+
+@app.route('/admin/user/<int:user_id>/roles', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def edit_user_roles(user_id):
+    user = User.query.get_or_404(user_id)
+    roles = Role.query.all()
+
+    if request.method == 'POST':
+        # Clear existing roles
+        user.roles = []
+
+        # Add selected roles
+        role_ids = request.form.getlist('roles')
+        for role_id in role_ids:
+            role = Role.query.get(role_id)
+            if role:
+                user.roles.append(role)
+
+        db.session.commit()
+        flash(f'{user.username} kullanıcısının rolleri güncellendi.')
+        return redirect(url_for('admin_panel'))
+
+    return render_template('edit_roles.html', user=user, roles=roles)
+
+@app.route('/admin/user/<int:user_id>/delete')
+@login_required
+@role_required('admin')
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    if user.username == 'admin':
+        flash('Admin kullanıcısı silinemez!', 'error')
+    else:
+        username = user.username
+        db.session.delete(user)
+        db.session.commit()
+        flash(f'{username} kullanıcısı başarıyla silindi.', 'success')
+    return redirect(url_for('admin_panel'))
+
+@app.route('/admin/user/new', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def new_user():
+    roles = Role.query.all()
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        user = User(username=username, email=email)
+        user.set_password(password)
+
+        # Add selected roles
+        role_ids = request.form.getlist('roles')
+        for role_id in role_ids:
+            role = Role.query.get(role_id)
+            if role:
+                user.roles.append(role)
+
+        db.session.add(user)
+        db.session.commit()
+        flash(f'Kullanıcı {username} başarıyla oluşturuldu.')
+        return redirect(url_for('admin_panel'))
+
+    return render_template('new_user.html', roles=roles)
 
 def clone_repo():
     """Clone or update the repository"""
@@ -41,13 +218,22 @@ def clone_repo():
         print(f"Error cloning repository: {e}")
         return None
 
+# Example of using the decorator for admin-only routes
+@app.route('/admin')
+@login_required
+@role_required('admin')
+def admin_panel():
+    users = User.query.all()
+    return render_template('admin.html', users=users)
 
+# Modify existing routes to check permissions
 @app.route('/refresh_repo')
+@login_required
+@role_required('teacher')  # Only teachers can refresh the repository
 def refresh_repo():
     """Refresh the repository by pulling the latest changes"""
     clone_repo()
     return redirect(url_for('index'))
-
 
 @app.route('/')
 def index():
@@ -72,8 +258,8 @@ def index():
 
     return render_template('index.html', notebooks=notebooks, error_message=error_message)
 
-
 @app.route('/view/<path:path>')
+@login_required
 def view_notebook(path):
     """Display notebook as HTML with run buttons"""
     repo_dir = os.path.join(os.getcwd(), 'notebooks_repo')
@@ -97,25 +283,105 @@ def view_notebook(path):
 
 
 @app.route('/run_code', methods=['POST'])
+@login_required
 def run_code():
     """Store code temporarily and return an ID to reference it"""
     code = request.json.get('code', '')
     code_id = str(uuid.uuid4())
 
-    # Store code in session or temporary storage
-    app.config.setdefault('CODE_STORAGE', {})[code_id] = code
+    # Store the user ID with the code
+    app.config.setdefault('CODE_STORAGE', {})[code_id] = {
+        'code': code,
+        'user_id': current_user.id
+    }
 
     return jsonify({'code_id': code_id})
 
 
-
-
 @app.route('/console/<code_id>')
+@login_required
 def python_console(code_id):
     """Show Python console with the specified code"""
-    code = app.config.get('CODE_STORAGE', {}).get(code_id, '')
-    return render_template('console.html', code=code)
+    code_data = app.config.get('CODE_STORAGE', {}).get(code_id, {})
 
+    # Check if code exists and belongs to this user
+    if not code_data or code_data.get('user_id') != current_user.id:
+        abort(403)
+
+    return render_template('console.html', code=code_data.get('code', ''))
+
+# Authentication routes
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        user = User.query.filter_by(username=username).first()
+
+        if user and user.check_password(password):
+            login_user(user)
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('index'))
+        else:
+            flash('Geçersiz kullanıcı adı veya şifre')
+
+    return render_template('login.html')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Check if username or email already exists
+        user_exists = User.query.filter_by(username=username).first()
+        email_exists = User.query.filter_by(email=email).first()
+
+        if user_exists:
+            flash('Bu kullanıcı adı zaten kullanılıyor')
+        elif email_exists:
+            flash('Bu e-posta adresi zaten kullanılıyor')
+        else:
+            user = User(username=username, email=email)
+            user.set_password(password)
+
+            # Assign default student role
+            student_role = Role.query.filter_by(name='student').first()
+            if student_role:
+                user.roles.append(student_role)
+
+            db.session.add(user)
+            db.session.commit()
+
+            login_user(user)
+            return redirect(url_for('index'))
+
+    return render_template('register.html')
+
+@app.errorhandler(403)
+def forbidden(error):
+    return render_template('403.html'), 403
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+@app.context_processor
+def utility_processor():
+    def now():
+        return datetime.utcnow()
+    return dict(now=now)
 
 @socketio.on('run_code')
 def handle_run_code(data):
@@ -171,7 +437,6 @@ def handle_run_code(data):
 
     emit('code_output', {'output': ''})  # Signal completion
 
-
 # Add this new event handler
 @socketio.on('input_response')
 def handle_input_response(data):
@@ -180,6 +445,19 @@ def handle_input_response(data):
 
 
 if __name__ == '__main__':
-    # Clone repo first
-    clone_repo()
-    socketio.run(app, debug=True, port=5000)
+    with app.app_context():
+        db.create_all()  # Create database tables
+        init_roles()  # Initialize default roles
+
+        # Create an admin user if none exists
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            admin = User(username='admin', email='admin@example.com')
+            admin.set_password('admin123')  # Change this to a secure password in production
+            admin_role = Role.query.filter_by(name='admin').first()
+            admin.roles.append(admin_role)
+            db.session.add(admin)
+            db.session.commit()
+
+    # Start the Flask server with Socket.IO
+    socketio.run(app, debug=True, port=5000, allow_unsafe_werkzeug=True)

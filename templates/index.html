@@ -1,30 +1,161 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Notebook Viewer</title>
+    <title>PythonPlayground</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <!-- Custom styles to ensure footer is at the bottom -->
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        h1 { color: #333; }
-        ul { list-style-type: none; padding: 0; }
-        li { margin-bottom: 10px; }
-        a { color: #0066cc; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .error { color: red; }
+        html, body, #root {
+            height: 100%;
+        }
+        #root {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
     </style>
 </head>
-<body>
-    <h1>Available Notebooks</h1>
+<body class="bg-gray-50">
+    <div id="root"></div>
 
-    {% if error_message %}
-        <p class="error">{{ error_message }}</p>
-    {% endif %}
+    <script type="text/babel">
+        const App = () => {
+ // Flask template data
+    const notebooks = {{ notebooks|tojson|safe }};
+    const errorMessage = {{ error_message|tojson|safe }};
+    const isAdmin = {{ 'true' if current_user.is_authenticated and current_user.is_admin() else 'false' }};
+    const isTeacher = {{ 'true' if current_user.is_authenticated and current_user.is_teacher() else 'false' }};
 
-    <ul>
-        {% for notebook in notebooks %}
-            <li><a href="{{ url_for('view_notebook', path=notebook) }}">{{ notebook }}</a></li>
-        {% endfor %}
-    </ul>
+            return (
+                <React.Fragment>
+                    <Header />
+                    <main className="flex-grow container mx-auto px-4 py-8">
+                        <div className="max-w-4xl mx-auto">
+                            <h1 className="text-3xl font-bold text-gray-800 mb-6">Python Notebook Kütüphanesi</h1>
 
-    <p><a href="{{ url_for('refresh_repo') }}">Refresh Repository</a></p>
+                            {isAdmin && (
+                                <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6">
+                                    <p className="font-bold">Admin Panel</p>
+                                    <p>Sistem yönetim yetkileriniz var.</p>
+                                    <a href="/admin" className="text-blue-600 hover:text-blue-800 underline">Admin Paneline Git</a>
+                                </div>
+                            )}
+
+                            {errorMessage && (
+                                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+                                    <p>{errorMessage}</p>
+                                </div>
+                            )}
+
+                            {notebooks.length > 0 ? (
+                                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                                    <ul className="divide-y divide-gray-200">
+                                        {notebooks.map((notebook, index) => (
+                                            <li key={index} className="hover:bg-gray-50">
+                                                <a
+                                                    href={`/view/${notebook}`}
+                                                    className="block px-6 py-4 text-blue-600 hover:text-blue-800 flex items-center"
+                                                >
+                                                    <svg className="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                    </svg>
+                                                    {notebook}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ) : !errorMessage && (
+                                <p className="text-gray-600">Henüz notebook bulunmamaktadır.</p>
+                            )}
+
+                            {/* Only show repository refresh for teachers and admins */}
+                            {(isTeacher || isAdmin) && (
+                                <div className="mt-8">
+                                    <a
+                                        href="/refresh_repo"
+                                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                    >
+                                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                        </svg>
+                                        Depoyu Yenile
+                                    </a>
+                                </div>
+                            )}
+                        </div>
+                    </main>
+                    <Footer />
+                </React.Fragment>
+            );
+        };
+
+        const Header = () => {
+    const isLoggedIn = {{ current_user.is_authenticated|tojson }};
+    const username = {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }};
+
+    return (
+        <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md">
+            <div className="container mx-auto px-4 py-6">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                    <div className="flex items-center mb-4 md:mb-0">
+                        <svg className="h-10 w-10 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        <div>
+                            <h1 className="text-2xl font-bold">PythonPlayground</h1>
+                            <p className="text-blue-100 text-sm">Etkileşimli Python notebookları ile öğrenin</p>
+                        </div>
+                    </div>
+                    <nav>
+                        <ul className="flex space-x-6">
+                            <li><a href="/" className="text-white hover:text-blue-200 font-medium">Ana Sayfa</a></li>
+                            <li><a href="#" className="text-white hover:text-blue-200 font-medium">Dersler</a></li>
+                            <li><a href="#" className="text-white hover:text-blue-200 font-medium">Hakkında</a></li>
+                            {isLoggedIn ? (
+                                <React.Fragment>
+                                    <li><span className="text-blue-200 font-medium">{username}</span></li>
+                                    <li><a href="/logout" className="text-white hover:text-blue-200 font-medium">Çıkış</a></li>
+                                </React.Fragment>
+                            ) : (
+                                <React.Fragment>
+                                    <li><a href="/login" className="text-white hover:text-blue-200 font-medium">Giriş</a></li>
+                                    <li><a href="/register" className="text-white hover:text-blue-200 font-medium">Kayıt Ol</a></li>
+                                </React.Fragment>
+                            )}
+                            <li class="flex space-x-2 ml-4">
+                                <a href="{{ url_for('set_language', lang='tr') }}" class="text-white hover:text-blue-200">TR</a>
+                                <span class="text-white">|</span>
+                                <a href="{{ url_for('set_language', lang='en') }}" class="text-white hover:text-blue-200">EN</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </header>
+    );
+};
+
+        const Footer = () => {
+            return (
+                <footer className="bg-gray-800 text-white py-4 mt-auto">
+                    <div className="container mx-auto px-4 text-center text-sm">
+                        <p>&copy; {new Date().getFullYear()} PythonPlayground. Tüm hakları saklıdır.</p>
+                        <p className="text-gray-400 text-xs mt-1">Bu platform eğitim amaçlı interaktif notebooklar sunar.</p>
+                    </div>
+                </footer>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
 </body>
 </html>
