@@ -1,335 +1,310 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Notebook Viewer</title>
+    <title>{{ notebook_path }} - {{ _('app_name') }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <!-- Marked for Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
+        html, body, #root {
+            height: 100%;
         }
-        h1, h2, h3, h4, h5, h6 { color: #333; }
-        pre { background-color: #f5f5f5; padding: 10px; border-radius: 5px; overflow-x: auto; }
-
-        /* Split view layout */
-        .main-container {
-            display: flex;
-            height: calc(100vh - 80px);
-            width: 100%;
-        }
-
-        #notebook-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            border-right: 2px solid #ccc;
-        }
-
-        #console-section {
-            flex: 1;
+        #root {
             display: flex;
             flex-direction: column;
-            padding: 20px;
-        }
-
-        /* Cell styling */
-        .cell {
-            margin-bottom: 20px;
-            border-left: 3px solid #ccc;
-            padding-left: 15px;
-        }
-        .code-cell { border-left-color: #3572A5; }
-        .markdown-cell { border-left-color: #5cb85c; }
-        .run-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 14px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .output {
-            background-color: #f9f9f9;
-            padding: 10px;
-            border-left: 3px solid #ff9800;
-            margin-top: 5px;
-        }
-
-        .output-console {
-            padding: 10px;
-            border-left: 3px solid #f4bb66;
-            margin-top: 5px;
-        }
-
-        .input {
-            padding: 10px;
-            border-left: 3px solid #98c379;
-            margin-top: 5px;
-        }
-
-        .command {
-            padding: 10px;
-            border-left: 3px solid #6abcef;
-            margin-top: 5px;
-        }
-
-        /* Console styles */
-        #console-container {
-            width: 100%;
-            flex-grow: 1;
-            background-color: #282c34;
-            color: #abb2bf;
-            border-radius: 5px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        #console-input-line {
-            display: flex;
-            padding: 5px 10px;
-            border-top: 1px solid #444;
-            background-color: #21252b;
-            border-left: 3px solid #00b7ff;
-            margin-top: 5px;
-        }
-        #console-prompt {
-            color: #98c379;
-            margin-right: 5px;
-        }
-        #console-output {
-            flex-grow: 1;
-            padding: 10px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-        }
-        #console-input {
-            flex-grow: 1;
-            background-color: transparent;
-            color: #abb2bf;
-            border: none;
-            outline: none;
-            font-family: monospace;
-            font-size: 14px;
-        }
-        .error { color: #e06c75; }
-        .info { color: #56b6c2; }
-        #status { margin-top: 10px; color: #666; }
-
-        /* Header styles */
-        .header {
-            padding: 15px 20px;
-            background-color: #f0f0f0;
-            border-bottom: 1px solid #ccc;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .header a {
-            margin-top: 5px;
-            display: inline-block;
+            min-height: 100vh;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
-    <script>
-        let socket;
-        let currentCode = '';
-        const commandHistory = [];
-        let historyIndex = -1;
-        let initialCodeExecuted = false;
-        window.isInputMode = false;
-
-        function initializeConsole() {
-            if (!socket) {
-                socket = io();
-
-                socket.on('partial_output', (data) => {
-                    if (data.output.trim() !== '') {
-                        appendToConsole(data.output, "output-console");
-                    }
-                    const consoleOutput = document.getElementById('console-output');
-                    consoleOutput.scrollTop = consoleOutput.scrollHeight;
-                });
-
-                socket.on('input_request', (data) => {
-                    const prompt = data.prompt || '';
-                    appendToConsole(prompt, "output-console");
-
-                    // Change the console prompt to indicate input mode
-                    const consolePrompt = document.getElementById('console-prompt');
-                    consolePrompt.textContent = "input>";
-
-                    // Enable input mode
-                    window.isInputMode = true;
-                    const consoleInput = document.getElementById('console-input');
-                    consoleInput.disabled = false;
-                    consoleInput.focus();
-                });
-
-                socket.on('code_output', (data) => {
-                    if (data.output.trim() !== '') {
-                        appendToConsole(data.output, "output-console");
-                    }
-                    const consoleInput = document.getElementById('console-input');
-                    consoleInput.disabled = false;
-                    consoleInput.focus();
-                });
-
-                socket.on('connect_error', (error) => {
-                    appendToConsole("Connection error: " + error, "error");
-                });
-            }
-        }
-
-        function runCode(codeElement) {
-            const code = codeElement.textContent;
-
-            // Initialize console if not already done
-            if (!socket) {
-                initializeConsole();
-            }
-
-            if (socket && socket.connected) {
-                executeCodeInConsole(code);
-            } else {
-                currentCode = code;
-            }
-        }
-
-        function executeCodeInConsole(code) {
-            if (code.trim() !== '') {
-                // Add to history and reset history navigation
-                commandHistory.push(code);
-                historyIndex = commandHistory.length;
-
-                // Display the command
-                appendToConsole(code, "command");
-
-                // Execute the code
-                document.getElementById('console-input').disabled = true;
-                socket.emit('run_code', { code });
-            }
-        }
-
-        function appendToConsole(text, className) {
-            const consoleOutput = document.getElementById('console-output');
-            const element = document.createElement('div');
-            element.className = className;
-            element.textContent = text;
-            consoleOutput.appendChild(element);
-            consoleOutput.scrollTop = consoleOutput.scrollHeight;
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Render markdown cells
-            document.querySelectorAll('.markdown-content').forEach(function(el) {
-                el.innerHTML = marked.parse(el.textContent);
-            });
-
-            // Initialize console immediately on page load
-            initializeConsole();
-
-            // Set up console input key handling
-            const consoleInput = document.getElementById('console-input');
-            consoleInput.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    const value = consoleInput.value;
-
-                    if (window.isInputMode) {
-                        // Handle input mode
-                        appendToConsole(value, "input");
-                        socket.emit('input_response', { value: value });
-
-                        // Reset input mode
-                        window.isInputMode = false;
-                        document.getElementById('console-prompt').textContent = ">>>";
-                        consoleInput.value = '';
-                    } else {
-                        // Handle code execution
-                        executeCodeInConsole(value);
-                        consoleInput.value = '';
-                    }
-                } else if (event.key === 'ArrowUp') {
-                    // Navigate command history (up)
-                    if (historyIndex > 0) {
-                        historyIndex--;
-                        consoleInput.value = commandHistory[historyIndex];
-                    }
-                    event.preventDefault();
-                } else if (event.key === 'ArrowDown') {
-                    // Navigate command history (down)
-                    if (historyIndex < commandHistory.length - 1) {
-                        historyIndex++;
-                        consoleInput.value = commandHistory[historyIndex];
-                    } else {
-                        historyIndex = commandHistory.length;
-                        consoleInput.value = '';
-                    }
-                    event.preventDefault();
-                }
-            });
-
-            // Focus input when clicking in console
-            document.getElementById('console-container').addEventListener('click', () => {
-                if (!consoleInput.disabled) {
-                    consoleInput.focus();
-                }
-            });
-        });
-    </script>
 </head>
-<body>
-    <div class="header">
-        <h1>{{ notebook_path }}</h1>
-        <a href="/">{{ _('back_to_notebooks') }}</a>
-    </div>
+<body class="bg-gray-50">
+    <div id="root"></div>
 
-    <div class="main-container">
-        <div id="notebook-content">
-            {% for cell in notebook.cells %}
-                {% if cell.cell_type == 'code' %}
-                    <div class="cell code-cell">
-                        <pre><code class="python">{{ cell.source }}</code></pre>
-                        <button class="run-button" onclick="runCode(this.previousElementSibling.firstChild)">{{ _('run') }}</button>
-                        {% if cell.outputs %}
-                            <div class="output">
-                                {% for output in cell.outputs %}
-                                    {% if output.output_type == 'stream' %}
-                                        <pre>{{ output.text }}</pre>
-                                    {% elif output.output_type == 'execute_result' and output.data['text/plain'] %}
-                                        <pre>{{ output.data['text/plain'] }}</pre>
-                                    {% endif %}
-                                {% endfor %}
+    <script type="text/babel">
+        const App = () => {
+            const notebook = {{ notebook|tojson }};
+            const translations = {
+                run: {{ _('run')|tojson|safe }}
+            };
+
+            return (
+                <React.Fragment>
+                    <Header />
+                    <NotebookViewer notebook={notebook} translations={translations} />
+                    <Footer />
+                </React.Fragment>
+            );
+        };
+
+        const Header = () => {
+            const isLoggedIn = {{ current_user.is_authenticated|tojson }};
+            const username = {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }};
+            const notebookPath = {{ notebook_path|tojson|safe }};
+
+            // Header translations
+            const headerTrans = {
+                appName: {{ _('app_name')|tojson|safe }},
+                tagline: {{ _('app_tagline')|tojson|safe }},
+                home: {{ _('home')|tojson|safe }},
+                courses: {{ _('courses')|tojson|safe }},
+                about: {{ _('about')|tojson|safe }},
+                logout: {{ _('logout')|tojson|safe }},
+                login: {{ _('login')|tojson|safe }},
+                register: {{ _('register')|tojson|safe }}
+            };
+
+            return (
+                <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md mb-auto">
+                    <div className="container mx-auto px-4 py-6">
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                            <div className="flex items-center mb-4 md:mb-0">
+                                <svg className="h-10 w-10 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                <div>
+                                    <h1 className="text-2xl font-bold">{notebookPath}</h1>
+                                    <p className="text-blue-100 text-sm">{headerTrans.tagline}</p>
+                                </div>
                             </div>
-                        {% endif %}
+                            <nav>
+                                <ul className="flex space-x-6">
+                                    <li><a href="/" className="text-white hover:text-blue-200 font-medium">{headerTrans.home}</a></li>
+                                    <li><a href="#" className="text-white hover:text-blue-200 font-medium">{headerTrans.courses}</a></li>
+                                    <li><a href="#" className="text-white hover:text-blue-200 font-medium">{headerTrans.about}</a></li>
+                                    {isLoggedIn ? (
+                                        <React.Fragment>
+                                            <li><span className="text-blue-200 font-medium">{username}</span></li>
+                                            <li><a href="/logout" className="text-white hover:text-blue-200 font-medium">{headerTrans.logout}</a></li>
+                                        </React.Fragment>
+                                    ) : (
+                                        <React.Fragment>
+                                            <li><a href="/login" className="text-white hover:text-blue-200 font-medium">{headerTrans.login}</a></li>
+                                            <li><a href="/register" className="text-white hover:text-blue-200 font-medium">{headerTrans.register}</a></li>
+                                        </React.Fragment>
+                                    )}
+                                    <li className="flex space-x-2 ml-4">
+                                        <a href="{{ url_for('set_language', lang='tr') }}" className="text-white hover:text-blue-200">TR</a>
+                                        <span className="text-white">|</span>
+                                        <a href="{{ url_for('set_language', lang='en') }}" className="text-white hover:text-blue-200">EN</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
-                {% elif cell.cell_type == 'markdown' %}
-                    <div class="cell markdown-cell">
-                        <div class="markdown-content">{{ cell.source }}</div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
+                </header>
+            );
+        };
 
-        <!-- Console Section (always visible) -->
-        <div id="console-section">
-            <div id="console-container">
-                <div id="console-output"></div>
-                <div id="console-input-line">
-                    <div id="console-prompt">>>></div>
-                    <input id="console-input" type="text" autocomplete="off" spellcheck="false">
+        const Footer = () => {
+            // Footer translations
+            const footerTrans = {
+                allRights: {{ _('all_rights')|tojson|safe }},
+                platformDesc: {{ _('platform_desc')|tojson|safe }}
+            };
+
+            return (
+                <footer className="bg-gray-800 text-white py-4 mt-auto">
+                    <div className="container mx-auto px-4 text-center text-sm">
+                        <p>&copy; {new Date().getFullYear()} PythonPlayground. {footerTrans.allRights}</p>
+                        <p className="text-gray-400 text-xs mt-1">{footerTrans.platformDesc}</p>
+                    </div>
+                </footer>
+            );
+        };
+
+        const NotebookViewer = ({ notebook, translations }) => {
+            const [socket, setSocket] = React.useState(null);
+            const [consoleOutput, setConsoleOutput] = React.useState([]);
+            const [inputValue, setInputValue] = React.useState('');
+            const [isInputMode, setIsInputMode] = React.useState(false);
+            const [commandHistory, setCommandHistory] = React.useState([]);
+            const [historyIndex, setHistoryIndex] = React.useState(-1);
+            const [isExecuting, setIsExecuting] = React.useState(false);
+
+            const consoleOutputRef = React.useRef(null);
+            const inputRef = React.useRef(null);
+
+            // Initialize Socket.IO connection
+            React.useEffect(() => {
+                const newSocket = io();
+
+                newSocket.on('partial_output', (data) => {
+                    if (data.output.trim() !== '') {
+                        setConsoleOutput(prev => [...prev, { type: 'output', content: data.output }]);
+                    }
+                });
+
+                newSocket.on('input_request', (data) => {
+                    const prompt = data.prompt || '';
+                    setConsoleOutput(prev => [...prev, { type: 'output', content: prompt }]);
+                    setIsInputMode(true);
+                    setIsExecuting(false);
+                });
+
+                newSocket.on('code_output', () => {
+                    setIsExecuting(false);
+                });
+
+                setSocket(newSocket);
+
+                return () => {
+                    newSocket.disconnect();
+                };
+            }, []);
+
+            // Scroll console output to bottom when updated
+            React.useEffect(() => {
+                if (consoleOutputRef.current) {
+                    consoleOutputRef.current.scrollTop = consoleOutputRef.current.scrollHeight;
+                }
+            }, [consoleOutput]);
+
+            // Focus input field when needed
+            React.useEffect(() => {
+                if (!isExecuting && inputRef.current) {
+                    inputRef.current.focus();
+                }
+            }, [isExecuting, isInputMode]);
+
+            // Initialize marked for rendering markdown
+            React.useEffect(() => {
+                marked.setOptions({
+                    breaks: true,
+                    gfm: true,
+                });
+            }, []);
+
+            const runCode = (code) => {
+                if (!socket || !code.trim()) return;
+
+                setCommandHistory(prev => [...prev, code]);
+                setHistoryIndex(commandHistory.length);
+                setConsoleOutput(prev => [...prev, { type: 'command', content: code }]);
+                setIsExecuting(true);
+
+                socket.emit('run_code', { code });
+            };
+
+            const handleInputKeyDown = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const value = inputValue;
+
+                    if (isInputMode) {
+                        setConsoleOutput(prev => [...prev, { type: 'input', content: value }]);
+                        socket.emit('input_response', { value });
+                        setIsInputMode(false);
+                    } else {
+                        runCode(value);
+                    }
+
+                    setInputValue('');
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (historyIndex > 0) {
+                        setHistoryIndex(historyIndex - 1);
+                        setInputValue(commandHistory[historyIndex - 1]);
+                    }
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (historyIndex < commandHistory.length - 1) {
+                        setHistoryIndex(historyIndex + 1);
+                        setInputValue(commandHistory[historyIndex + 1]);
+                    } else {
+                        setHistoryIndex(commandHistory.length);
+                        setInputValue('');
+                    }
+                }
+            };
+
+            const renderMarkdown = (markdown) => {
+                return { __html: marked.parse(markdown) };
+            };
+
+            return (
+                <div className="flex flex-col md:flex-row h-[calc(100vh-220px)] bg-white rounded-lg shadow-md overflow-hidden p-5">
+                    {/* Notebook Content */}
+                    <div className="w-full md:w-1/2 overflow-y-auto p-6 border-r border-gray-200">
+                        {notebook.cells.map((cell, index) => (
+                            <div key={index} className={`mb-6 pl-4 ${cell.cell_type === 'code' ? 'border-l-4 border-blue-500' : 'border-l-4 border-green-500'}`}>
+                                {cell.cell_type === 'code' ? (
+                                    <React.Fragment>
+                                        <pre className="bg-gray-50 p-4 rounded-md overflow-x-auto">
+                                            <code>{cell.source}</code>
+                                        </pre>
+                                        <button
+                                            className="mt-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-4 rounded text-sm"
+                                            onClick={() => runCode(cell.source)}
+                                        >
+                                            {translations.run}
+                                        </button>
+                                        {cell.outputs && cell.outputs.length > 0 && (
+                                            <div className="mt-2 bg-gray-50 p-4 rounded-md border-l-4 border-yellow-500">
+                                                {cell.outputs.map((output, i) => (
+                                                    <pre key={i}>
+                                                        {output.output_type === 'stream' && output.text}
+                                                        {output.output_type === 'execute_result' && output.data['text/plain']}
+                                                    </pre>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </React.Fragment>
+                                ) : (
+                                    <div
+                                        className="markdown-content prose"
+                                        dangerouslySetInnerHTML={renderMarkdown(cell.source)}
+                                    ></div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Console Section */}
+                    <div className="w-full md:w-1/2 flex flex-col">
+                        <div className="flex-1 bg-gray-900 text-gray-100 overflow-y-auto" ref={consoleOutputRef}>
+                            {consoleOutput.map((item, index) => (
+                                <div
+                                    key={index}
+                                    className={`px-4 py-2 border-l-4 ${
+                                        item.type === 'output' ? 'border-yellow-500' :
+                                        item.type === 'input' ? 'border-green-500' : 'border-blue-500'
+                                    }`}
+                                >
+                                    <pre className="whitespace-pre-wrap font-mono text-sm">{item.content}</pre>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex items-center border-t border-gray-700 bg-gray-800 p-2">
+                            <span className="text-green-400 mr-2 font-mono">
+                                {isInputMode ? "input>" : ">>>"}
+                            </span>
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                className="flex-grow bg-gray-800 text-gray-100 focus:outline-none font-mono"
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                onKeyDown={handleInputKeyDown}
+                                disabled={isExecuting}
+                                autoComplete="off"
+                                spellCheck="false"
+                            />
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
 </body>
 </html>
