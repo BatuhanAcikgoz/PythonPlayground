@@ -21,11 +21,13 @@ app.config['SECRET_KEY'] = 'secret!'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://radome:12345@localhost/python_platform'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize Babel
-babel = Babel(app)
-
 # Configure supported languages
 app.config['BABEL_DEFAULT_LOCALE'] = 'tr'  # Default language (Turkish)
 app.config['BABEL_SUPPORTED_LOCALES'] = ['tr', 'en']  # Supported languages
+# Near the top of app.py, with other configurations
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # Session lifetime in seconds
+babel = Babel(app)
 
 # Initialize extensions
 db = SQLAlchemy(app)
@@ -37,15 +39,18 @@ input_response = None
 
 # New approach using init app
 def get_locale():
+    # First check if user has explicitly set a language in session
     if 'language' in session:
         return session['language']
-    return request.accept_languages.best_match(app.config['BABEL_SUPPORTED_LOCALES'])
+    # Always default to 'tr' rather than using browser preferences
+    return app.config['BABEL_DEFAULT_LOCALE']
 
 babel.init_app(app, locale_selector=get_locale)
 
 @app.route('/language/<lang>')
 def set_language(lang):
     if lang in app.config['BABEL_SUPPORTED_LOCALES']:
+        session.permanent = True  # Make session permanent
         session['language'] = lang
     return redirect(request.referrer or url_for('index'))
 

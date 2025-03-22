@@ -110,6 +110,24 @@
         const Header = () => {
             const isLoggedIn = {{ current_user.is_authenticated|tojson }};
             const username = {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }};
+            const userEmail = {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }};
+            const [dropdownOpen, setDropdownOpen] = React.useState(false);
+
+            // Generate MD5 hash for Gravatar
+            const getGravatarURL = (email) => {
+                // Default to a placeholder if no email
+                if (!email) return "https://www.gravatar.com/avatar/?d=mp";
+
+                // Convert email to lowercase and trim
+                const processedEmail = email.toLowerCase().trim();
+
+                // Create MD5 hash using a simple implementation
+                const hash = Array.from(processedEmail).reduce((acc, char) => {
+                    return (((acc << 5) - acc) + char.charCodeAt(0)) & 0xFFFFFFFF;
+                }, 0).toString(16);
+
+                return `https://www.gravatar.com/avatar/${hash}?d=mp&s=40`;
+            };
 
             // Header translations
             const headerTrans = {
@@ -120,8 +138,24 @@
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
                 login: {{ _('login')|tojson|safe }},
-                register: {{ _('register')|tojson|safe }}
+                register: {{ _('register')|tojson|safe }},
+                profile: "Profile",
+                settings: "Settings"
             };
+
+            // Close dropdown when clicking outside
+            React.useEffect(() => {
+                if (!dropdownOpen) return;
+
+                const handleOutsideClick = (event) => {
+                    if (!event.target.closest('.user-dropdown-container')) {
+                        setDropdownOpen(false);
+                    }
+                };
+
+                document.addEventListener('click', handleOutsideClick);
+                return () => document.removeEventListener('click', handleOutsideClick);
+            }, [dropdownOpen]);
 
             return (
                 <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md">
@@ -137,14 +171,54 @@
                                 </div>
                             </div>
                             <nav>
-                                <ul className="flex space-x-6">
+                                <ul className="flex space-x-6 items-center">
                                     <li><a href="/" className="text-white hover:text-blue-200 font-medium">{headerTrans.home}</a></li>
                                     <li><a href="#" className="text-white hover:text-blue-200 font-medium">{headerTrans.courses}</a></li>
                                     <li><a href="#" className="text-white hover:text-blue-200 font-medium">{headerTrans.about}</a></li>
                                     {isLoggedIn ? (
                                         <React.Fragment>
-                                            <li><span className="text-blue-200 font-medium">{username}</span></li>
-                                            <li><a href="/logout" className="text-white hover:text-blue-200 font-medium">{headerTrans.logout}</a></li>
+                                            <li className="relative user-dropdown-container">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setDropdownOpen(!dropdownOpen);
+                                                    }}
+                                                    className="flex items-center text-blue-200 hover:text-white font-medium focus:outline-none"
+                                                >
+                                                    <img src={getGravatarURL(userEmail)} alt="Profile" className="w-8 h-8 rounded-full mr-2" />
+                                                    <span>{username}</span>
+                                                    <svg className={`ml-1 h-4 w-4 transition-transform ${dropdownOpen ? 'transform rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                                                    </svg>
+                                                </button>
+
+                                                {dropdownOpen && (
+                                                    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                                                        <div className="py-1" role="menu" aria-orientation="vertical">
+                                                            <a href="#" className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 items-center" role="menuitem">
+                                                                <svg className="h-4 w-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                                </svg>
+                                                                {headerTrans.profile}
+                                                            </a>
+                                                            <a href="#" className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 items-center" role="menuitem">
+                                                                <svg className="h-4 w-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                                </svg>
+                                                                {headerTrans.settings}
+                                                            </a>
+                                                            <div className="border-t border-gray-100"></div>
+                                                            <a href="/logout" className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 items-center" role="menuitem">
+                                                                <svg className="h-4 w-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                                                </svg>
+                                                                {headerTrans.logout}
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </li>
                                         </React.Fragment>
                                     ) : (
                                         <React.Fragment>
@@ -152,11 +226,6 @@
                                             <li><a href="/register" className="text-white hover:text-blue-200 font-medium">{headerTrans.register}</a></li>
                                         </React.Fragment>
                                     )}
-                                    <li className="flex space-x-2 ml-4">
-                                        <a href="{{ url_for('set_language', lang='tr') }}" className="text-white hover:text-blue-200">TR</a>
-                                        <span className="text-white">|</span>
-                                        <a href="{{ url_for('set_language', lang='en') }}" className="text-white hover:text-blue-200">EN</a>
-                                    </li>
                                 </ul>
                             </nav>
                         </div>
@@ -172,11 +241,77 @@
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             };
 
+            const [langDropdownOpen, setLangDropdownOpen] = React.useState(false);
+            const currentLang = {{ session.get('language', 'tr')|tojson }};
+
+            // Language names and flags
+            const languages = {
+                tr: { name: "Türkçe", flag: "🇹🇷" },
+                en: { name: "English", flag: "🇬🇧" }
+            };
+
+            // Close dropdown when clicking outside
+            React.useEffect(() => {
+                if (!langDropdownOpen) return;
+
+                const handleOutsideClick = (event) => {
+                    if (!event.target.closest('.lang-dropdown-container')) {
+                        setLangDropdownOpen(false);
+                    }
+                };
+
+                document.addEventListener('click', handleOutsideClick);
+                return () => document.removeEventListener('click', handleOutsideClick);
+            }, [langDropdownOpen]);
+
             return (
                 <footer className="bg-gray-800 text-white py-4 mt-auto">
-                    <div className="container mx-auto px-4 text-center text-sm">
-                        <p>&copy; {new Date().getFullYear()} PythonPlayground. {footerTrans.allRights}</p>
-                        <p className="text-gray-400 text-xs mt-1">{footerTrans.platformDesc}</p>
+                    <div className="container mx-auto px-4">
+                        <div className="flex flex-col md:flex-row justify-between items-center">
+                            {/* Language selector (on right on desktop) */}
+                            <div className="order-2 md:order-3 mb-4 md:mb-0 relative lang-dropdown-container">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setLangDropdownOpen(!langDropdownOpen);
+                                    }}
+                                    className="flex items-center bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm focus:outline-none"
+                                >
+                                    <span className="mr-1">{languages[currentLang].flag}</span>
+                                    <span className="mr-1">{languages[currentLang].name}</span>
+                                    <svg className={`h-4 w-4 transition-transform ${langDropdownOpen ? 'transform rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7"></path>
+                                    </svg>
+                                </button>
+
+                                {langDropdownOpen && (
+                                    <div className="absolute bottom-full mb-2 right-0 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                                        <div className="py-1" role="menu" aria-orientation="vertical">
+                                            {Object.entries(languages).map(([code, lang]) => (
+                                            <a
+                                                key={code}
+                                                href={`/language/${code}`}
+                                                className={`flex items-center px-4 py-2 text-sm ${currentLang === code ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-100'}`}
+                                                role="menuitem"
+                                            >
+                                                <span className="mr-2">{lang.flag}</span>
+                                                {lang.name}
+                                            </a>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Copyright text (centered) */}
+                            <div className="order-1 md:order-2 mb-4 md:mb-0 text-center flex-grow">
+                                <p>&copy; {new Date().getFullYear()} PythonPlayground. {footerTrans.allRights}</p>
+                                <p className="text-gray-400 text-xs mt-1">{footerTrans.platformDesc}</p>
+                            </div>
+
+                            {/* Empty div to balance the flex layout */}
+                            <div className="hidden md:block order-3 md:order-1"></div>
+                        </div>
                     </div>
                 </footer>
             );
