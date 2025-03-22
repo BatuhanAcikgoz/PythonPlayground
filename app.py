@@ -104,6 +104,10 @@ def load_user(id):
 # URL of the GitHub repository
 REPO_URL = 'https://github.com/msy-bilecik/ist204_2025'
 
+@app.route('/js/component/<filename>')
+def serve_component(filename):
+    return render_template(f'js/components/{filename}')
+
 def role_required(role_name):
     def decorator(f):
         @wraps(f)
@@ -155,7 +159,7 @@ def edit_user_roles(user_id):
         flash(_('user_roles_updated'))
         return redirect(url_for('admin_panel'))
 
-    return render_template('edit_roles.html', user=user, roles=roles)
+    return render_template('admin/edit_roles.html', user=user, roles=roles)
 
 @app.route('/admin/user/<int:user_id>/delete')
 @login_required
@@ -229,7 +233,7 @@ def clone_repo():
 @role_required('admin')
 def admin_panel():
     users = User.query.all()
-    return render_template('admin.html', users=users)
+    return render_template('admin/admin.html', users=users)
 
 # Modify existing routes to check permissions
 @app.route('/refresh_repo')
@@ -363,6 +367,10 @@ def register():
 @app.errorhandler(403)
 def forbidden(error):
     return render_template('403.html'), 403
+
+@app.errorhandler(404)
+def forbidden(error):
+    return render_template('404.html'), 404
 
 @app.route('/logout')
 @login_required
