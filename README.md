@@ -1,26 +1,35 @@
-# PythonPlayground: İnteraktif Konsol ve Eğitim Platformu 
+# PythonPlayground: İnteraktif Python Konsolu ve Eğitim Platformu
 
-Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görüntülemenizi ve içindeki Python kodlarını çalıştırmanızı sağlar. [Programiz'in çevrimiçi Python derleyicisi](https://www.programiz.com/python-programming/online-compiler/) benzeri bir interaktif konsol sunar ve kullanıcı kimlik doğrulama, rol tabanlı erişim kontrolü gibi ek özellikler içerir.
+Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görüntülemenizi ve içindeki Python kodlarını çalıştırmanızı sağlar. Programiz benzeri bir interaktif konsol sunar ve kullanıcı yönetimi, rol tabanlı erişim kontrolü gibi gelişmiş özellikler içerir.
 
 ## Özellikler
 
-- Kullanıcı kaydı ve giriş sistemi
-- Rol tabanlı erişim kontrolü (admin, öğretmen, öğrenci)
-- Çoklu dil desteği (şu anda Türkçe ve İngilizce)
-- Jupyter notebook'larını içeren GitHub deposunu otomatik olarak klonlar ve günceller
-- Notebook içeriğini HTML olarak görüntüler
-- Kod çalıştırmak için interaktif Python konsolu
-- Gerçek zamanlı kod yürütme ve çıktı görüntüleme
-- Komut istemi aracılığıyla interaktif girdi işleme
-- Yukarı/aşağı ok tuşlarıyla komut geçmişi navigasyonu
-- Kullanıcı yönetimi ve rol ataması için admin paneli
+- **Kullanıcı Yönetimi**: Kapsamlı kayıt, giriş, rol atama sistemi
+- **Rol Tabanlı Erişim Kontrolü**: Üç farklı yetki seviyesi (admin, öğretmen, öğrenci)
+- **Çoklu Dil Desteği**: Türkçe (varsayılan) ve İngilizce arayüz
+- **Notebook Entegrasyonu**: GitHub'dan Jupyter notebook'larını otomatik çeker ve günceller
+- **İnteraktif Konsol**: Gerçek zamanlı kod çalıştırma, çıktı görüntüleme
+- **Gelişmiş Konsol Özellikleri**: 
+  - Kod girişi ve anında çalıştırma
+  - Komut geçmişi (yukarı/aşağı ok tuşlarıyla)
+  - Kullanıcı girdisi alabilen programlar çalıştırabilme
+  - Renk kodlamalı çıktı görüntüleme
+- **Yönetim Paneli**: Kullanıcıları ve rolleri yönetme arayüzü
+
+## Teknik Detaylar
+
+- **Backend**: Flask ve Python ile geliştirilmiş web sunucusu
+- **Gerçek Zamanlı İletişim**: Socket.IO ile kod çalıştırma ve çıktı gösterme
+- **Veritabanı**: MySQL veritabanında kullanıcı ve rol bilgilerini saklama
+- **Güvenlik**: Şifreleme, oturum yönetimi ve rol bazlı erişim kontrolleri
+- **Çoklu Dil**: Flask-Babel ile farklı dil destekleri
 
 ## Kurulum
 
 1. Bu depoyu klonlayın:
    ```bash
-   git clone https://github.com/msy-bilecik/ist204_2025.git
-   cd ist204_2025
+   git clone https://github.com/BatuhanAcikgoz/PythonPlayground.git
+   cd PythonPlayground
    ```
 
 2. Gerekli bağımlılıkları yükleyin:
@@ -31,8 +40,14 @@ Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görünt
 3. MySQL veritabanını kurun:
    ```bash
    # 'python_platform' adında bir MySQL veritabanı oluşturun
-   # Gerekirse app.py içindeki veritabanı bağlantı dizesini güncelleyin:
+   # Veritabanı bağlantı bilgilerini app.py dosyasında güncelleyin:
    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://kullanici_adi:parola@localhost/python_platform'
+   ```
+
+4. Notebook deposu yapılandırması:
+   ```python
+   # app.py dosyasındaki REPO_URL değişkenini ihtiyacınıza göre düzenleyin
+   REPO_URL = 'https://github.com/msy-bilecik/ist204_2025'  # veya başka bir notebook deposu
    ```
 
 ## Kullanım
@@ -42,32 +57,66 @@ Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görünt
    python app.py
    ```
 
-2. Tarayıcınızı açın ve `http://localhost:5000` adresine gidin
+2. Tarayıcınızda `http://localhost:5000` adresine gidin
 
-3. Hesap oluşturun veya mevcut kimlik bilgileriyle giriş yapın
-   - Varsayılan admin hesabı: kullanıcı adı: `admin`, şifre: `admin123`
+3. Hesap oluşturun veya varsayılan admin hesabıyla giriş yapın:
+   - Kullanıcı adı: `admin` 
+   - Şifre: `admin123`
 
-4. Depodaki mevcut notebook'ları görüntüleyin
+4. Uygulama özellikleri:
+   - Ana sayfada mevcut notebook listesini görüntüleyin
+   - İncelemek istediğiniz notebook'a tıklayın
+   - "Çalıştır" butonuyla kod hücrelerini çalıştırın
+   - Konsola doğrudan Python kodu yazabilirsiniz
+   - Admin panelinden kullanıcıları ve rolleri yönetin
+   - Sağ üst köşeden dil tercihini değiştirin
 
-5. İçeriğini görmek için herhangi bir notebook'a tıklayın
+## Kullanıcı Rolleri ve İzinler
 
-6. Herhangi bir kod hücresini çalıştırmak için "Çalıştır" düğmesine tıklayın
+- **Öğrenci**:
+  - Notebook'ları görüntüleme
+  - Kod çalıştırma
+  - Profil düzenleme
 
-7. Python komutlarını doğrudan konsola yazın ve çalıştırmak için Enter tuşuna basın
+- **Öğretmen** (öğrenci yetkileri + şunlar):
+  - Notebook deposunu güncelleme
+  - Öğrenci ilerlemesini görüntüleme
+  - İçerik yönetimi
 
-## Kullanıcı Rolleri
+- **Admin** (öğretmen yetkileri + şunlar):
+  - Kullanıcı hesapları oluşturma/silme
+  - Rol atama ve düzenleme
+  - Sistem yapılandırması
 
-- **Öğrenci**: Notebook'ları görüntülemek ve kod çalıştırmak için temel erişim
-- **Öğretmen**: Notebook'ları yönetebilir, depo içeriğini yenileyebilir ve öğrenci ilerlemesini görüntüleyebilir
-- **Admin**: Tam yönetici erişimi, kullanıcı yönetimi ve rol atama dahil
+## Proje Yapısı
 
-## Çoklu Dil Desteği
+```
+PythonPlayground/
+├── app.py                 # Ana uygulama dosyası
+├── requirements.txt       # Bağımlılıklar
+├── notebooks_repo/        # Klonlanan notebook deposu
+├── static/                # Statik dosyalar (JS, CSS)
+│   ├── css/               # Stil dosyaları
+│   ├── js/                # JavaScript dosyaları
+│   └── images/            # Görseller
+├── templates/             # HTML şablonları
+│   ├── admin/             # Admin paneli şablonları
+│   ├── js/components/     # React bileşenleri
+│   ├── index.html         # Ana sayfa
+│   ├── login.html         # Giriş sayfası
+│   ├── register.html      # Kayıt sayfası
+│   └── notebook_viewer.html # Notebook görüntüleyici
+└── translations/          # Dil çevirileri
+    ├── en/                # İngilizce
+    └── tr/                # Türkçe
+```
 
-Uygulama birden fazla dili destekler. Şu anda uygulanmış olanlar:
-- Türkçe (varsayılan)
-- İngilizce
+## Teknik Gereksinimler
 
-Dil değiştirici üzerine tıklayarak veya `/language/en` veya `/language/tr` adreslerini ziyaret ederek dili değiştirebilirsiniz.
+- Python 3.8+
+- MySQL 5.7+ veya MariaDB 10.5+
+- Tarayıcı: Chrome, Firefox, Edge (güncel sürümler)
+- İnternet bağlantısı (notebook deposunu çekmek için)
 
 ## Bağımlılıklar
 
@@ -80,18 +129,17 @@ Dil değiştirici üzerine tıklayarak veya `/language/en` veya `/language/tr` a
 - python-socketio 5.10.0+
 - eventlet 0.33.3+
 - PyMySQL
+- React (CDN üzerinden)
+- TailwindCSS (CDN üzerinden)
 
-## Proje Yapısı
+## Katkıda Bulunma
 
-- `app.py`: Flask rotaları ve Socket.IO olay işleyicilerini içeren ana uygulama dosyası
-- `templates/`: HTML şablonları
-  - `index.html`: Mevcut notebook'ları listeleyen ana sayfa
-  - `login.html`, `register.html`: Kimlik doğrulama sayfaları
-  - `notebook_viewer.html`: Notebook görüntüleme şablonu
-  - `admin/`: Admin paneli şablonları
-- `static/`: Statik dosyalar (CSS, JS)
-- `translations/`: Dil çeviri dosyaları
+1. Bu depoyu fork edin
+2. Yeni bir branch oluşturun (`git checkout -b ozellik/yenilik`)
+3. Değişikliklerinizi commit edin (`git commit -am 'Yeni özellik: Açıklama'`)
+4. Branch'inizi push edin (`git push origin ozellik/yenilik`)
+5. Pull Request açın
 
 ## Lisans
 
-GPLv3 lisansı altında lisanslanmıştır. Daha fazla bilgi için [LİSANS](LICENSE) dosyasına bakın.
+Bu proje GPLv3 lisansı altında dağıtılmaktadır. Daha fazla bilgi için `LICENSE` dosyasını inceleyebilirsiniz.
