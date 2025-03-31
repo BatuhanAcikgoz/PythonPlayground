@@ -1,3 +1,5 @@
 .idea/inspectionProfiles/profiles_settings.xml
 /.idea
 notebooks_repo/
+/tests/__pycache__
+/tests/__pycache__

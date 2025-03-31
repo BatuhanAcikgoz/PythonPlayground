@@ -1,25 +1,27 @@
 # tests/conftest.py
 import pytest
-from tests.mock_app import mock_app, mock_db, MockUser
-
+from tests.mock_app import create_mock_app
 
 @pytest.fixture
 def app():
+    mock_app = create_mock_app()
+    db = mock_app.db
+    MockUser = mock_app.MockUser
+
     with mock_app.app_context():
-        mock_db.create_all()
+        db.create_all()
 
         # Create test user
-        test_user = MockUser(username='testuser')
+        test_user = MockUser(username='testuser', email='test@example.com')
         test_user.set_password('password')
-        mock_db.session.add(test_user)
-        mock_db.session.commit()
+        db.session.add(test_user)
+        db.session.commit()
 
         yield mock_app
 
         # Clean up
-        mock_db.session.remove()
-        mock_db.drop_all()
-
+        db.session.remove()
+        db.drop_all()
 
 @pytest.fixture
 def client(app):
