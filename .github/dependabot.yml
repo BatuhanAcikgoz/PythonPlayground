@@ -1,0 +1,36 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    target-branch: "main"
+    labels:
+      - "dependencies"
+      - "python"
+    ignore:
+      # Optional: Ignore patch updates for these packages if you want
+      # - dependency-name: "flask"
+      #   update-types: ["version-update:semver-patch"]
+    
+  # JavaScript dependencies (if you have package.json)
+  - package-ecosystem: "npm"
+    directory: "/static"  # Adjust this to the directory with package.json if needed
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "javascript"
+    # Only enable this section if you have npm dependencies
+    # Otherwise delete or comment it out
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
