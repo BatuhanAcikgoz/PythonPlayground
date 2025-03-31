@@ -79,7 +79,11 @@ def set_language(lang):
     if lang in app.config['BABEL_SUPPORTED_LOCALES']:
         session.permanent = True  # Make session permanent
         session['language'] = lang
-    return redirect(request.referrer or url_for('index'))
+    referrer = request.referrer or url_for('index')
+    referrer = referrer.replace('\\', '')
+    if not urlparse(referrer).netloc and not urlparse(referrer).scheme:
+        return redirect(referrer, code=302)
+    return redirect(url_for('index'), code=302)
 
 # Role model definitions
 class Role(db.Model):
