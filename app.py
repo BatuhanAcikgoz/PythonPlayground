@@ -17,9 +17,11 @@ from flask_babel import Babel, gettext as _, lazy_gettext as _l
 from functools import wraps
 from flask import abort
 from werkzeug.utils import secure_filename
+import logging
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
+logging.basicConfig(level=logging.ERROR)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://radome:12345@localhost/python_platform'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize Babel
@@ -335,7 +337,8 @@ def view_notebook(path):
                                notebook=notebook,
                                notebook_path=path)
     except Exception as e:
-        return f"Error loading notebook: {str(e)}", 500
+        logging.error(f"Error loading notebook: {str(e)}")
+        return "An internal error has occurred while loading the notebook.", 500
 
 
 @app.route('/run_code', methods=['POST'])
