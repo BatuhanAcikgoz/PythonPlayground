@@ -310,7 +310,10 @@ def index():
 def view_notebook(path):
     """Display notebook as HTML with run buttons"""
     repo_dir = os.path.join(os.getcwd(), 'notebooks_repo')
-    notebook_path = os.path.join(repo_dir, path)
+    notebook_path = os.path.normpath(os.path.join(repo_dir, path))
+
+    if not notebook_path.startswith(repo_dir):
+        return "Invalid notebook path", 400
 
     if not os.path.exists(notebook_path):
         return "Notebook not found", 404
