@@ -9,7 +9,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ lower(github.repository) }}
 
 jobs:
   build-and-push:
@@ -21,6 +20,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Set lowercase image name
+        id: image_name
+        run: echo "IMAGE_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
+      # Rest of your workflow...
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
