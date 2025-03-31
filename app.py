@@ -10,6 +10,7 @@ import nbformat
 import subprocess
 import sys
 import io
+from urllib.parse import urlparse
 import builtins
 from datetime import datetime
 from flask_babel import Babel, gettext as _, lazy_gettext as _l
@@ -367,8 +368,11 @@ def login():
 
         if user and user.check_password(password):
             login_user(user)
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('index'))
+            next_page = request.args.get('next', '')
+            next_page = next_page.replace('\\', '')
+            if not urlparse(next_page).netloc and not urlparse(next_page).scheme:
+                return redirect(next_page or url_for('index'))
+            return redirect(url_for('index'))
         else:
             flash(_('invalid_login'))
 
