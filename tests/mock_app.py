@@ -2,6 +2,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 # Create a Flask application for testing
 mock_app = Flask(__name__)
@@ -28,8 +29,9 @@ mock_user_roles = mock_db.Table('mock_user_roles',
 class MockUser(mock_db.Model):
     id = mock_db.Column(mock_db.Integer, primary_key=True)
     username = mock_db.Column(mock_db.String(100), unique=True, nullable=False)
-    email = mock_db.Column(mock_db.String(120), unique=True)
-    password_hash = mock_db.Column(mock_db.String(255))
+    email = mock_db.Column(mock_db.String(120), unique=True, nullable=False)
+    password_hash = mock_db.Column(mock_db.String(255), nullable=False)
+    created_at = mock_db.Column(mock_db.DateTime, default=datetime.utcnow)
     roles = mock_db.relationship('MockRole', secondary=mock_user_roles,
                             backref=mock_db.backref('users', lazy='dynamic'))
 
