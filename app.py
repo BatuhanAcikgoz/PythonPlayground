@@ -583,7 +583,8 @@ def server_status():
         mysql_result = db.session.execute(mysql_version_query).first()
         mysql_version = mysql_result.version if mysql_result else "Unknown"
     except Exception as e:
-        mysql_version = f"Error: {str(e)}"
+        app.logger.error(f"Error fetching MySQL version: {str(e)}")
+        mysql_version = "Error: Unable to fetch MySQL version"
 
     # Get system RAM usage
     mem = psutil.virtual_memory()
