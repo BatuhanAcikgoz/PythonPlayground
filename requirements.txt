@@ -20,7 +20,7 @@ eventlet==0.35.2
 nbformat~=5.10.4
 
 # System
-psutil~=5.9.5
+psutil~=7.0.0
 
 # Testing
 pytest~=8.3.5
