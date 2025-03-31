@@ -1,5 +1,12 @@
 # tests/conftest.py
+import os
+import sys
 import pytest
+
+# Add the parent directory to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Now we can import from app
 from app import app as flask_app, db, Role, User
 
 
@@ -9,7 +16,6 @@ def app():
         "TESTING": True,
         "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
         "WTF_CSRF_ENABLED": False,
-        "SERVER_NAME": "localhost.localdomain"
     })
 
     with flask_app.app_context():
@@ -20,12 +26,11 @@ def app():
         admin_role = Role(name='admin', description='Admin role')
         db.session.add_all([student_role, teacher_role, admin_role])
 
-        # Create test admin user
+        # Create test users
         test_admin = User(username='testadmin', email='admin@test.com')
         test_admin.set_password('password')
         test_admin.roles.append(admin_role)
 
-        # Create test student user
         test_student = User(username='teststudent', email='student@test.com')
         test_student.set_password('password')
         test_student.roles.append(student_role)
@@ -35,6 +40,7 @@ def app():
 
     yield flask_app
 
+    # Clean up after test is complete
     with flask_app.app_context():
         db.drop_all()
 
