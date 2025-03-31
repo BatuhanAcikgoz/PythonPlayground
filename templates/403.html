@@ -4,25 +4,82 @@
     <title>{{ _('access_denied') }} - {{ _('app_name') }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        html, body, #root {
+            height: 100%;
+        }
+        #root {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
-    <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md">
-        <!-- Header content -->
-    </header>
+<body class="bg-gray-50">
+    <div id="root"></div>
 
-    <main class="flex-grow container mx-auto px-4 py-8 flex items-center justify-center">
-        <div class="text-center">
-            <!-- Main content -->
-            <h1 class="text-6xl text-red-500 font-bold mb-4">403</h1>
-            <h2 class="text-3xl font-bold text-gray-800 mb-6">{{ _('access_denied') }}</h2>
-            <p class="text-lg text-gray-600 mb-8">{{ _('no_permission') }}</p>
-            <a href="/" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700">{{ _('return_home') }}</a>
-        </div>
-    </main>
+    <!-- Define global variables for component access -->
+    <script>
+        window.APP_DATA = {
+            // User information
+            isLoggedIn: {{ current_user.is_authenticated|tojson }},
+            userData: {
+                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
+                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
+            },
+            // Header translations
+            headerTrans: {
+                appName: {{ _('app_name')|tojson|safe }},
+                tagline: {{ _('app_tagline')|tojson|safe }},
+                home: {{ _('home')|tojson|safe }},
+                courses: {{ _('courses')|tojson|safe }},
+                about: {{ _('about')|tojson|safe }},
+                logout: {{ _('logout')|tojson|safe }},
+                login: {{ _('login')|tojson|safe }},
+                register: {{ _('register')|tojson|safe }},
+                profile: "Profile",
+                settings: "Settings"
+            },
+            // Footer translations
+            footerTrans: {
+                allRights: {{ _('all_rights')|tojson|safe }},
+                platformDesc: {{ _('platform_desc')|tojson|safe }}
+            },
+            // Current language
+            currentLang: {{ session.get('language', 'tr')|tojson }}
+        };
+    </script>
 
-    <footer class="bg-gray-800 text-white py-4 mt-auto">
-        <!-- Footer content -->
-    </footer>
+    <!-- Load component scripts -->
+    <script type="text/babel" src="{{ url_for('serve_component', filename='Header.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('serve_component', filename='Footer.jsx') }}"></script>
+
+    <script type="text/babel">
+        const App = () => {
+            return (
+                <React.Fragment>
+                    <Header />
+                    <main className="flex-grow container mx-auto px-4 py-8 flex items-center justify-center">
+                        <div className="text-center">
+                            <h1 className="text-6xl text-red-500 font-bold mb-4">403</h1>
+                            <h2 className="text-3xl font-bold text-gray-800 mb-6">{{ _('access_denied') }}</h2>
+                            <p className="text-lg text-gray-600 mb-8">{{ _('no_permission') }}</p>
+                            <a href="/" className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700">{{ _('return_home') }}</a>
+                        </div>
+                    </main>
+                    <Footer />
+                </React.Fragment>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
 </body>
 </html>

@@ -52,7 +52,7 @@ const Header = () => {
                     </div>
                     <nav>
                         <ul className="flex space-x-6 items-center">
-                            <li><a href="/static" className="text-white hover:text-blue-200 font-medium">{headerTrans.home}</a></li>
+                            <li><a href="/" className="text-white hover:text-blue-200 font-medium">{headerTrans.home}</a></li>
                             <li><a href="#" className="text-white hover:text-blue-200 font-medium">{headerTrans.courses}</a></li>
                             <li><a href="#" className="text-white hover:text-blue-200 font-medium">{headerTrans.about}</a></li>
                             {isLoggedIn ? (

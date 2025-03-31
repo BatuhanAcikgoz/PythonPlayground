@@ -37,6 +37,29 @@ login_manager.login_view = 'login'
 
 input_response = None
 
+class Course(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # Add relationship to questions
+    questions = db.relationship('Question', backref='course', lazy=True)
+
+    def __repr__(self):
+        return f'<Course {self.name}>'
+
+class Question(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    content = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    # Foreign key relationship with Course
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<Question {self.title}>'
+
 # New approach using init app
 def get_locale():
     # First check if user has explicitly set a language in session
@@ -106,7 +129,10 @@ REPO_URL = 'https://github.com/msy-bilecik/ist204_2025'
 
 @app.route('/js/component/<filename>')
 def serve_component(filename):
-    return render_template(f'js/components/{filename}')
+    file_path = os.path.join(app.template_folder, 'js', 'components', filename)
+    with open(file_path, 'r') as file:
+        content = file.read()
+    return content, 200, {'Content-Type': 'text/javascript'}
 
 def role_required(role_name):
     def decorator(f):
@@ -232,13 +258,25 @@ def clone_repo():
 @login_required
 @role_required('admin')
 def admin_panel():
-    users = User.query.all()
-    return render_template('admin/admin.html', users=users)
+    all_users = User.query.all()
+    users_data = []
+
+    for user in all_users:
+        user_dict = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'created_at': user.created_at.isoformat() if user.created_at else None,
+            'roles': [{'id': role.id, 'name': role.name} for role in user.roles]
+        }
+        users_data.append(user_dict)
+
+    return render_template('admin/admin.html', users=users_data)
 
 # Modify existing routes to check permissions
 @app.route('/refresh_repo')
 @login_required
-@role_required('teacher')  # Only teachers can refresh the repository
+@role_required('admin')  # Only teachers can refresh the repository
 def refresh_repo():
     """Refresh the repository by pulling the latest changes"""
     clone_repo()
@@ -384,9 +422,21 @@ def utility_processor():
         return datetime.utcnow()
     return dict(now=now)
 
+
+# Add this near other global variables
+user_namespaces = {}  # Dictionary to store execution environments for each user
+
+
 @socketio.on('run_code')
 def handle_run_code(data):
     code = data['code']
+    user_id = current_user.id
+
+    # Get or create namespace for this user
+    if user_id not in user_namespaces:
+        user_namespaces[user_id] = {'__builtins__': __builtins__}
+
+    user_namespace = user_namespaces[user_id]
 
     # Create a StringIO object to capture stdout
     old_stdout = sys.stdout
@@ -420,11 +470,62 @@ def handle_run_code(data):
         return response
 
     old_input = builtins.input
-    builtins.input = custom_input
+    user_namespace['input'] = custom_input
 
     try:
-        # Execute the code
-        exec(code)
+        # Check if the code is a simple expression (single line that could return a value)
+        is_simple_expression = False
+        try:
+            compiled_code = compile(code, '<string>', 'eval')
+            is_simple_expression = True
+        except SyntaxError:
+            pass
+
+        if is_simple_expression:
+            # Simple expression - evaluate and show result
+            result = eval(compiled_code, user_namespace)
+            if result is not None:
+                print(repr(result))
+        else:
+            # For multi-line code, use ast to check if the last statement is an expression
+            import ast
+
+            try:
+                # Parse the code into an AST
+                parsed = ast.parse(code)
+
+                # Check if there's at least one statement
+                if parsed.body:
+                    last_stmt = parsed.body[-1]
+
+                    # Check if the last statement is an expression
+                    if isinstance(last_stmt, ast.Expr):
+                        # Split the code into all statements except the last, and the last statement
+                        lines = code.splitlines()
+                        last_line_index = last_stmt.lineno - 1  # ast line numbers are 1-indexed
+
+                        # If it's the only line, execute normally with exec
+                        if len(lines) == 1:
+                            exec(code, user_namespace)
+                        else:
+                            # Execute all except last expression
+                            exec('\n'.join(lines[:last_line_index]), user_namespace)
+
+                            # Evaluate the last expression and print its result
+                            last_expr = lines[last_line_index]
+                            result = eval(last_expr, user_namespace)
+                            if result is not None:
+                                print(repr(result))
+                    else:
+                        # Not an expression, execute normally
+                        exec(code, user_namespace)
+                else:
+                    # Empty code
+                    exec(code, user_namespace)
+            except SyntaxError:
+                # If AST parsing fails, execute normally
+                exec(code, user_namespace)
+
         # Send any remaining output
         final_output = redirected_output.getvalue()[last_output_position:]
         if final_output:
@@ -432,11 +533,20 @@ def handle_run_code(data):
     except Exception as e:
         emit('partial_output', {'output': str(e)})
     finally:
-        # Restore the original functions
+        # Restore the original stdout
         sys.stdout = old_stdout
         builtins.input = old_input
 
     emit('code_output', {'output': ''})  # Signal completion
+
+@socketio.on('connect')
+def handle_connect():
+    if current_user.is_authenticated:
+        user_id = current_user.id
+        # Clear the user's namespace if it exists
+        if user_id in user_namespaces:
+            user_namespaces[user_id] = {'__builtins__': __builtins__}
+            print(f"Reset namespace for user {user_id}")
 
 # Add this new event handler
 @socketio.on('input_response')
@@ -444,6 +554,102 @@ def handle_input_response(data):
     global input_response
     input_response = data['value']
 
+@app.route('/api/server-status')
+@login_required
+@role_required('admin')
+def server_status():
+    import platform
+    import psutil
+    import flask
+    from sqlalchemy import text  # Import text function
+
+    # Get Python version
+    python_version = platform.python_version()
+
+    # Get Flask version
+    flask_version = flask.__version__
+
+    # Get MySQL version
+    try:
+        mysql_version_query = text("SELECT VERSION() as version")  # Wrap with text()
+        mysql_result = db.session.execute(mysql_version_query).first()
+        mysql_version = mysql_result.version if mysql_result else "Unknown"
+    except Exception as e:
+        mysql_version = f"Error: {str(e)}"
+
+    # Get system RAM usage
+    mem = psutil.virtual_memory()
+    ram_used = round(mem.used / (1024 * 1024 * 1024), 2)  # GB
+    ram_total = round(mem.total / (1024 * 1024 * 1024), 2)  # GB
+
+    # Get process-specific RAM usage
+    process = psutil.Process(os.getpid())
+    process_memory = process.memory_info()
+    process_ram_used = round(process_memory.rss / (1024 * 1024 * 1024), 2)  # GB - Resident Set Size
+    process_ram_allocated = round(process_memory.vms / (1024 * 1024 * 1024), 2)  # GB - Virtual Memory Size
+
+    # Get CPU usage
+    cpu_usage = psutil.cpu_percent(interval=1)
+
+    return jsonify({
+        'python_version': python_version,
+        'flask_version': flask_version,
+        'mysql_version': mysql_version,
+        'ram_used': ram_used,
+        'ram_total': ram_total,
+        'cpu_usage': cpu_usage,
+        'process_ram_used': process_ram_used,
+        'process_ram_allocated': process_ram_allocated
+    })
+
+
+@app.route('/api/recent-questions')
+@login_required
+@role_required('admin')
+def recent_questions():
+    # Assuming you have a Question model
+    # Fetch the 10 most recent questions
+    recent = db.session.query(
+        Question,
+        Course.name.label('course_name')
+    ).join(
+        Course,
+        Question.course_id == Course.id
+    ).order_by(
+        Question.created_at.desc()
+    ).limit(10).all()
+
+    questions = []
+    for q, course_name in recent:
+        questions.append({
+            'id': q.id,
+            'title': q.title,
+            'course_name': course_name,
+            'created_at': q.created_at.isoformat() if q.created_at else None
+        })
+
+    return jsonify({'questions': questions})
+
+
+@app.route('/api/recent-users')
+@login_required
+@role_required('admin')
+def recent_users():
+    # Fetch the 5 most recent users
+    recent_users = User.query.order_by(User.created_at.desc()).limit(5).all()
+
+    users_data = []
+    for user in recent_users:
+        user_data = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'created_at': user.created_at.isoformat() if user.created_at else None,
+            'roles': [{'id': role.id, 'name': role.name} for role in user.roles]
+        }
+        users_data.append(user_data)
+
+    return jsonify({'users': users_data})
 
 if __name__ == '__main__':
     with app.app_context():
