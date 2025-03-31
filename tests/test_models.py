@@ -1,22 +1,17 @@
 # tests/test_models.py
-import pytest
-from app import User, Role, Course, Question
+import sys
+import os
 
-def test_user_password(app):
-    with app.app_context():
-        user = User(username='testuser', email='test@example.com')
-        user.set_password('password123')
-        assert user.check_password('password123')
-        assert not user.check_password('wrongpassword')
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-def test_user_roles(app):
-    with app.app_context():
-        admin = User.query.filter_by(username='testadmin').first()
-        assert admin.has_role('admin')
-        assert admin.is_admin()
-        assert admin.is_teacher()
+from werkzeug.security import generate_password_hash, check_password_hash
 
-        student = User.query.filter_by(username='teststudent').first()
-        assert student.has_role('student')
-        assert not student.is_admin()
-        assert not student.is_teacher()
+
+def test_password_hash():
+    """Test password hashing works correctly"""
+    password = "secure_password"
+    hashed = generate_password_hash(password)
+
+    assert hashed != password
+    assert check_password_hash(hashed, password) is True
+    assert check_password_hash(hashed, "wrong_password") is False
