@@ -15,6 +15,7 @@ from datetime import datetime
 from flask_babel import Babel, gettext as _, lazy_gettext as _l
 from functools import wraps
 from flask import abort
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -129,7 +130,11 @@ REPO_URL = 'https://github.com/msy-bilecik/ist204_2025'
 
 @app.route('/js/component/<filename>')
 def serve_component(filename):
-    file_path = os.path.join(app.template_folder, 'js', 'components', filename)
+    base_path = os.path.join(app.template_folder, 'js', 'components')
+    safe_filename = secure_filename(filename)
+    file_path = os.path.normpath(os.path.join(base_path, safe_filename))
+    if not file_path.startswith(base_path):
+        abort(403)
     with open(file_path, 'r') as file:
         content = file.read()
     return content, 200, {'Content-Type': 'text/javascript'}
