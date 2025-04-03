@@ -410,7 +410,7 @@ Daha fazla bilgi için `CONTRIBUTING.md` dosyasına bakın.
 
 ## 📄 Lisans
 
-Bu proje MIT lisansı altında lisanslanmıştır. Daha fazla detay için `LICENSE` dosyasına bakın.
+Bu proje GPL-3.0 lisansı altında lisanslanmıştır. Daha fazla detay için `LICENSE` dosyasına bakın.
 
 ---
 
