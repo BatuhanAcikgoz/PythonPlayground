@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ _('edit_user') }} - {{ _('admin_panel') }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-8 px-4">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">{{ _('edit_user') }}: {{ user.username }}</h1>
+        <a href="{{ url_for('admin.users') }}" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+            {{ _('back_to_users') }}
+        </a>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <form method="POST" action="{{ url_for('admin.edit_user', id=user.id) }}">
+            {{ form.csrf_token }}
+
+            <div class="mb-4">
+                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">{{ form.username.label }}</label>
+                {{ form.username(class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500") }}
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">{{ form.email.label }}</label>
+                {{ form.email(class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500") }}
+                {% if form.email.errors %}
+                    {% for error in form.email.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">{{ form.password.label }}</label>
+                {{ form.password(class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500") }}
+                <p class="mt-1 text-sm text-gray-500">{{ _('leave_blank_to_keep_current') }}</p>
+                {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label for="roles" class="block text-sm font-medium text-gray-700 mb-1">{{ form.roles.label }}</label>
+                <div class="border border-gray-300 rounded-md p-2 bg-white">
+                    {% for choice in form.roles %}
+                    <div class="flex items-center mb-2">
+                        {{ choice }}
+                        <label for="{{ choice.id }}" class="ml-2 text-sm text-gray-700">{{ choice.label }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if form.roles.errors %}
+                    {% for error in form.roles.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div>
+                {{ form.submit(class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500") }}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

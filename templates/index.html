@@ -58,13 +58,13 @@
     </script>
 
     <!-- Load component scripts -->
-    <script type="text/babel" src="{{ url_for('serve_component', filename='Header.jsx') }}"></script>
-    <script type="text/babel" src="{{ url_for('serve_component', filename='Footer.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
     <script type="text/babel">
         const App = () => {
             // Flask template data with translations
-            const notebooks = {{ notebooks|tojson|safe }};
+            const notebooks = {{ notebooks|tojson|safe }};  // courses değil, notebooks kullan!
             const errorMessage = {{ error_message|tojson|safe }};
             const isAdmin = {{ 'true' if current_user.is_authenticated and current_user.is_admin() else 'false' }};
             const isTeacher = {{ 'true' if current_user.is_authenticated and current_user.is_teacher() else 'false' }};
