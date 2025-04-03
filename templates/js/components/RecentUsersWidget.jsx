@@ -11,7 +11,8 @@ const RecentUsersWidget = ({ title }) => {
                     throw new Error('Failed to fetch recent users');
                 }
                 const data = await response.json();
-                setUsers(data.users);
+                // API doğrudan dizi döndürüyor, data.users değil
+                setUsers(data);
                 setLoading(false);
             } catch (err) {
                 setError(err.message);
@@ -21,11 +22,6 @@ const RecentUsersWidget = ({ title }) => {
 
         fetchRecentUsers();
     }, []);
-
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString();
-    };
 
     return (
         <div className="bg-white rounded-lg shadow-md p-6 h-full">
@@ -85,18 +81,18 @@ const RecentUsersWidget = ({ title }) => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex flex-wrap gap-1">
-                                            {user.roles.map((role) => (
+                                            {user.roles.map((role, index) => (
                                                 <span
-                                                    key={role.id}
+                                                    key={index}
                                                     className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                                                    {role.name}
+                                                    {role}
                                                 </span>
                                             ))}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="text-sm text-gray-500">
-                                            {formatDate(user.created_at)}
+                                            {user.registered}
                                         </div>
                                     </td>
                                 </tr>
