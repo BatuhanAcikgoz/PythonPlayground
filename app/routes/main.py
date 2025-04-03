@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, session, request, flash, current_app
+from flask import Blueprint, render_template, redirect, url_for, session, request, flash
 from flask_login import login_required, current_user
-from models.course import Course
+from app.models.course import Course
 from flask import send_from_directory
 import os
 import subprocess

@@ -96,7 +96,7 @@ def fallback_server_status():
 
 
 def fallback_recent_users():
-    from models.user import User
+    from app.models.user import User
 
     users = User.query.order_by(User.id.desc()).limit(5).all()
     recent_users = []

@@ -1,7 +1,7 @@
 # forms/admin.py
 from wtforms import Form, StringField, PasswordField, TextAreaField, SelectMultipleField, SubmitField
 from wtforms.validators import DataRequired, Email, Length, Optional
-from models.user import Role
+from app.models.user import Role
 
 class UserForm(Form):
     username = StringField('Kullanıcı Adı', validators=[DataRequired(), Length(min=3, max=64)])

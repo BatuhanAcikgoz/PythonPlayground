@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
-from services.notebook_service import NotebookService
-from flask import current_app
+from app.services.notebook_service import NotebookService
 
 notebook_bp = Blueprint('notebook', __name__)
 

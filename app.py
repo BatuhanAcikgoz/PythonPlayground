@@ -1,17 +1,16 @@
-from flask import Flask, session, request, render_template
+from flask import Flask, session, render_template
 from flask_login import LoginManager
 import uvicorn
 import threading
 from flask_babel import Babel
 from flask_socketio import SocketIO
 import logging
-import os
 
 # Config ve modeller
 from config import Config
-from models.base import db
-from models.user import User, Role
-from routes import register_routes
+from app.models.base import db
+from app.models.user import User, Role
+from app.routes import register_routes
 
 
 def create_app():

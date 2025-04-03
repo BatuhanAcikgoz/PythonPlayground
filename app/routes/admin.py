@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
-from models.base import db
-from models.user import User, Role
-from models.course import Course  # Course modeliniz varsa
-from forms.admin import UserForm, RoleForm, CourseForm
+from app.models.base import db
+from app.models.user import User, Role
+from app.models.course import Course  # Course modeliniz varsa
+from app.forms import UserForm, CourseForm
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 

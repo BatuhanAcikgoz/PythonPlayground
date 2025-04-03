@@ -4,8 +4,8 @@ notebooks_repo/
 /tests/__pycache__
 /tests/__pycache__
 /__pycache__
-/utils/__pycache__
-/services/__pycache__
-/routes/__pycache__
-/models/__pycache__
-/forms/__pycache__
+/app/utils/__pycache__
+/app/services/__pycache__
+/app/routes/__pycache__
+/app/models/__pycache__
+/app/forms/__pycache__
