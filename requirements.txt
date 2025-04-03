@@ -12,7 +12,7 @@ Flask-SocketIO==5.3.6
 
 # Veritabanı
 SQLAlchemy>=2.0.0,<3.0.0
-PyMySQL==1.1.0
+PyMySQL==1.1.1
 
 # WebSocket
 python-socketio==5.10.0
