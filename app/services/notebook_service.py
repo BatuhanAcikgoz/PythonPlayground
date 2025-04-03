@@ -86,44 +86,22 @@ class NotebookService:
 
     def run_code(self, code, user_id=None):
         """Kodu çalıştırır ve sonucu döndürür (Socket.IO olmadan)"""
-        # Çıktıyı yakalamak için StringIO kullan
-        redirected_output = io.StringIO()
-        old_stdout = sys.stdout
-        sys.stdout = redirected_output
-
-        # Kullanıcıya özel namespace kullan
-        if user_id and user_id in self.user_namespaces:
-            namespace = self.user_namespaces[user_id]
-        else:
-            namespace = {'__builtins__': builtins}
-            if user_id:
-                self.user_namespaces[user_id] = namespace
-
         try:
-            # Basit ifade mi yoksa çoklu satır mı kontrol et
-            is_simple_expression = False
-            try:
-                compiled_code = compile(code, '<string>', 'eval')
-                is_simple_expression = True
-            except SyntaxError:
-                pass
+            # Kodu alt işlemde çalıştır
+            process = subprocess.Popen(
+                [sys.executable, '-c', code],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+            stdout, stderr = process.communicate()
 
-            if is_simple_expression:
-                # Basit ifade - değerlendir ve sonucu göster
-                result = eval(compiled_code, namespace)
-                if result is not None:
-                    print(repr(result))
+            if process.returncode == 0:
+                return {'success': True, 'output': stdout}
             else:
-                # Çoklu satırlı kod için exec kullan
-                exec(code, namespace)
-
-            output = redirected_output.getvalue()
-            return {'success': True, 'output': output}
+                return {'success': False, 'error': stderr}
         except Exception as e:
             return {'success': False, 'error': str(e)}
-        finally:
-            # Orijinal stdout'u geri yükle
-            sys.stdout = old_stdout
 
     def handle_socket_run_code(self, code, user_id, socketio=None):
         """Socket.IO ile kodu çalıştır ve çıktıyı Socket.IO kullanarak gönder"""
