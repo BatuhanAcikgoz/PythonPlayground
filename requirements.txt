@@ -23,7 +23,7 @@ nbformat==5.10.4
 nbconvert==7.9.2
 
 # Git Entegrasyonu
-GitPython==3.1.40
+GitPython==3.1.41
 
 # Sistem Bilgisi
 psutil==7.0.0
