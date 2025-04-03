@@ -101,7 +101,8 @@ class NotebookService:
             else:
                 return {'success': False, 'error': stderr}
         except Exception as e:
-            return {'success': False, 'error': str(e)}
+            current_app.logger.error(f"Error running code: {str(e)}")
+            return {'success': False, 'error': 'An internal error has occurred.'}
 
     def handle_socket_run_code(self, code, user_id, socketio=None):
         """Socket.IO ile kodu çalıştır ve çıktıyı Socket.IO kullanarak gönder"""
