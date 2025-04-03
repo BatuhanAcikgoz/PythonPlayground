@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
+from urllib.parse import urlparse
 from flask_login import login_user, logout_user, current_user
 from app.models.base import db
 from app.models.user import User
@@ -17,8 +18,12 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('main.index'))
+            next_page = request.args.get('next', '')
+            from urllib.parse import urlparse
+            next_page = next_page.replace('\\', '')
+            if next_page and not urlparse(next_page).netloc and not urlparse(next_page).scheme:
+                return redirect(next_page)
+            return redirect(url_for('main.index'))
         flash('Geçersiz kullanıcı adı veya şifre')
 
     return render_template('login.html', form=form)
