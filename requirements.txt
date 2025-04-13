@@ -6,7 +6,7 @@ uvicorn==0.29.0
 
 # Flask Uzantıları
 Flask-Login==0.6.3
-Flask-Babel==3.1.0
+Flask_Babel==4.0.0
 Flask-SQLAlchemy==3.1.0
 Flask-SocketIO==5.3.6
 
@@ -27,6 +27,9 @@ GitPython==3.1.41
 
 # Sistem Bilgisi
 psutil==7.0.0
+
+#Misc
+requests==2.32.3
 
 # API
 pydantic>=2.7.0
