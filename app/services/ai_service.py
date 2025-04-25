@@ -63,7 +63,7 @@ class AIService:
         self.api_provider = Setting.get('ai_api_provider', 'gemini')
         self.api_key = Setting.get('ai_api_key', '')
         self.model = Setting.get('ai_default_model', 'gemini-1.5-flash')
-        self.max_tokens = int(Setting.get('ai_max_token_limit', 1000))
+        self.max_tokens = int(Setting.get('ai_max_token_limit', 10000000))
         self.enabled = Setting.get('ai_enable_features', True)
 
     def _init_client(self):
@@ -236,20 +236,15 @@ class AIService:
                 raise Exception("API bağlantısı kurulamadı. Gemini API anahtarını kontrol edin.")
 
             summary_prompt = f"""
-            Bu bir Jupyter Notebook dosyasının içeriğidir. Bu notebook'u analiz ederek:
-            1. Genel bir özet oluşturun ve markdown formatında her bir kod hücresinin amacını ve teknik detaylarını detaylıca açıklayın.
-            2. Her kod hücresi için "Hücre X:" formatında detaylı teknik açıklamalar
-            3. Notebookun amacı ve öğrendikleri bilgileri özetleyin.
-            4. Son kısımda bu dosyada gösterilen şeylerin bir özetini geç ( Bu dosyada döngüler kullanılmıştır. Bu dosyada koşullar gösterilmiştir gibi vs. )
-            
-            Sadece kod hücrelerini değerlendirin, markdown hücrelerinden bahsetmeyin.
-            Açıklamalar net ve teknik açıdan doğru olmalıdır.
+            Aşağıdaki Jupiter Notebook dosyasını detaylı şekilde analiz et ve açıkla:
 
             Markdown içeriği:
             {text_content}
-            
+
             Kod hücreleri:
             {' '.join(code_cells)}
+
+            Dosyanın içindeki kazanımlar, konular ve öğretilenler hakkında özet bilgi ver. Ayrıca son kısımda bu notebook dosyasında öğretilenlerden sınavda sorulabilecek orta-zor düzeyde 5 soru oluştur ( Eğer varsa jupiter notebook dosyasındaki benzer sorular olsun. ).
             """
 
             # Özeti oluştur
@@ -266,24 +261,29 @@ class AIService:
             # Yanıtı al
             summary_text = response.choices[0].message.content
 
-            code_content = "\n\n".join([f"# Hücre {i + 1}:\n{cell}" for i, cell in enumerate(code_cells)])
-
             # Ayrı bir istek ile kod açıklaması oluştur
             code_prompt = f"""
-            Aşağıdaki Python kodunu detaylı şekilde analiz et ve açıkla:
+            Bu bir Jupyter Notebook dosyasının içeriğidir. Bu notebook'u analiz ederek:
+            1. Genel bir özet oluşturun ve markdown formatında her bir kod hücresinin amacını ve teknik detaylarını detaylıca açıklayın.
+            2. Her kod hücresi için "Hücre X:" formatında detaylı teknik açıklamalar yapın.
+            3. Notebookun amacı ve öğrendikleri bilgileri özetleyin.
+            4. Son kısımda bu dosyada gösterilen şeylerin bir özetini geç ( Bu dosyada döngüler kullanılmıştır. Bu kütüphaneler kullanılmıştır. Bu dosyada koşullar gösterilmiştir gibi vs. )
 
-            ```python
-            {code_content}
-            ```
+            Sadece kod hücrelerini değerlendirin, markdown hücrelerinden bahsetmeyin.
+            Açıklamalar net ve teknik açıdan doğru olmalıdır.
 
-            Kodun amacı, kullandığı kütüphaneler ve teknik detaylar hakkında bilgi ver.
+            Markdown içeriği:
+            {text_content}
+
+            Kod hücreleri:
+            {' '.join(code_cells)}
             """
 
             code_response = client.chat.create(
                 model=self.model,
                 messages=[
                     {"role": "system",
-                     "content": "Sen bir Python uzmanısın. Kod örneklerini analiz ederek açıklayıcı bilgiler sunuyorsun."},
+                     "content": "Sen bir Python bilen bir eğitim uzmanısın. Kod örneklerini analiz ederek açıklayıcı bilgiler sunuyorsun."},
                     {"role": "user", "content": code_prompt}
                 ],
                 max_tokens=self.max_tokens
