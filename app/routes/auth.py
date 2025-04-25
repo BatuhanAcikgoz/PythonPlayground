@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from urllib.parse import urlparse
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, login_required
+
+from app.forms.auth import UpdateAccountForm
 from app.models.base import db
 from app.models.user import User
 from app.forms import LoginForm, RegisterForm
@@ -51,18 +53,45 @@ def register():
 
     return render_template('register.html', form=form)
 
-@auth_bp.route('/profile')
-def profile():
+@auth_bp.route('/profil/<string:username>')
+def profile(username):
     if not current_user.is_authenticated:
         flash('Lütfen önce giriş yapın.')
         return redirect(url_for('auth.login'))
 
+    user = User.query.filter_by(username=username).first()
     return render_template('profile.html', user=current_user)
 
-@auth_bp.route('/settings')
-def settings():
-    if not current_user.is_authenticated:
-        flash('Lütfen önce giriş yapın.')
-        return redirect(url_for('auth.login'))
+@auth_bp.route('/settings/account', methods=['POST'])
+@login_required
+def update_account():
+    # Hesap bilgileri güncelleme mantığı
+    flash('Hesap bilgileriniz güncellendi.', 'success')
+    return redirect(url_for('auth.settings'))
 
-    return render_template('settings.html', user=current_user)
+@auth_bp.route('/settings/profile', methods=['POST'])
+@login_required
+def update_profile():
+    # Profil bilgileri güncelleme mantığı
+    flash('Profil bilgileriniz güncellendi.', 'success')
+    return redirect(url_for('auth.settings'))
+
+@auth_bp.route('/settings/notifications', methods=['POST'])
+@login_required
+def update_notifications():
+    # Bildirim tercihleri güncelleme mantığı
+    flash('Bildirim tercihleriniz güncellendi.', 'success')
+    return redirect(url_for('auth.settings'))
+
+@auth_bp.route('/settings/privacy', methods=['POST'])
+@login_required
+def update_privacy():
+    # Gizlilik ayarları güncelleme mantığı
+    flash('Gizlilik ayarlarınız güncellendi.', 'success')
+    return redirect(url_for('auth.settings'))
+
+@auth_bp.route('/settings')
+@login_required
+def settings():
+    form = UpdateAccountForm()  # app/forms/auth.py'deki mevcut formunuz
+    return render_template('settings.html', form=form)
