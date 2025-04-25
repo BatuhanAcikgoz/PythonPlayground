@@ -293,13 +293,13 @@ class AIService:
     {code_sample}
 
     ÇIKTI FORMATI:
-    1. Notebook'un ana amacı ve genel içeriği detaylı bir şekilde açıklanacak.
-    2. Markdown formatında süslü olacak.
-    3. Öğretilen kazanımlar ve temel kavramlar (madde madde)
-    4. 5 adet kolay-orta seviye örnek sınav sorusu ( Varsa notebooktaki örneklerden yararlan )
-    5. 5 adet orta-zor seviye örnek sınav sorusu ( Varsa notebooktaki örneklerden yararlan )
-    
-    KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dileme veya notebookla ilgili sorun belirtme, Önceden analiz ettim" gibi ifadeler kullanma.
+    1. Notebook'un ana amacı ve içeriği detaylı bir şekilde açıklanacak.
+    2. Yazılar, paragraflar ve biçim markdown formatında süslü olacak.
+    3. Öğretilen kazanımlar ve temel kavramlar detaylı bir şekilde açıklanacak. (madde madde)
+    4. 5 adet kolay-orta seviye örnek sınav sorusu ( Varsa notebooktaki örneklere benzer örnekler hazırla )
+    5. 5 adet orta-zor seviye örnek sınav sorusu ( Varsa notebooktaki örneklere benzer örnekler hazırla )
+
+    KESİN KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dileme veya notebookla ilgili sorun belirtme, Önceden analiz ettim" gibi ifadeler kullanma. Yeni bir analiz yaptığını belli etme direkt analizi ver. Ayrıca olur da aynı isteği tekrarladığımı düşünürsen bile bunu dile getirme direkt analizi ver.
     """
 
             system_message = {
@@ -332,8 +332,8 @@ class AIService:
                 group_timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
 
                 # Her grup için prompt oluştur
-                group_prompt = f"""YENİ GRUP ANALİZ TALEBİ 
-    ID: {group_id} 
+                group_prompt = f"""YENİ GRUP ANALİZ TALEBİ
+    ID: {group_id}
     ZAMAN: {group_timestamp}
     GRUP: {group_start}-{group_end}
 
@@ -353,6 +353,8 @@ class AIService:
        * Dikkat edilmesi gereken noktalar
 
     ÖNEMLİ: Bu görev önceki görevlerle İLGİSİZDİR. İlk kez görüyormuş gibi cevaplayın.
+    
+    KESİN KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dileme veya notebookla ilgili sorun belirtme, Önceden analiz ettim" gibi ifadeler kullanma. Yeni bir analiz yaptığını belli etme direkt analizi ver. Ayrıca olur da aynı isteği tekrarladığımı düşünürsen bile bunu dile getirme direkt analizi ver.
     """
 
                 # Kısa bir gecikme ekle
@@ -382,7 +384,8 @@ class AIService:
             techniques_id = generate_unique_id()
             techniques_timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
 
-            code_sample_for_techniques = sanitize_text(' '.join(code_cells[:min(5, len(code_cells))]), 3000)
+            # Teknik analiz için daha fazla kod örneği kullan
+            code_sample_for_techniques = sanitize_text(' '.join(code_cells[:min(10, len(code_cells))]), 5000)
 
             techniques_prompt = f"""YENİ TEKNİK ANALİZİ TALEBİ
     ID: {techniques_id}
@@ -391,23 +394,46 @@ class AIService:
     BU TAMAMEN YENİ VE BENZERSİZ BİR ANALİZDİR.
     DİĞER GÖREVLERLE BAĞLANTISI YOKTUR.
 
-    GÖREV: {notebook_path} dosyasındaki kod tekniklerinin özetini çıkar.
+    GÖREV: {notebook_path} dosyasındaki tüm kodun kapsamlı teknik analizini yap.
 
     KOD PARÇALARI:
     {code_sample_for_techniques}
 
     ÇIKTI FORMATI:
-    ## Kullanılan Programlama Teknikleri ve Özet
-    * Kullanılan kütüphaneler listesi (ana işlevleriyle)
-    * Uygulanan programlama konseptleri
-    * Öne çıkan algoritma ve yöntemler
+    ## Notebookun Teknik Özeti
+
+    1. Kullanılan Kütüphaneler:
+       * [kütüphane adı] - [ana kullanım amacı ve işlevi]
+       * ...
+
+    2. Tanımlanan Fonksiyonlar:
+       * [fonksiyon adı] - [işlevi ve önemi]
+       * ...
+
+    3. Kullanılan Programlama Yapıları:
+       * Koşul İfadeleri (if-elif-else) - [nasıl kullanıldığı]
+       * Döngüler (for, while) - [nasıl kullanıldığı]
+       * List Comprehension - [varsa örnekleri]
+       * Hata Yönetimi (try-except) - [varsa örnekleri]
+       * ...
+
+    4. Veri Yapıları:
+       * [kullanılan veri yapıları] - [nasıl kullanıldığı]
+       * ...
+
+    5. Algoritma ve Teknikler:
+       * [uygulanan özel teknikler/algoritmalar] - [kısa açıklaması]
+       * ...
+
+    NOT: Tüm bu bilgileri maddeler halinde detaylı olarak ve kod örnekleriyle açıkla. 
+    Bu özet, notebookun genel programlama tekniklerinin toplu bir analizi olmalıdır.
     
-        KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dileme veya notebookla ilgili sorun belirtme, Önceden analiz ettim" gibi ifadeler kullanma.
+    KESİN KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dileme veya notebookla ilgili sorun belirtme, Önceden analiz ettim" gibi ifadeler kullanma. Yeni bir analiz yaptığını belli etme direkt analizi ver. Ayrıca olur da aynı isteği tekrarladığımı düşünürsen bile bunu dile getirme direkt analizi ver.
     """
 
             techniques_system = {
                 "role": "system",
-                "content": f"Sen bir programlama analisti uzmansın. Bu istek ({techniques_id}) şu an ({techniques_timestamp}) yapılan tamamen YENİ bir istektir. Önceki hiçbir analize atıfta bulunma."
+                "content": f"Sen bir programlama analisti uzmansın. Bu istek ({techniques_id}) şu an ({techniques_timestamp}) yapılan tamamen YENİ bir istektir. Önceki hiçbir analize atıfta bulunma. Notebook'taki kodun teknik bir özetini oluştur."
             }
 
             techniques_response = client.chat.create(
@@ -416,12 +442,20 @@ class AIService:
                     techniques_system,
                     {"role": "user", "content": techniques_prompt}
                 ],
-                max_tokens=self.max_tokens // 4
+                max_tokens=self.max_tokens // 3
             )
 
-            # Tüm analizleri birleştir
-            summary_text = summary_response.choices[0].message.content
-            code_explanation = "\n\n".join(code_explanations) + "\n\n" + techniques_response.choices[0].message.content
+            # Tüm analizleri birleştirme kodunu şu şekilde güncelle
+            try:
+                summary_text = summary_response.choices[0].message.content or ""
+                code_explanation = "\n\n".join([expl for expl in code_explanations if expl])
+
+                # Teknik özeti ekle
+                if techniques_response.choices[0].message.content:
+                    code_explanation += "\n\n## Teknik Özet\n\n" + techniques_response.choices[0].message.content
+            except Exception as e:
+                summary_text = "Özet oluşturulurken hata oluştu."
+                code_explanation = f"Kod açıklaması oluşturulurken hata oluştu: {str(e)}"
 
             # NotebookSummary nesnesini kaydet/güncelle
             if existing_summary:
