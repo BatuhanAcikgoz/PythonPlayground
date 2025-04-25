@@ -10,7 +10,10 @@ const AdminSidebar = () => {
         questions: "Questions",
         manage_questions: "Manage Questions",
         add_question: "Add New Question",
-        settings: "Settings"
+        settings: "Settings",
+        badges: "Badges",
+        manage_badges: "Manage Badges",
+        add_badge: "Add New Badge",
     };
 
     return (
@@ -45,33 +48,6 @@ const AdminSidebar = () => {
                                     {translations.manage_users}
                                 </a>
                             </li>
-                            <li>
-                                <a href="/admin/user/new" className="block py-2 px-4 text-gray-400 hover:bg-gray-700 hover:text-white">
-                                    {translations.add_user}
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    {/* Courses Section */}
-                    <li className="mb-1">
-                        <div className="flex items-center py-2 px-4 text-gray-300">
-                            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                            </svg>
-                            {translations.courses}
-                        </div>
-                        <ul className="pl-10">
-                            <li>
-                                <a href="/admin/courses" className="block py-2 px-4 text-gray-400 hover:bg-gray-700 hover:text-white">
-                                    {translations.manage_courses}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/admin/course/new" className="block py-2 px-4 text-gray-400 hover:bg-gray-700 hover:text-white">
-                                    {translations.add_course}
-                                </a>
-                            </li>
                         </ul>
                     </li>
 
@@ -92,6 +68,28 @@ const AdminSidebar = () => {
                             <li>
                                 <a href="/admin/question/new" className="block py-2 px-4 text-gray-400 hover:bg-gray-700 hover:text-white">
                                     {translations.add_question}
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    {/* Badges Section */}
+                    <li className="mb-1">
+                        <div className="flex items-center py-2 px-4 text-gray-300">
+                            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path>
+                            </svg>
+                            {translations.badges}
+                        </div>
+                        <ul className="pl-10">
+                            <li>
+                                <a href="/admin/badges" className="block py-2 px-4 text-gray-400 hover:bg-gray-700 hover:text-white">
+                                    {translations.manage_badges}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/admin/badge/new" className="block py-2 px-4 text-gray-400 hover:bg-gray-700 hover:text-white">
+                                    {translations.add_badge}
                                 </a>
                             </li>
                         </ul>

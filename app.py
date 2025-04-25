@@ -1,27 +1,34 @@
-from flask import Flask, session, render_template
-from flask_login import LoginManager
-import uvicorn
-import threading
-from flask_babel import Babel
-from flask_socketio import SocketIO
 import logging
+import threading
 
-# Config ve modeller
-from config import Config
+import uvicorn
+from flask import Flask, session, render_template
+from flask_babel import Babel
+from flask_login import LoginManager
+from flask_socketio import SocketIO
+from flask_wtf import CSRFProtect
+
 from app.models.base import db
+from app.models.settings import Setting
 from app.models.user import User, Role
 from app.routes import register_routes
+# Config ve modeller
+from config import Config
 
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    # CSRF korumasını başlat
+    csrf = CSRFProtect(app)
+
     # Loglama
     logging.basicConfig(level=logging.ERROR)
 
     # Uzantılar başlat
     db.init_app(app)
+
     login_manager = LoginManager(app)
     login_manager.login_view = 'auth.login'
 
@@ -76,6 +83,10 @@ def init_db(app):
             'admin': 'Full administrative access'
         }
 
+        # AI ayarlarını ekle
+        from app.models.settings import add_ai_settings
+        add_ai_settings()
+
         for role_name, description in roles.items():
             role = Role.query.filter_by(name=role_name).first()
             if not role:
@@ -91,6 +102,20 @@ def init_db(app):
             if admin_role:
                 admin.roles.append(admin_role)
             db.session.add(admin)
+
+        default_settings = [
+            {'key': 'site_name', 'value': 'Python Playground', 'type': 'str', 'category': 'general'},
+            {'key': 'site_description', 'value': 'Eğitim ve kodlama platformu', 'type': 'str', 'category': 'general'},
+            {'key': 'default_language', 'value': 'tr', 'type': 'str', 'category': 'general'},
+            {'key': 'allow_registration', 'value': 'True', 'type': 'bool', 'category': 'users'},
+            {'key': 'enable_user_activation', 'value': 'False', 'type': 'bool', 'category': 'users'},
+        ]
+
+        for setting_data in default_settings:
+            setting = Setting.query.filter_by(key=setting_data['key']).first()
+            if not setting:
+                setting = Setting(**setting_data)
+                db.session.add(setting)
 
         db.session.commit()
 
