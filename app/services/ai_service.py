@@ -221,75 +221,151 @@ class AIService:
             # Metin içeriğini çıkart
             text_content = ""
             code_cells = []
+            numbered_code_cells = []
 
+            cell_number = 1
             for cell in nb.cells:
                 if cell.cell_type == 'markdown':
                     text_content += cell.source + "\n\n"
                 elif cell.cell_type == 'code':
                     code_cells.append(cell.source)
+                    cell_content = f"## Hücre {cell_number}:\n```python\n{cell.source}\n```"
+                    numbered_code_cells.append(cell_content)
+                    cell_number += 1
 
             # AI servisini kullan
             client = self._init_client()
 
             # Client null ise hata fırlat
             if client is None:
-                raise Exception("API bağlantısı kurulamadı. Gemini API anahtarını kontrol edin.")
+                raise Exception("API bağlantısı kurulamadı. API anahtarını kontrol edin.")
 
-            summary_prompt = f"""
-            Aşağıdaki Jupiter Notebook dosyasını detaylı şekilde analiz et ve açıkla:
+            # Benzersiz ana kimlik
+            base_id = f"{hash(notebook_path)}-{datetime.utcnow().timestamp()}"
 
-            Markdown içeriği:
+            # 1. İstek: Notebookun genel özeti
+            code_sample = ' '.join(code_cells[:min(3, len(code_cells))])
+            summary_prompt = f"""YENİ ANALİZ TALEBİ [REFERANS: {base_id}-ÖZET-{os.urandom(4).hex()}]
+
+            BU TAMAMEN BAĞIMSIZ BİR ANALİZ TALEBİDİR.
+            ÖNCEKİ GÖREVLERLE HİÇBİR İLGİSİ YOKTUR.
+
+            GÖREV: Bu Jupyter Notebook'un eğitim amaçlı özetini oluşturman isteniyor.
+
+            NOTEBOOK İÇERİĞİ:
+            Markdown Metinleri:
             {text_content}
 
-            Kod hücreleri:
-            {' '.join(code_cells)}
+            Kod Hücreleri Örneği:
+            {code_sample}...
 
-            Dosyanın içindeki kazanımlar, konular ve öğretilenler hakkında özet bilgi ver. Ayrıca son kısımda bu notebook dosyasında öğretilenlerden sınavda sorulabilecek orta-zor düzeyde 5 soru oluştur ( Eğer varsa jupiter notebook dosyasındaki benzer sorular olsun. ).
+            ÇIKTI FORMATI:
+            1. Notebook'un ana amacı ve genel içeriği
+            2. Öğretilen kazanımlar ve temel kavramlar (madde madde)
+            3. 5 adet orta-zor seviye örnek sınav sorusu
+
+            ÖNEMLİ KISITLAMALAR: 
+            - Kesinlikle önceki analizlere atıfta bulunma
+            - Özür dileme veya notebookla ilgili sorun belirtme
+            - "Önceden analiz ettim" gibi ifadeler kullanma
             """
 
-            # Özeti oluştur
-            response = client.chat.create(
+            summary_response = client.chat.create(
                 model=self.model,
                 messages=[
                     {"role": "system",
-                     "content": "Sen bir eğitim asistanısın. Jupyter Notebook dosyalarını analiz edip özetler hazırlıyorsun."},
+                     "content": "Sen bir eğitim içerik analistisin. Her görev tamamen bağımsızdır ve önceki görevlerden etkilenmeden işlenmelidir."},
                     {"role": "user", "content": summary_prompt}
                 ],
-                max_tokens=self.max_tokens
+                max_tokens=self.max_tokens // 2
             )
 
-            # Yanıtı al
-            summary_text = response.choices[0].message.content
+            # 2. Hücreleri 5'erli gruplar halinde analiz et
+            code_explanations = []
+            group_size = 5
 
-            # Ayrı bir istek ile kod açıklaması oluştur
-            code_prompt = f"""
-            Bu bir Jupyter Notebook dosyasının içeriğidir. Bu notebook'u analiz ederek:
-            1. Genel bir özet oluşturun ve markdown formatında her bir kod hücresinin amacını ve teknik detaylarını detaylıca açıklayın.
-            2. Her kod hücresi için "Hücre X:" formatında detaylı teknik açıklamalar yapın.
-            3. Notebookun amacı ve öğrendikleri bilgileri özetleyin.
-            4. Son kısımda bu dosyada gösterilen şeylerin bir özetini geç ( Bu dosyada döngüler kullanılmıştır. Bu kütüphaneler kullanılmıştır. Bu dosyada koşullar gösterilmiştir gibi vs. )
+            for i in range(0, len(numbered_code_cells), group_size):
+                # Her grup için hücreleri al
+                group = numbered_code_cells[i:i + group_size]
+                group_text = "\n\n".join(group)
+                group_start = i + 1
+                group_end = min(i + group_size, len(numbered_code_cells))
 
-            Sadece kod hücrelerini değerlendirin, markdown hücrelerinden bahsetmeyin.
-            Açıklamalar net ve teknik açıdan doğru olmalıdır.
+                # Her grup için benzersiz kimlik
+                group_id = f"{base_id}-GRUP-{i // group_size + 1}-{os.urandom(4).hex()}"
 
-            Markdown içeriği:
-            {text_content}
+                # Her grup için prompt oluştur
+                group_prompt = f"""YENİ ANALİZ TALEBİ [REFERANS: {group_id}]
 
-            Kod hücreleri:
-            {' '.join(code_cells)}
+                BU TAMAMEN BAĞIMSIZ BİR ANALİZ TALEBİDİR.
+                ÖNCEKİ ANALİZLERLE HİÇBİR İLİŞKİSİ YOKTUR.
+                HER ZAMAN YENİ VE ÖZGÜN BİR ANALİZ YAPMALISIN.
+
+                GÖREV: {group_start}-{group_end} numaralı Python kod hücrelerini analiz et.
+
+                KOD HÜCRELERİ:
+                {group_text}
+
+                ÇIKTI FORMATI:
+                1. Her hücre için "## Hücre X Analizi:" başlığı altında detaylı açıkla:
+                   - Kodun amacı ve çalışma mantığı
+                   - Kullanılan kütüphaneler ve fonksiyonlar
+                   - Teknik kavramlar ve algoritmalar
+
+                ÖNEMLİ KISITLAMALAR:
+                - KESİNLİKLE önceki analizlerden bahsetme
+                - Hiçbir şekilde özür dileme veya tekrarlama
+                - "Daha önce analiz ettim" gibi ifadeler kullanma
+                - HER ZAMAN ilk kez görüyormuş gibi yanıt ver
+                """
+
+                # Her grup için ayrı API çağrısı yap
+                group_response = client.chat.create(
+                    model=self.model,
+                    messages=[
+                        {"role": "system",
+                         "content": "Sen bir kod eğitimcisin. Her soru tamamen yeni ve bağımsızdır. Önceki yanıtlarından bağımsız olarak cevapla."},
+                        {"role": "user", "content": group_prompt}
+                    ],
+                    max_tokens=self.max_tokens // 2
+                )
+
+                # Grup analizini ekle
+                code_explanations.append(group_response.choices[0].message.content)
+
+            # 3. Kullanılan tekniklerin özeti için ek istek
+            techniques_id = f"{base_id}-TEKNİKLER-{os.urandom(4).hex()}"
+            techniques_prompt = f"""YENİ ANALİZ TALEBİ [REFERANS: {techniques_id}]
+
+            BU TAMAMEN BAĞIMSIZ BİR ANALİZ TALEBİDİR.
+            ÖNCEKİ GÖREVLERİ DİKKATE ALMA.
+
+            GÖREV: Aşağıdaki Python kodlarında kullanılan programlama tekniklerinin özetini çıkar.
+
+            KOD ÖRNEĞİ:
+            {' '.join(code_cells[:min(5, len(code_cells))])}...
+
+            ÇIKTI FORMATI:
+            ## Kullanılan Programlama Teknikleri ve Özet
+            * Kullanılan kütüphaneler listesi
+            * Uygulanan programlama konseptleri
+            * Öne çıkan algoritma ve yöntemler
+
+            ÖNEMLİ: Önceki analizlerden bahsetme, özür dileme veya tekrarlama yapma.
             """
 
-            code_response = client.chat.create(
+            techniques_response = client.chat.create(
                 model=self.model,
                 messages=[
-                    {"role": "system",
-                     "content": "Sen bir Python bilen bir eğitim uzmanısın. Kod örneklerini analiz ederek açıklayıcı bilgiler sunuyorsun."},
-                    {"role": "user", "content": code_prompt}
+                    {"role": "system", "content": "Sen bir Python uzmanısın. Bu talep tamamen bağımsızdır."},
+                    {"role": "user", "content": techniques_prompt}
                 ],
-                max_tokens=self.max_tokens
+                max_tokens=self.max_tokens // 4
             )
 
-            code_explanation = code_response.choices[0].message.content
+            # Tüm analizleri birleştir
+            summary_text = summary_response.choices[0].message.content
+            code_explanation = "\n\n".join(code_explanations) + "\n\n" + techniques_response.choices[0].message.content
 
             # NotebookSummary nesnesini kaydet/güncelle
             if existing_summary:
