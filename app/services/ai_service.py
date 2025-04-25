@@ -235,19 +235,21 @@ class AIService:
             if client is None:
                 raise Exception("API bağlantısı kurulamadı. Gemini API anahtarını kontrol edin.")
 
-            # Özet için prompt hazırla
             summary_prompt = f"""
             Bu bir Jupyter Notebook dosyasının içeriğidir. Bu notebook'u analiz ederek:
-            1. Genel bir özet oluşturun bu biçimsel olarak süslü olsun ve okunaklı olsun. Jupiter Notebook'daki her bir hücrenin amacını açıklayın ve ayrı ayrı al biçimsel olarak düzgün gözüksün yani.
-            2. İçerdiği kod hücreleri hakkında teknik açıklamalar yapın ( Hücreleri tek tek ele al Hücre 1, Hücre 2 gibi detaylı olsun ).
+            1. Genel bir özet oluşturun ve markdown formatında her bir kod hücresinin amacını teknik detaylarını açıklayın.
+            2. Her kod hücresi için "Hücre X:" formatında teknik açıklamalar
             3. Notebookun amacı ve öğrendikleri bilgileri özetleyin.
-            4. Son kısımda bu dosyada gösterilen şeylerin bir özetini geç ( Bu dosyada döngüler kullanılmıştır. Bu dosyada koşullar gösterilmiştir gibi)
+            4. Son kısımda bu dosyada gösterilen şeylerin bir özetini geç ( Bu dosyada döngüler kullanılmıştır. Bu dosyada koşullar gösterilmiştir gibi vs. )
+            
+            Sadece kod hücrelerini değerlendirin, markdown hücrelerinden bahsetmeyin.
+            Açıklamalar net ve teknik açıdan doğru olmalıdır.
 
             Markdown içeriği:
-            {text_content[:3000]}  # Çok uzunsa kısalt
-
-            Kod hücreleri (örnekler):
-            {' '.join(code_cells[:5])}  # İlk 5 kod hücresini göster
+            {text_content}
+            
+            Kod hücreleri:
+            {' '.join(code_cells)}
             """
 
             # Özeti oluştur
@@ -264,12 +266,14 @@ class AIService:
             # Yanıtı al
             summary_text = response.choices[0].message.content
 
+            code_content = "\n\n".join([f"# Hücre {i + 1}:\n{cell}" for i, cell in enumerate(code_cells)])
+
             # Ayrı bir istek ile kod açıklaması oluştur
             code_prompt = f"""
             Aşağıdaki Python kodunu detaylı şekilde analiz et ve açıkla:
 
             ```python
-            {' '.join(code_cells[:10])}
+            {code_content}
             ```
 
             Kodun amacı, kullandığı kütüphaneler ve teknik detaylar hakkında bilgi ver.
