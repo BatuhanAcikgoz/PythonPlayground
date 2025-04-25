@@ -239,9 +239,9 @@ class AIService:
             summary_prompt = f"""
             Bu bir Jupyter Notebook dosyasının içeriğidir. Bu notebook'u analiz ederek:
             1. Genel bir özet oluşturun bu biçimsel olarak süslü olsun ve okunaklı olsun. Jupiter Notebook'daki her bir hücrenin amacını açıklayın ve ayrı ayrı al biçimsel olarak düzgün gözüksün yani.
-            2. İçerdiği kod hücreleri hakkında teknik açıklamalar yapın.
+            2. İçerdiği kod hücreleri hakkında teknik açıklamalar yapın ( Hücreleri tek tek ele al Hücre 1, Hücre 2 gibi detaylı olsun ).
             3. Notebookun amacı ve öğrendikleri bilgileri özetleyin.
-            4. Son kısımda bu dosyada gösterilen şeylerin kısa bir özetini geç ( Bu dosyada döngüler kullanılmıştır. Bu dosyada koşullar gösterilmiştir gibi)
+            4. Son kısımda bu dosyada gösterilen şeylerin bir özetini geç ( Bu dosyada döngüler kullanılmıştır. Bu dosyada koşullar gösterilmiştir gibi)
 
             Markdown içeriği:
             {text_content[:3000]}  # Çok uzunsa kısalt
