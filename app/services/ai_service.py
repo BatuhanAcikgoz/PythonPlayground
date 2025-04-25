@@ -237,8 +237,8 @@ class AIService:
 
             summary_prompt = f"""
             Bu bir Jupyter Notebook dosyasının içeriğidir. Bu notebook'u analiz ederek:
-            1. Genel bir özet oluşturun ve markdown formatında her bir kod hücresinin amacını teknik detaylarını açıklayın.
-            2. Her kod hücresi için "Hücre X:" formatında teknik açıklamalar
+            1. Genel bir özet oluşturun ve markdown formatında her bir kod hücresinin amacını ve teknik detaylarını detaylıca açıklayın.
+            2. Her kod hücresi için "Hücre X:" formatında detaylı teknik açıklamalar
             3. Notebookun amacı ve öğrendikleri bilgileri özetleyin.
             4. Son kısımda bu dosyada gösterilen şeylerin bir özetini geç ( Bu dosyada döngüler kullanılmıştır. Bu dosyada koşullar gösterilmiştir gibi vs. )
             
