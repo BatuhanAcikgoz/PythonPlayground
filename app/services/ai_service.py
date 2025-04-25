@@ -240,41 +240,77 @@ class AIService:
             if client is None:
                 raise Exception("API bağlantısı kurulamadı. API anahtarını kontrol edin.")
 
-            # Benzersiz ana kimlik
-            base_id = f"{hash(notebook_path)}-{datetime.utcnow().timestamp()}"
+            # Benzersiz kimlik oluşturma fonksiyonu
+            def generate_unique_id():
+                import hashlib, time
+                timestamp = str(time.time())
+                random_data = os.urandom(8).hex()
+                unique_hash = hashlib.md5(f"{timestamp}-{random_data}".encode()).hexdigest()[:12]
+                return unique_hash
+
+            # Metin içeriğini temizleme ve sınırlama fonksiyonu
+            def sanitize_text(text, max_length=5000):
+                if not text:
+                    return ""
+                # Base64 kodlu içeriği ve özel karakterleri temizle
+                import re
+                # Base64 benzeri içerikleri temizle
+                text = re.sub(r'data:[^;]+;base64,[a-zA-Z0-9+/=]+', '[GÖRSEL İÇERİK]', text)
+                # Kontrol karakterlerini temizle
+                text = ''.join(c if ord(c) >= 32 or c in '\n\r\t' else ' ' for c in text)
+                # Uzunluğu sınırla
+                if len(text) > max_length:
+                    text = text[:max_length] + "..."
+                return text
+
+            # Markdown ve kod içeriklerini temizle ve sınırla
+            text_content = sanitize_text(text_content)
+            code_samples = []
+            for code in code_cells[:min(3, len(code_cells))]:
+                code_samples.append(sanitize_text(code, 1000))
+
+            code_sample = ' '.join(code_samples)
 
             # 1. İstek: Notebookun genel özeti
-            code_sample = ' '.join(code_cells[:min(3, len(code_cells))])
-            summary_prompt = f"""YENİ ANALİZ TALEBİ [REFERANS: {base_id}-ÖZET-{os.urandom(4).hex()}]
+            summary_id = generate_unique_id()
+            timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
 
-            BU TAMAMEN BAĞIMSIZ BİR ANALİZ TALEBİDİR.
-            ÖNCEKİ GÖREVLERLE HİÇBİR İLGİSİ YOKTUR.
+            summary_prompt = f"""YENİ VE BENZERSİZ ANALİZ TALEBİ
+    ID: {summary_id}
+    TARİH-SAAT: {timestamp}
+    DOSYA: {notebook_path}
 
-            GÖREV: Bu Jupyter Notebook'un eğitim amaçlı özetini oluşturman isteniyor.
+    BU TAMAMEN YENİ VE BENZERSİZ BİR ANALİZ TALEBİDİR.
+    ÖNCEKİ HİÇBİR GÖREVİ DİKKATE ALMA.
 
-            NOTEBOOK İÇERİĞİ:
-            Markdown Metinleri:
-            {text_content}
+    GÖREV: Bu Jupyter Notebook'un eğitim amaçlı özetini oluştur.
 
-            Kod Hücreleri Örneği:
-            {code_sample}...
+    NOTEBOOK İÇERİĞİ:
+    ----- MARKDOWN İÇERİĞİ -----
+    {text_content}
 
-            ÇIKTI FORMATI:
-            1. Notebook'un ana amacı ve genel içeriği
-            2. Öğretilen kazanımlar ve temel kavramlar (madde madde)
-            3. 5 adet orta-zor seviye örnek sınav sorusu
+    ----- KOD ÖRNEKLERİ -----
+    {code_sample}
 
-            ÖNEMLİ KISITLAMALAR: 
-            - Kesinlikle önceki analizlere atıfta bulunma
-            - Özür dileme veya notebookla ilgili sorun belirtme
-            - "Önceden analiz ettim" gibi ifadeler kullanma
-            """
+    ÇIKTI FORMATI:
+    1. Notebook'un ana amacı ve genel içeriği detaylı bir şekilde açıklanacak.
+    2. Markdown formatında süslü olacak.
+    3. Öğretilen kazanımlar ve temel kavramlar (madde madde)
+    4. 5 adet kolay-orta seviye örnek sınav sorusu ( Varsa notebooktaki örneklerden yararlan )
+    5. 5 adet orta-zor seviye örnek sınav sorusu ( Varsa notebooktaki örneklerden yararlan )
+    
+    KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dileme veya notebookla ilgili sorun belirtme, Önceden analiz ettim" gibi ifadeler kullanma.
+    """
+
+            system_message = {
+                "role": "system",
+                "content": f"Sen bir eğitim içerik uzmanısın. Bu talep ({summary_id}) ŞU AN ({timestamp}) yapılan YENİ ve BENZERSİZ bir istektir. Önceki hiçbir taleple ilgisi yoktur. 'Daha önce analiz edildi' gibi ifadeler ASLA kullanma. Her zaman yeni ve özgün cevap ver."
+            }
 
             summary_response = client.chat.create(
                 model=self.model,
                 messages=[
-                    {"role": "system",
-                     "content": "Sen bir eğitim içerik analistisin. Her görev tamamen bağımsızdır ve önceki görevlerden etkilenmeden işlenmelidir."},
+                    system_message,
                     {"role": "user", "content": summary_prompt}
                 ],
                 max_tokens=self.max_tokens // 2
@@ -287,77 +323,97 @@ class AIService:
             for i in range(0, len(numbered_code_cells), group_size):
                 # Her grup için hücreleri al
                 group = numbered_code_cells[i:i + group_size]
-                group_text = "\n\n".join(group)
+                group_text = sanitize_text("\n\n".join(group))
                 group_start = i + 1
                 group_end = min(i + group_size, len(numbered_code_cells))
 
                 # Her grup için benzersiz kimlik
-                group_id = f"{base_id}-GRUP-{i // group_size + 1}-{os.urandom(4).hex()}"
+                group_id = generate_unique_id()
+                group_timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
 
                 # Her grup için prompt oluştur
-                group_prompt = f"""YENİ ANALİZ TALEBİ [REFERANS: {group_id}]
+                group_prompt = f"""YENİ GRUP ANALİZ TALEBİ 
+    ID: {group_id} 
+    ZAMAN: {group_timestamp}
+    GRUP: {group_start}-{group_end}
 
-                BU TAMAMEN BAĞIMSIZ BİR ANALİZ TALEBİDİR.
-                ÖNCEKİ ANALİZLERLE HİÇBİR İLİŞKİSİ YOKTUR.
-                HER ZAMAN YENİ VE ÖZGÜN BİR ANALİZ YAPMALISIN.
+    BU TAMAMEN YENİ BİR ANALİZ TALEBİDİR.
+    DAHA ÖNCE HİÇ GÖRMEDİĞİN KOD PARÇALARIDIR.
 
-                GÖREV: {group_start}-{group_end} numaralı Python kod hücrelerini analiz et.
+    GÖREV: {notebook_path} notebookundaki {group_start}-{group_end} arası hücreleri analiz et.
 
-                KOD HÜCRELERİ:
-                {group_text}
+    KOD HÜCRELERİ:
+    {group_text}
 
-                ÇIKTI FORMATI:
-                1. Her hücre için "## Hücre X Analizi:" başlığı altında detaylı açıkla:
-                   - Kodun amacı ve çalışma mantığı
-                   - Kullanılan kütüphaneler ve fonksiyonlar
-                   - Teknik kavramlar ve algoritmalar
+    ÇIKTI FORMATI:
+    1. Her hücre için "## Hücre X Analizi:" başlığı altında:
+       * İlgili kod bloğunu markdown formatıyla göster
+       * İşlevi ve amacı
+       * Kritik kod bölümleri açıklaması
+       * Dikkat edilmesi gereken noktalar
 
-                ÖNEMLİ KISITLAMALAR:
-                - KESİNLİKLE önceki analizlerden bahsetme
-                - Hiçbir şekilde özür dileme veya tekrarlama
-                - "Daha önce analiz ettim" gibi ifadeler kullanma
-                - HER ZAMAN ilk kez görüyormuş gibi yanıt ver
-                """
+    ÖNEMLİ: Bu görev önceki görevlerle İLGİSİZDİR. İlk kez görüyormuş gibi cevaplayın.
+    """
+
+                # Kısa bir gecikme ekle
+                import time
+                time.sleep(0.5)
+
+                # Her grup için sistem mesajı
+                group_system = {
+                    "role": "system",
+                    "content": f"Sen bir kodlama eğitmenisin. Bu ({group_id}) ŞİMDİ analiz etmen gereken YENİ kod parçalarıdır. 'Daha önce gördüm' veya 'tekrar' gibi ifadeler KULLANMA. İlk kez gördüğün kod olarak düşün."
+                }
 
                 # Her grup için ayrı API çağrısı yap
                 group_response = client.chat.create(
                     model=self.model,
                     messages=[
-                        {"role": "system",
-                         "content": "Sen bir kod eğitimcisin. Her soru tamamen yeni ve bağımsızdır. Önceki yanıtlarından bağımsız olarak cevapla."},
+                        group_system,
                         {"role": "user", "content": group_prompt}
                     ],
-                    max_tokens=self.max_tokens // 2
+                    max_tokens=self.max_tokens // 3
                 )
 
                 # Grup analizini ekle
                 code_explanations.append(group_response.choices[0].message.content)
 
             # 3. Kullanılan tekniklerin özeti için ek istek
-            techniques_id = f"{base_id}-TEKNİKLER-{os.urandom(4).hex()}"
-            techniques_prompt = f"""YENİ ANALİZ TALEBİ [REFERANS: {techniques_id}]
+            techniques_id = generate_unique_id()
+            techniques_timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
 
-            BU TAMAMEN BAĞIMSIZ BİR ANALİZ TALEBİDİR.
-            ÖNCEKİ GÖREVLERİ DİKKATE ALMA.
+            code_sample_for_techniques = sanitize_text(' '.join(code_cells[:min(5, len(code_cells))]), 3000)
 
-            GÖREV: Aşağıdaki Python kodlarında kullanılan programlama tekniklerinin özetini çıkar.
+            techniques_prompt = f"""YENİ TEKNİK ANALİZİ TALEBİ
+    ID: {techniques_id}
+    ZAMAN: {techniques_timestamp}
 
-            KOD ÖRNEĞİ:
-            {' '.join(code_cells[:min(5, len(code_cells))])}...
+    BU TAMAMEN YENİ VE BENZERSİZ BİR ANALİZDİR.
+    DİĞER GÖREVLERLE BAĞLANTISI YOKTUR.
 
-            ÇIKTI FORMATI:
-            ## Kullanılan Programlama Teknikleri ve Özet
-            * Kullanılan kütüphaneler listesi
-            * Uygulanan programlama konseptleri
-            * Öne çıkan algoritma ve yöntemler
+    GÖREV: {notebook_path} dosyasındaki kod tekniklerinin özetini çıkar.
 
-            ÖNEMLİ: Önceki analizlerden bahsetme, özür dileme veya tekrarlama yapma.
-            """
+    KOD PARÇALARI:
+    {code_sample_for_techniques}
+
+    ÇIKTI FORMATI:
+    ## Kullanılan Programlama Teknikleri ve Özet
+    * Kullanılan kütüphaneler listesi (ana işlevleriyle)
+    * Uygulanan programlama konseptleri
+    * Öne çıkan algoritma ve yöntemler
+    
+        KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dileme veya notebookla ilgili sorun belirtme, Önceden analiz ettim" gibi ifadeler kullanma.
+    """
+
+            techniques_system = {
+                "role": "system",
+                "content": f"Sen bir programlama analisti uzmansın. Bu istek ({techniques_id}) şu an ({techniques_timestamp}) yapılan tamamen YENİ bir istektir. Önceki hiçbir analize atıfta bulunma."
+            }
 
             techniques_response = client.chat.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "Sen bir Python uzmanısın. Bu talep tamamen bağımsızdır."},
+                    techniques_system,
                     {"role": "user", "content": techniques_prompt}
                 ],
                 max_tokens=self.max_tokens // 4
@@ -377,6 +433,7 @@ class AIService:
                     notebook_path=notebook_path,
                     summary=summary_text,
                     code_explanation=code_explanation,
+                    last_updated=datetime.utcnow()
                 )
                 db.session.add(new_summary)
 
