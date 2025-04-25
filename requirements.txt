@@ -30,9 +30,13 @@ psutil==7.0.0
 
 #Misc
 requests==2.32.3
+email_validator==2.2.0
 
 # API
 pydantic>=2.7.0
+openai==1.72.0
+deepseek==1.0.0
+google==3.0.0
 
 # Test
 pytest==8.3.5
