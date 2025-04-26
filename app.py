@@ -124,11 +124,6 @@ def init_db(app):
 
         db.session.commit()
 
-        # Tüm notebook özetlerini kontrol et ve eksikleri oluştur
-        from app.services.ai_service import AIService
-        ai_service = AIService()
-        ai_service.preload_notebook_summaries()
-
 
 # FastAPI uygulaması başlatma (thread olarak)
 def run_fastapi():
@@ -137,6 +132,30 @@ def run_fastapi():
         uvicorn.run("api:api", host="127.0.0.1", port=8000, reload=False)
     except Exception as e:
         print(f"FastAPI başlatma hatası: {e}")
+
+
+# Fonksiyon çalışma kontrolü için global değişken
+_summaries_loaded = False
+
+# Notebook özetlerini arka planda yükle
+def load_summaries_with_app_context(app):
+    """Uygulama bağlamında notebook özetlerini yükler"""
+    global _summaries_loaded
+
+    # Eğer özetler zaten yüklendiyse, işlemi tekrarlama
+    if _summaries_loaded:
+        print("Notebook özetleri zaten yüklenmiş, tekrar yüklenmeyecek.")
+        return
+
+    try:
+        with app.app_context():
+            from app.services.ai_service import AIService
+            ai_service = AIService()
+            _summaries_loaded = True  # Yükleme başarılı olduğunu işaretle
+            ai_service.preload_notebook_summaries()
+    except Exception as e:
+        print(f"Notebook özetleri yüklenirken hata: {str(e)}")
+        _summaries_loaded = False
 
 
 if __name__ == '__main__':
@@ -150,5 +169,10 @@ if __name__ == '__main__':
     fastapi_thread.daemon = True  # Ana process bitince FastAPI thread'i de sonlanır
     fastapi_thread.start()
 
+    # Özetleri ayrı bir thread'de yükle
+    summaries_thread = threading.Thread(target=load_summaries_with_app_context, args=(app,))
+    summaries_thread.daemon = True
+    summaries_thread.start()
+
     # Flask sunucusunu başlat
-    socketio.run(app, debug=True, port=5000, allow_unsafe_werkzeug=True)
+    socketio.run(app, debug=False, port=5000, allow_unsafe_werkzeug=True)

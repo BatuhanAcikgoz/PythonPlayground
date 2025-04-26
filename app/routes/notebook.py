@@ -43,58 +43,39 @@ def register_socketio_handlers(socketio):
 @notebook_bp.route('/summary/<path:notebook_path>')
 @login_required
 def summary(notebook_path):
-    from app.services.ai_service import AIService
-    ai_service = AIService()
+    # URL'deki '/notebook/summary/' öneki dosya yoluna dahil edilmiş olabilir
+    if notebook_path.startswith('notebook/summary/'):
+        notebook_path = notebook_path[len('notebook/summary/'):]
 
-    try:
-        # URL'deki '/notebook/summary/' öneki dosya yoluna dahil edilmiş olabilir
-        if notebook_path.startswith('notebook/summary/'):
-            notebook_path = notebook_path[len('notebook/summary/'):]
-
-        # Notebook'u önce kontrol et
-        notebook = notebook_service.get_notebook(notebook_path)
-        if not notebook:
-            flash(f"Notebook bulunamadı: {notebook_path}", 'error')
-            return redirect(url_for('main.index'))
-
-        # AI özeti oluştur veya varsa getir
-        summary_data = ai_service.get_notebook_summary(notebook_path)
-
-        # None kontrolü - daha spesifik hata mesajı
-        if summary_data is None:
-            flash("AI özeti şu anda oluşturulamıyor. API servisi yanıt vermiyor veya API anahtarı geçersiz.", 'warning')
-
-            # Kullanıcılara yardımcı olacak detaylı bilgi verebilirsiniz
-            if current_user.is_admin():
-                flash(
-                    "Lütfen Admin Panelinden API ayarlarını kontrol edin ve geçerli bir API anahtarı girdiğinizden emin olun.",
-                    'info')
-
-            # Notebook varsa, en azından notebook'u görüntüle
-            return render_template(
-                'notebook_summary.html',
-                notebook_path=notebook_path,
-                summary_data={"error": "AI servisi geçici olarak kullanılamıyor."},
-                notebook=notebook
-            )
-
-        # Hata kontrolü - summary_data bir sözlük ve içinde 'error' var mı?
-        if isinstance(summary_data, dict) and 'error' in summary_data:
-            flash(summary_data['error'], 'error')
-            # Notebook varsa, hataya rağmen notebook'u görüntüle
-            return render_template(
-                'notebook_summary.html',
-                notebook_path=notebook_path,
-                summary_data=summary_data,
-                notebook=notebook
-            )
-
-        return render_template(
-            'notebook_summary.html',
-            notebook_path=notebook_path,
-            summary_data=summary_data,
-            notebook=notebook
-        )
-    except Exception as e:
-        flash(f"İşlem sırasında hata oluştu: {str(e)}", 'error')
+    # Notebook'u önce kontrol et
+    notebook = notebook_service.get_notebook(notebook_path)
+    if not notebook:
+        flash(f"Notebook bulunamadı: {notebook_path}", 'error')
         return redirect(url_for('main.index'))
+
+    # Veritabanında özet kontrolü yap (doğrudan NotebookSummary modelinden)
+    from app.models.notebook_summary import NotebookSummary
+    existing_summary = NotebookSummary.query.filter_by(notebook_path=notebook_path).first()
+
+    if not existing_summary:
+        flash(f"Bu notebook için henüz ön yüklenmiş özet bulunmuyor. Özet oluşturulması bekleniyor.", 'warning')
+        return redirect(url_for('main.index'))
+
+    # Özet var ama hata içeriyorsa
+    if existing_summary.error:
+        flash(f"Bu notebook için özet oluşturulurken hata oluştu: {existing_summary.error}", 'error')
+
+    # Özet verisini hazırla
+    summary_data = {
+        'summary': existing_summary.summary,
+        'code_explanation': existing_summary.code_explanation,
+        'last_updated': existing_summary.last_updated,
+        'error': existing_summary.error
+    }
+
+    return render_template(
+        'notebook_summary.html',
+        notebook_path=notebook_path,
+        summary_data=summary_data,
+        notebook=notebook
+    )
