@@ -22,7 +22,7 @@ class ChatCompletions:
     def __init__(self, client):
         self.client = client
 
-    def create(self, model, messages, max_tokens=1000, **kwargs):
+    def create(self, model, messages, max_tokens=100000, **kwargs):
         url = f"{self.client.base_url}/chat/completions"
         headers = {
             "Authorization": f"Bearer {self.client.api_key}",
