@@ -73,6 +73,11 @@ def create_app():
 
 def init_db(app):
     with app.app_context():
+        # NotebookSummary modelini açıkça import et
+        from app.models.notebook_summary import NotebookSummary
+        from app.models.user import User, Role
+        from app.models.settings import Setting
+
         # Tabloları oluştur
         db.create_all()
 
@@ -118,6 +123,11 @@ def init_db(app):
                 db.session.add(setting)
 
         db.session.commit()
+
+        # Tüm notebook özetlerini kontrol et ve eksikleri oluştur
+        from app.services.ai_service import AIService
+        ai_service = AIService()
+        ai_service.preload_notebook_summaries()
 
 
 # FastAPI uygulaması başlatma (thread olarak)

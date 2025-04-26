@@ -57,7 +57,7 @@ def add_ai_settings():
          'description': 'AI özelliklerinin kullanımını etkinleştirir'},
         {'key': 'ai_api_provider', 'value': 'gemini', 'type': 'str', 'category': 'ai',
          'description': 'AI API sağlayıcısı (sadece Gemini destekleniyor)'},
-        {'key': 'ai_default_model', 'value': 'gemini-pro', 'type': 'str', 'category': 'ai',
+        {'key': 'ai_default_model', 'value': 'gemini-2.0-flash', 'type': 'str', 'category': 'ai',
          'description': 'Varsayılan Gemini modeli'},
         {'key': 'ai_max_token_limit', 'value': '1000', 'type': 'int', 'category': 'ai',
          'description': 'Maksimum token limiti'},

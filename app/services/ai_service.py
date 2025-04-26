@@ -318,7 +318,7 @@ class AIService:
 
             # 2. Hücreleri 5'erli gruplar halinde analiz et
             code_explanations = []
-            group_size = 5
+            group_size = 10
 
             for i in range(0, len(numbered_code_cells), group_size):
                 # Her grup için hücreleri al
@@ -480,3 +480,88 @@ class AIService:
             }
         except Exception as e:
             return {"error": str(e)}
+
+    def preload_notebook_summaries(self):
+        """
+        Tüm notebook'lar için özetleri oluşturur veya günceller
+        Rate limit (dakikada 15 istek) için istek yönetimi uygular
+        """
+        import time
+        import os
+        from datetime import datetime, timedelta
+
+        try:
+            # Özet oluşturma işlemi devre dışıysa
+            if not self.enabled:
+                print("AI özeti özelliği devre dışı - özetler yüklenmedi")
+                return
+
+            repo_dir = os.path.join(os.getcwd(), 'notebooks_repo')
+            if not os.path.exists(repo_dir):
+                print(f"Notebook repository dizini bulunamadı: {repo_dir}")
+                return
+
+            # Tüm notebook dosyalarını bul
+            notebooks = []
+            for root, dirs, files in os.walk(repo_dir):
+                for file in files:
+                    if file.endswith('.ipynb'):
+                        rel_path = os.path.relpath(os.path.join(root, file), repo_dir)
+                        notebooks.append(rel_path)
+
+            # Özeti olmayan notebookları filtrele
+            notebooks_to_process = []
+            for notebook_path in notebooks:
+                existing_summary = NotebookSummary.query.filter_by(notebook_path=notebook_path).first()
+                if not existing_summary or not existing_summary.summary:
+                    notebooks_to_process.append(notebook_path)
+
+            print(
+                f"Toplam {len(notebooks)} notebook bulundu, {len(notebooks_to_process)} tanesi için özet oluşturulacak")
+
+            # Rate limit için istek sayacı ve zaman yönetimi
+            request_count = 0
+            minute_start = datetime.now()
+
+            # Her notebook için özet oluştur ve rate limit'i kontrol et
+            for idx, notebook_path in enumerate(notebooks_to_process):
+                try:
+                    print(f"[{idx + 1}/{len(notebooks_to_process)}] İşleniyor: {notebook_path}")
+
+                    # Rate limit kontrolü - dakikada 15 istek limiti
+                    current_time = datetime.now()
+                    if current_time - minute_start > timedelta(minutes=1):
+                        # Yeni dakika başladı, sayacı sıfırla
+                        request_count = 0
+                        minute_start = current_time
+
+                    if request_count >= 15:
+                        # Dakika içinde limit dolmuşsa, yeni dakika başlangıcına kadar bekle
+                        wait_time = 60 - (current_time - minute_start).seconds
+                        print(f"Rate limit aşıldı. {wait_time} saniye bekleniyor...")
+                        time.sleep(wait_time + 1)  # Güvenlik payı için +1 saniye
+                        request_count = 0
+                        minute_start = datetime.now()
+
+                    # Özet oluştur (bu işlem kendi içinde birden fazla API isteği içeriyor)
+                    result = self.get_notebook_summary(notebook_path)
+
+                    # Her notebook için yaklaşık 3 istek yapıldığını varsayalım
+                    # (özet + kod açıklaması + teknik analiz)
+                    request_count += 3
+
+                    if "error" in result:
+                        print(f"  Hata: {result['error']}")
+                    else:
+                        print(f"  Özet başarıyla oluşturuldu")
+
+                    # İki notebook işlemi arasında her zaman en az 5 saniye bekle
+                    time.sleep(5)
+
+                except Exception as e:
+                    print(f"  Notebook özeti oluşturma hatası ({notebook_path}): {str(e)}")
+                    # Hata durumunda da bekleme yap
+                    time.sleep(5)
+
+        except Exception as e:
+            print(f"Notebook özet önyükleme hatası: {str(e)}")
