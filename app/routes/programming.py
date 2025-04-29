@@ -1,10 +1,12 @@
 # app/routes/programming.py
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+import requests
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_required, current_user
+
+from api import evaluate_solution
 from app.models.base import db
 from app.models.programming_question import ProgrammingQuestion
 from app.models.submission import Submission
-from app.services.evaluation_service import evaluate_solution
 
 programming_bp = Blueprint('programming', __name__)
 
@@ -183,6 +185,36 @@ def evaluate_code(id):
     if not code:
         return jsonify({'error': 'Kod boş olamaz.'}), 400
 
-    # Çözümü değerlendir
-    result = evaluate_solution(code, question)
-    return jsonify(result)
+    # FastAPI servisine istek gönder
+    try:
+        evaluation_request = {
+            "code": code,
+            "function_name": question.function_name,
+            "test_inputs": question.test_inputs,
+            "solution_code": question.solution_code
+        }
+
+        response = requests.post(
+            "http://127.0.0.1:8000/api/evaluate",
+            json=evaluation_request,
+            timeout=5
+        )
+
+        if response.status_code == 200:
+            return jsonify(response.json())
+        else:
+            # FastAPI hatası durumunda hata mesajı döndür
+            return jsonify({
+                "is_correct": False,
+                "execution_time": 0,
+                "errors": ["Kod değerlendirme servisi geçici olarak kullanılamıyor."]
+            }), 500
+
+    except requests.RequestException as e:
+        # Bağlantı hatası durumunda hata mesajı döndür
+        current_app.logger.error(f"API bağlantı hatası: {str(e)}")
+        return jsonify({
+            "is_correct": False,
+            "execution_time": 0,
+            "errors": ["Kod değerlendirme servisi geçici olarak kullanılamıyor."]
+        }), 500

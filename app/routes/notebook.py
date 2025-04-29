@@ -53,25 +53,34 @@ def summary(notebook_path):
         flash(f"Notebook bulunamadı: {notebook_path}", 'error')
         return redirect(url_for('main.index'))
 
-    # Veritabanında özet kontrolü yap (doğrudan NotebookSummary modelinden)
-    from app.models.notebook_summary import NotebookSummary
-    existing_summary = NotebookSummary.query.filter_by(notebook_path=notebook_path).first()
+    # FastAPI'den özet iste
+    try:
+        from app.routes.api import proxy
+        response, status_code = proxy('notebook-summary')
+        if status_code != 200 or "error" in response and response["error"]:
+            flash(f"Özet alınırken bir hata oluştu: {response.get('error', 'Bilinmeyen hata')}", 'error')
+            summary_data = None
+        else:
+            summary_data = response
+    except Exception as e:
+        flash(f"API bağlantı hatası: {str(e)}", 'error')
+        # Veritabanından direkt sorgula
+        from app.models.notebook_summary import NotebookSummary
+        existing_summary = NotebookSummary.query.filter_by(notebook_path=notebook_path).first()
 
-    if not existing_summary:
-        flash(f"Bu notebook için henüz ön yüklenmiş özet bulunmuyor. Özet oluşturulması bekleniyor.", 'warning')
-        return redirect(url_for('main.index'))
+        if existing_summary:
+            summary_data = {
+                'summary': existing_summary.summary,
+                'code_explanation': existing_summary.code_explanation,
+                'last_updated': existing_summary.last_updated,
+                'error': existing_summary.error
+            }
+        else:
+            summary_data = None
+            flash(f"Bu notebook için henüz özet bulunmuyor.", 'warning')
 
-    # Özet var ama hata içeriyorsa
-    if existing_summary.error:
-        flash(f"Bu notebook için özet oluşturulurken hata oluştu: {existing_summary.error}", 'error')
-
-    # Özet verisini hazırla
-    summary_data = {
-        'summary': existing_summary.summary,
-        'code_explanation': existing_summary.code_explanation,
-        'last_updated': existing_summary.last_updated,
-        'error': existing_summary.error
-    }
+    if not summary_data:
+        return redirect(url_for('notebook.view', notebook_path=notebook_path))
 
     return render_template(
         'notebook_summary.html',

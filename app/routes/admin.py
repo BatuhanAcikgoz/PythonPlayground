@@ -263,13 +263,44 @@ def view_programming_question(id):
 @admin_required
 def test_programming_question(id):
     from app.models.programming_question import ProgrammingQuestion
-    from app.services.evaluation_service import evaluate_solution
+    import requests
 
     question = ProgrammingQuestion.query.get_or_404(id)
 
     if request.method == 'POST':
         test_code = request.form.get('test_code')
-        result = evaluate_solution(test_code, question)
+
+        # FastAPI servisine istek gönder
+        try:
+            evaluation_request = {
+                "code": test_code,
+                "function_name": question.function_name,
+                "test_inputs": question.test_inputs,
+                "solution_code": question.solution_code
+            }
+
+            response = requests.post(
+                "http://127.0.0.1:8000/api/evaluate",
+                json=evaluation_request,
+                timeout=5
+            )
+
+            if response.status_code == 200:
+                result = response.json()
+            else:
+                flash('Kod değerlendirme servisi geçici olarak kullanılamıyor.', 'error')
+                return render_template('admin/test_programming_question.html',
+                                       question=question,
+                                       test_code=test_code,
+                                       error="API Hatası")
+
+        except requests.RequestException as e:
+            flash('Kod değerlendirme servisi geçici olarak kullanılamıyor.', 'error')
+            return render_template('admin/test_programming_question.html',
+                                   question=question,
+                                   test_code=test_code,
+                                   error=str(e))
+
         return render_template('admin/test_programming_question.html',
                                question=question,
                                test_code=test_code,

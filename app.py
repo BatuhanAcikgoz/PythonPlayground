@@ -15,6 +15,30 @@ from app.routes import register_routes
 # Config ve modeller
 from config import Config
 
+# app.py içinde logging yapılandırması
+import colorlog
+import logging
+
+
+def setup_logger():
+    """Renkli loglamayı yapılandırır"""
+    handler = colorlog.StreamHandler()
+    handler.setFormatter(colorlog.ColoredFormatter(
+        '%(log_color)s%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        log_colors={
+            'DEBUG': 'cyan',
+            'INFO': 'green',
+            'WARNING': 'yellow',
+            'ERROR': 'red',
+            'CRITICAL': 'red,bg_white',
+        },
+        datefmt='%Y-%m-%d %H:%M:%S'
+    ))
+
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)  # Log seviyesi
+    root_logger.handlers = []  # Mevcut handler'ları temizle
+    root_logger.addHandler(handler)
 
 def create_app():
     app = Flask(__name__)
@@ -23,8 +47,7 @@ def create_app():
     # CSRF korumasını başlat
     csrf = CSRFProtect(app)
 
-    # Loglama
-    logging.basicConfig(level=logging.ERROR)
+    setup_logger()
 
     # Uzantılar başlat
     db.init_app(app)
@@ -139,26 +162,65 @@ def run_fastapi():
 # Fonksiyon çalışma kontrolü için global değişken
 _summaries_loaded = False
 
-# Notebook özetlerini arka planda yükle
+
 def load_summaries_with_app_context(app):
-    """Uygulama bağlamında notebook özetlerini yükler"""
-    global _summaries_loaded
+    """Notebook özetlerini arka planda FastAPI servisi aracılığıyla yükler."""
+    with app.app_context():
+        from flask import current_app
+        import requests
+        import os
+        import time
 
-    # Eğer özetler zaten yüklendiyse, işlemi tekrarlama
-    if _summaries_loaded:
-        print("Notebook özetleri zaten yüklenmiş, tekrar yüklenmeyecek.")
-        return
+        # Notebooks dizini yolu
+        notebooks_dir = os.path.join(os.getcwd(), 'notebooks_repo')
+        if not os.path.exists(notebooks_dir):
+            current_app.logger.error(f"Notebooks dizini bulunamadı: {notebooks_dir}")
+            return
 
-    try:
-        with app.app_context():
-            from app.services.ai_service import AIService
-            ai_service = AIService()
-            _summaries_loaded = True  # Yükleme başarılı olduğunu işaretle
-            ai_service.preload_notebook_summaries()
-    except Exception as e:
-        print(f"Notebook özetleri yüklenirken hata: {str(e)}")
-        _summaries_loaded = False
+        # Tüm notebook dosyalarını bul
+        notebook_files = []
+        for root, _, files in os.walk(notebooks_dir):
+            for file in files:
+                if file.endswith('.ipynb'):
+                    rel_path = os.path.relpath(os.path.join(root, file), notebooks_dir)
+                    notebook_files.append(rel_path)
 
+        current_app.logger.info(f"Toplam {len(notebook_files)} notebook bulundu, özetleri yüklenecek")
+
+        # FastAPI servisine istek gönder
+        try:
+            # Direkt FastAPI servisine bağlan
+            fastapi_url = "http://127.0.0.1:8000/api/notebook-summary"
+
+            for i, notebook_path in enumerate(notebook_files):
+                current_app.logger.info(f"[{i+1}/{len(notebook_files)}] İşleniyor: {notebook_path}")
+
+                try:
+                    # FastAPI'ye notebook özet isteği gönder - POST metodunu kullanmalı
+                    response = requests.post(
+                        fastapi_url,
+                        json={"notebook_path": notebook_path},
+                        timeout=60  # Yeterli zaman tanı
+                    )
+
+                    if response.status_code == 200:
+                        data = response.json()
+                        if data.get("error"):
+                            current_app.logger.warning(f"  Özet alınırken hata: {data.get('error')}")
+                        else:
+                            current_app.logger.info(f"  Özet başarıyla alındı: {len(data.get('summary', ''))} karakter")
+                    else:
+                        current_app.logger.error(f"  API hatası: {response.status_code} - {response.text}")
+
+                    # Rate limit için bekleme - AI hizmetleri için önemli
+                    if i < len(notebook_files) - 1:
+                        time.sleep(5)  # Her istek arasında 5 saniye bekle
+
+                except requests.RequestException as e:
+                    current_app.logger.error(f"  API isteği başarısız: {str(e)}")
+
+        except Exception as e:
+            current_app.logger.error(f"Notebook özetleri yüklenirken genel hata: {str(e)}")
 
 if __name__ == '__main__':
     app, socketio = create_app()
@@ -177,4 +239,4 @@ if __name__ == '__main__':
     summaries_thread.start()
 
     # Flask sunucusunu başlat
-    socketio.run(app, debug=False, port=5000, allow_unsafe_werkzeug=True)
+    socketio.run(app, debug=False, port=5000, allow_unsafe_werkzeug=True, log_output=True)
