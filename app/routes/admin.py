@@ -4,7 +4,6 @@ from app.models.settings import Setting
 from app.forms.admin import SettingForm
 from app.models.base import db
 from app.models.user import User, Role
-from app.models.course import Course  # Course modeliniz varsa
 from app.forms import UserForm, CourseForm
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -105,29 +104,6 @@ def edit_user(id):
     form.roles.data = [role.id for role in user.roles]
     return render_template('admin/edit_user.html', form=form, user=user)
 
-
-@admin_bp.route('/courses')
-@admin_required
-def courses():
-    courses = Course.query.all()
-    return render_template('admin/courses.html', courses=courses)
-
-
-@admin_bp.route('/courses/<int:id>', methods=['GET', 'POST'])
-@admin_required
-def edit_course(id):
-    course = Course.query.get_or_404(id)
-    form = CourseForm(obj=course)
-
-    if request.method == 'POST' and form.validate():
-        form.populate_obj(course)
-        db.session.commit()
-        flash('Kurs başarıyla güncellendi.')
-        return redirect(url_for('admin.courses'))
-
-    return render_template('admin/edit_course.html', form=form, course=course)
-
-
 @admin_bp.route('/settings', methods=['GET', 'POST'])
 @admin_required
 def settings():
@@ -178,3 +154,127 @@ def settings():
         return redirect(url_for('admin.settings'))
 
     return render_template('admin/settings.html', form=form)
+
+
+@admin_bp.route('/programming-questions/<int:id>/submissions')
+@admin_required
+def question_submissions(id):
+    from app.models.submission import Submission
+    from app.models.programming_question import ProgrammingQuestion
+
+    # Soruyu kontrol et
+    question = ProgrammingQuestion.query.get_or_404(id)
+
+    # Bu soru için tüm çözümleri al
+    submissions = Submission.query.filter_by(question_id=id) \
+        .order_by(Submission.created_at.desc()).all()
+
+    return render_template('admin/question_submissions.html',
+                           question=question,
+                           submissions=submissions)
+
+
+@admin_bp.route('/programming-questions')
+@admin_required
+def programming_questions():
+    from app.models.programming_question import ProgrammingQuestion
+    questions = ProgrammingQuestion.query.order_by(ProgrammingQuestion.created_at.desc()).all()
+    return render_template('admin/programming_questions.html', questions=questions)
+
+
+@admin_bp.route('/programming-questions/new', methods=['GET', 'POST'])
+@admin_required
+def new_programming_question():
+    from app.forms.programming import ProgrammingQuestionForm
+    from app.models.programming_question import ProgrammingQuestion
+
+    form = ProgrammingQuestionForm()
+
+    if form.validate_on_submit():
+        question = ProgrammingQuestion(
+            title=form.title.data,
+            description=form.description.data,
+            difficulty=form.difficulty.data,
+            points=form.points.data,
+            example_input=form.example_input.data,
+            example_output=form.example_output.data,
+            function_name=form.function_name.data,
+            solution_code=form.solution_code.data,
+            test_inputs=form.test_inputs.data
+        )
+
+        db.session.add(question)
+        db.session.commit()
+
+        flash('Programlama sorusu başarıyla oluşturuldu.', 'success')
+        return redirect(url_for('admin.programming_questions'))
+
+    return render_template('admin/new_programming_question.html', form=form)
+
+
+@admin_bp.route('/programming-questions/<int:id>/edit', methods=['GET', 'POST'])
+@admin_required
+def edit_programming_question(id):
+    from app.forms.programming import ProgrammingQuestionForm
+    from app.models.programming_question import ProgrammingQuestion
+
+    question = ProgrammingQuestion.query.get_or_404(id)
+    form = ProgrammingQuestionForm(obj=question)
+
+    if form.validate_on_submit():
+        form.populate_obj(question)
+        db.session.commit()
+
+        flash('Programlama sorusu başarıyla güncellendi.', 'success')
+        return redirect(url_for('admin.programming_questions'))
+
+    return render_template('admin/edit_programming_question.html', form=form, question=question)
+
+
+@admin_bp.route('/programming-questions/<int:id>/delete', methods=['POST'])
+@admin_required
+def delete_programming_question(id):
+    from app.models.programming_question import ProgrammingQuestion
+
+    question = ProgrammingQuestion.query.get_or_404(id)
+
+    # Önce soruyla ilişkili gönderileri temizle
+    from app.models.submission import Submission
+    Submission.query.filter_by(question_id=id).delete()
+
+    # Sonra soruyu sil
+    db.session.delete(question)
+    db.session.commit()
+
+    flash('Programlama sorusu başarıyla silindi.', 'success')
+    return redirect(url_for('admin.programming_questions'))
+
+
+@admin_bp.route('/programming-questions/<int:id>')
+@admin_required
+def view_programming_question(id):
+    from app.models.programming_question import ProgrammingQuestion
+
+    question = ProgrammingQuestion.query.get_or_404(id)
+    return render_template('admin/view_programming_question.html', question=question)
+
+
+@admin_bp.route('/programming-questions/<int:id>/test', methods=['GET', 'POST'])
+@admin_required
+def test_programming_question(id):
+    from app.models.programming_question import ProgrammingQuestion
+    from app.services.evaluation_service import evaluate_solution
+
+    question = ProgrammingQuestion.query.get_or_404(id)
+
+    if request.method == 'POST':
+        test_code = request.form.get('test_code')
+        result = evaluate_solution(test_code, question)
+        return render_template('admin/test_programming_question.html',
+                               question=question,
+                               test_code=test_code,
+                               result=result)
+
+    return render_template('admin/test_programming_question.html',
+                           question=question,
+                           test_code=question.solution_code)

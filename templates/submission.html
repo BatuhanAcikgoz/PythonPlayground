@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ submission.question.title }} - Programlama Sorusu Gönderimi</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <!-- CodeMirror for code editing -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <!-- Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- DOMPurify for HTML sanitization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.1/purify.min.js"></script>
+    <style>
+        html, body, #root {
+            height: 100%;
+        }
+        #root {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .CodeMirror {
+            height: auto;
+            min-height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .cm-readonly .CodeMirror {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <!-- Define global variables for component access -->
+    <script>
+        window.APP_DATA = {
+            isLoggedIn: {{ current_user.is_authenticated|tojson }},
+            userData: {
+                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
+                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
+            },
+            headerTrans: {
+                appName: {{ _('app_name')|tojson|safe }},
+                tagline: {{ _('app_tagline')|tojson|safe }},
+                home: {{ _('home')|tojson|safe }},
+                courses: {{ _('courses')|tojson|safe }},
+                leaderboard: {{ _('leaderboard')|tojson|safe }},
+                about: {{ _('about')|tojson|safe }},
+                logout: {{ _('logout')|tojson|safe }},
+                login: {{ _('login')|tojson|safe }},
+                register: {{ _('register')|tojson|safe }},
+                profile: "Profil",
+                settings: "Ayarlar"
+            },
+            footerTrans: {
+                allRights: {{ _('all_rights')|tojson|safe }},
+                platformDesc: {{ _('platform_desc')|tojson|safe }}
+            },
+            currentLang: {{ session.get('language', 'tr')|tojson }},
+            // Flash messages
+            flashMessages: [
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        {
+                            category: {{ category|tojson|safe }},
+                            message: {{ message|tojson|safe }}
+                        },
+                    {% endfor %}
+                {% endwith %}
+            ],
+            // Submission data
+            submission: {
+                id: {{ submission.id }},
+                code: {{ submission.code|tojson|safe }},
+                created_at: {{ submission.created_at.strftime('%Y-%m-%d %H:%M:%S')|tojson|safe }},
+                test_results: {{ submission.test_results|tojson|safe }} || {},
+                is_correct: {{ submission.is_correct|tojson }},
+                question: {
+                    id: {{ submission.question.id }},
+                    title: {{ submission.question.title|tojson|safe }},
+                    description: {{ submission.question.description|tojson|safe }},
+                    difficulty: {{ submission.question.difficulty }},
+                    points: {{ submission.question.points }},
+                    example_input: {{ submission.question.example_input|tojson|safe }},
+                    example_output: {{ submission.question.example_output|tojson|safe }},
+                    function_name: {{ submission.question.function_name|tojson|safe }}
+                }
+            }
+        };
+    </script>
+
+    <!-- Load component scripts -->
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
+
+    <script type="text/babel">
+        // CodeEditor component
+        const CodeEditor = ({ id, name, value, onChange, readOnly }) => {
+            const editorRef = React.useRef(null);
+            const textareaRef = React.useRef(null);
+
+            React.useEffect(() => {
+                if (textareaRef.current) {
+                    const editor = CodeMirror.fromTextArea(textareaRef.current, {
+                        mode: 'python',
+                        theme: 'default',
+                        lineNumbers: true,
+                        indentWithTabs: false,
+                        tabSize: 4,
+                        indentUnit: 4,
+                        readOnly: readOnly || false
+                    });
+
+                    editor.on('change', (cm) => {
+                        if (onChange) onChange(cm.getValue());
+                    });
+
+                    editorRef.current = editor;
+                }
+
+                return () => {
+                    if (editorRef.current) {
+                        editorRef.current.toTextArea();
+                    }
+                };
+            }, []);
+
+            React.useEffect(() => {
+                if (editorRef.current && value) {
+                    if (editorRef.current.getValue() !== value) {
+                        editorRef.current.setValue(value);
+                    }
+                }
+            }, [value]);
+
+            return (
+                <div className={`code-editor-container ${readOnly ? 'cm-readonly' : ''}`}>
+                    <textarea
+                        ref={textareaRef}
+                        id={id}
+                        name={name}
+                        defaultValue={value}
+                        className="hidden"
+                    />
+                </div>
+            );
+        };
+
+        // Test Result component
+        const TestResultDisplay = ({ result }) => {
+            if (!result) return null;
+
+            // Sadece "Test başarısız:" ile başlayan hata mesajlarını filtreleyerek gerçek test hataları sayısını buluyoruz
+            const failedTestCount = result.errors ? result.errors.filter(error =>
+                error.startsWith("Test başarısız:")).length : 0;
+
+            // Test girdilerinden toplam test sayısını tahmin etmeye çalışıyoruz
+            // Bu bilgi result nesnesinde doğrudan yok, bu nedenle sadece başarısız test sayısını kesin olarak gösterebiliriz
+
+            return (
+                <div className={`mt-4 p-4 rounded-md ${result.is_correct ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                    <div className="flex items-center mb-2">
+                        <span className={`mr-2 flex-shrink-0 h-5 w-5 rounded-full ${result.is_correct ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                        <span className="font-medium">
+                            {result.is_correct
+                                ? 'Tüm testler başarılı!'
+                                : `${failedTestCount} test başarısız.`}
+                        </span>
+                    </div>
+
+                    <div className="mt-3">
+                        <h4 className="font-medium mb-2">Test Sonuçları</h4>
+                        <div className="text-sm">
+                            <p>Çalışma Süresi: {result.execution_time ? `${result.execution_time.toFixed(2)} ms` : 'Hesaplanmadı'}</p>
+                            {!result.is_correct && failedTestCount > 0 &&
+                                <p className="mt-1 text-red-600">{failedTestCount} başarısız test</p>
+                            }
+                        </div>
+                    </div>
+
+                    {result.errors && result.errors.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-red-200">
+                            <h4 className="font-medium mb-2">Hatalar</h4>
+                            <ul className="list-disc pl-5 mt-1">
+                                {result.errors.map((error, idx) => (
+                                    <li key={idx} className="text-sm">{error}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // Main Submission component
+        const SubmissionView = () => {
+            const submission = window.APP_DATA.submission;
+            const question = submission.question;
+            const [code, setCode] = React.useState(submission.code);
+            const [testResult, setTestResult] = React.useState(null);
+            const [loading, setLoading] = React.useState(false);
+
+            // Test the code
+        const testCode = async () => {
+            setLoading(true);
+            try {
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                const response = await fetch(`/questions/${question.id}/evaluate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ code: code })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP hata! Durum: ${response.status}`);
+                }
+
+                const result = await response.json();
+                setTestResult(result);
+            } catch (error) {
+                console.error('Test hatası:', error);
+                alert(`Kod test edilirken hata oluştu: ${error.message}`);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+            // Format difficulty text
+            const getDifficultyText = (level) => {
+                const levels = {
+                    1: 'Kolay',
+                    2: 'Orta-Kolay',
+                    3: 'Orta',
+                    4: 'Orta-Zor',
+                    5: 'Zor'
+                };
+                return levels[level] || 'Bilinmiyor';
+            };
+
+            // Format submission date
+            const formatDate = (dateStr) => {
+                const date = new Date(dateStr);
+                return date.toLocaleString('tr-TR');
+            };
+
+            // Render markdown description
+            const renderDescription = (text) => {
+                return { __html: DOMPurify.sanitize(marked.parse(text)) };
+            };
+
+            return (
+                <div className="max-w-6xl mx-auto px-4 py-8">
+                    {/* Flash Messages */}
+                    {window.APP_DATA.flashMessages && window.APP_DATA.flashMessages.length > 0 && (
+                        <div className="mb-6">
+                            {window.APP_DATA.flashMessages.map((flash, index) => (
+                                <div key={index} className={`mb-4 p-4 rounded-lg ${
+                                    flash.category === 'success' ? 'bg-green-100 text-green-800' :
+                                    flash.category === 'warning' ? 'bg-yellow-100 text-yellow-800' :
+                                    flash.category === 'error' ? 'bg-red-100 text-red-800' :
+                                    'bg-blue-100 text-blue-800'
+                                }`}>
+                                    {flash.message}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="mb-6">
+                        <div className="flex justify-between items-center">
+                            <h1 className="text-2xl font-bold">{question.title}</h1>
+                            <div>
+                                <a
+                                    href="/questions"
+                                    className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md bg-white hover:bg-gray-100"
+                                >
+                                    Tüm Sorular
+                                </a>
+                            </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                {getDifficultyText(question.difficulty)}
+                            </span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                {question.points} Puan
+                            </span>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                Fonksiyon: {question.function_name}()
+                            </span>
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                submission.is_correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                            }`}>
+                                {submission.is_correct ? 'Başarılı' : 'Başarısız'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-2">
+                            <div className="bg-white shadow rounded-lg overflow-hidden">
+                                <div className="p-6">
+                                    <h2 className="text-lg font-medium mb-4">Soru Açıklaması</h2>
+                                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={renderDescription(question.description)} />
+
+                                    {(question.example_input || question.example_output) && (
+                                        <div className="mt-4 pt-4 border-t">
+                                            <h3 className="font-medium mb-2">Örnek</h3>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <h4 className="text-sm font-medium mb-1">Girdi:</h4>
+                                                    <pre className="bg-gray-50 p-2 rounded text-sm">{question.example_input}</pre>
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-sm font-medium mb-1">Çıktı:</h4>
+                                                    <pre className="bg-gray-50 p-2 rounded text-sm">{question.example_output}</pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="mt-6 bg-white shadow rounded-lg overflow-hidden">
+                                <div className="p-6">
+                                    <h2 className="text-lg font-medium mb-4">Gönderilen Kod</h2>
+                                    <div className="mb-4">
+                                        <CodeEditor
+                                            id="code"
+                                            name="code"
+                                            value={code}
+                                            onChange={setCode}
+                                            readOnly={false}
+                                        />
+                                    </div>
+
+                                    <div className="flex space-x-2">
+                                        <button
+                                            type="button"
+                                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
+                                            onClick={testCode}
+                                            disabled={loading}
+                                        >
+                                            {loading ? (
+                                                <React.Fragment>
+                                                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    Test Ediliyor...
+                                                </React.Fragment>
+                                            ) : (
+                                                'Tekrar Test Et'
+                                            )}
+                                        </button>
+                                    </div>
+
+                                    {testResult && <TestResultDisplay result={testResult} />}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="bg-white shadow rounded-lg overflow-hidden">
+                                <div className="p-6">
+                                    <h2 className="text-lg font-medium mb-4">Gönderim Bilgileri</h2>
+                                    <dl className="space-y-4">
+                                        <div>
+                                            <dt className="text-sm font-medium text-gray-500">Gönderim Tarihi</dt>
+                                            <dd className="mt-1 text-sm">{formatDate(submission.created_at)}</dd>
+                                        </div>
+                                        <div>
+                                            <dt className="text-sm font-medium text-gray-500">Durum</dt>
+                                            <dd className="mt-1">
+                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                                    submission.is_correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                                }`}>
+                                                    {submission.is_correct ? 'Başarılı' : 'Başarısız'}
+                                                </span>
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            </div>
+
+                            <div className="mt-6 bg-white shadow rounded-lg overflow-hidden">
+                                <div className="p-6">
+                                    <h2 className="text-lg font-medium mb-4">İşlemler</h2>
+                                    <div className="flex flex-col space-y-2">
+                                        <a
+                                            href={`/questions/${question.id}`}
+                                            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium bg-white hover:bg-gray-50"
+                                        >
+                                            Soruya Dön
+                                        </a>
+                                        <a
+                                            href="/my-submissions"
+                                            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium bg-white hover:bg-gray-50"
+                                        >
+                                            Tüm Gönderimlerim
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            return (
+                <React.Fragment>
+                    <Header />
+                    <div className="flex-grow bg-gray-50">
+                        <SubmissionView />
+                    </div>
+                    <Footer />
+                </React.Fragment>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

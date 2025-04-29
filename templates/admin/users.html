@@ -74,36 +74,108 @@
 
     <script type="text/babel">
         const UsersTable = ({ users, translations }) => {
+            const [searchTerm, setSearchTerm] = React.useState('');
+            const [sortBy, setSortBy] = React.useState('username');
+            const [sortOrder, setSortOrder] = React.useState('asc');
+
+            const filteredUsers = users
+                .filter(user =>
+                    user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .sort((a, b) => {
+                    if (sortOrder === 'asc') {
+                        return a[sortBy] > b[sortBy] ? 1 : -1;
+                    } else {
+                        return a[sortBy] < b[sortBy] ? 1 : -1;
+                    }
+                });
+
+            const handleSort = (field) => {
+                if (sortBy === field) {
+                    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                } else {
+                    setSortBy(field);
+                    setSortOrder('asc');
+                }
+            };
+
             return (
                 <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                    <div className="p-4 border-b">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between">
+                            <h2 className="text-xl font-semibold mb-2 md:mb-0">{translations.users}</h2>
+                            <div className="flex flex-col md:flex-row gap-3">
+                                <input
+                                    type="text"
+                                    placeholder="Kullanıcı ara..."
+                                    className="border rounded px-3 py-2 text-sm"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </div>
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{translations.username}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{translations.email}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{translations.roles}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{translations.actions}</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <button className="flex items-center" onClick={() => handleSort('username')}>
+                                        {translations.username}
+                                        {sortBy === 'username' && (
+                                            <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                                        )}
+                                    </button>
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <button className="flex items-center" onClick={() => handleSort('email')}>
+                                        {translations.email}
+                                        {sortBy === 'email' && (
+                                            <span className="ml-1">{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                                        )}
+                                    </button>
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    {translations.roles}
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    {translations.actions}
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {users.map(user => (
-                                <tr key={user.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.id}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.username}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {user.roles.map(role => (
-                                            <span key={role.id || role.name} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-1">
-                                                {role.name}
-                                            </span>
-                                        ))}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href={`/admin/users/${user.id}`} className="text-indigo-600 hover:text-indigo-900 mr-3">{translations.edit}</a>
+                            {filteredUsers.length === 0 ? (
+                                <tr>
+                                    <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
+                                        {searchTerm ? 'Aranan kriterlere uygun kullanıcı bulunamadı.' : 'Henüz kullanıcı eklenmemiş.'}
                                     </td>
                                 </tr>
-                            ))}
+                            ) : (
+                                filteredUsers.map(user => (
+                                    <tr key={user.id} className="hover:bg-gray-50">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">{user.username}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-500">{user.email}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex flex-wrap gap-1">
+                                                {user.roles.map(role => (
+                                                    <span key={role.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                        {role.name}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <a href={`/admin/users/${user.id}`} className="text-indigo-600 hover:text-indigo-900">
+                                                {translations.edit}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>

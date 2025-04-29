@@ -75,6 +75,8 @@ def init_db(app):
     with app.app_context():
         # NotebookSummary modelini açıkça import et
         from app.models.notebook_summary import NotebookSummary
+        from app.models.programming_question import ProgrammingQuestion
+        from app.models.submission import Submission
         from app.models.user import User, Role
         from app.models.settings import Setting
 

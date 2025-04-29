@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ question.title }} - Test | Admin Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <!-- CodeMirror for code editing -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <!-- Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.1/purify.min.js"></script>
+    <style>
+        html, body, #root {
+            height: 100%;
+        }
+        #root {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .CodeMirror {
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <!-- Define global variables for component access -->
+    <script>
+        window.APP_DATA = {
+            isLoggedIn: {{ current_user.is_authenticated|tojson }},
+            userData: {
+                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
+                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
+            },
+            headerTrans: {
+                appName: {{ _('app_name')|tojson|safe }},
+                profile: "Profil",
+                settings: "Ayarlar",
+                logout: "Çıkış"
+            },
+            footerTrans: {
+                allRights: {{ _('all_rights')|tojson|safe }},
+                platformDesc: {{ _('platform_desc')|tojson|safe }}
+            },
+            question: {
+                id: {{ question.id }},
+                title: {{ question.title|tojson|safe }},
+                description: {{ question.description|tojson|safe }},
+                difficulty: {{ question.difficulty }},
+                points: {{ question.points }},
+                function_name: {{ question.function_name|tojson|safe }},
+                example_input: {{ question.example_input|tojson|safe }},
+                example_output: {{ question.example_output|tojson|safe }}
+            },
+            // Current language
+            currentLang: {{ session.get('language', 'tr')|tojson }},
+            testCode: {{ test_code|tojson|safe }},
+            result: {{ result|tojson if result else 'null'|safe }}
+        };
+    </script>
+
+    <!-- Load component scripts -->
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
+
+    <script type="text/babel">
+        const CodeEditor = ({ id, name, defaultValue, onChange }) => {
+            const editorRef = React.useRef(null);
+            const textareaRef = React.useRef(null);
+
+            React.useEffect(() => {
+                if (textareaRef.current && !editorRef.current) {
+                    const editor = CodeMirror.fromTextArea(textareaRef.current, {
+                        mode: "python",
+                        lineNumbers: true,
+                        indentUnit: 4,
+                        lineWrapping: true,
+                        tabSize: 4,
+                        autofocus: true,
+                        theme: "default"
+                    });
+
+                    editor.on("change", () => {
+                        const value = editor.getValue();
+                        onChange(value);
+                    });
+
+                    editorRef.current = editor;
+                }
+            }, []);
+
+            return (
+                <div className="w-full">
+                    <textarea
+                        id={id}
+                        name={name}
+                        ref={textareaRef}
+                        defaultValue={defaultValue}
+                        className="hidden"
+                    />
+                </div>
+            );
+        };
+
+        const TestResultDisplay = ({ result }) => {
+            if (!result) return null;
+
+            return (
+                <div className={`mt-4 p-4 rounded-md ${result.is_correct ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                    <div className="flex items-center mb-2">
+                        <span className={`mr-2 flex-shrink-0 h-5 w-5 rounded-full ${result.is_correct ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                        <span className="font-medium">{result.is_correct ? 'Tüm testler başarılı.' : 'Bazı testlerden geçilemedi.'}</span>
+                    </div>
+
+                    <div className="mt-3">
+                        <h4 className="font-medium mb-2">Test Sonuçları</h4>
+                        <div className="text-sm">
+                            <p>Çalışma süresi: {result.execution_time.toFixed(2)} ms</p>
+                        </div>
+                    </div>
+
+                    {result.errors && result.errors.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-red-200">
+                            <h4 className="font-medium mb-2">Hatalar</h4>
+                            <ul className="list-disc pl-5 mt-1">
+                                {result.errors.map((error, idx) => (
+                                    <li key={idx} className="text-sm">{error}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const DifficultyBadge = ({ level }) => {
+            const levels = {
+                1: { text: 'Kolay', color: 'bg-green-100 text-green-800' },
+                2: { text: 'Orta-Kolay', color: 'bg-blue-100 text-blue-800' },
+                3: { text: 'Orta', color: 'bg-yellow-100 text-yellow-800' },
+                4: { text: 'Orta-Zor', color: 'bg-orange-100 text-orange-800' },
+                5: { text: 'Zor', color: 'bg-red-100 text-red-800' }
+            };
+
+            const { text, color } = levels[level] || { text: 'Bilinmiyor', color: 'bg-gray-100 text-gray-800' };
+
+            return (
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${color}`}>
+                    {text}
+                </span>
+            );
+        };
+
+        const TestView = () => {
+            const { question, testCode, result } = window.APP_DATA;
+            const [code, setCode] = React.useState(testCode);
+
+            const handleCodeChange = (value) => {
+                setCode(value);
+            };
+
+            const renderDescription = (text) => {
+                return { __html: DOMPurify.sanitize(marked.parse(text)) };
+            };
+
+            return (
+                <div className="container mx-auto p-4 max-w-6xl">
+                    <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+                        <div>
+                            <h1 className="text-2xl font-bold">{question.title} - Test</h1>
+                            <div className="flex items-center mt-2 space-x-4">
+                                <DifficultyBadge level={question.difficulty} />
+                                <span className="text-sm text-gray-600">{question.points} puan</span>
+                                <span className="text-sm text-gray-600">Fonksiyon: <code>{question.function_name}</code></span>
+                            </div>
+                        </div>
+                        <div className="mt-3 md:mt-0 space-x-2">
+                            <a href={`/admin/programming-questions/${question.id}`} className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm">
+                                Soruya Dön
+                            </a>
+                            <a href="/admin/programming-questions" className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm">
+                                Tüm Sorular
+                            </a>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Sol taraf: Soru açıklaması */}
+                        <div className="bg-white shadow-md rounded-lg p-6">
+                            <h2 className="text-lg font-semibold mb-4">Problem Tanımı</h2>
+                            <div
+                                className="prose markdown-content"
+                                dangerouslySetInnerHTML={renderDescription(question.description)}
+                            />
+
+                            {question.example_input && question.example_output && (
+                                <div className="mt-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <h3 className="text-md font-semibold mb-2">Örnek Girdi</h3>
+                                            <pre className="bg-gray-50 p-3 rounded border text-sm whitespace-pre-wrap">{question.example_input}</pre>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-md font-semibold mb-2">Örnek Çıktı</h3>
+                                            <pre className="bg-gray-50 p-3 rounded border text-sm whitespace-pre-wrap">{question.example_output}</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Sağ taraf: Kod editörü ve sonuçlar */}
+                        <div>
+                            <div className="bg-white shadow-md rounded-lg p-6">
+                                <h2 className="text-lg font-semibold mb-4">Test Kodu</h2>
+
+                                <form action={`/admin/programming-questions/${question.id}/test`} method="post" className="space-y-4">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                                    <div className="mb-4">
+                                        <CodeEditor
+                                            id="test_code"
+                                            name="test_code"
+                                            defaultValue={code}
+                                            onChange={handleCodeChange}
+                                        />
+                                    </div>
+
+                                    <div className="flex space-x-2">
+                                        <button
+                                            type="submit"
+                                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        >
+                                            Test Et
+                                        </button>
+                                    </div>
+
+                                    <input type="hidden" name="test_code" value={code} />
+                                </form>
+
+                                <TestResultDisplay result={result} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            return (
+                <React.Fragment>
+                    <Header />
+                    <div className="flex flex-grow">
+                        <AdminSidebar />
+                        <main className="flex-grow p-6">
+                            <TestView />
+                        </main>
+                    </div>
+                    <Footer />
+                </React.Fragment>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

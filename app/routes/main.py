@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, session, request, flash
 from flask_login import login_required, current_user
-from app.models.course import Course
 from flask import send_from_directory
 import os
 import subprocess
@@ -36,7 +35,6 @@ def clone_repo():
 
 @main_bp.route('/')
 def index():
-    courses = Course.query.all()
     # Notebook dosyalarını kontrol et
     repo_dir = os.path.join(os.getcwd(), 'notebooks_repo')
     notebooks = []
@@ -72,7 +70,7 @@ def index():
         except Exception as e:
             error_message = f"Repository işlemi sırasında hata: {str(e)}"
 
-    return render_template('index.html', courses=courses, notebooks=notebooks, error_message=error_message)
+    return render_template('index.html', notebooks=notebooks, error_message=error_message)
 
 @main_bp.route('/<path:path>')
 def redirect_notebook(path):
@@ -118,12 +116,3 @@ def set_language(language):
 def serve_component(filename):
     # JSX bileşenleri templates/js/components klasöründe
     return send_from_directory('templates/js/components', filename)
-
-@main_bp.route('/courses')
-def courses():
-    courses = Course.query.all()
-    return render_template('courses.html', courses=courses)
-
-@main_bp.route('/about')
-def about():
-    return render_template('about.html')
