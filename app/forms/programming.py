@@ -19,3 +19,11 @@ class ProgrammingQuestionForm(FlaskForm):
                              description='[[arg1, arg2,...], [arg1, arg2,...], ...] formatında 10 test girdisini girin',
                              validators=[DataRequired()])
     submit = SubmitField('Kaydet')
+
+class SolutionSubmitForm(FlaskForm):
+    code = TextAreaField('Kod', validators=[DataRequired()])
+    submit = SubmitField('Çözümü Gönder')
+
+class CodeEvaluationForm(FlaskForm):
+    code = TextAreaField('Kod', validators=[DataRequired()])
+    submit = SubmitField('Test Et')

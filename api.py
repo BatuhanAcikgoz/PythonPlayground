@@ -17,7 +17,7 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-api = FastAPI(title="Python Platform API", version="1.0.0")
+api = FastAPI(title="Python Playground API", version="1.0.0")
 
 # CORS ekle - domain sınırlaması
 api.add_middleware(

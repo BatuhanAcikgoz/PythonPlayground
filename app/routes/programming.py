@@ -4,12 +4,12 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_required, current_user
 
 from api import evaluate_solution
+from app.forms.programming import SolutionSubmitForm, CodeEvaluationForm
 from app.models.base import db
 from app.models.programming_question import ProgrammingQuestion
 from app.models.submission import Submission
 
 programming_bp = Blueprint('programming', __name__)
-
 
 @programming_bp.route('/questions')
 @login_required
@@ -114,40 +114,46 @@ def question(id):
                            question=question,
                            default_code=default_code)
 
+# submit_solution route'u güncellenir
 @programming_bp.route('/questions/<int:id>/submit', methods=['POST'])
 @login_required
 def submit_solution(id):
     """Çözüm gönderme"""
     question = ProgrammingQuestion.query.get_or_404(id)
-    code = request.form.get('code')
+    form = SolutionSubmitForm()
 
-    if not code:
-        flash('Kod boş olamaz.', 'error')
-        return redirect(url_for('programming.question', id=id))
+    if form.validate_on_submit():
+        code = form.code.data
 
-    # Çözümü değerlendir
-    result = evaluate_solution(code, question)
+        # Çözümü değerlendir
+        result = evaluate_solution(code, question)
 
-    # Submission kaydını oluştur
-    submission = Submission(
-        user_id=current_user.id,
-        question_id=question.id,
-        code=code,
-        is_correct=result['is_correct'],  # Doğru anahtarı kullan
-        test_results=result,
-        execution_time=result['execution_time'],
-        error_message=result.get('error_message', ''),
-    )
+        # Submission kaydını oluştur
+        submission = Submission(
+            user_id=current_user.id,
+            question_id=question.id,
+            code=code,
+            is_correct=result['is_correct'],
+            test_results=result,
+            execution_time=result['execution_time'],
+            error_message=result.get('error_message', ''),
+        )
 
-    db.session.add(submission)
-    db.session.commit()
+        db.session.add(submission)
+        db.session.commit()
 
-    if result['is_correct']:  # 'success' yerine 'is_correct'
-        flash('Tebrikler! Tüm testleri geçen bir çözüm gönderdiniz.', 'success')
-    else:
-        flash('Çözümünüz bazı testlerden geçemedi. Detaylar için sonuçlara bakın.', 'warning')
+        if result['is_correct']:
+            flash('Tebrikler! Tüm testleri geçen bir çözüm gönderdiniz.', 'success')
+        else:
+            flash('Çözümünüz bazı testlerden geçemedi. Detaylar için sonuçlara bakın.', 'warning')
 
-    return redirect(url_for('programming.submission', id=submission.id))
+        return redirect(url_for('programming.submission', id=submission.id))
+
+    # Form doğrulama hatası
+    for field, errors in form.errors.items():
+        flash(f"{form[field].label.text}: {', '.join(errors)}", 'error')
+
+    return redirect(url_for('programming.question', id=id))
 
 
 @programming_bp.route('/submissions/<int:id>')
@@ -180,41 +186,49 @@ def my_submissions():
 def evaluate_code(id):
     """AJAX ile kod değerlendirme"""
     question = ProgrammingQuestion.query.get_or_404(id)
-    code = request.json.get('code')
+    form = CodeEvaluationForm()
 
-    if not code:
-        return jsonify({'error': 'Kod boş olamaz.'}), 400
+    # AJAX isteği için özel form doğrulama
+    if request.is_json:
+        json_data = request.get_json()
+        form.code.data = json_data.get('code')
 
-    # FastAPI servisine istek gönder
-    try:
-        evaluation_request = {
-            "code": code,
-            "function_name": question.function_name,
-            "test_inputs": question.test_inputs,
-            "solution_code": question.solution_code
-        }
+    if form.validate():
+        code = form.code.data
 
-        response = requests.post(
-            "http://127.0.0.1:8000/api/evaluate",
-            json=evaluation_request,
-            timeout=5
-        )
+        try:
+            evaluation_request = {
+                "code": code,
+                "function_name": question.function_name,
+                "test_inputs": question.test_inputs,
+                "solution_code": question.solution_code
+            }
 
-        if response.status_code == 200:
-            return jsonify(response.json())
-        else:
-            # FastAPI hatası durumunda hata mesajı döndür
+            response = requests.post(
+                "http://127.0.0.1:8000/api/evaluate",
+                json=evaluation_request,
+                timeout=5
+            )
+
+            if response.status_code == 200:
+                return jsonify(response.json())
+            else:
+                return jsonify({
+                    "is_correct": False,
+                    "execution_time": 0,
+                    "errors": ["Kod değerlendirme servisi geçici olarak kullanılamıyor."]
+                }), 500
+
+        except requests.RequestException as e:
+            current_app.logger.error(f"API bağlantı hatası: {str(e)}")
             return jsonify({
                 "is_correct": False,
                 "execution_time": 0,
                 "errors": ["Kod değerlendirme servisi geçici olarak kullanılamıyor."]
             }), 500
 
-    except requests.RequestException as e:
-        # Bağlantı hatası durumunda hata mesajı döndür
-        current_app.logger.error(f"API bağlantı hatası: {str(e)}")
-        return jsonify({
-            "is_correct": False,
-            "execution_time": 0,
-            "errors": ["Kod değerlendirme servisi geçici olarak kullanılamıyor."]
-        }), 500
+    return jsonify({
+        "is_correct": False,
+        "execution_time": 0,
+        "errors": ["Geçersiz form verileri"]
+    }), 400

@@ -15,6 +15,14 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- Socket.IO -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+
+    <!-- CodeMirror Bağımlılıkları -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="https://unpkg.com/@uiw/react-codemirror@4.21.21/dist/codemirror.min.js"></script>
+
     <style>
         html, body, #root {
             height: 100%;
@@ -24,12 +32,15 @@
             flex-direction: column;
             min-height: 100vh;
         }
+        .code-bg {
+            background-color: #282a36;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
     <div id="root"></div>
 
-        <!-- Define global variables for component access -->
+    <!-- Define global variables for component access -->
     <script>
         window.APP_DATA = {
             // User information
@@ -67,6 +78,59 @@
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
     <script type="text/babel">
+        const CodeMirrorEditor = ({ value, onChange, onKeyDown, disabled, readOnly }) => {
+            const editorRef = React.useRef(null);
+            const cmRef = React.useRef(null);
+
+            React.useEffect(() => {
+                if (editorRef.current && !cmRef.current) {
+                    cmRef.current = CodeMirror.fromTextArea(editorRef.current, {
+                        mode: "python",
+                        theme: "dracula",
+                        lineNumbers: true,
+                        indentUnit: 4,
+                        tabSize: 4,
+                        indentWithTabs: false,
+                        lineWrapping: true,
+                        readOnly: readOnly || disabled
+                    });
+
+                    cmRef.current.setValue(value);
+
+                    cmRef.current.on("change", (instance) => {
+                        onChange(instance.getValue());
+                    });
+
+                    cmRef.current.on("keydown", (cm, event) => {
+                        if (onKeyDown) {
+                            onKeyDown(cm, event);
+                        }
+                    });
+                }
+
+                return () => {
+                    if (cmRef.current) {
+                        cmRef.current.toTextArea();
+                        cmRef.current = null;
+                    }
+                };
+            }, []);
+
+            React.useEffect(() => {
+                if (cmRef.current && value !== cmRef.current.getValue()) {
+                    cmRef.current.setValue(value);
+                }
+            }, [value]);
+
+            React.useEffect(() => {
+                if (cmRef.current) {
+                    cmRef.current.setOption("readOnly", readOnly || disabled);
+                }
+            }, [disabled, readOnly]);
+
+            return <textarea ref={editorRef} disabled={disabled} />;
+        };
+
         const App = () => {
             const notebook = {{ notebook|tojson }};
             const translations = {
@@ -92,7 +156,6 @@
             const [isExecuting, setIsExecuting] = React.useState(false);
 
             const consoleOutputRef = React.useRef(null);
-            const inputRef = React.useRef(null);
 
             // Initialize Socket.IO connection
             React.useEffect(() => {
@@ -129,13 +192,6 @@
                 }
             }, [consoleOutput]);
 
-            // Focus input field when needed
-            React.useEffect(() => {
-                if (!isExecuting && inputRef.current) {
-                    inputRef.current.focus();
-                }
-            }, [isExecuting, isInputMode]);
-
             // Initialize marked for rendering markdown
             React.useEffect(() => {
                 marked.setOptions({
@@ -155,27 +211,29 @@
                 socket.emit('run_code', { code });
             };
 
-            const handleInputKeyDown = (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const value = inputValue;
+            const handleInputChange = (value) => {
+                setInputValue(value);
+            };
 
+            const handleKeyDown = (cm, e) => {
+                if ((e.key === 'Enter' && e.ctrlKey) || (e.key === 'Enter' && isInputMode)) {
+                    e.preventDefault();
                     if (isInputMode) {
+                        const value = inputValue;
                         setConsoleOutput(prev => [...prev, { type: 'input', content: value }]);
                         socket.emit('input_response', { value });
                         setIsInputMode(false);
                     } else {
-                        runCode(value);
+                        runCode(inputValue);
                     }
-
                     setInputValue('');
-                } else if (e.key === 'ArrowUp') {
+                } else if (e.key === 'ArrowUp' && e.ctrlKey) {
                     e.preventDefault();
                     if (historyIndex > 0) {
                         setHistoryIndex(historyIndex - 1);
                         setInputValue(commandHistory[historyIndex - 1]);
                     }
-                } else if (e.key === 'ArrowDown') {
+                } else if (e.key === 'ArrowDown' && e.ctrlKey) {
                     e.preventDefault();
                     if (historyIndex < commandHistory.length - 1) {
                         setHistoryIndex(historyIndex + 1);
@@ -244,51 +302,19 @@
                                 </div>
                             ))}
                         </div>
-                        <div className="flex flex-col border-t border-gray-700 bg-gray-800 p-2">
+                        <div className="flex flex-col border-t border-gray-700 p-2 code-bg">
                             <div className="flex items-center mb-2">
                                 <span className="text-green-400 mr-2 font-mono">
                                     {isInputMode ? "Girdi>" : ""}
                                 </span>
-                                <textarea
-                                    ref={inputRef}
-                                    className="flex-grow bg-gray-800 text-gray-100 focus:outline-none font-mono resize-y min-h-[40px] max-h-[200px]"
-                                    value={inputValue}
-                                    onChange={(e) => setInputValue(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        // Keep Enter's default behavior for new lines
-                                        // Ctrl+Enter could still execute the code as shortcut
-                                        if (e.key === 'Enter' && e.ctrlKey) {
-                                            e.preventDefault();
-                                            if (isInputMode) {
-                                                const value = inputValue;
-                                                setConsoleOutput(prev => [...prev, { type: 'input', content: value }]);
-                                                socket.emit('input_response', { value });
-                                                setIsInputMode(false);
-                                            } else {
-                                                runCode(inputValue);
-                                            }
-                                            setInputValue('');
-                                        } else if (e.key === 'ArrowUp' && e.ctrlKey) {
-                                            e.preventDefault();
-                                            if (historyIndex > 0) {
-                                                setHistoryIndex(historyIndex - 1);
-                                                setInputValue(commandHistory[historyIndex - 1]);
-                                            }
-                                        } else if (e.key === 'ArrowDown' && e.ctrlKey) {
-                                            e.preventDefault();
-                                            if (historyIndex < commandHistory.length - 1) {
-                                                setHistoryIndex(historyIndex + 1);
-                                                setInputValue(commandHistory[historyIndex + 1]);
-                                            } else {
-                                                setHistoryIndex(commandHistory.length);
-                                                setInputValue('');
-                                            }
-                                        }
-                                    }}
-                                    disabled={isExecuting}
-                                    spellCheck="false"
-                                    rows={3}
-                                />
+                                <div className="w-full">
+                                    <CodeMirrorEditor
+                                        value={inputValue}
+                                        onChange={handleInputChange}
+                                        onKeyDown={handleKeyDown}
+                                        disabled={isExecuting}
+                                    />
+                                </div>
                             </div>
                             <div className="flex justify-end">
                                 <button
