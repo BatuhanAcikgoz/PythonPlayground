@@ -4,7 +4,7 @@ from app.models.settings import Setting
 from app.forms.admin import SettingForm
 from app.models.base import db
 from app.models.user import User, Role
-from app.forms import UserForm, CourseForm
+from app.forms import UserForm
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 

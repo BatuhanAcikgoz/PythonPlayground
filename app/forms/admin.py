@@ -21,12 +21,6 @@ class RoleForm(FlaskForm):
     description = TextAreaField('Açıklama', validators=[DataRequired()])
     submit = SubmitField('Kaydet')
 
-class CourseForm(FlaskForm):
-    name = StringField('Kurs Adı', validators=[DataRequired(), Length(max=100)])
-    description = TextAreaField('Açıklama', validators=[DataRequired()])
-    submit = SubmitField('Kaydet')
-
-
 class SettingForm(FlaskForm):
     site_name = StringField('Site Adı', validators=[DataRequired()])
     site_description = TextAreaField('Site Açıklaması')
