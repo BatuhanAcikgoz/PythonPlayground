@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ notebook_path }} - {{ _('app_name') }}</title>
+    <title>{{ notebook.metadata.title if notebook.metadata and 'title' in notebook.metadata else notebook.path }} - {{ _('app_name') }}</title>    <meta charset="UTF-8">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
@@ -21,7 +21,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
-    <script src="https://unpkg.com/@uiw/react-codemirror@4.21.21/dist/codemirror.min.js"></script>
 
     <style>
         html, body, #root {
@@ -78,7 +77,7 @@
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
     <script type="text/babel">
-        const CodeMirrorEditor = ({ value, onChange, onKeyDown, disabled, readOnly }) => {
+        const CodeMirrorEditor = ({ value, onChange, disabled, readOnly }) => {
             const editorRef = React.useRef(null);
             const cmRef = React.useRef(null);
 
@@ -215,36 +214,6 @@
                 setInputValue(value);
             };
 
-            const handleKeyDown = (cm, e) => {
-                if ((e.key === 'Enter' && e.ctrlKey) || (e.key === 'Enter' && isInputMode)) {
-                    e.preventDefault();
-                    if (isInputMode) {
-                        const value = inputValue;
-                        setConsoleOutput(prev => [...prev, { type: 'input', content: value }]);
-                        socket.emit('input_response', { value });
-                        setIsInputMode(false);
-                    } else {
-                        runCode(inputValue);
-                    }
-                    setInputValue('');
-                } else if (e.key === 'ArrowUp' && e.ctrlKey) {
-                    e.preventDefault();
-                    if (historyIndex > 0) {
-                        setHistoryIndex(historyIndex - 1);
-                        setInputValue(commandHistory[historyIndex - 1]);
-                    }
-                } else if (e.key === 'ArrowDown' && e.ctrlKey) {
-                    e.preventDefault();
-                    if (historyIndex < commandHistory.length - 1) {
-                        setHistoryIndex(historyIndex + 1);
-                        setInputValue(commandHistory[historyIndex + 1]);
-                    } else {
-                        setHistoryIndex(commandHistory.length);
-                        setInputValue('');
-                    }
-                }
-            };
-
             const renderMarkdown = (markdown) => {
                 return { __html: marked.parse(markdown) };
             };
@@ -311,7 +280,6 @@
                                     <CodeMirrorEditor
                                         value={inputValue}
                                         onChange={handleInputChange}
-                                        onKeyDown={handleKeyDown}
                                         disabled={isExecuting}
                                     />
                                 </div>
