@@ -1,10 +1,9 @@
 name: Docs
 
-# İzinleri tanımla
 permissions:
-  contents: write  # repo içeriğine yazma izni
-  pages: write     # GitHub Pages için izin
-  id-token: write  # Token doğrulama için gerekli
+  contents: write
+  pages: write
+  id-token: write
 
 on:
   push:
@@ -29,16 +28,10 @@ jobs:
         cd docs
         sphinx-apidoc -o source/ ../app ../api
         make html
+        # Jekyll'i devre dışı bırak
+        touch build/html/.nojekyll
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs/build/html
-
-- name: Build docs
-  run: |
-    cd docs
-    sphinx-apidoc -o source/ ../app ../api
-    make html
-    # Jekyll'i devre dışı bırak
-    touch build/html/.nojekyll

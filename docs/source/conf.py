@@ -1,10 +1,4 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
-
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+# conf.py
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
@@ -14,26 +8,33 @@ copyright = '2025, BatuhanAcikgoz'
 author = 'BatuhanAcikgoz'
 release = '1.0.0'
 
-# -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
-
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
     'sphinx_autodoc_typehints',
+    'sphinx.ext.intersphinx',  # Python standart kütüphane bağlantıları
+    'sphinx.ext.autosummary',  # Otomatik özet oluşturma
 ]
 
 templates_path = ['_templates']
 exclude_patterns = []
-
 language = 'tr'
 
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
+# Furo teması kullanımı (daha modern bir tema)
+html_theme = 'furo'  # sphinx_rtd_theme yerine
+html_theme_options = {
+    "light_css_variables": {
+        "font-stack": "Lato, sans-serif",
+        "font-stack--monospace": "Fira Code, monospace",
+    },
+    "sidebar_hide_name": False,
+}
 
-html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+html_css_files = ['custom.css']
 
-autodoc_member_order = 'bysource'
+# Autodoc ayarları
+autodoc_member_order = 'groupwise'  # bysource yerine
 autoclass_content = 'both'
+autodoc_typehints = 'description'  # Tip bilgilerini açıklamalarda göster
