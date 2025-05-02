@@ -10,3 +10,4 @@ notebooks_repo/
 /app/models/__pycache__
 /app/forms/__pycache__
 /app/__pycache__
+/docs/build
