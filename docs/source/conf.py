@@ -21,14 +21,18 @@ templates_path = ['_templates']
 exclude_patterns = []
 language = 'tr'
 
-# Furo teması kullanımı (daha modern bir tema)
-html_theme = 'furo'  # sphinx_rtd_theme yerine
+# Tema yapılandırması
+html_theme = 'furo'
 html_theme_options = {
-    "light_css_variables": {
-        "font-stack": "Lato, sans-serif",
-        "font-stack--monospace": "Fira Code, monospace",
-    },
     "sidebar_hide_name": False,
+    "navigation_with_keys": True,
+    "announcement": "Bu dokümantasyon geliştirilme aşamasındadır.",
+    "light_css_variables": {
+        "color-brand-primary": "#2980B9",
+        "color-brand-content": "#2980B9",
+        "font-stack": "system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+        "font-stack--monospace": "SFMono-Regular, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace",
+    },
 }
 
 html_static_path = ['_static']
