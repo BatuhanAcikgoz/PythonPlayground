@@ -15,13 +15,14 @@ extensions = [
     'sphinx_autodoc_typehints',
     'sphinx.ext.intersphinx',  # Python standart kütüphane bağlantıları
     'sphinx.ext.autosummary',  # Otomatik özet oluşturma
-    'sphinx.opengraph',  # OpenGraph meta etiketleri
+    'sphinxext.opengraph',  # Doğru import path
 ]
 
 # OpenGraph ayarları
 ogp_site_url = "https://batuhanacikgoz.github.io/PythonPlayground/"
-ogp_image = "_static/wagtail-style-logo.png"
 ogp_description_length = 300
+ogp_type = "website"
+ogp_site_name = "PythonPlayground"
 
 templates_path = ['_templates']
 exclude_patterns = []
