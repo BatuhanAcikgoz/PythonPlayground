@@ -41,9 +41,11 @@ class SettingForm(FlaskForm):
     default_ai_model = SelectField('Varsayılan AI Modeli',
                                    choices=[
                                        ('gemini-1.5-pro-latest', 'Gemini 1.5 Pro'),
-                                       ('gemini-1.5-flash-latest', 'Gemini 1.5 Flash')
+                                       ('gemini-1.5-flash-latest', 'Gemini 1.5 Flash'),
+                                       ('gemini-2.0-pro', 'Gemini 2.0 Pro'),
+                                       ('gemini-2.0-flash', 'Gemini 2.0 Flash'),
+                                       ('gemini-2.0-flash-lite', 'Gemini 2.0 Flash Lite'),
                                    ],
-                                   default='gemini-1.5-flash-latest')
-    max_token_limit = StringField('Maksimum Token Limiti')
+                                   default='gemini-2.0-flash-lite')
     api_key = PasswordField('API Anahtarı')
     submit = SubmitField('Ayarları Kaydet')

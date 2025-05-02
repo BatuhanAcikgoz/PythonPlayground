@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ _('leaderboard') }} - {{ _('app_name') }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        html, body, #root {
+            height: 100%;
+        }
+        #root {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .rank-1 {
+            background-color: rgba(253, 224, 71, 0.2);
+        }
+        .rank-2 {
+            background-color: rgba(209, 213, 219, 0.2);
+        }
+        .rank-3 {
+            background-color: rgba(234, 179, 8, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <!-- Global değişkenleri tanımla -->
+    <script>
+        window.APP_DATA = {
+            isLoggedIn: {{ current_user.is_authenticated|tojson }},
+            userData: {
+                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
+                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
+            },
+            headerTrans: {
+                appName: {{ _('app_name')|tojson|safe }},
+                tagline: {{ _('app_tagline')|tojson|safe }},
+                home: {{ _('home')|tojson|safe }},
+                courses: {{ _('courses')|tojson|safe }},
+                leaderboard: {{ _('leaderboard')|tojson|safe }},
+                about: {{ _('about')|tojson|safe }},
+                logout: {{ _('logout')|tojson|safe }},
+                login: {{ _('login')|tojson|safe }},
+                register: {{ _('register')|tojson|safe }},
+                profile: "Profile",
+                settings: "Settings"
+            },
+            footerTrans: {
+                allRights: {{ _('all_rights')|tojson|safe }},
+                platformDesc: {{ _('platform_desc')|tojson|safe }}
+            },
+            currentLang: {{ session.get('language', 'tr')|tojson }}
+        };
+    </script>
+
+    <!-- Bileşenleri yükle -->
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
+
+    <script type="text/babel">
+        const App = () => {
+            // Flask şablonundan veri al
+            const users = {{ users|tojson|safe if users is defined else '[]' }};
+
+            const LeaderboardTable = () => {
+                const [data, setData] = React.useState(null);
+                const [loading, setLoading] = React.useState(true);
+                const [error, setError] = React.useState(null);
+
+                React.useEffect(() => {
+                    setLoading(true);
+                    fetch(`/api/leaderboard?limit=20`)
+                        .then(response => {
+                            if (!response.ok) throw new Error("Veriler alınamadı");
+                            return response.json();
+                        })
+                        .then(data => {
+                            setData(data);
+                            setLoading(false);
+                        })
+                        .catch(err => {
+                            setError(err.message);
+                            setLoading(false);
+                        });
+                }, []);
+
+                if (loading) return <div className="text-center py-8">Yükleniyor...</div>;
+                if (error) return <div className="text-center py-8 text-red-500">Hata: {error}</div>;
+                if (!data) return null;
+
+                return (
+                    <div>
+                        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sıra</th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kullanıcı</th>
+                                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Puan</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {data.users.map((user, index) => {
+                                        let rankClass = "";
+                                        let rankBadge = null;
+
+                                        if (user.rank === 1) {
+                                            rankClass = "rank-1";
+                                            rankBadge = <span className="text-yellow-500 font-bold text-lg">🥇 1</span>;
+                                        } else if (user.rank === 2) {
+                                            rankClass = "rank-2";
+                                            rankBadge = <span className="text-gray-500 font-bold text-lg">🥈 2</span>;
+                                        } else if (user.rank === 3) {
+                                            rankClass = "rank-3";
+                                            rankBadge = <span className="text-orange-500 font-bold text-lg">🥉 3</span>;
+                                        }
+
+                                        return (
+                                            <tr key={index} className={`${rankClass} hover:bg-blue-50 transition-colors`}>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {rankBadge || <span className="text-gray-700">{user.rank}</span>}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <a href={`/user/${user.username}`}
+                                                       className="text-blue-600 hover:text-blue-900 font-medium">
+                                                        {user.username}
+                                                    </a>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap font-medium">
+                                                    {user.points}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <React.Fragment>
+                    <Header />
+                    <main className="flex-grow container mx-auto px-4 py-8">
+                        <div className="max-w-4xl mx-auto">
+                            <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Lider Tablosu</h1>
+
+                            <LeaderboardTable />
+
+                        </div>
+                    </main>
+                    <Footer />
+                </React.Fragment>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

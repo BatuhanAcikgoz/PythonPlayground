@@ -402,7 +402,7 @@ def get_notebook_summary(request: NotebookSummaryRequest, db=Depends(get_db)):
         api_provider = settings.get('ai_api_provider', 'gemini')
         api_key = settings.get('ai_api_key', '')
         model_name = settings.get('ai_default_model', 'gemini-1.5-flash')
-        max_tokens = int(settings.get('ai_max_token_limit', 10000))
+        max_tokens = int(settings.get('ai_max_token_limit', 10000000))
         enabled = settings.get('ai_enable_features', 'true').lower() == 'true'
 
         if not enabled:
@@ -692,3 +692,144 @@ KESİN KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dilem
             "last_updated": datetime.utcnow().isoformat(),
             "error": str(e)
         }
+
+from typing import Optional, List
+
+class DetailedQuestion(BaseModel):
+    id: int
+    title: str
+    description: str
+    difficulty: int
+    points: int
+    updated_at: str
+    created_at: str
+
+@api.get("/api/last-questions-detail", response_model=List[DetailedQuestion])
+def get_last_questions_detail(limit: Optional[int] = 5, db=Depends(get_db)):
+    """
+    API fonksiyonunu, bir veritabanından en son eklenen programlama sorularını belirli bir
+    sınır (varsayılan olarak 5) içinde sorgulatmak ve çağıran tarafın kullanımı için
+    detaylı bir formatta döndürmek üzere tasarlar. Sorular, oluşturulma tarihine göre
+    azalan bir biçimde sıralanır.
+
+    Parameters:
+        limit (Optional[int]): Sorguya dahil edilecek maksimum soru sayısını belirten
+                               isteğe bağlı bir parametredir. Varsayılan olarak 5'tir.
+        db: Veritabanı oturum bağımlılığını temsil eder.
+
+    Returns:
+        List: Her biri bir soru nesnesini ifade eden sözlük veri yapılarından oluşan bir
+        liste döner. Dönüş verileri aşağıdaki bilgileri içerir:
+            - id: Soru kimliği
+            - title: Soru başlığı
+            - description: Soru açıklaması
+            - difficulty: Zorluk seviyesi
+            - points: Sorunun puanı
+            - created_at: Oluşturulma tarihi (Yıl-Ay-Gün formatında)
+            - updated_at: Güncellenme tarihi (Yıl-Ay-Gün formatında)
+
+    Raises:
+        HTTPException: Eğer sorgu sırasında bir hata oluşursa, bu durum bir HTTP 500
+        durum kodu ile birlikte hata detayları içeren bir istisna döner.
+    """
+    try:
+        sql_query = text("""
+            SELECT q.id, q.title, q.description, q.difficulty, q.points,
+                   q.created_at, q.updated_at
+            FROM programming_question q
+            ORDER BY q.created_at DESC
+            LIMIT :limit
+        """)
+
+        result = db.execute(sql_query, {"limit": limit})
+
+        questions = []
+        for row in result:
+            questions.append({
+                "id": row.id,
+                "title": row.title,
+                "description": row.description,
+                "difficulty": row.difficulty,
+                "points": row.points,
+                "updated_at": row.updated_at.strftime('%Y-%m-%d'),
+                "created_at": row.created_at.strftime('%Y-%m-%d')
+            })
+
+        return questions
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class LeaderboardEntry(BaseModel):
+    """
+    Bir liderlik tablosu girdisi için veri modelini temsil eder.
+
+    LeaderboardEntry sınıfı, bir kullanıcının liderlik tablosundaki durumunu temsil
+    eder. Kullanicinin adını, puanını ve sıralamasını içerir.
+
+    Attributes:
+        username (str): Kullanıcının kullanıcı adı.
+        points (int): Kullanıcının kazandığı puan sayısı.
+        rank (int): Kullanıcının liderlik tablosundaki sıralaması.
+    """
+    username: str
+    points: int
+    rank: int
+
+
+class LeaderboardResponse(BaseModel):
+    users: List[LeaderboardEntry]
+    total: int
+    limit: int
+
+@api.get("/api/leaderboard", response_model=LeaderboardResponse)
+def get_leaderboard_api(limit: int = 20, db=Depends(get_db)):
+    """
+    Bu fonksiyon, kullanıcıları puanlarına göre sıralamak ve belirli bir sınır ile sınırlı
+    bir liderlik tablosu döndürmek amacıyla kullanılır. Veritabanı ile iletişim kurarak
+    puanlara göre bir sıralama yapar ve belirtilen limit kadar kullanıcıyı liderlik
+    tablosuna ekler. Bunun sonucunda, her kullanıcının sıralamadaki konumu, kullanıcı
+    adı ve puanı döndürülür. Liderlik tablosu, toplam kullanıcı sayısını ve sınır
+    değerini de içerir.
+
+    @param limit: Dönen kullanıcı sayısının sınırı. Varsayılan 20.
+    @type limit: int
+    @param db: Veritabanı bağlantısı için bağımlılık.
+    @type db: Database connection provided by Depends(get_db)
+
+    @return: Liderlik tablosu bilgilerini içeren bir sözlüğü döner. Sözlük, sıralanmış
+    kullanıcı bilgileri listesini ve sınır değerini içerir.
+    @rtype: dict
+
+    @raises HTTPException: Veritabanı işlemi sırasında bir hata meydana gelirse veya
+    istek gerçekleştirilemezse 500 durum kodu ile HTTPException yükselir.
+    """
+    try:
+        # Kullanıcıları puanlarına göre sırala ve limit uygula
+        sql_query = text("""
+            SELECT id, username, points 
+            FROM user 
+            ORDER BY points DESC
+            LIMIT :limit
+        """)
+
+        result = db.execute(sql_query, {"limit": limit})
+
+        users = []
+        for idx, row in enumerate(result):
+            rank = idx + 1
+            users.append({
+                "username": row.username,
+                "points": row.points,
+                "rank": rank
+            })
+
+        return {
+            "users": users,
+            "total": len(users),
+            "limit": limit
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

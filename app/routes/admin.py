@@ -126,7 +126,6 @@ def settings():
         form.enable_ai_features.data = '1' if Setting.get('ai_enable_features', True) else '0'
         form.api_provider.data = Setting.get('ai_api_provider', 'openai')
         form.default_ai_model.data = Setting.get('ai_default_model', 'gpt-3.5-turbo')
-        form.max_token_limit.data = Setting.get('ai_max_token_limit', '1000')
         form.api_key.data = Setting.get('ai_api_key', '')
 
     # Formu kaydet (POST isteğinde)
@@ -146,7 +145,6 @@ def settings():
         Setting.set('ai_enable_features', form.enable_ai_features.data == '1')
         Setting.set('ai_api_provider', form.api_provider.data)
         Setting.set('ai_default_model', form.default_ai_model.data)
-        Setting.set('ai_max_token_limit', form.max_token_limit.data)
         Setting.set('ai_api_key', form.api_key.data)
 
         db.session.commit()

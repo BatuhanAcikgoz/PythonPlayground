@@ -71,7 +71,6 @@
                 "default_ai_model": {{ _('default_ai_model')|tojson|safe }} || "Varsayılan AI Modeli",
                 "jupyter_ai_integration": {{ _('jupyter_ai_integration')|tojson|safe }} || "Jupyter AI Entegrasyonu",
                 "enable_ai_features": {{ _('enable_ai_features')|tojson|safe }} || "AI Özelliklerini Etkinleştir",
-                "max_token_limit": {{ _('max_token_limit')|tojson|safe }} || "Maksimum Token Limiti",
                 "api_provider": {{ _('api_provider')|tojson|safe }} || "API Sağlayıcı"
             },
             formData: {
@@ -91,7 +90,6 @@
                 api_provider: "{{ form.api_provider.data }}",
                 default_ai_model: "{{ form.default_ai_model.data }}",
                 api_key: "{{ form.api_key.data }}",
-                max_token_limit: "{{ form.max_token_limit.data }}",
                 {% endif %}
             }
         };
@@ -344,22 +342,9 @@
                                                             <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro</option>
                                                             <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash</option>
                                                             <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite</option>
+                                                            <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                                                            <option value="gemini-2.0-pro">Gemini 2.0 Pro</option>
                                                         </select>
-                                                </div>
-
-                                                <div className="form-group">
-                                                    <label htmlFor="max_token_limit" className="block text-sm font-medium text-gray-700 mb-1">
-                                                        {translations.max_token_limit}
-                                                    </label>
-                                                    <input
-                                                        type="number"
-                                                        name="max_token_limit"
-                                                        id="max_token_limit"
-                                                        defaultValue="1000"
-                                                        min="100"
-                                                        max="8000"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                    />
                                                 </div>
 
                                                 <div className="form-group md:col-span-2">

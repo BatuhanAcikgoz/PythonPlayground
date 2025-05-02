@@ -1,9 +1,14 @@
-from flask import Blueprint, render_template, redirect, url_for, session, request, flash
+from flask import Blueprint, render_template, redirect, url_for, session, request, flash, current_app
 from flask_login import login_required, current_user
 from flask import send_from_directory
 import os
 import subprocess
 import shutil
+from sqlalchemy import func
+
+from app.models.base import db
+from app.models.user import User
+from app.models.submission import Submission
 
 main_bp = Blueprint('main', __name__)
 
@@ -116,3 +121,11 @@ def set_language(language):
 def serve_component(filename):
     # JSX bileşenleri templates/js/components klasöründe
     return send_from_directory('templates/js/components', filename)
+
+
+@main_bp.route('/leaderboard')
+def leaderboard():
+    """Liderlik tablosu sayfasını görüntüler"""
+    # Template'e sadece temel parametreleri geçirelim,
+    # veriler API'den React bileşeniyle çekilecek
+    return render_template('leaderboard.html')
