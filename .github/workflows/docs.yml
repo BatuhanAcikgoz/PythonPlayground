@@ -1,5 +1,11 @@
 name: Docs
 
+# İzinleri tanımla
+permissions:
+  contents: write  # repo içeriğine yazma izni
+  pages: write     # GitHub Pages için izin
+  id-token: write  # Token doğrulama için gerekli
+
 on:
   push:
     branches: [main]
