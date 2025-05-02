@@ -1,128 +1,287 @@
+<!doctype html>
+<html class="no-js" lang="tr" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Dizin" href="genindex.html" /><link rel="search" title="Ara" href="search.html" /><link rel="next" title="app.routes package" href="app.routes.html" /><link rel="prev" title="app.forms package" href="app.forms.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>app.models package - PythonPlayground 1.0.0 belgelendirmesi</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=a8c1e5d8" />
+    
+    
 
 
-<!DOCTYPE html>
-<html class="writer-html5" lang="tr" data-content_root="./">
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>app.models package &mdash; PythonPlayground 1.0.0 belgelendirmesi</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --color-brand-primary: #43b1b0;
+  --color-brand-content: #43b1b0;
+  --color-admonition-background: #f5fafa;
+  --font-stack: 'Nunito Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-stack--monospace: 'Inconsolata', monospace;
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b6527007"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="_static/translations.js?v=b0f24d8d"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Dizin" href="genindex.html" />
-    <link rel="search" title="Ara" href="search.html" />
-    <link rel="next" title="app.routes package" href="app.routes.html" />
-    <link rel="prev" title="app.forms package" href="app.forms.html" /> 
-</head>
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #59c1c0;
+  --color-brand-content: #59c1c0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #59c1c0;
+  --color-brand-content: #59c1c0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
 
-          
-          
-          <a href="index.html" class="icon icon-home">
-            PythonPlayground
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Belgeleri arayın" aria-label="Belgeleri arayın" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">İçindekiler:</span></p>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">PythonPlayground 1.0.0 belgelendirmesi</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">PythonPlayground 1.0.0 belgelendirmesi</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Ara" name="q" aria-label="Ara">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">İçerik:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">app</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="app.html">app package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="app.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="app.forms.html">app.forms package</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">app.models package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="app.routes.html">app.routes package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="app.services.html">app.services package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="app.utils.html">app.utils package</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="app.html#module-app">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1 current"><a class="reference internal" href="app.html">app package</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="app.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="modules.html">app</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of app</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="app.html">app package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of app package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="app.forms.html">app.forms package</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">app.models package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-app.models.base">app.models.base module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-app.models.notebook_summary">app.models.notebook_summary module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-app.models.programming_question">app.models.programming_question module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-app.models.settings">app.models.settings module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-app.models.submission">app.models.submission module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-app.models.user">app.models.user module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-app.models">Module contents</a></li>
-</ul>
-</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">app.models package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="app.routes.html">app.routes package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="app.services.html">app.services package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="app.utils.html">app.utils package</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="app.html#module-app">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="app.html">app package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of app package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app.forms.html">app.forms package</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">app.models package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.routes.html">app.routes package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.services.html">app.services package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.utils.html">app.utils package</a></li>
 </ul>
 </li>
 </ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">PythonPlayground</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="modules.html">app</a></li>
-          <li class="breadcrumb-item"><a href="app.html">app package</a></li>
-      <li class="breadcrumb-item active">app.models package</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/app.models.rst.txt" rel="nofollow"> Sayfa kaynağını görüntüle</a>
-      </li>
-  </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="app-models-package">
-<h1>app.models package<a class="headerlink" href="#app-models-package" title="Link to this heading"></a></h1>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/app.models.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="app-models-package">
+<h1>app.models package<a class="headerlink" href="#app-models-package" title="Link to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
 <section id="module-app.models.base">
-<span id="app-models-base-module"></span><h2>app.models.base module<a class="headerlink" href="#module-app.models.base" title="Link to this heading"></a></h2>
+<span id="app-models-base-module"></span><h2>app.models.base module<a class="headerlink" href="#module-app.models.base" title="Link to this heading">¶</a></h2>
 </section>
 <section id="module-app.models.notebook_summary">
-<span id="app-models-notebook-summary-module"></span><h2>app.models.notebook_summary module<a class="headerlink" href="#module-app.models.notebook_summary" title="Link to this heading"></a></h2>
+<span id="app-models-notebook-summary-module"></span><h2>app.models.notebook_summary module<a class="headerlink" href="#module-app.models.notebook_summary" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.notebook_summary.</span></span><span class="sig-name descname"><span class="pre">NotebookSummary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/notebook_summary.html#NotebookSummary"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.notebook_summary.</span></span><span class="sig-name descname"><span class="pre">NotebookSummary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/notebook_summary.html#NotebookSummary"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
 <p>A simple constructor that allows initialization from kwargs.</p>
 <p>Sets attributes on the constructed instance using the names and
@@ -131,38 +290,33 @@ values in <code class="docutils literal notranslate"><span class="pre">kwargs</s
 attributes of the instance’s class are allowed. These could be,
 for example, any mapped columns or relationships.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.id" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.notebook_path">
-<span class="sig-name descname"><span class="pre">notebook_path</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.notebook_path" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.summary">
-<span class="sig-name descname"><span class="pre">summary</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.summary" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.code_explanation">
-<span class="sig-name descname"><span class="pre">code_explanation</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.code_explanation" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.last_updated">
-<span class="sig-name descname"><span class="pre">last_updated</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.last_updated" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">code_explanation</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.code_explanation" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.error">
-<span class="sig-name descname"><span class="pre">error</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.error" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">error</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.error" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.last_updated">
+<span class="sig-name descname"><span class="pre">last_updated</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.last_updated" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.notebook_path">
+<span class="sig-name descname"><span class="pre">notebook_path</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.notebook_path" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.query">
-<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar[Query]</span></em><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.query" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar[Query]</span></em><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.query" title="Link to this definition">¶</a></dt>
 <dd><p>A SQLAlchemy query for a model. Equivalent to <code class="docutils literal notranslate"><span class="pre">db.session.query(Model)</span></code>. Can be
 customized per-model by overriding <code class="xref py py-attr docutils literal notranslate"><span class="pre">query_class</span></code>.</p>
 <div class="admonition warning">
@@ -171,15 +325,20 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <code class="docutils literal notranslate"><span class="pre">session.execute(select())</span></code> instead.</p>
 </div>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.summary" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-app.models.programming_question">
-<span id="app-models-programming-question-module"></span><h2>app.models.programming_question module<a class="headerlink" href="#module-app.models.programming_question" title="Link to this heading"></a></h2>
+<span id="app-models-programming-question-module"></span><h2>app.models.programming_question module<a class="headerlink" href="#module-app.models.programming_question" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.programming_question.</span></span><span class="sig-name descname"><span class="pre">ProgrammingQuestion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/programming_question.html#ProgrammingQuestion"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.programming_question.</span></span><span class="sig-name descname"><span class="pre">ProgrammingQuestion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/programming_question.html#ProgrammingQuestion"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
 <p>A simple constructor that allows initialization from kwargs.</p>
 <p>Sets attributes on the constructed instance using the names and
@@ -188,73 +347,48 @@ values in <code class="docutils literal notranslate"><span class="pre">kwargs</s
 attributes of the instance’s class are allowed. These could be,
 for example, any mapped columns or relationships.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.id" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.title">
-<span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.title" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.created_at" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.description">
-<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.description" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.description" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.difficulty">
-<span class="sig-name descname"><span class="pre">difficulty</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.difficulty" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.points">
-<span class="sig-name descname"><span class="pre">points</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.points" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">difficulty</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.difficulty" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.example_input">
-<span class="sig-name descname"><span class="pre">example_input</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.example_input" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">example_input</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.example_input" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.example_output">
-<span class="sig-name descname"><span class="pre">example_output</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.example_output" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">example_output</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.example_output" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.function_name">
-<span class="sig-name descname"><span class="pre">function_name</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.function_name" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">function_name</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.function_name" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.solution_code">
-<span class="sig-name descname"><span class="pre">solution_code</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.solution_code" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.id" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.test_inputs">
-<span class="sig-name descname"><span class="pre">test_inputs</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.test_inputs" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.created_at">
-<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.created_at" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.updated_at">
-<span class="sig-name descname"><span class="pre">updated_at</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.updated_at" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.submissions">
-<span class="sig-name descname"><span class="pre">submissions</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.submissions" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.points">
+<span class="sig-name descname"><span class="pre">points</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.points" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.query">
-<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar[Query]</span></em><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.query" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar[Query]</span></em><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.query" title="Link to this definition">¶</a></dt>
 <dd><p>A SQLAlchemy query for a model. Equivalent to <code class="docutils literal notranslate"><span class="pre">db.session.query(Model)</span></code>. Can be
 customized per-model by overriding <code class="xref py py-attr docutils literal notranslate"><span class="pre">query_class</span></code>.</p>
 <div class="admonition warning">
@@ -263,15 +397,40 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <code class="docutils literal notranslate"><span class="pre">session.execute(select())</span></code> instead.</p>
 </div>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.solution_code">
+<span class="sig-name descname"><span class="pre">solution_code</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.solution_code" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.submissions">
+<span class="sig-name descname"><span class="pre">submissions</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.submissions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.test_inputs">
+<span class="sig-name descname"><span class="pre">test_inputs</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.test_inputs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.title">
+<span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.title" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.updated_at">
+<span class="sig-name descname"><span class="pre">updated_at</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.updated_at" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-app.models.settings">
-<span id="app-models-settings-module"></span><h2>app.models.settings module<a class="headerlink" href="#module-app.models.settings" title="Link to this heading"></a></h2>
+<span id="app-models-settings-module"></span><h2>app.models.settings module<a class="headerlink" href="#module-app.models.settings" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="app.models.settings.Setting">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.settings.</span></span><span class="sig-name descname"><span class="pre">Setting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/settings.html#Setting"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.settings.Setting" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.settings.</span></span><span class="sig-name descname"><span class="pre">Setting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/settings.html#Setting"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.settings.Setting" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
 <p>A simple constructor that allows initialization from kwargs.</p>
 <p>Sets attributes on the constructed instance using the names and
@@ -279,51 +438,41 @@ values in <code class="docutils literal notranslate"><span class="pre">kwargs</s
 <p>Only keys that are present as
 attributes of the instance’s class are allowed. These could be,
 for example, any mapped columns or relationships.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.settings.Setting.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.settings.Setting.id" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.settings.Setting.key">
-<span class="sig-name descname"><span class="pre">key</span></span><a class="headerlink" href="#app.models.settings.Setting.key" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.settings.Setting.value">
-<span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#app.models.settings.Setting.value" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.settings.Setting.type">
-<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#app.models.settings.Setting.type" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.settings.Setting.category">
-<span class="sig-name descname"><span class="pre">category</span></span><a class="headerlink" href="#app.models.settings.Setting.category" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.settings.Setting.description">
-<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#app.models.settings.Setting.description" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.settings.Setting.get">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/settings.html#Setting.get"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.settings.Setting.get" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/settings.html#Setting.get"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.settings.Setting.get" title="Link to this definition">¶</a></dt>
 <dd><p>Belirli bir anahtarın değerini döndür</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.settings.Setting.set">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/settings.html#Setting.set"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.settings.Setting.set" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/settings.html#Setting.set"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.settings.Setting.set" title="Link to this definition">¶</a></dt>
 <dd><p>Ayarı güncelle veya oluştur</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.settings.Setting.category">
+<span class="sig-name descname"><span class="pre">category</span></span><a class="headerlink" href="#app.models.settings.Setting.category" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.settings.Setting.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#app.models.settings.Setting.description" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.settings.Setting.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.settings.Setting.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.settings.Setting.key">
+<span class="sig-name descname"><span class="pre">key</span></span><a class="headerlink" href="#app.models.settings.Setting.key" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.settings.Setting.query">
-<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar[Query]</span></em><a class="headerlink" href="#app.models.settings.Setting.query" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar[Query]</span></em><a class="headerlink" href="#app.models.settings.Setting.query" title="Link to this definition">¶</a></dt>
 <dd><p>A SQLAlchemy query for a model. Equivalent to <code class="docutils literal notranslate"><span class="pre">db.session.query(Model)</span></code>. Can be
 customized per-model by overriding <code class="xref py py-attr docutils literal notranslate"><span class="pre">query_class</span></code>.</p>
 <div class="admonition warning">
@@ -332,21 +481,31 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <code class="docutils literal notranslate"><span class="pre">session.execute(select())</span></code> instead.</p>
 </div>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.settings.Setting.type">
+<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#app.models.settings.Setting.type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.settings.Setting.value">
+<span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#app.models.settings.Setting.value" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.models.settings.add_ai_settings">
-<span class="sig-prename descclassname"><span class="pre">app.models.settings.</span></span><span class="sig-name descname"><span class="pre">add_ai_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/settings.html#add_ai_settings"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.settings.add_ai_settings" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">app.models.settings.</span></span><span class="sig-name descname"><span class="pre">add_ai_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/settings.html#add_ai_settings"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.settings.add_ai_settings" title="Link to this definition">¶</a></dt>
 <dd><p>AI ayarlarını Settings tablosuna ekler - Sadece Gemini API için</p>
 </dd></dl>
 
 </section>
 <section id="module-app.models.submission">
-<span id="app-models-submission-module"></span><h2>app.models.submission module<a class="headerlink" href="#module-app.models.submission" title="Link to this heading"></a></h2>
+<span id="app-models-submission-module"></span><h2>app.models.submission module<a class="headerlink" href="#module-app.models.submission" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="app.models.submission.Submission">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.submission.</span></span><span class="sig-name descname"><span class="pre">Submission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.submission.Submission" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.submission.</span></span><span class="sig-name descname"><span class="pre">Submission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.submission.Submission" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
 <p>A simple constructor that allows initialization from kwargs.</p>
 <p>Sets attributes on the constructed instance using the names and
@@ -354,76 +513,50 @@ values in <code class="docutils literal notranslate"><span class="pre">kwargs</s
 <p>Only keys that are present as
 attributes of the instance’s class are allowed. These could be,
 for example, any mapped columns or relationships.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.submission.Submission.id" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.models.submission.Submission.has_correct_submission">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">has_correct_submission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">question_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission.has_correct_submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.submission.Submission.has_correct_submission" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcının belirli bir soru için doğru çözüm gönderip göndermediğini kontrol eder</p>
+</dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.user_id">
-<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#app.models.submission.Submission.user_id" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.question_id">
-<span class="sig-name descname"><span class="pre">question_id</span></span><a class="headerlink" href="#app.models.submission.Submission.question_id" title="Link to this definition"></a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.models.submission.Submission.save_submission">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_submission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">question</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluation_result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission.save_submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.submission.Submission.save_submission" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.submission.Submission.code">
-<span class="sig-name descname"><span class="pre">code</span></span><a class="headerlink" href="#app.models.submission.Submission.code" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.is_correct">
-<span class="sig-name descname"><span class="pre">is_correct</span></span><a class="headerlink" href="#app.models.submission.Submission.is_correct" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.test_results">
-<span class="sig-name descname"><span class="pre">test_results</span></span><a class="headerlink" href="#app.models.submission.Submission.test_results" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.execution_time">
-<span class="sig-name descname"><span class="pre">execution_time</span></span><a class="headerlink" href="#app.models.submission.Submission.execution_time" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.error_message">
-<span class="sig-name descname"><span class="pre">error_message</span></span><a class="headerlink" href="#app.models.submission.Submission.error_message" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">code</span></span><a class="headerlink" href="#app.models.submission.Submission.code" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.submission.Submission.created_at">
-<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#app.models.submission.Submission.created_at" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#app.models.submission.Submission.created_at" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.user">
-<span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#app.models.submission.Submission.user" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="app.models.submission.Submission.error_message">
+<span class="sig-name descname"><span class="pre">error_message</span></span><a class="headerlink" href="#app.models.submission.Submission.error_message" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="app.models.submission.Submission.save_submission">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_submission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">question</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluation_result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission.save_submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.submission.Submission.save_submission" title="Link to this definition"></a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.execution_time">
+<span class="sig-name descname"><span class="pre">execution_time</span></span><a class="headerlink" href="#app.models.submission.Submission.execution_time" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="app.models.submission.Submission.has_correct_submission">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">has_correct_submission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">question_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission.has_correct_submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.submission.Submission.has_correct_submission" title="Link to this definition"></a></dt>
-<dd><p>Kullanıcının belirli bir soru için doğru çözüm gönderip göndermediğini kontrol eder</p>
-</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.submission.Submission.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="app.models.submission.Submission.result_summary">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">result_summary</span></span><a class="headerlink" href="#app.models.submission.Submission.result_summary" title="Link to this definition"></a></dt>
-<dd><p>Test sonuçlarının özeti</p>
-</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.is_correct">
+<span class="sig-name descname"><span class="pre">is_correct</span></span><a class="headerlink" href="#app.models.submission.Submission.is_correct" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.submission.Submission.query">
-<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar[Query]</span></em><a class="headerlink" href="#app.models.submission.Submission.query" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar[Query]</span></em><a class="headerlink" href="#app.models.submission.Submission.query" title="Link to this definition">¶</a></dt>
 <dd><p>A SQLAlchemy query for a model. Equivalent to <code class="docutils literal notranslate"><span class="pre">db.session.query(Model)</span></code>. Can be
 customized per-model by overriding <code class="xref py py-attr docutils literal notranslate"><span class="pre">query_class</span></code>.</p>
 <div class="admonition warning">
@@ -433,14 +566,40 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 </div>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.question_id">
+<span class="sig-name descname"><span class="pre">question_id</span></span><a class="headerlink" href="#app.models.submission.Submission.question_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="app.models.submission.Submission.result_summary">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">result_summary</span></span><a class="headerlink" href="#app.models.submission.Submission.result_summary" title="Link to this definition">¶</a></dt>
+<dd><p>Test sonuçlarının özeti</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.test_results">
+<span class="sig-name descname"><span class="pre">test_results</span></span><a class="headerlink" href="#app.models.submission.Submission.test_results" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.user">
+<span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#app.models.submission.Submission.user" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#app.models.submission.Submission.user_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </section>
 <section id="module-app.models.user">
-<span id="app-models-user-module"></span><h2>app.models.user module<a class="headerlink" href="#module-app.models.user" title="Link to this heading"></a></h2>
+<span id="app-models-user-module"></span><h2>app.models.user module<a class="headerlink" href="#module-app.models.user" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="app.models.user.Role">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.user.</span></span><span class="sig-name descname"><span class="pre">Role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#Role"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.Role" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.user.</span></span><span class="sig-name descname"><span class="pre">Role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#Role"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.Role" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
 <p>A simple constructor that allows initialization from kwargs.</p>
 <p>Sets attributes on the constructed instance using the names and
@@ -449,23 +608,23 @@ values in <code class="docutils literal notranslate"><span class="pre">kwargs</s
 attributes of the instance’s class are allowed. These could be,
 for example, any mapped columns or relationships.</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.user.Role.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#app.models.user.Role.description" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.user.Role.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.user.Role.id" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.user.Role.id" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.user.Role.name">
-<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#app.models.user.Role.name" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.user.Role.description">
-<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#app.models.user.Role.description" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#app.models.user.Role.name" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.user.Role.query">
-<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar[Query]</span></em><a class="headerlink" href="#app.models.user.Role.query" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar[Query]</span></em><a class="headerlink" href="#app.models.user.Role.query" title="Link to this definition">¶</a></dt>
 <dd><p>A SQLAlchemy query for a model. Equivalent to <code class="docutils literal notranslate"><span class="pre">db.session.query(Model)</span></code>. Can be
 customized per-model by overriding <code class="xref py py-attr docutils literal notranslate"><span class="pre">query_class</span></code>.</p>
 <div class="admonition warning">
@@ -479,7 +638,7 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 
 <dl class="py class">
 <dt class="sig sig-object py" id="app.models.user.User">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.user.</span></span><span class="sig-name descname"><span class="pre">User</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.user.</span></span><span class="sig-name descname"><span class="pre">User</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">UserMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
 <p>A simple constructor that allows initialization from kwargs.</p>
 <p>Sets attributes on the constructed instance using the names and
@@ -487,69 +646,59 @@ values in <code class="docutils literal notranslate"><span class="pre">kwargs</s
 <p>Only keys that are present as
 attributes of the instance’s class are allowed. These could be,
 for example, any mapped columns or relationships.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.user.User.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.user.User.id" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.user.User.username">
-<span class="sig-name descname"><span class="pre">username</span></span><a class="headerlink" href="#app.models.user.User.username" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.user.User.email">
-<span class="sig-name descname"><span class="pre">email</span></span><a class="headerlink" href="#app.models.user.User.email" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.user.User.password_hash">
-<span class="sig-name descname"><span class="pre">password_hash</span></span><a class="headerlink" href="#app.models.user.User.password_hash" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.user.User.created_at">
-<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#app.models.user.User.created_at" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.user.User.points">
-<span class="sig-name descname"><span class="pre">points</span></span><a class="headerlink" href="#app.models.user.User.points" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.user.User.roles">
-<span class="sig-name descname"><span class="pre">roles</span></span><a class="headerlink" href="#app.models.user.User.roles" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="app.models.user.User.set_password">
-<span class="sig-name descname"><span class="pre">set_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.set_password"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.set_password" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.user.User.check_password">
-<span class="sig-name descname"><span class="pre">check_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.check_password"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.check_password" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">check_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.check_password"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.check_password" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.user.User.has_role">
-<span class="sig-name descname"><span class="pre">has_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.has_role"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.has_role" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">has_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.has_role"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.has_role" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.user.User.is_admin">
-<span class="sig-name descname"><span class="pre">is_admin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.is_admin"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.is_admin" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_admin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.is_admin"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.is_admin" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.user.User.is_teacher">
-<span class="sig-name descname"><span class="pre">is_teacher</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.is_teacher"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.is_teacher" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">is_teacher</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.is_teacher"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.is_teacher" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.models.user.User.set_password">
+<span class="sig-name descname"><span class="pre">set_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.set_password"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.set_password" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.user.User.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#app.models.user.User.created_at" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.user.User.email">
+<span class="sig-name descname"><span class="pre">email</span></span><a class="headerlink" href="#app.models.user.User.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.user.User.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.user.User.id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.user.User.password_hash">
+<span class="sig-name descname"><span class="pre">password_hash</span></span><a class="headerlink" href="#app.models.user.User.password_hash" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.user.User.points">
+<span class="sig-name descname"><span class="pre">points</span></span><a class="headerlink" href="#app.models.user.User.points" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.user.User.query">
-<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar[Query]</span></em><a class="headerlink" href="#app.models.user.User.query" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">query</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">t.ClassVar[Query]</span></em><a class="headerlink" href="#app.models.user.User.query" title="Link to this definition">¶</a></dt>
 <dd><p>A SQLAlchemy query for a model. Equivalent to <code class="docutils literal notranslate"><span class="pre">db.session.query(Model)</span></code>. Can be
 customized per-model by overriding <code class="xref py py-attr docutils literal notranslate"><span class="pre">query_class</span></code>.</p>
 <div class="admonition warning">
@@ -559,43 +708,201 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 </div>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.user.User.roles">
+<span class="sig-name descname"><span class="pre">roles</span></span><a class="headerlink" href="#app.models.user.User.roles" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.user.User.username">
+<span class="sig-name descname"><span class="pre">username</span></span><a class="headerlink" href="#app.models.user.User.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </section>
 <section id="module-app.models">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-app.models" title="Link to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-app.models" title="Link to this heading">¶</a></h2>
 </section>
 </section>
 
-
-           </div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="app.routes.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">app.routes package</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="app.forms.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">app.forms package</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, BatuhanAcikgoz
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="app.forms.html" class="btn btn-neutral float-left" title="app.forms package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Önceki</a>
-        <a href="app.routes.html" class="btn btn-neutral float-right" title="app.routes package" accesskey="n" rel="next">Sonraki <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/batuhanacikgoz/PythonPlayground" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
     </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">app.models package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-app.models.base">app.models.base module</a></li>
+<li><a class="reference internal" href="#module-app.models.notebook_summary">app.models.notebook_summary module</a><ul>
+<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary"><code class="docutils literal notranslate"><span class="pre">NotebookSummary</span></code></a><ul>
+<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.code_explanation"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.code_explanation</span></code></a></li>
+<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.error"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.error</span></code></a></li>
+<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.id"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.id</span></code></a></li>
+<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.last_updated"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.last_updated</span></code></a></li>
+<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.notebook_path"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.notebook_path</span></code></a></li>
+<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.query"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.query</span></code></a></li>
+<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.summary"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.summary</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.models.programming_question">app.models.programming_question module</a><ul>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion</span></code></a><ul>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.created_at"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.created_at</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.description"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.description</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.difficulty"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.difficulty</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.example_input"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.example_input</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.example_output"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.example_output</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.function_name"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.function_name</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.id"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.id</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.points"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.points</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.query"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.query</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.solution_code"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.solution_code</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.submissions"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.submissions</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.test_inputs"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.test_inputs</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.title"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.title</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.updated_at"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.updated_at</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.models.settings">app.models.settings module</a><ul>
+<li><a class="reference internal" href="#app.models.settings.Setting"><code class="docutils literal notranslate"><span class="pre">Setting</span></code></a><ul>
+<li><a class="reference internal" href="#app.models.settings.Setting.get"><code class="docutils literal notranslate"><span class="pre">Setting.get()</span></code></a></li>
+<li><a class="reference internal" href="#app.models.settings.Setting.set"><code class="docutils literal notranslate"><span class="pre">Setting.set()</span></code></a></li>
+<li><a class="reference internal" href="#app.models.settings.Setting.category"><code class="docutils literal notranslate"><span class="pre">Setting.category</span></code></a></li>
+<li><a class="reference internal" href="#app.models.settings.Setting.description"><code class="docutils literal notranslate"><span class="pre">Setting.description</span></code></a></li>
+<li><a class="reference internal" href="#app.models.settings.Setting.id"><code class="docutils literal notranslate"><span class="pre">Setting.id</span></code></a></li>
+<li><a class="reference internal" href="#app.models.settings.Setting.key"><code class="docutils literal notranslate"><span class="pre">Setting.key</span></code></a></li>
+<li><a class="reference internal" href="#app.models.settings.Setting.query"><code class="docutils literal notranslate"><span class="pre">Setting.query</span></code></a></li>
+<li><a class="reference internal" href="#app.models.settings.Setting.type"><code class="docutils literal notranslate"><span class="pre">Setting.type</span></code></a></li>
+<li><a class="reference internal" href="#app.models.settings.Setting.value"><code class="docutils literal notranslate"><span class="pre">Setting.value</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.models.settings.add_ai_settings"><code class="docutils literal notranslate"><span class="pre">add_ai_settings()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.models.submission">app.models.submission module</a><ul>
+<li><a class="reference internal" href="#app.models.submission.Submission"><code class="docutils literal notranslate"><span class="pre">Submission</span></code></a><ul>
+<li><a class="reference internal" href="#app.models.submission.Submission.has_correct_submission"><code class="docutils literal notranslate"><span class="pre">Submission.has_correct_submission()</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.save_submission"><code class="docutils literal notranslate"><span class="pre">Submission.save_submission()</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.code"><code class="docutils literal notranslate"><span class="pre">Submission.code</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.created_at"><code class="docutils literal notranslate"><span class="pre">Submission.created_at</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.error_message"><code class="docutils literal notranslate"><span class="pre">Submission.error_message</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.execution_time"><code class="docutils literal notranslate"><span class="pre">Submission.execution_time</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.id"><code class="docutils literal notranslate"><span class="pre">Submission.id</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.is_correct"><code class="docutils literal notranslate"><span class="pre">Submission.is_correct</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.query"><code class="docutils literal notranslate"><span class="pre">Submission.query</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.question_id"><code class="docutils literal notranslate"><span class="pre">Submission.question_id</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.result_summary"><code class="docutils literal notranslate"><span class="pre">Submission.result_summary</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.test_results"><code class="docutils literal notranslate"><span class="pre">Submission.test_results</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.user"><code class="docutils literal notranslate"><span class="pre">Submission.user</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.user_id"><code class="docutils literal notranslate"><span class="pre">Submission.user_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.models.user">app.models.user module</a><ul>
+<li><a class="reference internal" href="#app.models.user.Role"><code class="docutils literal notranslate"><span class="pre">Role</span></code></a><ul>
+<li><a class="reference internal" href="#app.models.user.Role.description"><code class="docutils literal notranslate"><span class="pre">Role.description</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.Role.id"><code class="docutils literal notranslate"><span class="pre">Role.id</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.Role.name"><code class="docutils literal notranslate"><span class="pre">Role.name</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.Role.query"><code class="docutils literal notranslate"><span class="pre">Role.query</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.models.user.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a><ul>
+<li><a class="reference internal" href="#app.models.user.User.check_password"><code class="docutils literal notranslate"><span class="pre">User.check_password()</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.User.has_role"><code class="docutils literal notranslate"><span class="pre">User.has_role()</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.User.is_admin"><code class="docutils literal notranslate"><span class="pre">User.is_admin()</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.User.is_teacher"><code class="docutils literal notranslate"><span class="pre">User.is_teacher()</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.User.set_password"><code class="docutils literal notranslate"><span class="pre">User.set_password()</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.User.created_at"><code class="docutils literal notranslate"><span class="pre">User.created_at</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.User.email"><code class="docutils literal notranslate"><span class="pre">User.email</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.User.id"><code class="docutils literal notranslate"><span class="pre">User.id</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.User.password_hash"><code class="docutils literal notranslate"><span class="pre">User.password_hash</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.User.points"><code class="docutils literal notranslate"><span class="pre">User.points</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.User.query"><code class="docutils literal notranslate"><span class="pre">User.query</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.User.roles"><code class="docutils literal notranslate"><span class="pre">User.roles</span></code></a></li>
+<li><a class="reference internal" href="#app.models.user.User.username"><code class="docutils literal notranslate"><span class="pre">User.username</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.models">Module contents</a></li>
+</ul>
+</li>
+</ul>
 
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2025, BatuhanAcikgoz.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
-    kullanılarak <a href="https://readthedocs.org">Read the Docs</a> tarafından sağlanmasıyla oluşturuldu.
-   
-
-</footer>
+          </div>
         </div>
       </div>
-    </section>
+      
+      
+    </aside>
   </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+</div><script src="_static/documentation_options.js?v=b6527007"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="_static/translations.js?v=b0f24d8d"></script>
+    <script src="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&family=Inconsolata&display=swap"></script>
+    </body>
 </html>
