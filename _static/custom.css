@@ -1,48 +1,74 @@
+/* Wagtail tarzı genel görünüm */
 :root {
-    --admonition-font-size: 0.95rem;
-    --admonition-title-font-size: 1rem;
+    --wagtail-color-primary: #43b1b0;
+    --wagtail-color-secondary: #358c8b;
+    --wagtail-color-teal-darker: #246060;
+    --wagtail-color-grey-1: #333;
+    --wagtail-color-grey-2: #555;
+    --wagtail-color-grey-3: #777;
+    --wagtail-color-grey-4: #999;
 }
 
-/* Wagtail benzeri genel görünüm */
+/* Ana içerik genişliği ve kenar boşluklarını ayarlama */
+article {
+    max-width: 900px !important;
+    line-height: 1.6;
+}
+
+/* Logo ve sidebar stilleri */
 .sidebar-brand {
     padding: 1.5rem 1.5rem 0.5rem 1.5rem;
 }
 
 .sidebar-brand-text {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: var(--color-brand-primary);
+    color: var(--wagtail-color-primary);
 }
 
-/* Başlıklar için Wagtail stili */
+/* Başlık stilleri */
 h1, h2, h3 {
     font-weight: 700;
     margin-top: 2rem;
     margin-bottom: 1rem;
-    color: #333;
 }
 
 h1 {
+    color: var(--wagtail-color-teal-darker);
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.7rem;
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    color: var(--wagtail-color-teal-darker);
     border-bottom: 1px solid #eee;
     padding-bottom: 0.5rem;
 }
 
-/* Kod bloğu stilini geliştirme */
-pre {
+/* Kod blokları */
+div[class*="highlight-"] {
     border-radius: 5px;
+    border-left: 3px solid var(--wagtail-color-primary);
+    margin: 1.5rem 0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .highlight {
     border-radius: 4px;
-    margin: 1.2rem 0;
+    background: #f6f8fa;
 }
 
-/* Method ve class tanımlarının stillerini geliştirme */
+pre {
+    padding: 1rem;
+    font-size: 0.9rem;
+}
+
+/* API referans stilleri - Wagtail benzeri */
 dl.py.class, dl.py.function, dl.py.method {
-    padding: 0.5rem;
+    padding: 1rem;
     margin-bottom: 1.5rem;
-    border-left: 3px solid var(--color-brand-primary);
+    border-left: 3px solid var(--wagtail-color-primary);
     background: rgba(67, 177, 176, 0.05);
     border-radius: 0 4px 4px 0;
 }
@@ -50,31 +76,55 @@ dl.py.class, dl.py.function, dl.py.method {
 .sig {
     border-radius: 4px;
     padding: 0.7rem;
+    margin-bottom: 1rem;
     background: rgba(67, 177, 176, 0.1);
 }
 
 .sig-name {
     font-weight: 700;
-    color: var(--color-brand-primary);
+    color: var(--wagtail-color-primary);
 }
 
-.sig-param {
-    font-style: normal;
-}
-
-/* Navigasyon için stil geliştirmesi */
+/* Navigasyon ve içindekiler */
 .toc-tree li {
     margin: 0.5rem 0;
+    line-height: 1.4;
 }
 
-/* Bağlantılar için stil geliştirmesi */
+/* Uyarı ve not kutuları - Wagtail tarzı */
+.admonition {
+    border-radius: 4px;
+    border-left-width: 3px;
+    padding: 0.8rem 1rem;
+}
+
+.admonition.note {
+    border-color: var(--wagtail-color-primary);
+}
+
+.admonition-title {
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+}
+
+/* Hover efektleri ve geçişler */
 a.reference {
+    transition: color 0.2s, border-bottom 0.2s;
     text-decoration: none;
-    border-bottom: 1px dotted var(--color-brand-primary);
+    border-bottom: 1px dotted var(--wagtail-color-primary);
 }
 
 a.reference:hover {
-    border-bottom: 1px solid var(--color-brand-primary);
+    color: var(--wagtail-color-secondary);
+    border-bottom: 1px solid var(--wagtail-color-secondary);
+}
+
+/* Üye listesi stilleri */
+p.rubric {
+    font-size: 1.2rem;
+    color: var(--wagtail-color-grey-2);
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.3rem;
 }
 
 /* Mobil görünüm optimizasyonları */
