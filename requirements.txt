@@ -31,7 +31,7 @@ psutil==7.0.0
 #Misc
 requests==2.32.3
 email_validator==2.2.0
-cryptography==40.0.2
+cryptography==44.0.1
 
 # API
 pydantic>=2.7.0
