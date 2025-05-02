@@ -1,35 +1,47 @@
 PythonPlayground Dokümantasyonu
 ===============================
 
-.. image:: _static/logo.png
-   :width: 200px
-   :align: center
-   :alt: PythonPlayground Logo
+.. container:: wagtail-intro
 
-PythonPlayground, kullanıcıların Python kodlarını interaktif bir ortamda çalıştırabilecekleri bir web uygulamasıdır.
+   PythonPlayground, Python kodlarını çalıştırmanıza, yönetmenize ve paylaşmanıza olanak tanıyan bir platformdur.
 
-Özellikler
----------
+.. container:: wagtail-features
 
-* Python kodlarını çalıştırma
-* Socket.IO ile gerçek zamanlı çıktı
-* Kullanıcı yönetimi
-* Notebook benzeri arayüz
+   .. grid:: 3
 
-İçindekiler
-----------
+      .. grid-item-card::
+         :link: modules
+
+         **Modüller**
+
+         Tüm modüllerin dokümantasyonu ve kullanım örnekleri.
+
+      .. grid-item-card::
+         :link: app
+
+         **Uygulama**
+
+         Ana uygulama bileşenleri ve konfigürasyonu.
+
+      .. grid-item-card::
+         :link: api
+
+         **API Referansı**
+
+         REST API ve entegrasyon dokümantasyonu.
 
 .. toctree::
    :maxdepth: 2
    :caption: İçerik:
+   :hidden:
 
    modules
    app
    api
 
-Dizinler ve Tablolar
-==================
+.. toctree::
+   :maxdepth: 1
+   :caption: Referanslar:
+   :hidden:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   genindex

@@ -15,12 +15,19 @@ extensions = [
     'sphinx_autodoc_typehints',
     'sphinx.ext.intersphinx',  # Python standart kütüphane bağlantıları
     'sphinx.ext.autosummary',  # Otomatik özet oluşturma
+    'sphinx.opengraph',  # OpenGraph meta etiketleri
 ]
+
+# OpenGraph ayarları
+ogp_site_url = "https://batuhanacikgoz.github.io/PythonPlayground/"
+ogp_image = "_static/wagtail-style-logo.png"
+ogp_description_length = 300
 
 templates_path = ['_templates']
 exclude_patterns = []
 language = 'tr'
 
+html_title = "PythonPlayground"
 html_theme = 'furo'
 html_theme_options = {
     "sidebar_hide_name": False,
