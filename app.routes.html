@@ -1,0 +1,264 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="tr" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.routes package &mdash; PythonPlayground 1.0.0 belgelendirmesi</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=b6527007"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=b0f24d8d"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Dizin" href="genindex.html" />
+    <link rel="search" title="Ara" href="search.html" />
+    <link rel="next" title="app.services package" href="app.services.html" />
+    <link rel="prev" title="app.models package" href="app.models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PythonPlayground
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Belgeleri arayın" aria-label="Belgeleri arayın" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">İçindekiler:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">app</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="app.html">app package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="app.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="app.forms.html">app.forms package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.models.html">app.models package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">app.routes package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.services.html">app.services package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="app.utils.html">app.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.html#module-app">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="app.html">app package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="app.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="app.forms.html">app.forms package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.models.html">app.models package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">app.routes package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#app-routes-admin-module">app.routes.admin module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.routes.api">app.routes.api module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#app-routes-auth-module">app.routes.auth module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.routes.main">app.routes.main module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.routes.notebook">app.routes.notebook module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#app-routes-programming-module">app.routes.programming module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-app.routes">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="app.services.html">app.services package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="app.utils.html">app.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="app.html#module-app">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PythonPlayground</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">app</a></li>
+          <li class="breadcrumb-item"><a href="app.html">app package</a></li>
+      <li class="breadcrumb-item active">app.routes package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/app.routes.rst.txt" rel="nofollow"> Sayfa kaynağını görüntüle</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="app-routes-package">
+<h1>app.routes package<a class="headerlink" href="#app-routes-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="app-routes-admin-module">
+<h2>app.routes.admin module<a class="headerlink" href="#app-routes-admin-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-app.routes.api">
+<span id="app-routes-api-module"></span><h2>app.routes.api module<a class="headerlink" href="#module-app.routes.api" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.api.admin_required">
+<span class="sig-prename descclassname"><span class="pre">app.routes.api.</span></span><span class="sig-name descname"><span class="pre">admin_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/api.html#admin_required"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.api.admin_required" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.api.proxy">
+<span class="sig-prename descclassname"><span class="pre">app.routes.api.</span></span><span class="sig-name descname"><span class="pre">proxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/api.html#proxy"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.api.proxy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.api.fallback_server_status">
+<span class="sig-prename descclassname"><span class="pre">app.routes.api.</span></span><span class="sig-name descname"><span class="pre">fallback_server_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/api.html#fallback_server_status"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.api.fallback_server_status" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.api.fallback_recent_users">
+<span class="sig-prename descclassname"><span class="pre">app.routes.api.</span></span><span class="sig-name descname"><span class="pre">fallback_recent_users</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/api.html#fallback_recent_users"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.api.fallback_recent_users" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.api.fallback_recent_questions">
+<span class="sig-prename descclassname"><span class="pre">app.routes.api.</span></span><span class="sig-name descname"><span class="pre">fallback_recent_questions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/api.html#fallback_recent_questions"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.api.fallback_recent_questions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="app-routes-auth-module">
+<h2>app.routes.auth module<a class="headerlink" href="#app-routes-auth-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-app.routes.main">
+<span id="app-routes-main-module"></span><h2>app.routes.main module<a class="headerlink" href="#module-app.routes.main" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.main.clone_repo">
+<span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">clone_repo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#clone_repo"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.clone_repo" title="Link to this definition"></a></dt>
+<dd><p>Repository klonlama veya güncelleme işlemi</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.main.index">
+<span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#index"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.index" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.main.redirect_notebook">
+<span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">redirect_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#redirect_notebook"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.redirect_notebook" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.main.refresh_repo">
+<span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">refresh_repo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#refresh_repo"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.refresh_repo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.main.dashboard">
+<span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">dashboard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#dashboard"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.dashboard" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.main.set_language">
+<span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">set_language</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">language</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#set_language"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.set_language" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.main.serve_component">
+<span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">serve_component</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#serve_component"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.serve_component" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.main.leaderboard">
+<span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">leaderboard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#leaderboard"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.leaderboard" title="Link to this definition"></a></dt>
+<dd><p>Liderlik tablosu sayfasını görüntüler</p>
+</dd></dl>
+
+</section>
+<section id="module-app.routes.notebook">
+<span id="app-routes-notebook-module"></span><h2>app.routes.notebook module<a class="headerlink" href="#module-app.routes.notebook" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.notebook.view">
+<span class="sig-prename descclassname"><span class="pre">app.routes.notebook.</span></span><span class="sig-name descname"><span class="pre">view</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/notebook.html#view"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.notebook.view" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.notebook.run">
+<span class="sig-prename descclassname"><span class="pre">app.routes.notebook.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/notebook.html#run"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.notebook.run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.notebook.register_socketio_handlers">
+<span class="sig-prename descclassname"><span class="pre">app.routes.notebook.</span></span><span class="sig-name descname"><span class="pre">register_socketio_handlers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">socketio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/notebook.html#register_socketio_handlers"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.notebook.register_socketio_handlers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.notebook.summary">
+<span class="sig-prename descclassname"><span class="pre">app.routes.notebook.</span></span><span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/notebook.html#summary"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.notebook.summary" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="app-routes-programming-module">
+<h2>app.routes.programming module<a class="headerlink" href="#app-routes-programming-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-app.routes">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-app.routes" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.register_routes">
+<span class="sig-prename descclassname"><span class="pre">app.routes.</span></span><span class="sig-name descname"><span class="pre">register_routes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">socketio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes.html#register_routes"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.register_routes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="app.models.html" class="btn btn-neutral float-left" title="app.models package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Önceki</a>
+        <a href="app.services.html" class="btn btn-neutral float-right" title="app.services package" accesskey="n" rel="next">Sonraki <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, BatuhanAcikgoz.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    kullanılarak <a href="https://readthedocs.org">Read the Docs</a> tarafından sağlanmasıyla oluşturuldu.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
