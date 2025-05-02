@@ -1,44 +1,85 @@
 :root {
-    --admonition-font-size: 0.9rem;
-    --admonition-title-font-size: 0.9rem;
+    --admonition-font-size: 0.95rem;
+    --admonition-title-font-size: 1rem;
 }
 
-article {
-    max-width: 900px !important;
+/* Wagtail benzeri genel görünüm */
+.sidebar-brand {
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
 }
 
 .sidebar-brand-text {
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-brand-primary);
 }
 
-.sig {
-    padding: 0.5rem;
+/* Başlıklar için Wagtail stili */
+h1, h2, h3 {
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
 }
 
-.sig-name {
-    font-weight: bold;
+h1 {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+/* Kod bloğu stilini geliştirme */
+pre {
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .highlight {
     border-radius: 4px;
-    font-size: 0.9rem;
+    margin: 1.2rem 0;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
+/* Method ve class tanımlarının stillerini geliştirme */
+dl.py.class, dl.py.function, dl.py.method {
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 3px solid var(--color-brand-primary);
+    background: rgba(67, 177, 176, 0.05);
+    border-radius: 0 4px 4px 0;
 }
 
-.toc-tree {
-    padding-left: 0.5rem;
+.sig {
+    border-radius: 4px;
+    padding: 0.7rem;
+    background: rgba(67, 177, 176, 0.1);
 }
 
-a.headerlink {
-    opacity: 0;
-    transition: opacity 0.2s;
+.sig-name {
+    font-weight: 700;
+    color: var(--color-brand-primary);
 }
 
-:hover > a.headerlink {
-    opacity: 0.5;
+.sig-param {
+    font-style: normal;
+}
+
+/* Navigasyon için stil geliştirmesi */
+.toc-tree li {
+    margin: 0.5rem 0;
+}
+
+/* Bağlantılar için stil geliştirmesi */
+a.reference {
+    text-decoration: none;
+    border-bottom: 1px dotted var(--color-brand-primary);
+}
+
+a.reference:hover {
+    border-bottom: 1px solid var(--color-brand-primary);
+}
+
+/* Mobil görünüm optimizasyonları */
+@media (max-width: 960px) {
+    article {
+        padding: 1rem;
+    }
 }
