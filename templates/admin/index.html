@@ -66,6 +66,8 @@
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='ServerStatusWidget.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='RecentUsersWidget.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='RecentQuestionsWidget.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='RecentSubmissions.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminChart.jsx') }}"></script>
 
     <script type="text/babel">
         const App = () => {
@@ -75,7 +77,8 @@
                 dashboard: {{ _('dashboard')|tojson|safe }} || "Dashboard",
                 server_status: {{ _('server_status')|tojson|safe }} || "Server Status",
                 recent_users: {{ _('recent_users')|tojson|safe }} || "Recent Users",
-                recent_questions: {{ _('recent_questions')|tojson|safe }} || "Recent Questions"
+                recent_questions: {{ _('recent_questions')|tojson|safe }} || "Recent Questions",
+                recent_submissions: {{ _('recent_submissions')|tojson|safe }} || "Son Gönderimler"
             };
 
             return (
@@ -90,21 +93,62 @@
                             <div className="container mx-auto">
                                 <h1 className="text-3xl font-bold mb-6">{translations.dashboard}</h1>
 
-                                {/* Dashboard Grid */}
+                                {/* İstatistik Kartları */}
+                                <div className="grid grid-cols-1 gap-6 mb-6">
+                                    <AdminChart
+                                        title="Son 30 Gün İstatistikleri"
+                                        chartType="stats"
+                                        endpoint="/api/chart/activity-stats"
+                                        days={30}
+                                    />
+                                </div>
+
+                                {/* Grafikler - Tek Chart'ta Birleştirilmiş */}
+                                <div className="mb-6">
+                                    <AdminChart
+                                        title="Platform Aktivite Analizi"
+                                        chartType="combined"
+                                        endpoints={[
+                                            {
+                                                id: 'registrations',
+                                                url: '/api/chart/registrations',
+                                                label: 'Yeni Kullanıcılar',
+                                                type: 'line',  // 'bar' yerine 'line' olarak değiştirildi
+                                                fill: true,    // Çizgi grafiği altını doldurmak için
+                                                backgroundColor: 'rgba(59, 130, 246, 0.2)', // Hafif mavi dolgu
+                                                borderColor: 'rgba(59, 130, 246, 1)'        // Koyu mavi çizgi
+                                            },
+                                            {
+                                                id: 'solved',
+                                                url: '/api/chart/solved-questions',
+                                                label: 'Çözülen Sorular',
+                                                type: 'line',
+                                                fill: true,
+                                                backgroundColor: 'rgba(34, 197, 94, 0.2)', // Hafif yeşil dolgu
+                                                borderColor: 'rgba(34, 197, 94, 1)'        // Koyu yeşil çizgi
+                                            }
+                                        ]}
+                                        days={30}
+                                        className="shadow-md"
+                                    />
+                                </div>
+
+                                {/* Mevcut widget'lar */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {/* Server Status Widget */}
                                     <div className="col-span-1 lg:col-span-3">
                                         <ServerStatusWidget title={translations.server_status} />
                                     </div>
 
-                                    {/* Recent Users Widget */}
-                                    <div className="col-span-1 lg:col-span-2">
+                                    <div className="col-span-1 lg:col-span-1">
                                         <RecentUsersWidget title={translations.recent_users} />
                                     </div>
 
-                                    {/* Recent Questions Widget */}
                                     <div className="col-span-1">
                                         <RecentQuestionsWidget title={translations.recent_questions} />
+                                    </div>
+
+                                    <div className="col-span-1">
+                                        <RecentSubmissions title={translations.recent_submissions} />
                                     </div>
                                 </div>
                             </div>

@@ -100,6 +100,7 @@ def init_db(app):
         from app.models.notebook_summary import NotebookSummary
         from app.models.programming_question import ProgrammingQuestion
         from app.models.submission import Submission
+        from app.models.badges import Badges
         from app.models.user import User, Role
         from app.models.settings import Setting
 

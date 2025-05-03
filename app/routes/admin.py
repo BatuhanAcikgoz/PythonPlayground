@@ -307,3 +307,71 @@ def test_programming_question(id):
     return render_template('admin/test_programming_question.html',
                            question=question,
                            test_code=question.solution_code)
+
+@admin_bp.route('/badges')
+@admin_required
+def badges():
+    from app.models.badges import Badges
+    badge = Badges.query.all()
+    return render_template('admin/badges.html', badge=badge)
+
+@admin_bp.route('/badges/new', methods=['GET', 'POST'])
+@admin_required
+def new_badge():
+    from app.forms.badges import BadgeForm
+    from app.models.badges import Badges
+
+    form = BadgeForm()
+
+    if form.validate_on_submit():
+        badge = Badges(
+            name=form.name.data,
+            description=form.description.data,
+            icon=form.icon.data,
+        )
+
+        db.session.add(badge)
+        db.session.commit()
+
+        flash('Badge başarıyla oluşturuldu.', 'success')
+        return redirect(url_for('admin.badges'))
+
+    return render_template('admin/new_badge.html', form=form)
+
+@admin_bp.route('/badges/<int:id>/edit', methods=['GET', 'POST'])
+@admin_required
+def edit_badge(id):
+    from app.forms.badges import BadgeForm
+    from app.models.badges import Badges
+
+    badge = Badges.query.get_or_404(id)
+    form = BadgeForm(obj=badge)
+
+    if form.validate_on_submit():
+        form.populate_obj(badge)
+        db.session.commit()
+
+        flash('Badge başarıyla güncellendi.', 'success')
+        return redirect(url_for('admin.badges'))
+
+    return render_template('admin/edit_badge.html', form=form, badge=badge)
+
+@admin_bp.route('/badges/<int:id>/delete', methods=['POST'])
+@admin_required
+def delete_badge(id):
+    from app.models.badges import Badges
+
+    badge = Badges.query.get_or_404(id)
+
+    # Badge ile ilişkili kullanıcıları güncelle
+    from app.models.user import User
+    users = User.query.filter(User.badge_id == id).all()
+    for user in users:
+        user.badge_id = None
+
+    # Sonra badge'i sil
+    db.session.delete(badge)
+    db.session.commit()
+
+    flash('Badge başarıyla silindi.', 'success')
+    return redirect(url_for('admin.badges'))

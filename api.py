@@ -1,11 +1,15 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 import platform
 import psutil
 import flask
-import os
+import json
+import time
+import traceback
+from contextlib import redirect_stdout
+import io
 from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -142,58 +146,6 @@ def recent_users(admin: dict = Depends(get_current_admin), db=Depends(get_db)):
         })
 
     return users
-
-
-class Question(BaseModel):
-    id: int
-    title: str
-    user: str
-    date: str
-    status: str
-
-
-@api.get("/api/recent-questions", response_model=List[Question])
-def recent_questions(admin: dict = Depends(get_current_admin)):
-    # Örnek veri
-    sample_questions = [
-        {
-            "id": 1,
-            "title": "Python döngüleri nasıl kullanılır?",
-            "user": "student1",
-            "date": "02.04.2025",
-            "status": "answered"
-        },
-        {
-            "id": 2,
-            "title": "Flask Blueprint nedir?",
-            "user": "student3",
-            "date": "01.04.2025",
-            "status": "pending"
-        },
-        {
-            "id": 3,
-            "title": "React ile Flask nasıl entegre edilir?",
-            "user": "student2",
-            "date": "31.03.2025",
-            "status": "answered"
-        },
-        {
-            "id": 4,
-            "title": "SQLAlchemy ilişkiler nasıl kurulur?",
-            "user": "student4",
-            "date": "30.03.2025",
-            "status": "pending"
-        }
-    ]
-
-    return sample_questions
-
-# api.py dosyasına eklenecek importlar
-import json
-import time
-import traceback
-from contextlib import redirect_stdout
-import io
 
 class EvaluationRequest(BaseModel):
     code: str
@@ -831,5 +783,156 @@ def get_leaderboard_api(limit: int = 20, db=Depends(get_db)):
             "limit": limit
         }
 
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class SubmissionDetail(BaseModel):
+    id: int
+    user_id: int
+    username: str
+    question_id: int
+    question_title: str
+    is_correct: bool
+    execution_time: float
+    created_at: str
+
+@api.get("/api/last-submissions", response_model=List[SubmissionDetail])
+def get_last_submissions(limit: Optional[int] = 10, db=Depends(get_db)):
+    """
+    En son yapılan çözüm gönderimlerini listeler.
+    """
+    try:
+        sql_query = text("""
+            SELECT s.id, s.user_id, u.username, s.question_id, q.title as question_title, 
+                   s.is_correct, s.execution_time, s.created_at
+            FROM submission s
+            JOIN user u ON s.user_id = u.id
+            JOIN programming_question q ON s.question_id = q.id
+            ORDER BY s.created_at DESC
+            LIMIT :limit
+        """)
+
+        result = db.execute(sql_query, {"limit": limit})
+
+        submissions = []
+        for row in result:
+            submissions.append({
+                "id": row.id,
+                "user_id": row.user_id,
+                "username": row.username,
+                "question_id": row.question_id,
+                "question_title": row.question_title,
+                "is_correct": row.is_correct,
+                "execution_time": row.execution_time,
+                "created_at": row.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            })
+
+        return submissions
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+from typing import Optional
+
+@api.get("/api/chart/registrations")
+def chart_daily_registrations(days: Optional[int] = 30, db=Depends(get_db)):
+    """Son X gün içindeki günlük kullanıcı kayıtlarını döndürür"""
+    try:
+        sql_query = text("""
+            SELECT DATE(created_at) as date, COUNT(*) as count
+            FROM user
+            WHERE created_at >= CURDATE() - INTERVAL :days DAY
+            GROUP BY DATE(created_at)
+            ORDER BY DATE(created_at)
+        """)
+
+        result = db.execute(sql_query, {"days": days})
+
+        data = []
+        for row in result:
+            data.append({
+                "date": row.date.strftime('%Y-%m-%d'),
+                "count": row.count
+            })
+
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api.get("/api/chart/solved-questions")
+def chart_solved_questions(days: Optional[int] = 30, db=Depends(get_db)):
+    """Son X gün içindeki çözülen soruların sayısını döndürür"""
+    try:
+        sql_query = text("""
+            SELECT DATE(created_at) as date, COUNT(*) as count
+            FROM submission
+            WHERE is_correct = 1 AND created_at >= CURDATE() - INTERVAL :days DAY
+            GROUP BY DATE(created_at)
+            ORDER BY DATE(created_at)
+        """)
+
+        result = db.execute(sql_query, {"days": days})
+
+        data = []
+        for row in result:
+            data.append({
+                "date": row.date.strftime('%Y-%m-%d'),
+                "count": row.count
+            })
+
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api.get("/api/chart/activity-stats")
+def chart_activity_stats(days: Optional[int] = 30, db=Depends(get_db)):
+    """Son X gün içindeki platform aktivitelerine ait özet istatistikler"""
+    try:
+        # Yeni kullanıcı kaydı sayısı
+        users_query = text("""
+            SELECT COUNT(*) as user_count
+            FROM user
+            WHERE created_at >= CURDATE() - INTERVAL :days DAY
+        """)
+
+        # Toplam soru çözüm sayısı
+        submissions_query = text("""
+            SELECT COUNT(*) as submission_count
+            FROM submission
+            WHERE created_at >= CURDATE() - INTERVAL :days DAY
+        """)
+
+        # Başarılı soru çözüm sayısı
+        correct_submissions_query = text("""
+            SELECT COUNT(*) as correct_count
+            FROM submission
+            WHERE is_correct = 1 AND created_at >= CURDATE() - INTERVAL :days DAY
+        """)
+
+        # Aktif kullanıcı sayısı
+        active_users_query = text("""
+            SELECT COUNT(DISTINCT user_id) as active_count
+            FROM submission
+            WHERE created_at >= CURDATE() - INTERVAL :days DAY
+        """)
+
+        # Sorguları çalıştır
+        user_count = db.execute(users_query, {"days": days}).first().user_count
+        submission_count = db.execute(submissions_query, {"days": days}).first().submission_count
+        correct_count = db.execute(correct_submissions_query, {"days": days}).first().correct_count
+        active_count = db.execute(active_users_query, {"days": days}).first().active_count
+
+        # Doğruluk oranını hesapla
+        accuracy_rate = 0
+        if submission_count > 0:
+            accuracy_rate = round((correct_count / submission_count) * 100, 1)
+
+        return {
+            "new_users": user_count,
+            "total_submissions": submission_count,
+            "correct_submissions": correct_count,
+            "active_users": active_count,
+            "accuracy_rate": accuracy_rate
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

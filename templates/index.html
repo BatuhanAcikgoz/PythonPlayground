@@ -97,34 +97,6 @@
                 viewAllQuestions: "Tüm Soruları Gör"
             };
 
-            // Örnek yeni sorular - Gerçek uygulamada backend'den alınacaktır
-            const newQuestions = [
-                {
-                    id: 1,
-                    title: "Liste Manipülasyonu Sorusu",
-                    createdAt: "25 Nis 2023",
-                    description: "Python listeleri ile elemanları sıralama ve filtreleme",
-                    isNew: true,
-                    path: "python_lists/sorting.ipynb"
-                },
-                {
-                    id: 2,
-                    title: "Fonksiyon Özellikleri",
-                    createdAt: "23 Nis 2023",
-                    description: "Fonksiyon parametreleri ve recursive fonksiyonlar hakkında",
-                    isNew: true,
-                    path: "python_functions/recursion.ipynb"
-                },
-                {
-                    id: 3,
-                    title: "Dosya İşlemleri",
-                    createdAt: "20 Nis 2023",
-                    description: "Dosya okuma, yazma ve düzenleme işlemleri",
-                    isNew: false,
-                    path: "python_io/file_operations.ipynb"
-                }
-            ];
-
             const NewQuestionsSection = () => {
                 const [questions, setQuestions] = React.useState([]);
                 const [isLoading, setIsLoading] = React.useState(true);
