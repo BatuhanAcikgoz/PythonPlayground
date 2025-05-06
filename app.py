@@ -230,6 +230,124 @@ def load_summaries_with_app_context(app):
         except Exception as e:
             current_app.logger.error(f"Notebook özetleri yüklenirken genel hata: {str(e)}")
 
+
+def init_db(app):
+    with app.app_context():
+        # NotebookSummary modelini açıkça import et
+        from app.models.notebook_summary import NotebookSummary
+        from app.models.programming_question import ProgrammingQuestion
+        from app.models.submission import Submission
+        from app.models.badges import Badges
+        from app.models.user import User, Role
+        from app.models.settings import Setting
+
+        # Tabloları oluştur
+        db.create_all()
+
+        # Rolleri başlat
+        roles = {
+            'student': 'Basic access to view notebooks',
+            'teacher': 'Can manage notebooks and view student progress',
+            'admin': 'Full administrative access'
+        }
+
+        # AI ayarlarını ekle
+        from app.models.settings import add_ai_settings
+        add_ai_settings()
+
+        for role_name, description in roles.items():
+            role = Role.query.filter_by(name=role_name).first()
+            if not role:
+                role = Role(name=role_name, description=description)
+                db.session.add(role)
+
+        # Admin kullanıcı oluştur
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            admin = User(username='admin', email='admin@example.com')
+            admin.set_password('admin123')
+            admin_role = Role.query.filter_by(name='admin').first()
+            if admin_role:
+                admin.roles.append(admin_role)
+            db.session.add(admin)
+
+        default_settings = [
+            {'key': 'site_name', 'value': 'Python Playground', 'type': 'str', 'category': 'general'},
+            {'key': 'site_description', 'value': 'Eğitim ve kodlama platformu', 'type': 'str', 'category': 'general'},
+            {'key': 'default_language', 'value': 'tr', 'type': 'str', 'category': 'general'},
+            {'key': 'allow_registration', 'value': 'True', 'type': 'bool', 'category': 'users'},
+            {'key': 'enable_user_activation', 'value': 'False', 'type': 'bool', 'category': 'users'},
+        ]
+
+        for setting_data in default_settings:
+            setting = Setting.query.filter_by(key=setting_data['key']).first()
+            if not setting:
+                setting = Setting(**setting_data)
+                db.session.add(setting)
+
+        db.session.commit()
+
+
+def generate_questions_on_startup(app):
+    with app.app_context():
+        import requests
+        import time
+        from flask import current_app
+
+        difficulty_levels = [1, 2, 3, 4]  # Kolay, Orta, Zor, Çok Zor
+
+        current_app.logger.info("Başlangıç sorularını üretme işlemi başlatılıyor...")
+
+        for difficulty in difficulty_levels:
+            try:
+                current_app.logger.info(f"Zorluk seviyesi {difficulty} için soru üretiliyor...")
+
+                # FastAPI endpoint'ine istek gönder
+                response = requests.post(
+                    "http://127.0.0.1:8000/api/generate-question",
+                    params={"difficulty_level": difficulty},
+                    timeout=60  # 60 saniye timeout
+                )
+
+                if response.status_code == 200:
+                    question_data = response.json()
+
+                    if "error" in question_data and question_data["error"]:
+                        current_app.logger.error(f"Zorluk {difficulty} için soru üretme hatası: {question_data['error']}")
+                    else:
+                        # Soruyu veritabanına ekle
+                        from app.models.programming_question import ProgrammingQuestion
+
+                        new_question = ProgrammingQuestion(
+                            title=question_data["title"],
+                            description=question_data["description"],
+                            function_name=question_data["function_name"],
+                            difficulty=difficulty,
+                            points=question_data["points"],
+                            example_input=question_data["example_input"],
+                            example_output=question_data["example_output"],
+                            test_inputs=question_data["test_inputs"],
+                            solution_code=question_data["solution_code"]
+                        )
+
+                        db.session.add(new_question)
+                        db.session.commit()
+                        current_app.logger.info(
+                            f"Zorluk {difficulty} için soru başarıyla üretildi: '{question_data['title']}'")
+                else:
+                    current_app.logger.error(f"API yanıt hatası: {response.status_code} - {response.text}")
+
+                # Rate limit için her istekten sonra bekleme süresi
+                time.sleep(5)
+
+            except Exception as e:
+                import traceback
+                current_app.logger.error(f"Zorluk {difficulty} için soru üretilirken hata: {str(e)}")
+                current_app.logger.error(traceback.format_exc())
+
+        current_app.logger.info("Başlangıç soruları üretme işlemi tamamlandı.")
+
+
 if __name__ == '__main__':
     app, socketio = create_app()
 
@@ -245,6 +363,10 @@ if __name__ == '__main__':
     summaries_thread = threading.Thread(target=load_summaries_with_app_context, args=(app,))
     summaries_thread.daemon = True
     summaries_thread.start()
+
+    ai_questions_thread = threading.Thread(target=generate_questions_on_startup, args=(app,))
+    ai_questions_thread.daemon = True
+    ai_questions_thread.start()
 
     # Flask sunucusunu başlat
     socketio.run(app, debug=False, port=5000, allow_unsafe_werkzeug=True, log_output=True)

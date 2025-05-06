@@ -114,12 +114,6 @@
                     cmRef.current.on("change", (instance) => {
                         onChange(instance.getValue());
                     });
-
-                    cmRef.current.on("keydown", (cm, event) => {
-                        if (onKeyDown) {
-                            onKeyDown(cm, event);
-                        }
-                    });
                 }
 
                 return () => {

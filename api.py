@@ -1,22 +1,19 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from typing import List, Optional
 from fastapi import HTTPException
 import platform
 import psutil
 import flask
-import json
 from typing import Optional, List
 import nbformat
 import os
 import time
 import hashlib
 import re
+import json
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 import traceback
-from contextlib import redirect_stdout
-import io
 from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -164,14 +161,60 @@ class EvaluationResult(BaseModel):
     is_correct: bool
     execution_time: float
     errors: List[str]
+    test_count: int
+    passed_tests: int
+    failed_tests: int
+    test_results: Optional[dict] = None
+
 
 def check_indentation(code: str):
     """Kod içindeki girinti hatalarını kontrol eder"""
     lines = code.splitlines()
+
+    # Tab ve boşluk karışımını kontrol et
     for i, line in enumerate(lines):
         if line.strip() and line.startswith(" ") and "\t" in line:
-            return False, i + 1
-    return True, 0
+            return False, i + 1, "Tab ve boşluk karışımı tespit edildi"
+
+    # Girinti tutarlılığını kontrol et
+    try:
+        # Gerçek Python derleyicisiyle girinti hatasını tespit et
+        compile(code, "<string>", "exec")
+        return True, 0, ""
+    except IndentationError as e:
+        # IndentationError, satır numarasını ve hata mesajını içerir
+        return False, e.lineno, str(e)
+
+    return True, 0, ""
+
+def normalize_indentation(code: str) -> str:
+    """Kod içindeki karışık girintileri normalleştirip tutarlı hale getirir"""
+    lines = code.splitlines()
+    normalized_lines = []
+
+    # Her satır için
+    for line in lines:
+        if line.strip():  # Boş satır değilse
+            # Satırın başındaki boşlukları say
+            leading_space_count = len(line) - len(line.lstrip())
+            leading_content = line[:leading_space_count]
+
+            # Tab ve boşluk karışımını kontrol et ve düzelt
+            if '\t' in leading_content and ' ' in leading_content:
+                # Her tab'ı 4 boşlukla değiştir (Python standardı)
+                fixed_indent = leading_content.replace('\t', '    ')
+                normalized_lines.append(fixed_indent + line[leading_space_count:])
+            elif '\t' in leading_content:
+                # Tüm tab'ları 4 boşlukla değiştir
+                fixed_indent = leading_content.replace('\t', '    ')
+                normalized_lines.append(fixed_indent + line[leading_space_count:])
+            else:
+                normalized_lines.append(line)
+        else:
+            normalized_lines.append(line)
+
+    return '\n'.join(normalized_lines)
+
 
 @api.post("/api/evaluate", response_model=EvaluationResult)
 def evaluate_solution(request: EvaluationRequest):
@@ -179,15 +222,21 @@ def evaluate_solution(request: EvaluationRequest):
     result = {
         "is_correct": False,
         "execution_time": 0,
+        "test_count": 0,
+        "test_results": {},
         "errors": []
     }
 
-    # Girinti kontrolü
-    is_valid, line_num = check_indentation(request.code)
+    # Kodu normalleştirme adımı ekle
+    normalized_code = normalize_indentation(request.code)
+
+    # Geliştirilmiş girinti kontrolü (normalleştirilmiş kod üzerinde)
+    is_valid, line_num, error_msg = check_indentation(normalized_code)
     if not is_valid:
-        result["errors"].append(f"Girinti hatası: Satır {line_num}'de karışık tab ve boşluk kullanımı tespit edildi.")
+        result["errors"].append(f"Satır {line_num}'de girinti hatası: {error_msg}")
         return result
 
+    test_inputs = []
     try:
         test_inputs = json.loads(request.test_inputs)
     except json.JSONDecodeError:
@@ -195,46 +244,89 @@ def evaluate_solution(request: EvaluationRequest):
         return result
 
     try:
-        # Kullanıcı kodunu çalıştır
+        # Kullanıcı kodunu güvenli bir şekilde çalıştır (normalleştirilmiş kodu kullan)
         user_namespace = {}
-        exec(request.code, user_namespace)
+        exec(normalized_code, user_namespace)
         user_function = user_namespace.get(request.function_name)
 
-        if not user_function:
-            result["errors"].append(f"'{request.function_name}' adında bir fonksiyon bulamadık")
+        if user_function is None:
+            result["errors"].append(f"'{request.function_name}' adında bir fonksiyon bulunamadı")
             return result
 
-        # Admin çözümünü çalıştır
-        admin_namespace = {}
-        exec(request.solution_code, admin_namespace)
-        admin_function = admin_namespace.get(request.function_name)
+        if not callable(user_function):
+            result["errors"].append(f"'{request.function_name}' çağrılabilir bir fonksiyon değil")
+            return result
+
+        # Çözüm kodunu çalıştır
+        solution_namespace = {}
+        exec(request.solution_code, solution_namespace)
+        solution_function = solution_namespace.get(request.function_name)
+
+        if not solution_function:
+            result["errors"].append("Çözüm fonksiyonu bulunamadı")
+            return result
 
         # Testleri çalıştır
+        all_correct = True
         start_time = time.time()
 
         for test_input in test_inputs:
-            stdout = io.StringIO()
-            with redirect_stdout(stdout):
+            # Test girişlerinin liste olduğundan emin ol
+            if not isinstance(test_input, list):
+                test_input = [test_input]
+
+            try:
+                # Kullanıcı kodunu çalıştır
                 user_result = user_function(*test_input)
+                # Çözüm kodunu çalıştır
+                expected_result = solution_function(*test_input)
 
-            admin_result = admin_function(*test_input)
+                if user_result != expected_result:
+                    all_correct = False
+                    result["errors"].append(f"Girdi: {test_input}, Beklenen: {expected_result}, Alınan: {user_result}")
 
-            if user_result != admin_result:
-                result["errors"].append(
-                    f"Test başarısız: Girdi: {test_input}, Beklenen: {admin_result}, Çıktı: {user_result}")
+            except TypeError as e:
+                error_msg = str(e)
+                if "'builtin_function_or_method' object is not subscriptable" in error_msg:
+                    # Hata konumunu bul
+                    import traceback
+                    tb = traceback.extract_tb(e.__traceback__)
+                    line_number = None
+
+                    # Kullanıcı kodundaki satır numarasını bul
+                    for frame in tb:
+                        if frame.filename == "<string>":
+                            line_number = frame.lineno
+                            break
+
+                    # Daha açıklayıcı hata mesajı (satır numarası ile)
+                    line_info = f"Satır {line_number}: " if line_number else ""
+                    result["errors"].append(
+                        f"{line_info}Yerleşik fonksiyon/metot indeks notasyonu ile kullanılamaz. "
+                        "Örnek: 'max[0]' yerine 'max(liste)' kullanmalısınız."
+                    )
+                else:
+                    result["errors"].append(f"Tip hatası: {error_msg}")
+                all_correct = False
+
+            except Exception as e:
+                result["errors"].append(f"Çalışma zamanı hatası: {str(e)}")
+                all_correct = False
 
         end_time = time.time()
-        result["execution_time"] = (end_time - start_time) * 1000  # milisaniye
+        execution_time = round((end_time - start_time) * 1000, 2)  # milisaniye cinsinden
 
-        if not result["errors"]:
-            result["is_correct"] = True
+        result["is_correct"] = all_correct
+        result["execution_time"] = execution_time
+
+        return result
 
     except Exception as e:
-        result["errors"].append(f"Hata: {str(e)}")
-        result["errors"].append(traceback.format_exc())
-
-    return result
-
+        import traceback
+        error_trace = traceback.format_exc()
+        result["errors"].append(f"Değerlendirme hatası: {str(e)}")
+        result["error_details"] = error_trace
+        return result
 
 # --- AI Notebook Summary Modelleri ---
 class NotebookSummaryRequest(BaseModel):
@@ -1128,3 +1220,234 @@ def get_user_profile(username: str, current_user_id: Optional[int] = None, db=De
         raise ex
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+from pydantic import BaseModel
+
+
+class QuestionGenerationRequest(BaseModel):
+    difficulty_level: int = 1
+    topic: str = "genel"
+    tags: list = []
+
+class GeneratedQuestionResponse(BaseModel):
+    title: str = ""
+    description: str = ""
+    function_name: str = ""
+    difficulty: int = 1
+    points: int = 10
+    example_input: str = "Örnek girdi yok"
+    example_output: str = "Örnek çıktı yok"
+    test_inputs: str = "[]"
+    solution_code: str = ""
+    error: Optional[str] = None
+
+
+@api.post("/api/generate-question", response_model=GeneratedQuestionResponse)
+def generate_programming_question(difficulty_level: int = 2, db=Depends(get_db)):
+    """Yapay zeka kullanarak yeni bir programlama sorusu oluşturur"""
+    try:
+        # Varsayılan sonuç şablonunu başlangıçta oluştur
+        data = {
+            "title": "",
+            "description": "",
+            "function_name": "",
+            "difficulty": difficulty_level,
+            "points": 10 + difficulty_level * 5,
+            "example_input": "Örnek girdi yok",
+            "example_output": "Örnek çıktı yok",
+            "test_inputs": "[]",
+            "solution_code": ""
+        }
+
+        # Veritabanı ayarlarını al
+        settings = {}
+        settings_query = text("SELECT `key`, `value` FROM settings WHERE `key` LIKE 'ai_%'")
+        for row in db.execute(settings_query):
+            settings[row.key] = row.value
+
+        api_provider = settings.get('ai_api_provider', 'gemini')
+        api_key = settings.get('ai_api_key', '')
+        model_name = settings.get('ai_default_model', 'gemini-1.5-flash')
+        enabled = settings.get('ai_enable_features', 'true').lower() == 'true'
+
+        if not enabled:
+            data["error"] = "AI özellikleri sistem ayarlarından devre dışı bırakılmış."
+            return data
+
+        # Zorluk seviyesi açıklamaları
+        difficulty_desc = {
+            1: "Kolay (Başlangıç seviyesi programcılar için)",
+            2: "Orta (Temel Python bilgisi gerektirir)",
+            3: "Zor (İleri düzey algoritmik düşünme gerektirir)",
+            4: "Çok Zor (Karmaşık algoritmalar ve optimizasyon gerektirir)"
+        }
+
+        # Mevcut soru başlıklarını al
+        existing_titles_query = text("SELECT title FROM programming_question")
+        existing_titles = [row.title for row in db.execute(existing_titles_query)]
+
+        # Rastgele konu seçimi
+        topics = ["veri yapıları", "algoritmalar", "string işleme", "matematik",
+                  "sayı teorisi", "arama", "sıralama", "dinamik programlama", "graf teorisi", "olasılık", "istatistik"]
+        import random
+        topic = random.choice(topics)
+        selected_tags = random.sample(["python", "algoritma", "programlama", "veri yapıları"], 3)
+
+        # AI prompt hazırla
+        prompt = f"""Bir Python programlama sorusu oluştur.
+
+Zorluk seviyesi: {difficulty_desc.get(difficulty_level, 'Orta')}
+Konu: {topic}
+Etiketler: {', '.join(selected_tags)}
+
+KATI KURALLAR:
+* HackerRank'e benzer sorular oluştur
+* Soru parametreler almalı ve return ( yani geri dönüş değeri döndürmeli )
+* Sorunun çözüm kodu ve test girdilerini ekle
+* Parametre sayılarının tutarlı olmasına dikkat et
+* Basit ve anlaşılır örnek girdi-çıktı ekle
+* Çözüm kodu mümkün olduğunca sade olsun
+* test_inputs alanında eğer ki çözüm kodunda kaç tane parametre varsa input sayısı da ona göre olmalı!
+* test_inputs alanında sadece parametrelerin alacağı değerler olmalı çıktılar olmamalı!
+* Yanıt kesinlikle JSON formatında olmalı öbür türlüsü kabul edilmiyor!!!
+
+Ürettiğin soru aşağıdaki mevcut sorulardan TAMAMEN farklı olmalı:
+{', '.join(existing_titles[:10])}
+
+Yanıtını JSON formatında oluştur:
+
+{{
+  "title": "Kısa ve açıklayıcı soru başlığı",
+  "description": "Markdown formatında soru açıklaması örnek girdiler ve çıktılarla destekle",
+  "function_name": "python_fonksiyon_adi",
+  "difficulty": {difficulty_level},
+  "points": {10 + difficulty_level * 5},
+  "example_input": "Örnek girdi",
+  "example_output": "Örnek çıktı",
+  "test_inputs": [[1, 2], [3, 4]] (2 parametreli fonksiyon için örnek) sadece parametrelerin alacağı değerler olmalı çıktılar bu kısımda olmamalı!,
+  "solution_code": "def python_fonksiyon_adi(param1, param2):\\n    return sonuc"
+}}"""
+
+        # AI client oluştur ve soru iste
+        client = AIClient(api_provider, api_key, model_name)
+        response = client.chat_completion([
+            {"role": "system",
+             "content": "Sen bir Python programlama eğitmenisin. Amacın öğrenciler için özgün, çözülebilir ve öğretici programlama soruları üretmek."},
+            {"role": "user", "content": prompt}
+        ])
+
+        # Yanıt içeriğini text formatına çevir
+        response_text = ""
+        if isinstance(response, dict):
+            if "content" in response:
+                response_text = response["content"]
+            else:
+                response_text = json.dumps(response)
+        else:
+            response_text = str(response)
+
+        json_data = None
+
+        # Debug bilgilerini topla
+        debug_info = {
+            "raw_response": response_text[:1000] + "..." if len(response_text) > 1000 else response_text,
+            "ayrıştırma_denemeleri": []
+        }
+
+        # Strateji 1: Doğrudan JSON ayrıştırma
+        try:
+            json_data = json.loads(response_text)
+            debug_info["ayrıştırma_denemeleri"].append("Doğrudan JSON ayrıştırma başarılı")
+        except Exception as e:
+            debug_info["ayrıştırma_denemeleri"].append(f"Doğrudan JSON ayrıştırma hatası: {str(e)}")
+
+        # Strateji 2: Regex ile JSON bloklarını ara
+        if not json_data:
+            json_matches = re.findall(r'({[\s\S]*?})(?=\s*$|```)', response_text)
+            debug_info["json_matches_count"] = len(json_matches)
+
+            for i, match in enumerate(json_matches):
+                try:
+                    match_data = json.loads(match)
+                    json_data = match_data
+                    debug_info["ayrıştırma_denemeleri"].append(f"Regex match {i + 1} başarılı")
+                    break
+                except:
+                    debug_info["ayrıştırma_denemeleri"].append(f"Regex match {i + 1} başarısız")
+
+        # Strateji 3: Kod blokları içinde ara
+        if not json_data:
+            code_blocks = re.findall(r'```(?:json)?\s*([\s\S]*?)\s*```', response_text)
+            debug_info["code_blocks_count"] = len(code_blocks)
+
+            for i, block in enumerate(code_blocks):
+                try:
+                    block_data = json.loads(block)
+                    json_data = block_data
+                    debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i + 1} başarılı")
+                    break
+                except:
+                    debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i + 1} başarısız")
+
+        # Eğer JSON ayrıştırılabildiyse verileri güncelle
+        if json_data:
+            # Zorluk seviyesi ve puan
+            if "difficulty" in json_data:
+                data["difficulty"] = int(json_data["difficulty"])
+            if "points" in json_data:
+                data["points"] = int(json_data["points"])
+
+            # Temel alan kontrolü
+            for field in ["title", "description", "function_name", "solution_code"]:
+                if field in json_data and json_data[field]:
+                    data[field] = json_data[field]
+
+            # Örnek girdi ve çıktılar
+            if "example_input" in json_data and json_data["example_input"]:
+                data["example_input"] = json_data["example_input"]
+            if "example_output" in json_data and json_data["example_output"]:
+                data["example_output"] = json_data["example_output"]
+
+            # Test girdileri
+            if "test_inputs" in json_data:
+                if isinstance(json_data["test_inputs"], list):
+                    data["test_inputs"] = json.dumps(json_data["test_inputs"])
+                else:
+                    data["test_inputs"] = json_data["test_inputs"]
+        else:
+            # JSON ayrıştırılamadıysa hata döndür
+            data["error"] = "JSON ayrıştırma hatası: AI yanıtı beklenen formatta değil"
+            data["debug_info"] = debug_info
+            return data
+
+        # Sonuç kontrolü - temel alanlar var mı?
+        required_fields = ["title", "description", "function_name", "solution_code"]
+        missing_fields = [field for field in required_fields if not data.get(field)]
+
+        if missing_fields:
+            data["error"] = f"Eksik alanlar: {', '.join(missing_fields)}"
+
+        return data
+
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+
+        return {
+            "error": f"Soru üretme hatası: {str(e)}",
+            "debug_info": {
+                "traceback": error_details,
+                "response_text": response_text[:1000] + "..." if 'response_text' in locals() and len(
+                    response_text) > 1000 else response_text if 'response_text' in locals() else "Yanıt alınamadı"
+            },
+            "title": "",
+            "description": "",
+            "function_name": "",
+            "difficulty": difficulty_level,
+            "points": 10 + difficulty_level * 5,
+            "example_input": "Örnek girdi yok",
+            "example_output": "Örnek çıktı yok",
+            "test_inputs": "[]",
+            "solution_code": ""
+        }
