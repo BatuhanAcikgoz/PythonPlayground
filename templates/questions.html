@@ -82,7 +82,7 @@
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                courses: {{ _('courses')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
                 leaderboard: {{ _('leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
@@ -110,7 +110,11 @@
                 },
                     {{ "," if not loop.last }}
                 {% endfor %}
-            ]
+            ],
+            urls: {
+                mySubmissions: "{{ url_for('programming.my_submissions') }}",
+                viewQuestion: "{{ url_for('programming.questions') }}/"
+            }
         };
     </script>
 
@@ -143,6 +147,8 @@
     const [sortBy, setSortBy] = React.useState('difficulty');
     const [sortOrder, setSortOrder] = React.useState('asc');
     const [showOnlyUnsolved, setShowOnlyUnsolved] = React.useState(false);
+
+    const { urls } = window.APP_DATA;
 
     const filteredQuestions = questions
         .filter(q => q.title.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -201,7 +207,7 @@
                             <label htmlFor="showOnlyUnsolved" className="text-sm">Sadece çözülmemiş soruları göster</label>
                         </div>
                         <a
-                            href="/my-submissions"
+                            href={urls.mySubmissions}
                             className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm font-medium">
                             Çözümlerim
                         </a>
@@ -282,7 +288,7 @@
                                             </div>
                                         ) : (
                                             <a
-                                                href={`/questions/${question.id}`}
+                                                href={`${urls.viewQuestion}${question.id}`}
                                                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
                                             >
                                                 Çöz

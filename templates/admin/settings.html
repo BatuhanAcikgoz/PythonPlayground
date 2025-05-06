@@ -37,7 +37,7 @@
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                courses: {{ _('courses')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
                 leaderboard: {{ _('leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
@@ -91,6 +91,16 @@
                 default_ai_model: "{{ form.default_ai_model.data }}",
                 api_key: "{{ form.api_key.data }}",
                 {% endif %}
+            },
+            urls: {
+                adminIndex: "{{ url_for('admin.index') }}",
+                programmingQuestions: "{{ url_for('admin.programming_questions') }}",
+                newProgrammingQuestion: "{{ url_for('admin.new_programming_question') }}",
+                users: "{{ url_for('admin.users') }}",
+                badges: "{{ url_for('admin.badges') }}",
+                newBadge: "{{ url_for('admin.new_badge') }}",
+                settings: "{{ url_for('admin.settings') }}",
+                leaderboard: "{{ url_for('main.leaderboard') }}"
             }
         };
     </script>
@@ -130,13 +140,13 @@
 
                                 <div className="flex justify-between items-center mb-6">
                                     <h1 className="text-3xl font-bold">{translations.settings}</h1>
-                                    <a href="/admin" className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                                    <a href={window.APP_DATA.urls.adminIndex} className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
                                         {translations.back_to_admin}
                                     </a>
                                 </div>
 
                                 <div className="bg-white shadow-md rounded-lg p-6">
-                                    <form method="post" action="{{ url_for('admin.settings') }}">
+                                    <form method="post" action={window.APP_DATA.urls.settings}>
                                         <input type="hidden" name="csrf_token" value={formData.csrf_token} />
 
                                         <div className="mb-6">

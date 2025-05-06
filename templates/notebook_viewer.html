@@ -53,7 +53,7 @@
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                courses: {{ _('courses')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
                 leaderboard: {{ _('leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
@@ -68,7 +68,21 @@
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
             // Current language
-            currentLang: {{ session.get('language', 'tr')|tojson }}
+            currentLang: {{ session.get('language', 'tr')|tojson }},
+            // URL'leri url_for ile tanımlıyoruz
+            urls: {
+                home: "{{ url_for('main.index') }}",
+                viewNotebook: "{{ url_for('notebook.view', notebook_path='dummy') }}".replace('/dummy', '/'),
+                notebookSummary: "{{ url_for('notebook.summary', notebook_path='dummy') }}".replace('/dummy', '/'),
+                runCode: "{{ url_for('notebook.run') }}",
+                refreshRepo: "{{ url_for('main.refresh_repo') }}",
+                questions: "{{ url_for('programming.questions') }}",
+                leaderboard: "{{ url_for('main.leaderboard') }}",
+                about: "{{ url_for('main.about') }}",
+                setLanguage: "{{ url_for('main.set_language', language='') }}"
+            },
+            // Notebook data
+            notebook: {{ notebook|tojson }}
         };
     </script>
 
@@ -77,6 +91,7 @@
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
     <script type="text/babel">
+        // CodeBlock bileşeni
         const CodeMirrorEditor = ({ value, onChange, disabled, readOnly }) => {
             const editorRef = React.useRef(null);
             const cmRef = React.useRef(null);
@@ -131,21 +146,22 @@
         };
 
         const App = () => {
-            const notebook = {{ notebook|tojson }};
+            const notebook = window.APP_DATA.notebook;
             const translations = {
                 run: {{ _('run')|tojson|safe }}
             };
+            const urls = window.APP_DATA.urls;
 
             return (
                 <React.Fragment>
                     <Header />
-                    <NotebookViewer notebook={notebook} translations={translations} />
+                    <NotebookViewer notebook={notebook} translations={translations} urls={urls} />
                     <Footer />
                 </React.Fragment>
             );
         };
 
-        const NotebookViewer = ({ notebook, translations }) => {
+        const NotebookViewer = ({ notebook, translations, urls }) => {
             const [socket, setSocket] = React.useState(null);
             const [consoleOutput, setConsoleOutput] = React.useState([]);
             const [inputValue, setInputValue] = React.useState('');

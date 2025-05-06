@@ -168,6 +168,7 @@ def load_summaries_with_app_context(app):
     """Notebook özetlerini arka planda FastAPI servisi aracılığıyla yükler."""
     with app.app_context():
         from flask import current_app
+        from app.models.notebook_summary import NotebookSummary
         import requests
         import os
         import time
@@ -186,7 +187,7 @@ def load_summaries_with_app_context(app):
                     rel_path = os.path.relpath(os.path.join(root, file), notebooks_dir)
                     notebook_files.append(rel_path)
 
-        current_app.logger.info(f"Toplam {len(notebook_files)} notebook bulundu, özetleri yüklenecek")
+        current_app.logger.info(f"Toplam {len(notebook_files)} notebook bulundu, özetleri kontrol edilecek")
 
         # FastAPI servisine istek gönder
         try:
@@ -194,14 +195,20 @@ def load_summaries_with_app_context(app):
             fastapi_url = "http://127.0.0.1:8000/api/notebook-summary"
 
             for i, notebook_path in enumerate(notebook_files):
-                current_app.logger.info(f"[{i+1}/{len(notebook_files)}] İşleniyor: {notebook_path}")
+                current_app.logger.info(f"[{i + 1}/{len(notebook_files)}] İşleniyor: {notebook_path}")
+
+                # Veritabanında özet var mı kontrol et
+                existing_summary = NotebookSummary.query.filter_by(notebook_path=notebook_path).first()
+                if existing_summary:
+                    current_app.logger.info(f"  Bu notebook için özet zaten mevcut, atlanıyor: {notebook_path}")
+                    continue
 
                 try:
                     # FastAPI'ye notebook özet isteği gönder - POST metodunu kullanmalı
                     response = requests.post(
                         fastapi_url,
                         json={"notebook_path": notebook_path},
-                        timeout=60  # Yeterli zaman tanı
+                        timeout=None # Yeterli zaman tanı
                     )
 
                     if response.status_code == 200:
@@ -215,7 +222,7 @@ def load_summaries_with_app_context(app):
 
                     # Rate limit için bekleme - AI hizmetleri için önemli
                     if i < len(notebook_files) - 1:
-                        time.sleep(5)  # Her istek arasında 5 saniye bekle
+                        time.sleep(20)  # Her istek arasında 5 saniye bekle
 
                 except requests.RequestException as e:
                     current_app.logger.error(f"  API isteği başarısız: {str(e)}")

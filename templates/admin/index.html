@@ -39,14 +39,14 @@
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                courses: {{ _('courses')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
                 leaderboard: {{ _('leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
                 login: {{ _('login')|tojson|safe }},
                 register: {{ _('register')|tojson|safe }},
-                profile: "Profile",
-                settings: "Settings"
+                profile: "Profil",
+                settings: "Ayarlar"
             },
             footerTrans: {
                 allRights: {{ _('all_rights')|tojson|safe }},
@@ -55,6 +55,16 @@
             currentLang: {{ session.get('language', 'tr')|tojson }},
             adminData: {
                 users: {{ users|tojson|safe }}
+            },
+            // URL'leri url_for ile tanımlıyoruz
+            urls: {
+                adminIndex: "{{ url_for('admin.index') }}",
+                adminUsers: "{{ url_for('admin.users') }}",
+                editUser: "{{ url_for('admin.edit_user', id=0) }}".replace("/0", "/"),
+                adminSettings: "{{ url_for('admin.settings') }}",
+                programmingQuestions: "{{ url_for('admin.programming_questions') }}",
+                badges: "{{ url_for('admin.badges') }}",
+                questionSubmissions: "{{ url_for('admin.question_submissions', id=0) }}".replace("/0/submissions", "/")
             }
         };
     </script>
@@ -76,8 +86,8 @@
                 admin_panel: {{ _('admin_panel')|tojson|safe }},
                 dashboard: {{ _('dashboard')|tojson|safe }} || "Dashboard",
                 server_status: {{ _('server_status')|tojson|safe }} || "Server Status",
-                recent_users: {{ _('recent_users')|tojson|safe }} || "Recent Users",
-                recent_questions: {{ _('recent_questions')|tojson|safe }} || "Recent Questions",
+                recent_users: {{ _('recent_users')|tojson|safe }} || "Son Kullanıcılar",
+                recent_questions: {{ _('recent_questions')|tojson|safe }} || "Son Sorular",
                 recent_submissions: {{ _('recent_submissions')|tojson|safe }} || "Son Gönderimler"
             };
 
@@ -86,7 +96,7 @@
                     <Header />
                     <div className="flex flex-grow">
                         {/* Sidebar */}
-                        <AdminSidebar />
+                        <AdminSidebar activeItem="dashboard" />
 
                         {/* Main Content */}
                         <main className="flex-grow p-6">
@@ -96,10 +106,10 @@
                                 {/* İstatistik Kartları */}
                                 <div className="grid grid-cols-1 gap-6 mb-6">
                                     <AdminChart
-                                        title="Son 30 Gün İstatistikleri"
+                                        title="Son 7 Gün İstatistikleri"
                                         chartType="stats"
                                         endpoint="/api/chart/activity-stats"
-                                        days={30}
+                                        days={7}
                                     />
                                 </div>
 
@@ -113,42 +123,53 @@
                                                 id: 'registrations',
                                                 url: '/api/chart/registrations',
                                                 label: 'Yeni Kullanıcılar',
-                                                type: 'line',  // 'bar' yerine 'line' olarak değiştirildi
-                                                fill: true,    // Çizgi grafiği altını doldurmak için
-                                                backgroundColor: 'rgba(59, 130, 246, 0.2)', // Hafif mavi dolgu
-                                                borderColor: 'rgba(59, 130, 246, 1)'        // Koyu mavi çizgi
+                                                type: 'line',
+                                                fill: true,
+                                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                                borderColor: 'rgba(59, 130, 246, 1)'
                                             },
                                             {
-                                                id: 'solved',
+                                                id: 'solved_questions',
                                                 url: '/api/chart/solved-questions',
                                                 label: 'Çözülen Sorular',
                                                 type: 'line',
                                                 fill: true,
-                                                backgroundColor: 'rgba(34, 197, 94, 0.2)', // Hafif yeşil dolgu
-                                                borderColor: 'rgba(34, 197, 94, 1)'        // Koyu yeşil çizgi
+                                                backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                                                borderColor: 'rgba(34, 197, 94, 1)'
                                             }
                                         ]}
-                                        days={30}
+                                        days={7}
                                         className="shadow-md"
                                     />
                                 </div>
 
-                                {/* Mevcut widget'lar */}
+                                {/* Mevcut widget'lar - ServerStatusWidget tam genişlik */}
+                                <div className="w-full mb-6">
+                                    <ServerStatusWidget title={translations.server_status} />
+                                </div>
+
+                                {/* İki sütunlu grid */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    <div className="col-span-1 lg:col-span-3">
-                                        <ServerStatusWidget title={translations.server_status} />
-                                    </div>
-
-                                    <div className="col-span-1 lg:col-span-1">
-                                        <RecentUsersWidget title={translations.recent_users} />
+                                    <div className="col-span-1">
+                                        <RecentUsersWidget
+                                            title={translations.recent_users}
+                                            users={window.APP_DATA.adminData.users}
+                                            editUserUrl={window.APP_DATA.urls.editUser}
+                                        />
                                     </div>
 
                                     <div className="col-span-1">
-                                        <RecentQuestionsWidget title={translations.recent_questions} />
+                                        <RecentQuestionsWidget
+                                            title={translations.recent_questions}
+                                            questionUrl={window.APP_DATA.urls.programmingQuestions}
+                                        />
                                     </div>
 
                                     <div className="col-span-1">
-                                        <RecentSubmissions title={translations.recent_submissions} />
+                                        <RecentSubmissions
+                                            title={translations.recent_submissions}
+                                            submissionsUrl={window.APP_DATA.urls.questionSubmissions}
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -160,6 +181,25 @@
         };
 
         ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+
+    <!-- Flash mesajları için script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    const container = document.querySelector('.container');
+                    if (container) {
+                        {% for category, message in messages %}
+                            const messageDiv = document.createElement('div');
+                            messageDiv.className = `p-4 mb-6 rounded-lg ${category === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+                            messageDiv.textContent = '{{ message }}';
+                            container.insertBefore(messageDiv, container.firstChild);
+                        {% endfor %}
+                    }
+                {% endif %}
+            {% endwith %}
+        });
     </script>
 </body>
 </html>

@@ -62,7 +62,7 @@
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                courses: {{ _('courses')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
                 leaderboard: {{ _('leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
@@ -77,7 +77,11 @@
             },
             currentLang: {{ session.get('language', 'tr')|tojson }},
             badge: {{ badge|tojson|safe }},
-            formCsrfToken: "{{ form.csrf_token._value() }}"
+            formCsrfToken: "{{ form.csrf_token._value() }}",
+            urls: {
+                adminIndex: "{{ url_for('admin.index') }}",
+                badges: "{{ url_for('admin.badges') }}"
+            }
         };
     </script>
 
@@ -373,7 +377,7 @@
                     </div>
 
                     <div className="flex justify-end space-x-3">
-                        <a href="/admin/badges" className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
+                        <a href={window.APP_DATA.urls.badges} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
                             İptal
                         </a>
                         <button
@@ -422,9 +426,9 @@
                                     <h1 className="text-2xl font-bold">{translations.edit_badge}</h1>
                                     <nav className="text-sm" aria-label="Breadcrumb">
                                         <ol className="flex space-x-2">
-                                            <li><a href="/admin" className="text-blue-600 hover:text-blue-800">{translations.dashboard}</a></li>
+                                            <li><a href={window.APP_DATA.urls.adminIndex} className="text-blue-600 hover:text-blue-800">{translations.dashboard}</a></li>
                                             <li>/</li>
-                                            <li><a href="/admin/badges" className="text-blue-600 hover:text-blue-800">{translations.badges}</a></li>
+                                            <li><a href={window.APP_DATA.urls.badges} className="text-blue-600 hover:text-blue-800">{translations.badges}</a></li>
                                             <li>/</li>
                                             <li className="text-gray-700">{translations.edit_badge}</li>
                                         </ol>

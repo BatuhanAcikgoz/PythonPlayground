@@ -36,15 +36,17 @@
     }
 
     .prose h1 {
-        font-size: 2.25em;
-        border-bottom: 2px solid rgba(219, 234, 254, 1);
+        font-size: 1.8em;
+        color: rgba(37, 99, 235, 1);
+        border-bottom: 2px solid rgba(37, 99, 235, 0.2);
         padding-bottom: 0.3em;
     }
 
     .prose h2 {
-        font-size: 1.7em;
-        border-bottom: 1px solid rgba(219, 234, 254, 1);
-        padding-bottom: 0.3em;
+        font-size: 1.6em;
+        border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+        padding-bottom: 0.2em;
+        color: rgba(31, 41, 55, 0.9);
     }
 
     .prose h3 { font-size: 1.4em; color: rgba(59, 130, 246, 0.9); }
@@ -53,7 +55,7 @@
     /* Süslü listeler */
     .prose ul, .prose ol {
         margin-top: 1em;
-        margin-bottom: 1.5em;
+        margin-bottom: 1em;
         padding-left: 1.5em;
     }
 
@@ -63,28 +65,25 @@
 
     .prose ul li {
         position: relative;
-        margin-top: 0.7em;
         margin-bottom: 0.7em;
-        padding-left: 0.5em;
     }
 
     .prose ul li::before {
         content: "•";
-        position: absolute;
-        left: -1em;
-        color: rgba(37, 99, 235, 0.8);
+        color: rgba(59, 130, 246, 1);
         font-weight: bold;
-        font-size: 1.2em;
+        display: inline-block;
+        width: 1em;
+        margin-left: -1.5em;
+        margin-right: 0.5em;
     }
 
     .prose ol {
         list-style-type: decimal;
-        counter-reset: list-counter;
     }
 
     .prose ol li {
         position: relative;
-        margin-top: 0.7em;
         margin-bottom: 0.7em;
     }
 
@@ -212,31 +211,48 @@
 
     <script>
         window.APP_DATA = {
+            // Flash mesajları
+            flashMessages: [
+                {% for category, message in get_flashed_messages(with_categories=true) %}
+                {
+                    category: "{{ category }}",
+                    message: "{{ message }}"
+                }{{ "," if not loop.last }}
+                {% endfor %}
+            ],
+            // Kullanıcı bilgileri
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
             userData: {
                 username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
-                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
+                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }},
+                isAdmin: {{ current_user.is_admin()|tojson if current_user.is_authenticated else 'false' }},
+                isTeacher: {{ current_user.is_teacher()|tojson if current_user.is_authenticated else 'false' }}
             },
+            // Header çevirileri
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
-                tagline: {{ _('app_tagline')|tojson|safe }},
-                home: {{ _('home')|tojson|safe }},
-                courses: {{ _('courses')|tojson|safe }},
-                leaderboard: {{ _('leaderboard')|tojson|safe }},
-                about: {{ _('about')|tojson|safe }},
-                logout: {{ _('logout')|tojson|safe }},
-                login: {{ _('login')|tojson|safe }},
-                register: {{ _('register')|tojson|safe }},
-                profile: "Profile",
-                settings: "Settings"
+                home: "Ana Sayfa",
+                profile: "Profil",
+                settings: "Ayarlar",
+                logout: "Çıkış"
             },
+            // Footer çevirileri
             footerTrans: {
                 allRights: {{ _('all_rights')|tojson|safe }},
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
+            // Mevcut dil
             currentLang: {{ session.get('language', 'tr')|tojson }},
+            // URL'leri url_for ile tanımlıyoruz
+            urls: {
+                home: "{{ url_for('main.index') }}",
+                viewNotebook: "{{ url_for('notebook.view', notebook_path='dummy') }}".replace('/dummy', '/'),
+                viewNotebookSummary: "{{ url_for('notebook.summary', notebook_path='dummy') }}".replace('/dummy', '/'),
+                runCode: "{{ url_for('notebook.run') }}"
+            },
+            // Notebook verisi
             notebookPath: {{ notebook_path|tojson|safe }},
-            summaryData: {{ summary_data|tojson|safe }},
+            summaryData: {{ summary_data|tojson|safe }}
         };
     </script>
 
@@ -245,94 +261,102 @@
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
     <script type="text/babel">
-        const App = () => {
+        {% raw %}
+        const SummaryView = () => {
+            const [tabIndex, setTabIndex] = React.useState(0);
+            const urls = window.APP_DATA.urls;
             const notebookPath = window.APP_DATA.notebookPath;
-            const summaryData = window.APP_DATA.summaryData;
+            const summaryData = window.APP_DATA.summaryData || {};
 
-            // Markdown'ı HTML'e dönüştürmek için
-            const renderMarkdown = (markdown) => {
-                if (!markdown) return "";
-                return { __html: marked.parse(markdown) };
-            };
-
+            // Sayfa yüklendiğinde kod bloklarını highlight et
             React.useEffect(() => {
-                // Kod bloklarına sözdizimi vurgulaması
-                setTimeout(() => {
-                    document.querySelectorAll('pre code').forEach((block) => {
-                        hljs.highlightElement(block);
-                    });
-                }, 100);
-            }, []);
-
-            const formatDate = (dateString) => {
-                if (!dateString) return '';
-                const date = new Date(dateString);
-                return new Intl.DateTimeFormat('tr-TR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                }).format(date);
-            };
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightBlock(block);
+                });
+            }, [tabIndex]);
 
             return (
-                <React.Fragment>
-                    <Header />
-                    <main className="flex-grow container mx-auto px-4 py-8">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="flex justify-between items-center mb-6">
-                                <div>
-                                    <h1 className="text-2xl font-bold text-gray-800">
-                                        AI Özeti: {notebookPath}
-                                    </h1>
-                                    {summaryData.last_updated && (
-                                        <p className="text-sm text-gray-500">
-                                            Son güncelleme: {formatDate(summaryData.last_updated)}
-                                        </p>
-                                    )}
-                                </div>
-                                <div className="flex space-x-2">
-                                    <a
-                                        href={`/view/${notebookPath}`}
-                                        className="px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
-                                    >
-                                        Notebook'u Görüntüle
-                                    </a>
-                                    <a
-                                        href="/"
-                                        className="px-3 py-2 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
-                                    >
-                                        Notebook Listesi
-                                    </a>
+                <div className="container mx-auto max-w-6xl px-4 py-8">
+                    <div className="mb-6 flex flex-col md:flex-row md:justify-between md:items-center">
+                        <div>
+                            <h1 className="text-3xl font-bold mb-2">Notebook Özeti</h1>
+                            <p className="text-gray-600">{notebookPath}</p>
+                        </div>
+
+                        <div className="flex mt-4 md:mt-0 space-x-4">
+                            <a
+                                href={`${urls.viewNotebook}${notebookPath}`}
+                                className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white inline-flex items-center">
+                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                Notebook'u Aç
+                            </a>
+
+                            <a
+                                href={urls.home}
+                                className="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded text-white inline-flex items-center">
+                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                                Ana Sayfa
+                            </a>
+                        </div>
+                    </div>
+
+                    {summaryData.error ? (
+                        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
+                            <p>Hata: {summaryData.error}</p>
+                        </div>
+                    ) : (
+                        <div>
+                            <div className="mb-6">
+                                <div className="flex border-b border-gray-200">
+                                    <button
+                                        onClick={() => setTabIndex(0)}
+                                        className={`px-4 py-2 font-medium ${tabIndex === 0 ? 'text-blue-600 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'}`}>
+                                        Özet
+                                    </button>
+                                    <button
+                                        onClick={() => setTabIndex(1)}
+                                        className={`px-4 py-2 font-medium ${tabIndex === 1 ? 'text-blue-600 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'}`}>
+                                        Kod Açıklaması
+                                    </button>
                                 </div>
                             </div>
 
-                            {summaryData.error ? (
-                                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
-                                    <p className="font-bold">Hata</p>
-                                    <p>{summaryData.error}</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-8">
-                                    <div className="bg-white rounded-lg shadow-md p-6">
-                                        <h2 className="text-xl font-semibold mb-4">Özet</h2>
-                                        <div
-                                            className="prose max-w-none"
-                                            dangerouslySetInnerHTML={renderMarkdown(summaryData.summary)}
-                                        />
+                            <div className="bg-white shadow-md rounded-lg overflow-hidden p-6">
+                                {tabIndex === 0 && (
+
+                                    <div className="prose max-w-none"
+                                         dangerouslySetInnerHTML={{ __html: marked.parse(summaryData.summary || 'Özet bulunamadı.') }}>
                                     </div>
 
-                                    <div className="bg-white rounded-lg shadow-md p-6">
-                                        <h2 className="text-xl font-semibold mb-4">Kod Açıklaması</h2>
-                                        <div
-                                            className="prose max-w-none"
-                                            dangerouslySetInnerHTML={renderMarkdown(summaryData.code_explanation)}
-                                        />
+                                )}
+
+                                {tabIndex === 1 && (
+                                    <div className="prose max-w-none"
+                                         dangerouslySetInnerHTML={{ __html: marked.parse(summaryData.code_explanation || 'Kod açıklaması bulunamadı.') }}>
                                     </div>
-                                </div>
-                            )}
+                                )}
+                            </div>
+
+                            <div className="mt-6 text-sm text-gray-500">
+                                <p>Son güncelleme: {new Date(summaryData.last_updated || Date.now()).toLocaleString()}</p>
+                            </div>
                         </div>
+                    )}
+                </div>
+            );
+        };
+
+        const App = () => {
+            return (
+                <React.Fragment>
+                    <Header />
+                    <main className="min-h-screen pb-16">
+                        <SummaryView />
                     </main>
                     <Footer />
                 </React.Fragment>
@@ -340,6 +364,7 @@
         };
 
         ReactDOM.render(<App />, document.getElementById('root'));
+        {% endraw %}
     </script>
 </body>
 </html>

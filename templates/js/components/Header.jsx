@@ -53,7 +53,7 @@ const Header = () => {
                     <nav>
                         <ul className="flex space-x-6 items-center">
                             <li><a href="/" className="text-white hover:text-blue-200 font-medium">{headerTrans.home}</a></li>
-                            <li><a href="/kurslar" className="text-white hover:text-blue-200 font-medium">{headerTrans.courses}</a></li>
+                            <li><a href="/questions" className="text-white hover:text-blue-200 font-medium">{headerTrans.questions}</a></li>
                             <li><a href="/about" className="text-white hover:text-blue-200 font-medium">{headerTrans.about}</a></li>
                             <li><a href="/siralama" className="text-white hover:text-blue-200 font-medium">{headerTrans.leaderboard}</a></li>
                             {isLoggedIn ? (

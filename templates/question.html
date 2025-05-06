@@ -89,7 +89,12 @@
                 example_output: {{ question.example_output|tojson|safe }}
             },
             defaultCode: {{ default_code|tojson|safe }},
-            testResultsUrl: "/questions/{{ question.id }}/evaluate"
+            testResultsUrl: "{{ url_for('programming.evaluate_code', id=question.id) }}",
+            urls: {
+                questionsList: "{{ url_for('programming.questions') }}",
+                mySubmissions: "{{ url_for('programming.my_submissions') }}",
+                submitSolution: "{{ url_for('programming.submit_solution', id=question.id) }}"
+            }
         };
     </script>
 
@@ -197,7 +202,7 @@
         };
 
         const ProgrammingQuestion = () => {
-            const { question, defaultCode, testResultsUrl } = window.APP_DATA;
+            const { question, defaultCode, testResultsUrl, urls } = window.APP_DATA;
             const [code, setCode] = React.useState(defaultCode);
             const [testResult, setTestResult] = React.useState(null);
             const [loading, setLoading] = React.useState(false);
@@ -211,7 +216,7 @@
             try {
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-                const response = await fetch(`/questions/${question.id}/evaluate`, {
+                const response = await fetch(testResultsUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -245,10 +250,10 @@
                             </div>
                         </div>
                         <div className="mt-3 md:mt-0 space-x-2">
-                            <a href="/questions" className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm">
+                            <a href={urls.questionsList} className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm">
                                 Soru Listesi
                             </a>
-                            <a href="/my-submissions" className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm">
+                            <a href={urls.mySubmissions} className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm">
                                 Çözümlerim
                             </a>
                         </div>
@@ -282,7 +287,7 @@
                             <div className="bg-white shadow-md rounded-lg p-6">
                                 <h2 className="text-lg font-semibold mb-4">Çözümünüz</h2>
 
-                                <form action={`/questions/${question.id}/submit`} method="post" className="space-y-4">
+                                <form action={urls.submitSolution} method="post" className="space-y-4">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                                     <div className="mb-4">
                                         <CodeEditor

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ _('about') }} - {{ _('app_name') }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        html, body, #root {
+            height: 100%;
+        }
+        #root {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <!-- Define global variables for component access -->
+    <script>
+        window.APP_DATA = {
+            // Flash mesajlarını ekle
+            flashMessages: [
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        {
+                            type: "{{ category }}",
+                            message: "{{ message }}"
+                        }{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                {% endwith %}
+            ],
+            isLoggedIn: {{ current_user.is_authenticated|tojson }},
+            userData: {
+                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
+                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
+            },
+            headerTrans: {
+                appName: {{ _('app_name')|tojson|safe }},
+                tagline: {{ _('app_tagline')|tojson|safe }},
+                home: {{ _('home')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
+                leaderboard: {{ _('leaderboard')|tojson|safe }},
+                about: {{ _('about')|tojson|safe }},
+                logout: {{ _('logout')|tojson|safe }},
+                login: {{ _('login')|tojson|safe }},
+                register: {{ _('register')|tojson|safe }},
+                profile: {{ _('profile')|tojson|safe }},
+                settings: {{ _('settings')|tojson|safe }}
+            },
+            footerTrans: {
+                allRights: {{ _('all_rights')|tojson|safe }},
+                platformDesc: {{ _('platform_desc')|tojson|safe }}
+            },
+            currentLang: {{ session.get('language', 'tr')|tojson }},
+            urls: {
+                home: "{{ url_for('main.index') }}",
+                leaderboard: "{{ url_for('main.leaderboard') }}"
+            }
+        };
+    </script>
+
+    <!-- Load component scripts -->
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
+
+    <script type="text/babel">
+        const AboutContent = () => {
+            return (
+                <div className="container mx-auto px-4 py-8 max-w-4xl">
+                    <h1 className="text-3xl font-bold mb-6 text-center">{{ _('about_title')|default('Hakkımızda') }}</h1>
+
+                    <div className="bg-white shadow rounded-lg p-6 mb-8">
+                        <h2 className="text-2xl font-semibold mb-4">{{ _('about_platform')|default('Platform Hakkında') }}</h2>
+                        <p className="mb-4">{{ _('about_platform_desc')|default('Bu platform, programlama becerilerini geliştirmek isteyen öğrencilere interaktif bir öğrenme deneyimi sağlamak için tasarlanmıştır.') }}</p>
+                        <p className="mb-4">{{ _('about_platform_features')|default('Platformumuz çeşitli zorluk seviyelerinde programlama soruları, gerçek zamanlı kod değerlendirme, otomatik geri bildirim ve rekabetçi bir liderlik tablosu sunmaktadır.') }}</p>
+                    </div>
+
+                    <div className="bg-white shadow rounded-lg p-6 mb-8">
+                        <h2 className="text-2xl font-semibold mb-4">{{ _('mission_title')|default('Misyonumuz') }}</h2>
+                        <p className="mb-4">{{ _('mission_desc')|default('Öğrencilerin programlama yeteneklerini pratik uygulamalarla geliştirmelerine yardımcı olmak ve kodlama konusunda güven kazanmalarını sağlamaktır.') }}</p>
+                    </div>
+
+                    <div className="bg-white shadow rounded-lg p-6">
+                        <h2 className="text-2xl font-semibold mb-4">{{ _('team_title')|default('Ekibimiz') }}</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="text-center p-4">
+                                <div className="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-3 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </div>
+                                <h3 className="font-semibold text-lg">{{ _('team_member1_name')|default('Prof. Dr. Ali Yılmaz') }}</h3>
+                                <p className="text-gray-600">{{ _('team_member1_role')|default('Proje Yöneticisi') }}</p>
+                            </div>
+                            <div className="text-center p-4">
+                                <div className="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-3 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </div>
+                                <h3 className="font-semibold text-lg">{{ _('team_member2_name')|default('Dr. Ayşe Demir') }}</h3>
+                                <p className="text-gray-600">{{ _('team_member2_role')|default('Eğitim İçerik Uzmanı') }}</p>
+                            </div>
+                            <div className="text-center p-4">
+                                <div className="w-24 h-24 rounded-full bg-gray-200 mx-auto mb-3 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </div>
+                                <h3 className="font-semibold text-lg">{{ _('team_member3_name')|default('Mehmet Kaya') }}</h3>
+                                <p className="text-gray-600">{{ _('team_member3_role')|default('Yazılım Geliştirici') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            return (
+                <React.Fragment>
+                    <Header />
+                    <main className="flex-grow bg-gray-50 py-8">
+                        <AboutContent />
+                    </main>
+                    <Footer />
+                </React.Fragment>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

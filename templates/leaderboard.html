@@ -46,20 +46,35 @@
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                courses: {{ _('courses')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
                 leaderboard: {{ _('leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
                 login: {{ _('login')|tojson|safe }},
                 register: {{ _('register')|tojson|safe }},
-                profile: "Profile",
-                settings: "Settings"
+                profile: {{ _('profile')|tojson|safe }},
+                settings: {{ _('settings')|tojson|safe }}
             },
             footerTrans: {
                 allRights: {{ _('all_rights')|tojson|safe }},
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
-            currentLang: {{ session.get('language', 'tr')|tojson }}
+            currentLang: {{ session.get('language', 'tr')|tojson }},
+            // URL'leri url_for ile tanımlıyoruz
+            urls: {
+                home: "{{ url_for('main.index') }}",
+                leaderboard: "{{ url_for('main.leaderboard') }}",
+                about: "{{ url_for('main.about') }}",
+                adminIndex: "{{ url_for('admin.index') }}",
+                viewProfile: "{{ url_for('auth.profile', username=0) }}", // Bu endpoint için uygun url_for eklenmelidir
+                setLanguage: {
+                    tr: "{{ url_for('main.set_language', language='tr') }}",
+                    en: "{{ url_for('main.set_language', language='en') }}"
+                },
+                api: {
+                    leaderboard: "/api/leaderboard" // API endpoint için uygun url_for eklenmelidir
+                }
+            }
         };
     </script>
 
@@ -71,6 +86,7 @@
         const App = () => {
             // Flask şablonundan veri al
             const users = {{ users|tojson|safe if users is defined else '[]' }};
+            const urls = window.APP_DATA.urls;
 
             const LeaderboardTable = () => {
                 const [data, setData] = React.useState(null);
@@ -79,7 +95,7 @@
 
                 React.useEffect(() => {
                     setLoading(true);
-                    fetch(`/api/leaderboard?limit=20`)
+                    fetch(`${urls.api.leaderboard}?limit=20`)
                         .then(response => {
                             if (!response.ok) throw new Error("Veriler alınamadı");
                             return response.json();
@@ -131,7 +147,7 @@
                                                     {rankBadge || <span className="text-gray-700">{user.rank}</span>}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <a href={`/user/${user.username}`}
+                                                    <a href={window.APP_DATA.urls.viewProfile.replace('0', user.username)}
                                                        className="text-blue-600 hover:text-blue-900 font-medium">
                                                         {user.username}
                                                     </a>

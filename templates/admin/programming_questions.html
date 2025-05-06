@@ -57,7 +57,16 @@
                 },
                     {{ "," if not loop.last }}
                 {% endfor %}
-            ]
+            ],
+            urls: {
+                newQuestion: "{{ url_for('admin.new_programming_question') }}",
+                viewQuestion: "{{ url_for('admin.view_programming_question', id=0) }}",
+                editQuestion: "{{ url_for('admin.edit_programming_question', id=0) }}",
+                questionSubmissions: "{{ url_for('admin.question_submissions', id=0) }}",
+                deleteQuestion: "{{ url_for('admin.delete_programming_question', id=0) }}",
+                adminIndex: "{{ url_for('admin.index') }}",
+                programmingQuestions: "{{ url_for('admin.programming_questions') }}"
+            }
         };
     </script>
 
@@ -114,7 +123,7 @@
                     // Form oluştur ve post request gönder
                     const form = document.createElement('form');
                     form.method = 'post';
-                    form.action = `/admin/programming-questions/${id}/delete`;
+                    form.action = window.APP_DATA.urls.deleteQuestion.replace('0', id);
                     document.body.appendChild(form);
                     form.submit();
                 }
@@ -134,7 +143,7 @@
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
                                 <a
-                                    href="/admin/programming-questions/new"
+                                    href={window.APP_DATA.urls.newQuestion}
                                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium">
                                     Yeni Soru Ekle
                                 </a>
@@ -208,13 +217,13 @@
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <div className="flex justify-end space-x-2">
-                                                    <a href={`/admin/programming-questions/${question.id}`} className="text-blue-600 hover:text-blue-900">
+                                                    <a href={window.APP_DATA.urls.viewQuestion.replace('0', question.id)} className="text-blue-600 hover:text-blue-900">
                                                         Görüntüle
                                                     </a>
-                                                    <a href={`/admin/programming-questions/${question.id}/edit`} className="text-indigo-600 hover:text-indigo-900">
+                                                    <a href={window.APP_DATA.urls.editQuestion.replace('0', question.id)} className="text-indigo-600 hover:text-indigo-900">
                                                         Düzenle
                                                     </a>
-                                                    <a href={`/admin/programming-questions/${question.id}/submissions`} className="text-green-600 hover:text-green-900">
+                                                    <a href={window.APP_DATA.urls.questionSubmissions.replace('0', question.id)} className="text-green-600 hover:text-green-900">
                                                         Çözümler
                                                     </a>
                                                     <button

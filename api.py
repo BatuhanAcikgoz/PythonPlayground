@@ -1,12 +1,19 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
+from fastapi import HTTPException
 import platform
 import psutil
 import flask
 import json
+from typing import Optional, List
+import nbformat
+import os
 import time
+import hashlib
+import re
+from datetime import datetime, timedelta
+from pydantic import BaseModel
 import traceback
 from contextlib import redirect_stdout
 import io
@@ -229,18 +236,6 @@ def evaluate_solution(request: EvaluationRequest):
     return result
 
 
-from typing import Optional, List
-from datetime import datetime
-import nbformat
-import os
-import time
-import hashlib
-import re
-import requests
-from fastapi import HTTPException
-from pydantic import BaseModel
-
-
 # --- AI Notebook Summary Modelleri ---
 class NotebookSummaryRequest(BaseModel):
     notebook_path: str
@@ -325,19 +320,20 @@ class AIClient:
 
 
 @api.post("/api/notebook-summary", response_model=NotebookSummaryResponse)
-def get_notebook_summary(request: NotebookSummaryRequest, db=Depends(get_db)):
+def get_notebook_summary(request: NotebookSummaryRequest, force_update: bool = False, db=Depends(get_db)):
     """Notebook için özet oluşturur veya var olan özeti döndürür"""
     try:
         # Veritabanında özet var mı kontrol et
         summary_query = text("""
-            SELECT notebook_path, summary, code_explanation, last_updated
-            FROM notebook_summary
-            WHERE notebook_path = :path
-        """)
+                             SELECT notebook_path, summary, code_explanation, last_updated
+                             FROM notebook_summary
+                             WHERE notebook_path = :path
+                             """)
 
         existing = db.execute(summary_query, {"path": request.notebook_path}).first()
 
-        if existing and existing.summary:
+        # Force update parametresi ile zorla güncelleme imkanı, boş özet kontrolü eklendi
+        if not force_update and existing and existing.summary and len(existing.summary.strip()) > 10:
             return {
                 "summary": existing.summary,
                 "code_explanation": existing.code_explanation,
@@ -396,6 +392,23 @@ def get_notebook_summary(request: NotebookSummaryRequest, db=Depends(get_db)):
 
         # AI istemcisini oluştur
         client = AIClient(api_provider, api_key, model_name)
+
+        # API bağlantı testi - sağlamlık kontrolü
+        test_response = client.chat_completion(
+            messages=[
+                {"role": "system", "content": "Kısa bir test mesajı"},
+                {"role": "user", "content": "Çalışıyor musun?"}
+            ],
+            max_tokens=100
+        )
+
+        if "error" in test_response:
+            return {"summary": "", "code_explanation": "", "last_updated": datetime.utcnow().isoformat(),
+                    "error": f"AI servisi bağlantı hatası: {test_response.get('error')}"}
+
+        if not test_response.get("content"):
+            return {"summary": "", "code_explanation": "", "last_updated": datetime.utcnow().isoformat(),
+                    "error": "AI servisi boş yanıt döndürdü. API anahtarınızı kontrol ediniz."}
 
         # Yardımcı fonksiyonlar
         def generate_unique_id():
@@ -457,16 +470,41 @@ KESİN KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dilem
             "content": f"Sen bir eğitim içerik uzmanısın. Bu talep ({summary_id}) ŞU AN ({timestamp}) yapılan YENİ ve BENZERSİZ bir istektir. Önceki hiçbir taleple ilgisi yoktur. 'Daha önce analiz edildi' gibi ifadeler ASLA kullanma. Her zaman yeni ve özgün cevap ver."
         }
 
-        summary_response = client.chat_completion(
-            messages=[
-                system_message,
-                {"role": "user", "content": summary_prompt}
-            ],
-            max_tokens=max_tokens
-        )
+        # Summary elde etme ve hata kontrolü
+        retry_count = 2
+        summary_text = ""
+        while retry_count >= 0 and not summary_text:
+            summary_response = client.chat_completion(
+                messages=[
+                    system_message,
+                    {"role": "user", "content": summary_prompt}
+                ],
+                max_tokens=max_tokens
+            )
 
-        # Özeti al
-        summary_text = summary_response.get("content", "") if "error" not in summary_response else ""
+            if "error" in summary_response:
+                if retry_count > 0:
+                    print(f"Özet yanıtı alınamadı, tekrar deneniyor: {summary_response.get('error')}")
+                    time.sleep(3)  # Kısa bekleme
+                    retry_count -= 1
+                    continue
+                else:
+                    return {"summary": "", "code_explanation": "", "last_updated": datetime.utcnow().isoformat(),
+                            "error": f"AI yanıtı alınamadı: {summary_response.get('error')}"}
+
+            summary_text = summary_response.get("content", "")
+            if not summary_text or len(summary_text.strip()) < 50:  # En az 50 karakter olmalı
+                if retry_count > 0:
+                    print(f"AI boş veya çok kısa özet döndürdü, tekrar deneniyor. Uzunluk: {len(summary_text or '')}")
+                    time.sleep(3)  # Kısa bekleme
+                    retry_count -= 1
+                    # İkinci denemede daha açık prompt
+                    summary_prompt += "\n\nÖNEMLİ: Lütfen en az 500 kelimelik detaylı bir özet oluşturun. Özetin boş olmaması kritik öneme sahiptir."
+                else:
+                    return {"summary": "", "code_explanation": "", "last_updated": datetime.utcnow().isoformat(),
+                            "error": "AI sisteminden uygun bir özet alınamadı. Lütfen daha sonra tekrar deneyin veya API anahtarınızı kontrol edin."}
+            else:
+                break  # Başarılı özet elde edildi
 
         # 2. Hücreleri gruplar halinde analiz et
         code_explanations = []
@@ -496,6 +534,7 @@ KOD HÜCRELERİ:
 
 ÇIKTI FORMATI:
 1. Her hücre için "## Hücre X Analizi:" başlığı altında:
+   * Açıklamadan hemen önce markdown formatında ilgili kod hücresini göster
    * Kodun ne yaptığını detaylı açıklama
    * Kullanılan önemli kütüphaneler ve metotlar
    * Algoritmanın zaman ve alan karmaşıklığı (uygunsa)
@@ -590,24 +629,31 @@ KESİN KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dilem
         try:
             code_explanation_combined = ""
             if code_explanations:
-                code_explanation_combined = "# Kod Hücrelerinin Analizi\n\n" + "\n\n".join(code_explanations)
+                code_explanation_combined = "\n\n".join(code_explanations)
 
             if "error" not in techniques_response:
                 techniques_text = techniques_response.get("content", "")
                 if techniques_text:
-                    code_explanation_combined += "\n\n# Teknik Analiz\n\n" + techniques_text
+                    code_explanation_combined += "\n\n" + techniques_text
         except Exception as e:
             code_explanation_combined = f"Kod açıklaması oluşturulurken hata oluştu: {str(e)}"
+
+        # Son kontrol - hala boş ise
+        if not summary_text or len(summary_text.strip()) < 50:
+            return {"summary": "", "code_explanation": "", "last_updated": datetime.utcnow().isoformat(),
+                    "error": "AI özetleme işlemi başarısız oldu. Özet içeriği boş veya çok kısa."}
 
         # Veritabanına kaydet
         last_updated = datetime.utcnow()
 
         if existing:
             update_query = text("""
-                UPDATE notebook_summary
-                SET summary = :summary, code_explanation = :code_explanation, last_updated = :last_updated
-                WHERE notebook_path = :path
-            """)
+                                UPDATE notebook_summary
+                                SET summary          = :summary,
+                                    code_explanation = :code_explanation,
+                                    last_updated     = :last_updated
+                                WHERE notebook_path = :path
+                                """)
 
             db.execute(update_query, {
                 "summary": summary_text,
@@ -617,9 +663,9 @@ KESİN KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dilem
             })
         else:
             insert_query = text("""
-                INSERT INTO notebook_summary (notebook_path, summary, code_explanation, last_updated)
-                VALUES (:path, :summary, :code_explanation, :last_updated)
-            """)
+                                INSERT INTO notebook_summary (notebook_path, summary, code_explanation, last_updated)
+                                VALUES (:path, :summary, :code_explanation, :last_updated)
+                                """)
 
             db.execute(insert_query, {
                 "path": request.notebook_path,
@@ -638,11 +684,13 @@ KESİN KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dilem
         }
 
     except Exception as e:
+        print(f"Notebook özeti oluşturulurken hata: {str(e)}")
+        print(traceback.format_exc())
         return {
             "summary": "",
             "code_explanation": "",
             "last_updated": datetime.utcnow().isoformat(),
-            "error": str(e)
+            "error": f"Notebook özeti oluşturulurken hata: {str(e)}"
         }
 
 from typing import Optional, List
@@ -922,17 +970,161 @@ def chart_activity_stats(days: Optional[int] = 30, db=Depends(get_db)):
         correct_count = db.execute(correct_submissions_query, {"days": days}).first().correct_count
         active_count = db.execute(active_users_query, {"days": days}).first().active_count
 
-        # Doğruluk oranını hesapla
-        accuracy_rate = 0
-        if submission_count > 0:
-            accuracy_rate = round((correct_count / submission_count) * 100, 1)
-
         return {
             "new_users": user_count,
             "total_submissions": submission_count,
             "correct_submissions": correct_count,
             "active_users": active_count,
-            "accuracy_rate": accuracy_rate
         }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class Badge(BaseModel):
+    id: int
+    name: str
+    icon: str
+    description: str
+
+
+class Activity(BaseModel):
+    id: int
+    type: str
+    content: dict
+    date: str
+
+
+class UserStats(BaseModel):
+    solvedProblems: int
+    codingDays: int
+    activeDaysStreak: int
+    solutedProblemsPercentage: float
+
+
+class UserProfileData(BaseModel):
+    username: str
+    email: str
+    joinDate: Optional[str]
+    isCurrentUser: bool
+    badges: List[Badge]
+    stats: UserStats
+    activities: List[Activity]
+    dailyActivity: List[dict]
+
+@api.get("/api/user-profile/{username}", response_model=UserProfileData)
+def get_user_profile(username: str, current_user_id: Optional[int] = None, db=Depends(get_db)):
+    """Kullanıcının profil verilerini döndürür"""
+    try:
+        # Kullanıcıyı bul
+        user_query = text("""
+                          SELECT id, username, email, created_at
+                          FROM user
+                          WHERE username = :username
+                          """)
+        user = db.execute(user_query, {"username": username}).first()
+
+        if not user:
+            raise HTTPException(status_code=404, detail=f"Kullanıcı bulunamadı: {username}")
+
+        stats_query = text("""
+                           SELECT (SELECT COUNT(*)
+                                   FROM submission
+                                   WHERE user_id = :user_id
+                                     AND is_correct = 1)     as solved_problems,
+                                  (SELECT COUNT(DISTINCT DATE (created_at))
+                                   FROM submission
+                                   WHERE user_id = :user_id) as coding_days,
+                                  0                          as active_streak,
+                                  IFNULL(
+                                          (SELECT (COUNT(DISTINCT s.question_id) / (SELECT COUNT(*) FROM programming_question)) * 100
+                                           FROM submission s
+                                           WHERE s.user_id = :user_id
+                                           AND s.is_correct = 1),
+                                          0
+                                        ) as question_participation_rate
+                           """)
+
+        stats = db.execute(stats_query, {"user_id": user.id}).first()
+
+        badges = []
+        activities = []
+
+        # Kullanıcının çözülen problem aktivitelerini al
+        activities_query = text("""
+                                SELECT s.id, q.title as problem_title, s.created_at
+                                FROM submission s
+                                         JOIN programming_question q ON s.question_id = q.id
+                                WHERE s.user_id = :user_id
+                                  AND s.is_correct = 1
+                                ORDER BY s.created_at DESC LIMIT 10
+                                """)
+
+        activities_result = db.execute(activities_query, {"user_id": user.id})
+        for activity in activities_result:
+            activities.append({
+                "id": activity.id,
+                "type": "problem_solved",
+                "content": {"problem": activity.problem_title},
+                "date": activity.created_at.strftime('%Y-%m-%d')
+            })
+
+        # Son 7 günlük aktiviteyi al
+        end_date = datetime.utcnow().date()
+        start_date = end_date - timedelta(days=6)
+
+        daily_activity_query = text("""
+                                    SELECT DATE (created_at) as activity_date, COUNT(*) as count
+                                    FROM submission
+                                    WHERE user_id = :user_id
+                                      AND DATE(created_at) BETWEEN :start_date
+                                      AND :end_date
+                                    GROUP BY DATE(created_at)
+                                    ORDER BY DATE(created_at)
+                                    """)
+
+        daily_results = db.execute(daily_activity_query, {
+            "user_id": user.id,
+            "start_date": start_date,
+            "end_date": end_date
+        })
+
+        # 7 günlük veriyi doldur (boş günler için 0 değeri)
+        daily_activity = []
+        date_counts = {row.activity_date: row.count for row in daily_results}
+
+        for i in range(7):
+            current_date = start_date + timedelta(days=i)
+            label = ""
+            if i == 6:
+                label = "Bugün"
+            elif i == 5:
+                label = "Dün"
+            else:
+                label = f"{6 - i} gün önce"
+
+            daily_activity.append({
+                "date": current_date.strftime('%Y-%m-%d'),
+                "label": label,
+                "count": date_counts.get(current_date, 0)
+            })
+
+        is_current_user = current_user_id is not None and current_user_id == user.id
+
+        return {
+            "username": user.username,
+            "email": user.email,
+            "joinDate": user.created_at.strftime('%Y-%m-%d') if user.created_at else None,
+            "isCurrentUser": is_current_user,
+            "badges": badges,
+            "stats": {
+                "solvedProblems": stats.solved_problems if stats else 0,
+                "codingDays": stats.coding_days if stats else 0,
+                "activeDaysStreak": stats.active_streak if stats else 0,
+                "solutedProblemsPercentage": stats.question_participation_rate if stats else 0
+            },
+            "activities": activities,
+            "dailyActivity": daily_activity
+        }
+    except HTTPException as ex:
+        raise ex
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

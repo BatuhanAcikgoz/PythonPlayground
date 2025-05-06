@@ -62,7 +62,7 @@
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                courses: {{ _('courses')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
                 leaderboard: {{ _('leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
@@ -76,7 +76,12 @@
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
             currentLang: {{ session.get('language', 'tr')|tojson }},
-            formCsrfToken: "{{ form.csrf_token._value() }}"
+            formCsrfToken: "{{ form.csrf_token._value() }}",
+            // URL'leri url_for ile tanımlıyoruz
+            urls: {
+                adminIndex: "{{ url_for('admin.index') }}",
+                adminBadges: "{{ url_for('admin.badges') }}"
+            }
         };
     </script>
 
@@ -384,7 +389,7 @@
                     </div>
 
                     <div className="flex justify-end space-x-3">
-                        <a href="/admin/badges" className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
+                        <a href={window.APP_DATA.urls.adminBadges} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
                             İptal
                         </a>
                         <button
@@ -428,14 +433,14 @@
                     <div className="flex flex-grow">
                         <AdminSidebar />
                         <main className="flex-grow p-6">
-                            <div className="container mx-auto max-w-3xl">
+                            <div className="container mx-auto max-w-6xl">
                                 <div className="flex justify-between items-center mb-6">
                                     <h1 className="text-2xl font-bold">{translations.new_badge}</h1>
                                     <nav className="text-sm" aria-label="Breadcrumb">
                                         <ol className="flex space-x-2">
-                                            <li><a href="/admin" className="text-blue-600 hover:text-blue-800">{translations.dashboard}</a></li>
+                                            <li><a href={window.APP_DATA.urls.adminIndex} className="text-blue-600 hover:text-blue-800">{translations.dashboard}</a></li>
                                             <li>/</li>
-                                            <li><a href="/admin/badges" className="text-blue-600 hover:text-blue-800">{translations.badges}</a></li>
+                                            <li><a href={window.APP_DATA.urls.adminBadges} className="text-blue-600 hover:text-blue-800">{translations.badges}</a></li>
                                             <li>/</li>
                                             <li className="text-gray-700">{translations.new_badge}</li>
                                         </ol>

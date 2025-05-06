@@ -308,12 +308,27 @@ def test_programming_question(id):
                            question=question,
                            test_code=question.solution_code)
 
+
 @admin_bp.route('/badges')
 @admin_required
 def badges():
     from app.models.badges import Badges
-    badge = Badges.query.all()
-    return render_template('admin/badges.html', badge=badge)
+    badges_list = Badges.query.all()
+
+    # Badges nesnelerini serileştirilebilir sözlüklere dönüştür
+    badges_data = []
+    for badge in badges_list:
+        badges_data.append({
+            'id': badge.id,
+            'name': badge.name,
+            'description': badge.description,
+            'icon': badge.icon,
+            'color': badge.color,
+            'created_at': badge.created_at.isoformat() if hasattr(badge, 'created_at') and badge.created_at else None,
+            'updated_at': badge.updated_at.isoformat() if hasattr(badge, 'updated_at') and badge.updated_at else None
+        })
+
+    return render_template('admin/badges.html', badge=badges_data)
 
 @admin_bp.route('/badges/new', methods=['GET', 'POST'])
 @admin_required
@@ -328,6 +343,7 @@ def new_badge():
             name=form.name.data,
             description=form.description.data,
             icon=form.icon.data,
+            color=form.color.data,
         )
 
         db.session.add(badge)
@@ -353,6 +369,16 @@ def edit_badge(id):
 
         flash('Badge başarıyla güncellendi.', 'success')
         return redirect(url_for('admin.badges'))
+
+    badge_data = {
+        'id': badge.id,
+        'name': badge.name,
+        'description': badge.description,
+        'icon': badge.icon,
+        'color': badge.color
+    }
+
+    return render_template('admin/edit_badge.html', badge=badge_data, form=form)
 
     return render_template('admin/edit_badge.html', form=form, badge=badge)
 

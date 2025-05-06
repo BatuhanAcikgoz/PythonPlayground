@@ -38,46 +38,15 @@
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
             userData: {
                 username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
-                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
+                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }},
+                id: {{ current_user.id|tojson if current_user.is_authenticated else 'null'|safe }},
             },
-            profileData: {
-                username: {{ user.username|tojson }},
-                email: {{ user.email|tojson }},
-                joinDate: {{ user.created_at|string|tojson if user.created_at else '""'|safe }},
-                isCurrentUser: {{ (current_user.id == user.id)|tojson }},
-                badges: [
-                    { id: 1, name: "Python Master", icon: "🐍", description: "Tamamlanan 10 Python kursu" },
-                    { id: 2, name: "Çözüm Ustası", icon: "💡", description: "100 problemi çözdü" },
-                    { id: 3, name: "Aktif Öğrenci", icon: "🔥", description: "30 gün üst üste platform kullanımı" }
-                ],
-                stats: {
-                    completedCourses: 7,
-                    solvedProblems: 124,
-                    codingDays: 42,
-                    activeDaysStreak: 12
-                },
-                activities: [
-                    { id: 1, type: "course_completion", course: "Python Temelleri", date: "2023-11-15" },
-                    { id: 2, type: "problem_solved", problem: "Fibonacci Dizisi", date: "2023-11-14" },
-                    { id: 3, type: "notebook_shared", notebook: "Veri Analizi Örneği", date: "2023-11-10" }
-                ],
-                friends: [
-                    { id: 1, username: "ahmet", avatar: "https://i.pravatar.cc/150?img=1" },
-                    { id: 2, username: "ayse", avatar: "https://i.pravatar.cc/150?img=2" },
-                    { id: 3, username: "mehmet", avatar: "https://i.pravatar.cc/150?img=3" }
-                ],
-                notebooks: [
-                    { id: 1, title: "Veri Görselleştirme", date: "2023-11-08", likes: 24 },
-                    { id: 2, title: "ML Model Eğitimi", date: "2023-10-25", likes: 18 },
-                    { id: 3, title: "Web Scraping Örnekleri", date: "2023-10-15", likes: 32 }
-                ]
-            },
-            // Header translations
+            username: {{ user.username|tojson }},
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                courses: {{ _('courses')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
                 leaderboard: {{ _('leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
@@ -86,29 +55,29 @@
                 profile: "Profile",
                 settings: "Settings"
             },
-            // Footer translations
             footerTrans: {
                 allRights: {{ _('all_rights')|tojson|safe }},
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
-            // Current language
             currentLang: {{ session.get('language', 'tr')|tojson }},
             translations: {
                 profile: {{ _('profile')|tojson|safe }} || "Profil",
                 edit_profile: {{ _('edit_profile')|tojson|safe }} || "Profili Düzenle",
                 badges: {{ _('badges')|tojson|safe }} || "Rozetler",
                 statistics: {{ _('statistics')|tojson|safe }} || "İstatistikler",
-                completed_courses: {{ _('completed_courses')|tojson|safe }} || "Tamamlanan Kurslar",
+                activity_chart: {{ _('activity_chart')|tojson|safe }} || "Aktivite Grafiği",
+                accuracy_rate: {{ _('accuracy_rate')|tojson|safe }} || "Doğruluk Oranı",
+                soluted_problems_percentage: {{ _('soluted_problems_percentage')|tojson|safe }} || "Çözülen Soru Yüzdesi",
                 solved_problems: {{ _('solved_problems')|tojson|safe }} || "Çözülen Problemler",
                 coding_days: {{ _('coding_days')|tojson|safe }} || "Kodlama Günleri",
                 active_streak: {{ _('active_streak')|tojson|safe }} || "Aktif Gün Serisi",
                 recent_activities: {{ _('recent_activities')|tojson|safe }} || "Son Aktiviteler",
-                friends: {{ _('friends')|tojson|safe }} || "Arkadaşlar",
-                notebooks: {{ _('notebooks')|tojson|safe }} || "Defterler",
-                view: {{ _('view')|tojson|safe }} || "Görüntüle",
-                see_all: {{ _('see_all')|tojson|safe }} || "Tümünü Gör",
                 member_since: {{ _('member_since')|tojson|safe }} || "Üyelik Tarihi",
-                send_message: {{ _('send_message')|tojson|safe }} || "Mesaj Gönder"
+                send_message: {{ _('send_message')|tojson|safe }} || "Mesaj Gönder",
+                loading: "Yükleniyor...",
+                error_loading: "Veri yüklenirken bir hata oluştu",
+                no_activities: "Henüz çözülmüş problem bulunmuyor",
+                see_all: {{ _('see_all')|tojson|safe }} || "Tümünü Gör"
             }
         };
     </script>
@@ -119,69 +88,138 @@
 
     <script type="text/babel">
         const ProfilePage = () => {
-            const { profileData, translations } = window.APP_DATA;
-            const [activeTab, setActiveTab] = React.useState('activities');
+            const { username, translations } = window.APP_DATA;
             const chartRef = React.useRef(null);
+            const [profileData, setProfileData] = React.useState(null);
+            const [isLoading, setIsLoading] = React.useState(true);
+            const [error, setError] = React.useState(null);
 
+            // Profil verilerini API'dan al
             React.useEffect(() => {
-                if (!chartRef.current) return;
+                const fetchProfileData = async () => {
+                    try {
+                        setIsLoading(true);
+                        const response = await fetch(`/api/user-profile/${username}?current_user_id=${window.APP_DATA.userData.id}`);
 
-                const ctx = chartRef.current.getContext('2d');
-                const chart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['6 gün önce', '5 gün önce', '4 gün önce', '3 gün önce', '2 gün önce', 'Dün', 'Bugün'],
-                        datasets: [{
-                            label: 'Günlük Aktivite',
-                            data: [2, 4, 3, 5, 7, 4, 6],
-                            fill: true,
-                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                            borderColor: 'rgba(59, 130, 246, 1)',
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    precision: 0
-                                }
-                            }
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
                         }
-                    }
-                });
 
-                return () => chart.destroy();
-            }, []);
+                        const data = await response.json();
+                        setProfileData(data);
+                        setError(null);
+                    } catch (err) {
+                        console.error("Profil verileri yüklenirken hata:", err);
+                        setError("Profil verileri yüklenemedi. Lütfen daha sonra tekrar deneyin.");
+                    } finally {
+                        setIsLoading(false);
+                    }
+                };
+
+                fetchProfileData();
+            }, [username]);
+
+            // Aktivite grafiği
+            React.useEffect(() => {
+                // Bir gecikme ekleyerek DOM'un tamamen yüklenmesini bekleyelim
+                setTimeout(() => {
+                    console.log("DOM hazır, grafik oluşturma başlıyor");
+
+                    if (!chartRef.current) {
+                        console.error("chartRef mevcut değil!");
+                        return;
+                    }
+
+                    if (!profileData) {
+                        console.error("profileData mevcut değil!");
+                        return;
+                    }
+
+                    if (!profileData.dailyActivity) {
+                        console.error("dailyActivity mevcut değil!");
+                        return;
+                    }
+
+                    const ctx = chartRef.current.getContext('2d');
+                    if (!ctx) {
+                        console.error("canvas context alınamadı!");
+                        return;
+                    }
+
+                    console.log("Tüm veriler tamam, grafik oluşturuluyor");
+
+                    // Önceki grafiği temizle
+                    if (window.activityChart) {
+                        window.activityChart.destroy();
+                    }
+
+                    const labels = profileData.dailyActivity.map(day => day.label);
+                    const data = profileData.dailyActivity.map(day => day.count);
+
+                    window.activityChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Günlük Aktivite',
+                                data: data,
+                                fill: true,
+                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                borderColor: 'rgba(59, 130, 246, 1)',
+                                borderWidth: 2,
+                                pointRadius: 4,
+                                tension: 0.4
+                            }]
+                        },
+                    });
+                }, 500); // 500ms bekle
+
+                return () => {
+                    if (window.activityChart) {
+                        window.activityChart.destroy();
+                    }
+                };
+            }, [profileData]);
 
             const formatDate = (dateString) => {
                 const date = new Date(dateString);
                 return new Intl.DateTimeFormat('tr-TR').format(date);
             };
 
-            const renderActivityIcon = (type) => {
-                switch(type) {
-                    case 'course_completion': return '🎓';
-                    case 'problem_solved': return '✅';
-                    case 'notebook_shared': return '📝';
-                    default: return '🔔';
-                }
-            };
+            // Yükleme durumunu göster
+            if (isLoading) {
+                return (
+                    <div className="flex flex-col flex-grow">
+                        <Header />
+                        <main className="flex-grow flex items-center justify-center">
+                            <div className="text-center">
+                                <div className="text-3xl mb-4">⌛</div>
+                                <p>{translations.loading}</p>
+                            </div>
+                        </main>
+                        <Footer />
+                    </div>
+                );
+            }
 
-            const renderActivityText = (activity) => {
-                switch(activity.type) {
-                    case 'course_completion':
-                        return `"${activity.course}" kursunu tamamladı`;
-                    case 'problem_solved':
-                        return `"${activity.problem}" problemini çözdü`;
-                    case 'notebook_shared':
-                        return `"${activity.notebook}" defterini paylaştı`;
-                    default:
-                        return 'Bir etkinlik gerçekleştirdi';
-                }
-            };
+            // Hata durumunu göster
+            if (error) {
+                return (
+                    <div className="flex flex-col flex-grow">
+                        <Header />
+                        <main className="flex-grow flex items-center justify-center">
+                            <div className="text-center text-red-600">
+                                <div className="text-3xl mb-4">❌</div>
+                                <p>{error}</p>
+                            </div>
+                        </main>
+                        <Footer />
+                    </div>
+                );
+            }
+
+            // Profil verisi yoksa çık
+            if (!profileData) return null;
 
             return (
                 <div className="flex flex-col flex-grow">
@@ -220,6 +258,7 @@
                                         ) : (
                                             <button
                                                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                                                onClick={() => alert(translations.send_message)}
                                             >
                                                 {translations.send_message}
                                             </button>
@@ -237,9 +276,9 @@
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="bg-blue-50 p-4 rounded-lg text-center">
                                                 <div className="text-2xl font-bold text-blue-600">
-                                                    {profileData.stats.completedCourses}
+                                                    {profileData.stats.solutedProblemsPercentage || '0'}%
                                                 </div>
-                                                <div className="text-sm text-gray-600">{translations.completed_courses}</div>
+                                                <div className="text-sm text-gray-600">{translations.soluted_problems_percentage}</div>
                                             </div>
                                             <div className="bg-green-50 p-4 rounded-lg text-center">
                                                 <div className="text-2xl font-bold text-green-600">
@@ -266,8 +305,11 @@
                                 {/* Aktivite Grafiği */}
                                 <div className="bg-white shadow-md rounded-lg overflow-hidden">
                                     <div className="p-6">
-                                        <h2 className="text-lg font-semibold mb-4">Aktivite Grafiği</h2>
+                                        <h2 className="text-lg font-semibold mb-4">{translations.activity_chart}</h2>
                                         <canvas ref={chartRef}></canvas>
+                                        <div id="chartFallback" className="hidden absolute inset-0 flex items-center justify-center text-gray-500">
+                                            Grafik yüklenemedi
+                                        </div>
                                     </div>
                                 </div>
 
@@ -276,121 +318,52 @@
                                     <div className="p-6">
                                         <h2 className="text-lg font-semibold mb-4">{translations.badges}</h2>
                                         <div className="flex flex-wrap gap-4">
-                                            {profileData.badges.map(badge => (
-                                                <div
-                                                    key={badge.id}
-                                                    className="badge flex flex-col items-center tooltip"
-                                                    title={badge.description}
-                                                >
-                                                    <div className="text-4xl mb-2">{badge.icon}</div>
-                                                    <div className="text-sm font-medium text-center">{badge.name}</div>
-                                                </div>
-                                            ))}
+                                            {profileData.badges.length > 0 ? (
+                                                profileData.badges.map(badge => (
+                                                    <div
+                                                        key={badge.id}
+                                                        className="badge flex flex-col items-center tooltip"
+                                                        title={badge.description}
+                                                    >
+                                                        <div className="text-4xl mb-2">{badge.icon}</div>
+                                                        <div className="text-sm font-medium text-center">{badge.name}</div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <p className="text-gray-500">Henüz rozet kazanılmamış.</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Sekmeli Bölümler */}
+                            {/* Çözülen Problemler Bölümü */}
                             <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                                <div className="border-b">
-                                    <div className="flex">
-                                        <button
-                                            className={`px-4 py-3 font-medium ${activeTab === 'activities' ?
-                                                'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-800'}`}
-                                            onClick={() => setActiveTab('activities')}
-                                        >
-                                            {translations.recent_activities}
-                                        </button>
-                                        <button
-                                            className={`px-4 py-3 font-medium ${activeTab === 'notebooks' ?
-                                                'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-800'}`}
-                                            onClick={() => setActiveTab('notebooks')}
-                                        >
-                                            {translations.notebooks}
-                                        </button>
-                                        <button
-                                            className={`px-4 py-3 font-medium ${activeTab === 'friends' ?
-                                                'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-800'}`}
-                                            onClick={() => setActiveTab('friends')}
-                                        >
-                                            {translations.friends}
-                                        </button>
-                                    </div>
+                                <div className="px-6 py-4 border-b">
+                                    <h2 className="text-lg font-semibold">{translations.solved_problems}</h2>
                                 </div>
 
-                                {/* Sekme İçerikleri */}
                                 <div className="p-6">
-                                    {activeTab === 'activities' && (
-                                        <div>
-                                            <div className="space-y-4">
-                                                {profileData.activities.map(activity => (
-                                                    <div key={activity.id} className="flex p-3 border rounded-lg hover:bg-gray-50">
-                                                        <div className="text-2xl mr-4">
-                                                            {renderActivityIcon(activity.type)}
-                                                        </div>
-                                                        <div className="flex-grow">
-                                                            <p>{renderActivityText(activity)}</p>
-                                                            <p className="text-sm text-gray-500">{formatDate(activity.date)}</p>
-                                                        </div>
+                                    <div className="space-y-4">
+                                        {profileData.activities.length > 0 ? (
+                                            profileData.activities.map(activity => (
+                                                <div key={activity.id} className="flex p-3 border rounded-lg hover:bg-gray-50">
+                                                    <div className="text-2xl mr-4">✅</div>
+                                                    <div className="flex-grow">
+                                                        <p>"{activity.content.problem}" problemini çözdü</p>
+                                                        <p className="text-sm text-gray-500">{formatDate(activity.date)}</p>
                                                     </div>
-                                                ))}
-                                            </div>
-                                            <div className="mt-4 text-center">
-                                                <button className="text-blue-600 hover:underline">
-                                                    {translations.see_all}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {activeTab === 'notebooks' && (
-                                        <div>
-                                            <div className="overflow-x-auto">
-                                                <table className="w-full text-left">
-                                                    <thead>
-                                                        <tr className="border-b">
-                                                            <th className="pb-3 font-medium">Başlık</th>
-                                                            <th className="pb-3 font-medium">Tarih</th>
-                                                            <th className="pb-3 font-medium">Beğeniler</th>
-                                                            <th className="pb-3 font-medium"></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {profileData.notebooks.map(notebook => (
-                                                            <tr key={notebook.id} className="border-b hover:bg-gray-50">
-                                                                <td className="py-3">{notebook.title}</td>
-                                                                <td className="py-3">{formatDate(notebook.date)}</td>
-                                                                <td className="py-3">❤️ {notebook.likes}</td>
-                                                                <td className="py-3">
-                                                                    <button className="text-blue-600 hover:underline">
-                                                                        {translations.view}
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {activeTab === 'friends' && (
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                            {profileData.friends.map(friend => (
-                                                <a
-                                                    key={friend.id}
-                                                    href={`/profil/${friend.username}`}
-                                                    className="flex flex-col items-center p-4 border rounded-lg hover:bg-gray-50"
-                                                >
-                                                    <img
-                                                        src={friend.avatar}
-                                                        alt={friend.username}
-                                                        className="w-16 h-16 rounded-full mb-2"
-                                                    />
-                                                    <span className="font-medium">{friend.username}</span>
-                                                </a>
-                                            ))}
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-center text-gray-500">{translations.no_activities}</p>
+                                        )}
+                                    </div>
+                                    {profileData.activities.length > 0 && (
+                                        <div className="mt-4 text-center">
+                                            <a href="/my-submissions" className="text-blue-600 hover:underline">
+                                                {translations.see_all}
+                                            </a>
                                         </div>
                                     )}
                                 </div>
