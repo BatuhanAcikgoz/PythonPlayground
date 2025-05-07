@@ -239,6 +239,8 @@ def evaluate_solution(request: EvaluationRequest):
     test_inputs = []
     try:
         test_inputs = json.loads(request.test_inputs)
+        # Test sayısını ekle
+        result["test_count"] = len(test_inputs)
     except json.JSONDecodeError:
         result["errors"].append("Test girdileri geçerli JSON formatında değil")
         return result
@@ -269,11 +271,19 @@ def evaluate_solution(request: EvaluationRequest):
         # Testleri çalıştır
         all_correct = True
         start_time = time.time()
+        passed_tests = 0
+        failed_tests = 0
 
-        for test_input in test_inputs:
+        # Test sonuçlarını takip etmek için sözlük
+        test_results = {}
+
+        for i, test_input in enumerate(test_inputs):
             # Test girişlerinin liste olduğundan emin ol
             if not isinstance(test_input, list):
                 test_input = [test_input]
+
+            test_key = f"test_{i + 1}"
+            test_results[test_key] = {"input": test_input, "passed": False}
 
             try:
                 # Kullanıcı kodunu çalıştır
@@ -283,10 +293,21 @@ def evaluate_solution(request: EvaluationRequest):
 
                 if user_result != expected_result:
                     all_correct = False
+                    failed_tests += 1
+                    test_results[test_key]["passed"] = False
+                    test_results[test_key]["expected"] = expected_result
+                    test_results[test_key]["actual"] = user_result
                     result["errors"].append(f"Girdi: {test_input}, Beklenen: {expected_result}, Alınan: {user_result}")
+                else:
+                    passed_tests += 1
+                    test_results[test_key]["passed"] = True
 
             except TypeError as e:
                 error_msg = str(e)
+                failed_tests += 1
+                test_results[test_key]["passed"] = False
+                test_results[test_key]["error"] = error_msg
+
                 if "'builtin_function_or_method' object is not subscriptable" in error_msg:
                     # Hata konumunu bul
                     import traceback
@@ -310,6 +331,9 @@ def evaluate_solution(request: EvaluationRequest):
                 all_correct = False
 
             except Exception as e:
+                failed_tests += 1
+                test_results[test_key]["passed"] = False
+                test_results[test_key]["error"] = str(e)
                 result["errors"].append(f"Çalışma zamanı hatası: {str(e)}")
                 all_correct = False
 
@@ -318,6 +342,10 @@ def evaluate_solution(request: EvaluationRequest):
 
         result["is_correct"] = all_correct
         result["execution_time"] = execution_time
+        result["test_results"] = test_results
+        # Test sonuç sayılarını ekle
+        result["passed_tests"] = passed_tests
+        result["failed_tests"] = failed_tests
 
         return result
 
@@ -1302,7 +1330,7 @@ Konu: {topic}
 Etiketler: {', '.join(selected_tags)}
 
 KATI KURALLAR:
-* HackerRank'e benzer sorular oluştur
+* HackerRank'e veya LeetCode'dakine benzer sorular oluştur
 * Soru parametreler almalı ve return ( yani geri dönüş değeri döndürmeli )
 * Sorunun çözüm kodu ve test girdilerini ekle
 * Parametre sayılarının tutarlı olmasına dikkat et
@@ -1310,6 +1338,8 @@ KATI KURALLAR:
 * Çözüm kodu mümkün olduğunca sade olsun
 * test_inputs alanında eğer ki çözüm kodunda kaç tane parametre varsa input sayısı da ona göre olmalı!
 * test_inputs alanında sadece parametrelerin alacağı değerler olmalı çıktılar olmamalı!
+* Olabildiğince özgün ve yaratıcı ol
+* Olabildiğince az kütüphane bilgisi isteyen sorular hazırla
 * Yanıt kesinlikle JSON formatında olmalı öbür türlüsü kabul edilmiyor!!!
 
 Ürettiğin soru aşağıdaki mevcut sorulardan TAMAMEN farklı olmalı:
@@ -1325,7 +1355,7 @@ Yanıtını JSON formatında oluştur:
   "points": {10 + difficulty_level * 5},
   "example_input": "Örnek girdi",
   "example_output": "Örnek çıktı",
-  "test_inputs": [[1, 2], [3, 4]] (2 parametreli fonksiyon için örnek) sadece parametrelerin alacağı değerler olmalı çıktılar bu kısımda olmamalı!,
+  "test_inputs": [[1, 2], [3, 4]] (2 parametreli fonksiyon için örnek) parametre sayısı ve her bir testin içindeki girdi sayısı aynı olmalı, sadece parametrelerin alacağı değerler olmalı çıktılar bu kısımda olmamalı!,
   "solution_code": "def python_fonksiyon_adi(param1, param2):\\n    return sonuc"
 }}"""
 

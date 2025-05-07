@@ -306,7 +306,7 @@ def generate_questions_on_startup(app):
                 response = requests.post(
                     "http://127.0.0.1:8000/api/generate-question",
                     params={"difficulty_level": difficulty},
-                    timeout=60  # 60 saniye timeout
+                    timeout=180  # 180 saniye timeout
                 )
 
                 if response.status_code == 200:
