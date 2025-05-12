@@ -1,22 +1,28 @@
+from pydoc_data.topics import topics
+
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import HTTPException
 import platform
 import psutil
 import flask
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 import nbformat
 import os
 import time
 import hashlib
 import re
 import json
+import random
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 import traceback
 from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+
+from app.events import event_manager
+from app.events.event_definitions import EventType
 from config import Config
 
 # Veritabanı bağlantısı
@@ -168,24 +174,28 @@ class EvaluationResult(BaseModel):
 
 
 def check_indentation(code: str):
-    """Kod içindeki girinti hatalarını kontrol eder"""
+    """Kod içindeki girinti hatalarını ve sözdizimi hatalarını kontrol eder"""
     lines = code.splitlines()
 
     # Tab ve boşluk karışımını kontrol et
     for i, line in enumerate(lines):
         if line.strip() and line.startswith(" ") and "\t" in line:
-            return False, i + 1, "Tab ve boşluk karışımı tespit edildi"
+            return False, i + 1, "Bu satırda hem tab hem de boşluk karakteri var, bu tutarsız girintiye neden olur", "indentation"
 
-    # Girinti tutarlılığını kontrol et
+    # Girinti tutarlılığını ve sözdizimi hatalarını kontrol et
     try:
-        # Gerçek Python derleyicisiyle girinti hatasını tespit et
+        # Gerçek Python derleyicisiyle girinti ve sözdizimi hatalarını tespit et
         compile(code, "<string>", "exec")
-        return True, 0, ""
+        return True, None, None, None
     except IndentationError as e:
         # IndentationError, satır numarasını ve hata mesajını içerir
-        return False, e.lineno, str(e)
-
-    return True, 0, ""
+        return False, e.lineno, str(e), "indentation"
+    except SyntaxError as e:
+        # SyntaxError hatalarını da yakala
+        return False, e.lineno, str(e), "syntax"
+    except Exception as e:
+        # Diğer hatalar için
+        return False, None, str(e), "other"
 
 def normalize_indentation(code: str) -> str:
     """Kod içindeki karışık girintileri normalleştirip tutarlı hale getirir"""
@@ -218,35 +228,51 @@ def normalize_indentation(code: str) -> str:
 
 @api.post("/api/evaluate", response_model=EvaluationResult)
 def evaluate_solution(request: EvaluationRequest):
-    """Kullanıcı kodunu değerlendirir ve sonuçları döndürür"""
+    """
+    Kullanıcı kodunu değerlendirir ve sonuçları döndürür.
+
+    Bu API endpoint'i kullanıcının gönderdiği kodu çalıştırır, çözüm ile karşılaştırır
+    ve test sonuçlarını döndürür.
+    """
+    # Sonuç nesnesi başlangıç değerleri
     result = {
         "is_correct": False,
         "execution_time": 0,
         "test_count": 0,
         "test_results": {},
-        "errors": []
+        "errors": [],
+        "passed_tests": 0,  # Zorunlu alan
+        "failed_tests": 0  # Zorunlu alan
     }
 
-    # Kodu normalleştirme adımı ekle
-    normalized_code = normalize_indentation(request.code)
-
-    # Geliştirilmiş girinti kontrolü (normalleştirilmiş kod üzerinde)
-    is_valid, line_num, error_msg = check_indentation(normalized_code)
-    if not is_valid:
-        result["errors"].append(f"Satır {line_num}'de girinti hatası: {error_msg}")
-        return result
-
-    test_inputs = []
     try:
-        test_inputs = json.loads(request.test_inputs)
-        # Test sayısını ekle
-        result["test_count"] = len(test_inputs)
-    except json.JSONDecodeError:
-        result["errors"].append("Test girdileri geçerli JSON formatında değil")
-        return result
+        # 1. Kod ön işleme ve kontrol
+        normalized_code = normalize_indentation(request.code)
 
-    try:
-        # Kullanıcı kodunu güvenli bir şekilde çalıştır (normalleştirilmiş kodu kullan)
+        # Geliştirilmiş girinti kontrolü
+        is_valid, line_num, error_msg, error_type = check_indentation(normalized_code)
+        if not is_valid:
+            if error_type == "syntax":
+                result["errors"].append(f"Satır {line_num}'de sözdizimi hatası: {error_msg}")
+            elif error_type == "indentation":
+                result["errors"].append(f"Satır {line_num}'de girinti hatası: {error_msg}")
+            else:
+                result["errors"].append(f"Kodda hata: {error_msg}")
+            return result
+
+        # 2. Random kullanım kontrolü ve seed enjeksiyonu
+        normalized_code = inject_random_seed(normalized_code, request.function_name)
+        modified_solution_code = inject_random_seed(request.solution_code, request.function_name)
+
+        # 3. Test girdilerini yükle
+        try:
+            test_inputs = json.loads(request.test_inputs)
+            result["test_count"] = len(test_inputs)
+        except json.JSONDecodeError:
+            result["errors"].append("Test girdileri geçerli JSON formatında değil")
+            return result
+
+        # 4. Kullanıcı fonksiyonunu çalıştırma
         user_namespace = {}
         exec(normalized_code, user_namespace)
         user_function = user_namespace.get(request.function_name)
@@ -259,102 +285,129 @@ def evaluate_solution(request: EvaluationRequest):
             result["errors"].append(f"'{request.function_name}' çağrılabilir bir fonksiyon değil")
             return result
 
-        # Çözüm kodunu çalıştır
+        # 5. Çözüm fonksiyonunu çalıştırma
         solution_namespace = {}
-        exec(request.solution_code, solution_namespace)
+        exec(modified_solution_code, solution_namespace)
         solution_function = solution_namespace.get(request.function_name)
 
         if not solution_function:
             result["errors"].append("Çözüm fonksiyonu bulunamadı")
             return result
 
-        # Testleri çalıştır
-        all_correct = True
+        # 6. Testleri çalıştır ve değerlendir
         start_time = time.time()
-        passed_tests = 0
-        failed_tests = 0
-
-        # Test sonuçlarını takip etmek için sözlük
-        test_results = {}
-
-        for i, test_input in enumerate(test_inputs):
-            # Test girişlerinin liste olduğundan emin ol
-            if not isinstance(test_input, list):
-                test_input = [test_input]
-
-            test_key = f"test_{i + 1}"
-            test_results[test_key] = {"input": test_input, "passed": False}
-
-            try:
-                # Kullanıcı kodunu çalıştır
-                user_result = user_function(*test_input)
-                # Çözüm kodunu çalıştır
-                expected_result = solution_function(*test_input)
-
-                if user_result != expected_result:
-                    all_correct = False
-                    failed_tests += 1
-                    test_results[test_key]["passed"] = False
-                    test_results[test_key]["expected"] = expected_result
-                    test_results[test_key]["actual"] = user_result
-                    result["errors"].append(f"Girdi: {test_input}, Beklenen: {expected_result}, Alınan: {user_result}")
-                else:
-                    passed_tests += 1
-                    test_results[test_key]["passed"] = True
-
-            except TypeError as e:
-                error_msg = str(e)
-                failed_tests += 1
-                test_results[test_key]["passed"] = False
-                test_results[test_key]["error"] = error_msg
-
-                if "'builtin_function_or_method' object is not subscriptable" in error_msg:
-                    # Hata konumunu bul
-                    import traceback
-                    tb = traceback.extract_tb(e.__traceback__)
-                    line_number = None
-
-                    # Kullanıcı kodundaki satır numarasını bul
-                    for frame in tb:
-                        if frame.filename == "<string>":
-                            line_number = frame.lineno
-                            break
-
-                    # Daha açıklayıcı hata mesajı (satır numarası ile)
-                    line_info = f"Satır {line_number}: " if line_number else ""
-                    result["errors"].append(
-                        f"{line_info}Yerleşik fonksiyon/metot indeks notasyonu ile kullanılamaz. "
-                        "Örnek: 'max[0]' yerine 'max(liste)' kullanmalısınız."
-                    )
-                else:
-                    result["errors"].append(f"Tip hatası: {error_msg}")
-                all_correct = False
-
-            except Exception as e:
-                failed_tests += 1
-                test_results[test_key]["passed"] = False
-                test_results[test_key]["error"] = str(e)
-                result["errors"].append(f"Çalışma zamanı hatası: {str(e)}")
-                all_correct = False
-
+        test_results, passed, failed, is_all_correct, error_messages = run_tests(
+            user_function, solution_function, test_inputs
+        )
         end_time = time.time()
-        execution_time = round((end_time - start_time) * 1000, 2)  # milisaniye cinsinden
 
-        result["is_correct"] = all_correct
-        result["execution_time"] = execution_time
+        # 7. Sonuçları hazırla
+        result["is_correct"] = is_all_correct
+        result["execution_time"] = round((end_time - start_time) * 1000, 2)  # milisaniye
         result["test_results"] = test_results
-        # Test sonuç sayılarını ekle
-        result["passed_tests"] = passed_tests
-        result["failed_tests"] = failed_tests
+        result["passed_tests"] = passed
+        result["failed_tests"] = failed
+        result["errors"].extend(error_messages)
 
         return result
 
     except Exception as e:
+        # Genel hata durumu
         import traceback
         error_trace = traceback.format_exc()
         result["errors"].append(f"Değerlendirme hatası: {str(e)}")
         result["error_details"] = error_trace
         return result
+
+
+def inject_random_seed(code, function_name):
+    """Random modülü kullanıldığında seed ekler"""
+    if not code:
+        return code
+
+    # Random kullanım kontrolü
+    uses_random = re.search(r'import\s+random|from\s+random\s+import', code) is not None
+
+    if uses_random:
+        # Fonksiyon tanımını bul
+        function_pattern = re.compile(f"def\\s+{re.escape(function_name)}\\s*\\([^)]*\\)\\s*:")
+        match = function_pattern.search(code)
+        if match:
+            insertion_point = match.end()
+            # Fonksiyonun ilk satırına seed enjekte et
+            code = code[:insertion_point] + "\n    random.seed(67)" + code[insertion_point:]
+
+    return code
+
+
+def run_tests(user_function, solution_function, test_inputs):
+    """Test girişlerine göre fonksiyonu çalıştırır ve sonuçları değerlendirir"""
+    all_correct = True
+    passed_tests = 0
+    failed_tests = 0
+    test_results = {}
+    error_messages = []
+
+    for i, test_input in enumerate(test_inputs):
+        # Test girişlerinin liste olduğundan emin ol
+        if not isinstance(test_input, list):
+            test_input = [test_input]
+
+        test_key = f"test_{i + 1}"
+        test_results[test_key] = {"input": test_input, "passed": False}
+
+        try:
+            # Her iki fonksiyonu da aynı girdilerle çalıştır
+            user_result = user_function(*test_input)
+            expected_result = solution_function(*test_input)
+
+            # Sonuçları karşılaştır
+            if user_result != expected_result:
+                all_correct = False
+                failed_tests += 1
+                test_results[test_key]["passed"] = False
+                test_results[test_key]["expected"] = expected_result
+                test_results[test_key]["actual"] = user_result
+                error_messages.append(
+                    f"Test başarısız: Girdi: {test_input}, Beklenen: {expected_result}, Alınan: {user_result}")
+            else:
+                passed_tests += 1
+                test_results[test_key]["passed"] = True
+
+        except TypeError as e:
+            error_msg = str(e)
+            failed_tests += 1
+            test_results[test_key]["passed"] = False
+            test_results[test_key]["error"] = error_msg
+
+            if "'builtin_function_or_method' object is not subscriptable" in error_msg:
+                # Hata konumunu bul
+                import traceback
+                tb = traceback.extract_tb(e.__traceback__)
+                line_number = None
+
+                for frame in tb:
+                    if frame.filename == "<string>":
+                        line_number = frame.lineno
+                        break
+
+                line_info = f"Satır {line_number}: " if line_number else ""
+                error_messages.append(
+                    f"{line_info}Yerleşik fonksiyon/metot indeks notasyonu ile kullanılamaz. "
+                    "Örnek: 'max[0]' yerine 'max(liste)' kullanmalısınız."
+                )
+            else:
+                error_messages.append(f"Tip hatası: {error_msg}")
+            all_correct = False
+
+        except Exception as e:
+            failed_tests += 1
+            test_results[test_key]["passed"] = False
+            test_results[test_key]["error"] = str(e)
+            error_messages.append(f"Çalışma zamanı hatası: {str(e)}")
+            all_correct = False
+
+    return test_results, passed_tests, failed_tests, all_correct, error_messages
 
 # --- AI Notebook Summary Modelleri ---
 class NotebookSummaryRequest(BaseModel):
@@ -1263,6 +1316,7 @@ class GeneratedQuestionResponse(BaseModel):
     description: str = ""
     function_name: str = ""
     difficulty: int = 1
+    topic: str = ""
     points: int = 10
     example_input: str = "Örnek girdi yok"
     example_output: str = "Örnek çıktı yok"
@@ -1281,6 +1335,7 @@ def generate_programming_question(difficulty_level: int = 2, db=Depends(get_db))
             "description": "",
             "function_name": "",
             "difficulty": difficulty_level,
+            "topic": "",
             "points": 10 + difficulty_level * 5,
             "example_input": "Örnek girdi yok",
             "example_output": "Örnek çıktı yok",
@@ -1352,6 +1407,7 @@ Yanıtını JSON formatında oluştur:
   "description": "Markdown formatında soru açıklaması örnek girdiler ve çıktılarla destekle",
   "function_name": "python_fonksiyon_adi",
   "difficulty": {difficulty_level},
+  "topic": "{topic}",
   "points": {10 + difficulty_level * 5},
   "example_input": "Örnek girdi",
   "example_output": "Örnek çıktı",
@@ -1475,9 +1531,27 @@ Yanıtını JSON formatında oluştur:
             "description": "",
             "function_name": "",
             "difficulty": difficulty_level,
+            "topic": topic,
             "points": 10 + difficulty_level * 5,
             "example_input": "Örnek girdi yok",
             "example_output": "Örnek çıktı yok",
             "test_inputs": "[]",
             "solution_code": ""
         }
+
+class EventRequest(BaseModel):
+    event_type: str
+    data: Dict[str, Any]
+
+@api.post("/api/trigger-event")
+def trigger_event(request: EventRequest):
+    """Belirtilen olayı tetikler ve ilgili verileri işler"""
+    try:
+        # String olarak gelen event türünü EventType'a çevir
+        event_type = EventType[request.event_type]
+        event_manager.trigger_event(event_type, request.data)
+        return {"success": True, "message": f"{request.event_type} olayı başarıyla tetiklendi"}
+    except KeyError:
+        return {"success": False, "message": f"Geçersiz olay türü: {request.event_type}"}
+    except Exception as e:
+        return {"success": False, "message": f"Olay tetiklenirken hata oluştu: {str(e)}"}

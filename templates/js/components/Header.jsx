@@ -5,7 +5,19 @@ const Header = () => {
     const username = window.APP_DATA.userData.username;
     const userEmail = window.APP_DATA.userData.email;
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
-    const headerTrans = window.APP_DATA.headerTrans;
+    const headerTrans = window.APP_DATA.headerTrans || {
+        home: "Ana Sayfa",
+        questions: "Sorular",
+        about: "Hakkında",
+        leaderboard: "Sıralama",
+        profile: "Profil",
+        settings: "Ayarlar",
+        logout: "Çıkış Yap",
+        login: "Giriş Yap",
+        register: "Kayıt Ol",
+        appName: "Python Playground",
+        tagline: "Python ile eğlenceli bir şekilde öğrenin",
+    };
 
     // Generate MD5 hash for Gravatar
     const getGravatarURL = (email) => {
@@ -54,8 +66,8 @@ const Header = () => {
                         <ul className="flex space-x-6 items-center">
                             <li><a href="/" className="text-white hover:text-blue-200 font-medium">{headerTrans.home}</a></li>
                             <li><a href="/questions" className="text-white hover:text-blue-200 font-medium">{headerTrans.questions}</a></li>
+                            <li><a href="/leaderboard" className="text-white hover:text-blue-200 font-medium">{headerTrans.leaderboard}</a></li>
                             <li><a href="/about" className="text-white hover:text-blue-200 font-medium">{headerTrans.about}</a></li>
-                            <li><a href="/siralama" className="text-white hover:text-blue-200 font-medium">{headerTrans.leaderboard}</a></li>
                             {isLoggedIn ? (
                                 <React.Fragment>
                                     <li className="relative user-dropdown-container">
@@ -76,13 +88,13 @@ const Header = () => {
                                         {dropdownOpen && (
                                             <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                                                 <div className="py-1" role="menu" aria-orientation="vertical">
-                                                    <a href="#" className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 items-center" role="menuitem">
+                                                    <a href="/profil" className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 items-center" role="menuitem">
                                                         <svg className="h-4 w-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                                         </svg>
                                                         {headerTrans.profile}
                                                     </a>
-                                                    <a href="#" className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 items-center" role="menuitem">
+                                                    <a href="/settings" className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 items-center" role="menuitem">
                                                         <svg className="h-4 w-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>

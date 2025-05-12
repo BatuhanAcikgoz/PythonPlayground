@@ -101,6 +101,8 @@ def init_db(app):
         from app.models.programming_question import ProgrammingQuestion
         from app.models.submission import Submission
         from app.models.badges import Badges
+        from app.models.badge_criteria import BadgeCriteria
+        from app.models.user_badges import UserBadge
         from app.models.user import User, Role
         from app.models.settings import Setting
 
@@ -238,6 +240,7 @@ def init_db(app):
         from app.models.programming_question import ProgrammingQuestion
         from app.models.submission import Submission
         from app.models.badges import Badges
+        from app.models.user_badges import UserBadge
         from app.models.user import User, Role
         from app.models.settings import Setting
 
@@ -323,6 +326,7 @@ def generate_questions_on_startup(app):
                             description=question_data["description"],
                             function_name=question_data["function_name"],
                             difficulty=difficulty,
+                            topic=question_data["topic"],
                             points=question_data["points"],
                             example_input=question_data["example_input"],
                             example_output=question_data["example_output"],

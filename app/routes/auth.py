@@ -62,6 +62,15 @@ def profile(username):
     user = User.query.filter_by(username=username).first()
     return render_template('profile.html', user=current_user)
 
+@auth_bp.route('/profil')
+def my_profile():
+    if not current_user.is_authenticated:
+        flash('Lütfen önce giriş yapın.')
+        return redirect(url_for('auth.login'))
+
+    return render_template('profile.html', user=current_user)
+
+
 @auth_bp.route('/settings/account', methods=['POST'])
 @login_required
 def update_account():

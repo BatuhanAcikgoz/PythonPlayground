@@ -207,7 +207,7 @@ def evaluate_code(id):
             response = requests.post(
                 "http://127.0.0.1:8000/api/evaluate",
                 json=evaluation_request,
-                timeout=5
+                timeout=30
             )
 
             if response.status_code == 200:

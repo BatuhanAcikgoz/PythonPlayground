@@ -169,42 +169,111 @@
         const TestResultDisplay = ({ result }) => {
             if (!result) return null;
 
-            // Sadece "Test başarısız:" ile başlayan hata mesajlarını filtreleyerek gerçek test hataları sayısını buluyoruz
-            const failedTestCount = result.errors ? result.errors.filter(error =>
-                error.startsWith("Test başarısız:")).length : 0;
+            // Test sonuçları istatistikleri
+            const passedTests = result.passed_tests || 0;
+            const failedTests = result.failed_tests || 0;
+            const totalTests = result.test_count || (passedTests + failedTests);
+            const passRate = totalTests ? Math.round((passedTests / totalTests) * 100) : 0;
 
-            // Test girdilerinden toplam test sayısını tahmin etmeye çalışıyoruz
-            // Bu bilgi result nesnesinde doğrudan yok, bu nedenle sadece başarısız test sayısını kesin olarak gösterebiliriz
+            // Hata kategorileri
+            const syntaxErrors = result.errors ? result.errors.filter(e => e.includes("SyntaxError") || e.includes("sözdizimi hatası")) : [];
+            const runtimeErrors = result.errors ? result.errors.filter(e => e.includes("RuntimeError") || e.includes("TypeError") || e.includes("ValueError")) : [];
+            const logicErrors = result.errors ? result.errors.filter(e => e.startsWith("Test başarısız:")) : [];
+            const otherErrors = result.errors ? result.errors.filter(e =>
+                !syntaxErrors.includes(e) && !runtimeErrors.includes(e) && !logicErrors.includes(e)) : [];
 
             return (
                 <div className={`mt-4 p-4 rounded-md ${result.is_correct ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-                    <div className="flex items-center mb-2">
+                    <div className="flex items-center mb-4">
                         <span className={`mr-2 flex-shrink-0 h-5 w-5 rounded-full ${result.is_correct ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                        <span className="font-medium">
-                            {result.is_correct
-                                ? 'Tüm testler başarılı!'
-                                : `${failedTestCount} test başarısız.`}
-                        </span>
+                        <span className="font-medium">{result.is_correct ? 'Tüm testler başarılı.' : 'Bazı testlerden geçilemedi.'}</span>
                     </div>
 
-                    <div className="mt-3">
-                        <h4 className="font-medium mb-2">Test Sonuçları</h4>
-                        <div className="text-sm">
-                            <p>Çalışma Süresi: {result.execution_time ? `${result.execution_time.toFixed(2)} ms` : 'Hesaplanmadı'}</p>
-                            {!result.is_correct && failedTestCount > 0 &&
-                                <p className="mt-1 text-red-600">{failedTestCount} başarısız test</p>
-                            }
+                    {/* Test istatistikleri (dairesel gösterge) */}
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="w-20 h-20 relative">
+                            <svg viewBox="0 0 36 36" className="w-full h-full">
+                                <path
+                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke="#eee"
+                                    strokeWidth="3"
+                                    strokeDasharray="100, 100"
+                                />
+                                <path
+                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none"
+                                    stroke={result.is_correct ? "#48bb78" : "#f56565"}
+                                    strokeWidth="3"
+                                    strokeDasharray={`${passRate}, 100`}
+                                />
+                                <text x="18" y="20.5" textAnchor="middle" fontSize="10" fill="#444">
+                                    {passRate}%
+                                </text>
+                            </svg>
+                        </div>
+                        <div className="flex-1 ml-4">
+                            <div className="text-sm">
+                                <p>Toplam test: <span className="font-medium">{totalTests}</span></p>
+                                <p>Başarılı test: <span className="font-medium text-green-600">{passedTests}</span></p>
+                                <p>Başarısız test: <span className="font-medium text-red-600">{failedTests}</span></p>
+                                {result.execution_time !== undefined && (
+                                    <p>Çalışma süresi: <span className="font-medium">
+                                        {(result.execution_time === 0 ? "0.00" : result.execution_time.toFixed(2))} ms
+                                    </span></p>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    {result.errors && result.errors.length > 0 && (
+                    {/* Hata kategorileri */}
+                    {!result.is_correct && (
                         <div className="mt-3 pt-3 border-t border-red-200">
                             <h4 className="font-medium mb-2">Hatalar</h4>
-                            <ul className="list-disc pl-5 mt-1">
-                                {result.errors.map((error, idx) => (
-                                    <li key={idx} className="text-sm">{error}</li>
-                                ))}
-                            </ul>
+
+                            {syntaxErrors.length > 0 && (
+                                <div className="mb-3">
+                                    <h5 className="text-sm font-medium text-orange-600">Sözdizimi Hataları:</h5>
+                                    <ul className="list-disc pl-5 text-sm text-orange-700">
+                                        {syntaxErrors.map((error, index) => (
+                                            <li key={`syntax-${index}`}>{error}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {runtimeErrors.length > 0 && (
+                                <div className="mb-3">
+                                    <h5 className="text-sm font-medium text-red-600">Çalışma Zamanı Hataları:</h5>
+                                    <ul className="list-disc pl-5 text-sm text-red-700">
+                                        {runtimeErrors.map((error, index) => (
+                                            <li key={`runtime-${index}`}>{error}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {logicErrors.length > 0 && (
+                                <div className="mb-3">
+                                    <h5 className="text-sm font-medium text-blue-600">Mantık Hataları:</h5>
+                                    <ul className="list-disc pl-5 text-sm text-blue-700">
+                                        {logicErrors.map((error, index) => (
+                                            <li key={`logic-${index}`}>{error}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {otherErrors.length > 0 && (
+                                <div>
+                                    <h5 className="text-sm font-medium text-gray-600">Diğer Hatalar:</h5>
+                                    <ul className="list-disc pl-5 text-sm text-gray-700">
+                                        {otherErrors.map((error, index) => (
+                                            <li key={`other-${index}`}>{error}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

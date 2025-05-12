@@ -43,11 +43,19 @@
                 username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
                 email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
             },
+            // Header translations
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
-                profile: "Profil",
-                settings: "Ayarlar",
-                logout: "Çıkış"
+                tagline: {{ _('app_tagline')|tojson|safe }},
+                home: {{ _('home')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
+                leaderboard: {{ _('leaderboard')|tojson|safe }},
+                about: {{ _('about')|tojson|safe }},
+                logout: {{ _('logout')|tojson|safe }},
+                login: {{ _('login')|tojson|safe }},
+                register: {{ _('register')|tojson|safe }},
+                profile: {{ _('profile')|tojson|safe }},
+                settings: {{ _('settings')|tojson|safe }}
             },
             formData: {
                 csrf_token: "{{ form.csrf_token._value() }}"
@@ -161,10 +169,9 @@
                             >
                                 <option value="">Seçiniz...</option>
                                 <option value="1">Kolay</option>
-                                <option value="2">Orta-Kolay</option>
-                                <option value="3">Orta</option>
-                                <option value="4">Orta-Zor</option>
-                                <option value="5">Zor</option>
+                                <option value="2">Orta</option>
+                                <option value="3">Zor</option>
+                                <option value="4">Çok Zor</option>
                             </select>
                         </FormField>
 
@@ -257,7 +264,7 @@
                         <AdminSidebar />
 
                         <main className="flex-grow p-6">
-                            <div className="container mx-auto max-w-4xl">
+                            <div className="container mx-auto max-w-6xl">
                                 <h1 className="text-2xl font-bold mb-6">Yeni Programlama Sorusu</h1>
 
                                 <ProgrammingQuestionForm />

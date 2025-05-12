@@ -7,7 +7,7 @@ class ProgrammingQuestionForm(FlaskForm):
     title = StringField('Soru Başlığı', validators=[DataRequired(), Length(max=255)])
     description = TextAreaField('Soru Açıklaması', validators=[DataRequired()])
     difficulty = SelectField('Zorluk Seviyesi',
-                          choices=[(1, 'Kolay'), (2, 'Orta-Kolay'), (3, 'Orta'), (4, 'Orta-Zor'), (5, 'Zor')],
+                          choices=[(1, 'Kolay'), (2, 'Orta'), (3, 'Zor'), (4, 'Çok-Zor')],
                           coerce=int,
                           validators=[DataRequired()])
     points = IntegerField('Puan', validators=[DataRequired(), NumberRange(min=1)])
