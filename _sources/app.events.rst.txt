@@ -1,0 +1,37 @@
+app.events package
+==================
+
+Submodules
+----------
+
+app.events.event\_definitions module
+------------------------------------
+
+.. automodule:: app.events.event_definitions
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+app.events.event\_manager module
+--------------------------------
+
+.. automodule:: app.events.event_manager
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+app.events.handlers module
+--------------------------
+
+.. automodule:: app.events.handlers
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: app.events
+   :members:
+   :show-inheritance:
+   :undoc-members:
