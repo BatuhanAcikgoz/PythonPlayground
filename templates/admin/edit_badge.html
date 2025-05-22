@@ -80,7 +80,7 @@
             formCsrfToken: "{{ form.csrf_token._value() }}",
             urls: {
                 adminIndex: "{{ url_for('admin.index') }}",
-                badges: "{{ url_for('admin.badges') }}"
+                adminBadges: "{{ url_for('admin.badges') }}"
             }
         };
     </script>
@@ -99,6 +99,16 @@
             const [activeCategory, setActiveCategory] = React.useState('all');
             const [searchQuery, setSearchQuery] = React.useState('');
             const [loading, setLoading] = React.useState(true);
+
+            // Temel emojiler (API yanıt vermezse bunlar gösterilir)
+            const fallbackEmojis = [
+                '🏆', '🥇', '🥈', '🥉', '🎖️', '⭐', '🌟', '✨', '💫', '🔥',
+                '💡', '📚', '👨‍🎓', '👩‍🎓', '🧠', '🚀', '💻', '⚡', '🎯', '🏅',
+                '🐍', '🐘', '🦊', '🦁', '🦄', '🐢', '🦔', '🦉', '🧩', '🎓',
+                '🎮', '🎲', '🎨', '🎭', '🎬', '💎', '🎪', '📊', '📈', '🛠️',
+                '👍', '👑', '🔍', '📱', '💼', '📝', '🧩', '🧪', '🔬', '🧮',
+                '📊', '📈', '📉', '💯', '📋', '✅', '✓', '☑️', '📌', '⚙️'
+            ];
 
             React.useEffect(() => {
                 const fetchEmojis = async () => {
@@ -234,17 +244,17 @@
                             {filteredEmojis.length > 0 ? (
                                 filteredEmojis.map((item, index) => (
                                     <button
-                                        type="button"
                                         key={index}
+                                        type="button"
                                         onClick={() => onSelect(item.emoji)}
-                                        className={`p-2 rounded-md flex items-center justify-center hover:bg-gray-100 ${selectedEmoji === item.emoji ? 'bg-blue-100 border border-blue-300' : ''}`}
+                                        className={`p-2 rounded-md flex items-center justify-center ${selectedEmoji === item.emoji ? 'bg-blue-100' : 'hover:bg-gray-100'}`}
                                         title={item.name}
                                     >
                                         <span className="emoji">{item.emoji}</span>
                                     </button>
                                 ))
                             ) : (
-                                <p className="text-gray-500 text-center py-4">Emoji bulunamadı</p>
+                                <p className="p-2 text-center text-gray-500">Eşleşen emoji bulunamadı.</p>
                             )}
                         </div>
                     )}
@@ -257,6 +267,20 @@
             const [selectedEmoji, setSelectedEmoji] = React.useState(badge.icon || '🏆');
             const [showEmojiSelector, setShowEmojiSelector] = React.useState(false);
             const [selectedColor, setSelectedColor] = React.useState(badge.color || '#3b82f6');
+            const [nameErrors, setNameErrors] = React.useState([]);
+            const [descriptionErrors, setDescriptionErrors] = React.useState([]);
+
+            // Kriter türleri ve açıklamaları
+            const [criteriaType, setCriteriaType] = React.useState(badge.criteria_type || 'registration');
+            const [criteriaValue, setCriteriaValue] = React.useState(badge.criteria_value || '');
+            const [criteriaErrors, setCriteriaErrors] = React.useState([]);
+
+            const criteriaTypes = [
+                { id: 'registration', label: 'Kayıt Olunca', description: 'Kullanıcı platforma kayıt olduğunda bu rozeti alır.' },
+                { id: 'point_threshold', label: 'Puan Eşiği', description: 'Kullanıcı belirli bir puana ulaştığında bu rozeti alır.' },
+                { id: 'question_solved', label: 'Belirli Soru Çözülünce', description: 'Kullanıcı belirtilen soruyu çözdüğünde bu rozeti alır.' },
+                { id: 'questions_count', label: 'Belirli Sayıda Soru Çözülünce', description: 'Kullanıcı belirtilen sayıda soruyu çözdüğünde bu rozeti alır.' }
+            ];
 
             const handleEmojiSelect = (emoji) => {
                 setSelectedEmoji(emoji);
@@ -269,6 +293,15 @@
                 document.getElementById('color').value = e.target.value;
             };
 
+            const handleCriteriaTypeChange = (e) => {
+                setCriteriaType(e.target.value);
+                setCriteriaValue('');
+            };
+
+            const handleCriteriaValueChange = (e) => {
+                setCriteriaValue(e.target.value);
+            };
+
             // Form ilk yüklendiğinde hidden input'ları doldur
             React.useEffect(() => {
                 document.getElementById('icon').value = selectedEmoji;
@@ -278,6 +311,73 @@
                 document.getElementById('namePreview').textContent = badge.name || "Rozet Adı";
                 document.getElementById('descPreview').textContent = badge.description || "Rozet açıklaması burada gösterilir";
             }, []);
+
+            // Kriter türüne göre uygun input alanını gösteren fonksiyon
+            const renderCriteriaValueInput = () => {
+                switch(criteriaType) {
+                    case 'point_threshold':
+                        return (
+                            <div className="mt-2">
+                                <label htmlFor="criteria_value" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Gereken Minimum Puan
+                                </label>
+                                <input
+                                    type="number"
+                                    id="criteria_value"
+                                    name="criteria_value"
+                                    value={criteriaValue}
+                                    onChange={handleCriteriaValueChange}
+                                    className="w-full p-2 border border-gray-300 rounded-md"
+                                    min="1"
+                                    required={criteriaType !== 'registration'}
+                                />
+                            </div>
+                        );
+                    case 'question_solved':
+                        return (
+                            <div className="mt-2">
+                                <label htmlFor="criteria_value" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Soru ID
+                                </label>
+                                <input
+                                    type="number"
+                                    id="criteria_value"
+                                    name="criteria_value"
+                                    value={criteriaValue}
+                                    onChange={handleCriteriaValueChange}
+                                    className="w-full p-2 border border-gray-300 rounded-md"
+                                    min="1"
+                                    required={criteriaType !== 'registration'}
+                                />
+                            </div>
+                        );
+                    case 'questions_count':
+                        return (
+                            <div className="mt-2">
+                                <label htmlFor="criteria_value" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Gereken Soru Sayısı
+                                </label>
+                                <input
+                                    type="number"
+                                    id="criteria_value"
+                                    name="criteria_value"
+                                    value={criteriaValue}
+                                    onChange={handleCriteriaValueChange}
+                                    className="w-full p-2 border border-gray-300 rounded-md"
+                                    min="1"
+                                    required={criteriaType !== 'registration'}
+                                />
+                            </div>
+                        );
+                    case 'registration':
+                    default:
+                        return (
+                            <p className="text-sm text-gray-500 mt-2">
+                                Bu kriter için ek parametre gerekmemektedir.
+                            </p>
+                        );
+                }
+            };
 
             return (
                 <form method="post" className="bg-white shadow-md rounded-lg p-6">
@@ -292,7 +392,9 @@
                             className="w-full p-2 border border-gray-300 rounded-md"
                             required
                         />
-                        {/* Errors will be rendered by Jinja2 */}
+                        {nameErrors.map((error, index) => (
+                            <p key={index} className="text-sm text-red-600 mt-1">{error}</p>
+                        ))}
                     </div>
 
                     <div className="mb-6">
@@ -305,7 +407,9 @@
                             className="w-full p-2 border border-gray-300 rounded-md"
                             required
                         />
-                        {/* Errors will be rendered by Jinja2 */}
+                        {descriptionErrors.map((error, index) => (
+                            <p key={index} className="text-sm text-red-600 mt-1">{error}</p>
+                        ))}
                     </div>
 
                     <div className="mb-6">
@@ -361,23 +465,54 @@
                         </div>
                     </div>
 
+                    {/* Yeni eklenen Rozet Kriterleri bölümü */}
+                    <div className="mb-6 border-t pt-6">
+                        <h3 className="text-lg font-medium text-gray-800 mb-3">Rozet Kazanma Koşulu</h3>
+
+                        <div className="mb-4">
+                            <label htmlFor="criteria_type" className="block text-sm font-medium text-gray-700 mb-1">
+                                Koşul Türü
+                            </label>
+                            <select
+                                id="criteria_type"
+                                name="criteria_type"
+                                value={criteriaType}
+                                onChange={handleCriteriaTypeChange}
+                                className="w-full p-2 border border-gray-300 rounded-md"
+                            >
+                                {criteriaTypes.map(type => (
+                                    <option key={type.id} value={type.id}>{type.label}</option>
+                                ))}
+                            </select>
+                            <p className="text-sm text-gray-500 mt-1">
+                                {(criteriaTypes.find(t => t.id === criteriaType) || {}).description || ''}
+                            </p>
+                        </div>
+
+                        {renderCriteriaValueInput()}
+
+                        {criteriaErrors.map((error, index) => (
+                            <p key={index} className="text-sm text-red-600 mt-1">{error}</p>
+                        ))}
+                    </div>
+
                     <div className="mb-6">
                         <div className="p-4 border border-gray-300 rounded-md bg-gray-50">
                             <p className="text-sm font-medium text-gray-700 mb-2">Rozet Önizleme</p>
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{backgroundColor: selectedColor}}>
-                                    <span className="emoji-lg text-white">{selectedEmoji}</span>
+                                    <span className="emoji-lg">{selectedEmoji}</span>
                                 </div>
                                 <div>
-                                    <p className="font-medium" id="namePreview">{badge.name}</p>
-                                    <p className="text-sm text-gray-600" id="descPreview">{badge.description}</p>
+                                    <p className="font-medium" id="namePreview">{badge.name || "Rozet Adı"}</p>
+                                    <p className="text-sm text-gray-600" id="descPreview">{badge.description || "Rozet açıklaması burada gösterilir"}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="flex justify-end space-x-3">
-                        <a href={window.APP_DATA.urls.badges} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
+                        <a href={window.APP_DATA.urls.adminBadges} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
                             İptal
                         </a>
                         <button
@@ -428,7 +563,7 @@
                                         <ol className="flex space-x-2">
                                             <li><a href={window.APP_DATA.urls.adminIndex} className="text-blue-600 hover:text-blue-800">{translations.dashboard}</a></li>
                                             <li>/</li>
-                                            <li><a href={window.APP_DATA.urls.badges} className="text-blue-600 hover:text-blue-800">{translations.badges}</a></li>
+                                            <li><a href={window.APP_DATA.urls.adminBadges} className="text-blue-600 hover:text-blue-800">{translations.badges}</a></li>
                                             <li>/</li>
                                             <li className="text-gray-700">{translations.edit_badge}</li>
                                         </ol>

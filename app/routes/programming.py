@@ -1,9 +1,13 @@
 # app/routes/programming.py
+import json
+
 import requests
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_required, current_user
 
-from api import evaluate_solution
+from api import evaluate_solution, EvaluationRequest
+from app.events import event_manager
+from app.events.event_definitions import EventType
 from app.forms.programming import SolutionSubmitForm, CodeEvaluationForm
 from app.models.base import db
 from app.models.programming_question import ProgrammingQuestion
@@ -118,40 +122,52 @@ def question(id):
 @programming_bp.route('/questions/<int:id>/submit', methods=['POST'])
 @login_required
 def submit_solution(id):
-    """Çözüm gönderme"""
     question = ProgrammingQuestion.query.get_or_404(id)
     form = SolutionSubmitForm()
 
     if form.validate_on_submit():
         code = form.code.data
 
-        # Çözümü değerlendir
-        result = evaluate_solution(code, question)
+        # Doğru çağrı:
+        request = EvaluationRequest(
+            code=code,
+            function_name=question.function_name,
+            test_inputs=question.test_inputs,
+            solution_code=question.solution_code
+        )
+        result = evaluate_solution(request)
 
-        # Submission kaydını oluştur
+        # Başarı durumu ve sonuçları kaydetme
         submission = Submission(
             user_id=current_user.id,
             question_id=question.id,
             code=code,
-            is_correct=result['is_correct'],
-            test_results=result,
-            execution_time=result['execution_time'],
-            error_message=result.get('error_message', ''),
+            is_correct=result.get('is_correct', False),
+            test_results=json.dumps(result.get('test_results', [])),  # JSON formatında sakla
+            execution_time=result.get('execution_time', 0),
+            error_message=json.dumps(result.get('error_message', []))
         )
 
         db.session.add(submission)
         db.session.commit()
 
-        if result['is_correct']:
-            flash('Tebrikler! Tüm testleri geçen bir çözüm gönderdiniz.', 'success')
+        # Bildirim veya rozet kontrolleri
+
+        if result.get('is_correct', False):
+            event_manager.trigger_event(EventType.QUESTION_SOLVED, {
+                'user_id': submission.user_id,
+                'question_id': submission.question_id
+            })
+            flash('Tebrikler! Çözümünüz doğru.', 'success')
         else:
-            flash('Çözümünüz bazı testlerden geçemedi. Detaylar için sonuçlara bakın.', 'warning')
+            flash('Çözümünüzde hatalar var.', 'error')
 
         return redirect(url_for('programming.submission', id=submission.id))
 
-    # Form doğrulama hatası
+    # Form doğrulama hatası kısmı
     for field, errors in form.errors.items():
-        flash(f"{form[field].label.text}: {', '.join(errors)}", 'error')
+        for error in errors:
+            flash(f"{field}: {error}", 'error')
 
     return redirect(url_for('programming.question', id=id))
 

@@ -11,24 +11,6 @@ from ..models.submission import Submission
 
 logger = logging.getLogger(__name__)
 
-
-def user_registered_handler(data):
-    """Kullanıcı kaydolduğunda çalışacak handler"""
-    username = data.get("username", "bilinmeyen")
-    logger.info(f"Yeni kayıt: {username}")
-    # Burada kayıt sonrası işlemler yapılabilir
-    # Örnek: Hoşgeldin e-postası gönderme, kullanıcı profilini başlatma vs.
-
-
-def question_solved_handler(data):
-    """Bir soru çözüldüğünde çalışacak handler"""
-    username = data.get("username", "bilinmeyen")
-    question_id = data.get("question_id", "bilinmeyen")
-    points = data.get("points", 0)
-
-    logger.info(f"{username} kullanıcısı {question_id} numaralı soruyu çözdü ve {points} puan kazandı")
-    # Burada başarı rozeti verme, istatistikleri güncelleme gibi işlemler yapılabilir
-
 def notebook_accessed_handler(data):
     """Notebook erişildiğinde çalışacak handler"""
     username = data.get("username", "bilinmeyen")
@@ -43,14 +25,6 @@ def notebook_summary_viewed_handler(data):
     notebook_id = data.get("notebook_id", "bilinmeyen")
     logger.info(f"{username} kullanıcısı {notebook_id} numaralı not defterinin özetini görüntüledi")
     # Burada erişim istatistiklerini güncelleme gibi işlemler yapılabilir
-
-
-def register_default_handlers(event_manager):
-    """Varsayılan handler'ları event manager'a kaydeder"""
-    event_manager.register_handler(EventType.USER_REGISTERED, user_registered_handler)
-    event_manager.register_handler(EventType.QUESTION_SOLVED, question_solved_handler)
-    event_manager.register_handler(EventType.NOTEBOOK_ACCESSED, user_registered_handler)
-    event_manager.register_handler(EventType.NOTEBOOK_SUMMARY_VIEWED, user_registered_handler)
 
 logger = logging.getLogger(__name__)
 
@@ -69,10 +43,49 @@ def user_registered_handler(data):
 
 def question_solved_handler(data):
     """Bir soru çözüldüğünde çalışacak handler"""
-    username = data.get("username", "bilinmeyen")
     user_id = data.get("user_id")
     question_id = data.get("question_id", "bilinmeyen")
-    points = data.get("points", 0)
+
+    # Kullanıcı adını veritabanından alalım
+    username = "bilinmeyen"
+    points = 0
+
+    try:
+        if user_id:
+            from app.models.user import User
+            from sqlalchemy import text
+
+            # Kullanıcı bilgilerini al
+            user = User.query.get(user_id)
+            if user:
+                username = user.username or "bilinmeyen"
+
+            # Soru puanını al
+            question_query = text("""
+                                  SELECT points
+                                  FROM programming_question
+                                  WHERE id = :question_id
+                                  """)
+            question_result = db.session.execute(question_query, {'question_id': question_id}).first()
+
+            if question_result and question_result.points:
+                points = question_result.points
+
+                # Kullanıcıya puanı ekle
+                if user:
+                    user.points = (user.points or 0) + points
+                    db.session.add(user)
+                    db.session.commit()
+
+                    # Puan güncellendiğini bildir
+                    from .event_manager import event_manager
+                    event_manager.trigger_event(EventType.USER_POINTS_UPDATED, {
+                        'user_id': user_id,
+                        'points': user.points
+                    })
+    except Exception as e:
+        logger.error(f"Soru çözme puan hesaplama hatası: {str(e)}")
+        db.session.rollback()
 
     logger.info(f"{username} kullanıcısı {question_id} numaralı soruyu çözdü ve {points} puan kazandı")
 

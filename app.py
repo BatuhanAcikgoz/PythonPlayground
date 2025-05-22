@@ -40,6 +40,7 @@ def setup_logger():
     root_logger.handlers = []  # Mevcut handler'ları temizle
     root_logger.addHandler(handler)
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -210,7 +211,7 @@ def load_summaries_with_app_context(app):
                     response = requests.post(
                         fastapi_url,
                         json={"notebook_path": notebook_path},
-                        timeout=None # Yeterli zaman tanı
+                        timeout=None  # Yeterli zaman tanı
                     )
 
                     if response.status_code == 200:
@@ -309,14 +310,14 @@ def generate_questions_on_startup(app):
                 response = requests.post(
                     "http://127.0.0.1:8000/api/generate-question",
                     params={"difficulty_level": difficulty},
-                    timeout=180  # 180 saniye timeout
+                    timeout=1800  # 180 saniye timeout
                 )
 
                 if response.status_code == 200:
                     question_data = response.json()
-
                     if "error" in question_data and question_data["error"]:
-                        current_app.logger.error(f"Zorluk {difficulty} için soru üretme hatası: {question_data['error']}")
+                        current_app.logger.error(
+                            f"Zorluk {difficulty} için soru üretme hatası: {question_data['error']}, {question_data['debug_info']}")
                     else:
                         # Soruyu veritabanına ekle
                         from app.models.programming_question import ProgrammingQuestion
@@ -358,9 +359,9 @@ if __name__ == '__main__':
     # DB başlat
     init_db(app)
 
-    # FastAPI'yi ayrı bir thread'de başlat (multiprocessing yerine)
+    # FastAPI'yi ayrı bir thread'de başlat
     fastapi_thread = threading.Thread(target=run_fastapi)
-    fastapi_thread.daemon = True  # Ana process bitince FastAPI thread'i de sonlanır
+    fastapi_thread.daemon = True
     fastapi_thread.start()
 
     # Özetleri ayrı bir thread'de yükle

@@ -1218,7 +1218,26 @@ def get_user_profile(username: str, current_user_id: Optional[int] = None, db=De
 
         stats = db.execute(stats_query, {"user_id": user.id}).first()
 
+        # Kullanıcı rozetlerini al
+        badges_query = text("""
+                            SELECT b.id, b.name, b.icon, b.description
+                            FROM badges b
+                                     JOIN user_badges ub ON b.id = ub.badge_id
+                            WHERE ub.user_id = :user_id
+                            ORDER BY ub.awarded_at DESC
+                            """)
+
+        badges_result = db.execute(badges_query, {"user_id": user.id})
+
         badges = []
+        for badge in badges_result:
+            badges.append({
+                "id": badge.id,
+                "name": badge.name,
+                "icon": badge.icon,
+                "description": badge.description
+            })
+
         activities = []
 
         # Kullanıcının çözülen problem aktivitelerini al
@@ -1488,6 +1507,10 @@ Yanıtını JSON formatında oluştur:
             for field in ["title", "description", "function_name", "solution_code"]:
                 if field in json_data and json_data[field]:
                     data[field] = json_data[field]
+
+            # Topic değeri boş ise rastgele seçilen topic değerini kullan
+            if not data["topic"]:
+                data["topic"] = topic
 
             # Örnek girdi ve çıktılar
             if "example_input" in json_data and json_data["example_input"]:

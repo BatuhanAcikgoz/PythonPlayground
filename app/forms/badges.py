@@ -11,4 +11,6 @@ class BadgeForm(FlaskForm):
     description = StringField('Description', validators=[DataRequired()])
     icon = HiddenField('Icon', validators=[DataRequired()])
     color = HiddenField('Color', validators=[DataRequired()])
+    criteria_type = StringField('Criteria Type', validators=[DataRequired()])
+    criteria_value = StringField('Criteria Value', validators=[DataRequired()])
     submit = SubmitField('Save Badge')

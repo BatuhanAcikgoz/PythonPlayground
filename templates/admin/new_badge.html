@@ -272,6 +272,18 @@
             const [nameErrors, setNameErrors] = React.useState([]);
             const [descriptionErrors, setDescriptionErrors] = React.useState([]);
 
+            // Kriter türleri ve açıklamaları
+            const [criteriaType, setCriteriaType] = React.useState('registration');
+            const [criteriaValue, setCriteriaValue] = React.useState('');
+            const [criteriaErrors, setCriteriaErrors] = React.useState([]);
+
+            const criteriaTypes = [
+                { id: 'registration', label: 'Kayıt Olunca', description: 'Kullanıcı platforma kayıt olduğunda bu rozeti alır.' },
+                { id: 'point_threshold', label: 'Puan Eşiği', description: 'Kullanıcı belirli bir puana ulaştığında bu rozeti alır.' },
+                { id: 'question_solved', label: 'Belirli Soru Çözülünce', description: 'Kullanıcı belirtilen soruyu çözdüğünde bu rozeti alır.' },
+                { id: 'questions_count', label: 'Belirli Sayıda Soru Çözülünce', description: 'Kullanıcı belirtilen sayıda soruyu çözdüğünde bu rozeti alır.' }
+            ];
+
             const handleEmojiSelect = (emoji) => {
                 setSelectedEmoji(emoji);
                 document.getElementById('icon').value = emoji;
@@ -283,11 +295,87 @@
                 document.getElementById('color').value = e.target.value;
             };
 
+            const handleCriteriaTypeChange = (e) => {
+                setCriteriaType(e.target.value);
+                setCriteriaValue('');
+            };
+
+            const handleCriteriaValueChange = (e) => {
+                setCriteriaValue(e.target.value);
+            };
+
             // Form ilk yüklendiğinde hidden input'ları doldur
             React.useEffect(() => {
                 document.getElementById('icon').value = selectedEmoji;
                 document.getElementById('color').value = selectedColor;
             }, []);
+
+            // Kriter türüne göre uygun input alanını gösteren fonksiyon
+            const renderCriteriaValueInput = () => {
+                switch(criteriaType) {
+                    case 'point_threshold':
+                        return (
+                            <div className="mt-2">
+                                <label htmlFor="criteria_value" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Gereken Minimum Puan
+                                </label>
+                                <input
+                                    type="number"
+                                    id="criteria_value"
+                                    name="criteria_value"
+                                    value={criteriaValue}
+                                    onChange={handleCriteriaValueChange}
+                                    className="w-full p-2 border border-gray-300 rounded-md"
+                                    min="1"
+                                    required={criteriaType !== 'registration'}
+                                />
+                            </div>
+                        );
+                    case 'question_solved':
+                        return (
+                            <div className="mt-2">
+                                <label htmlFor="criteria_value" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Soru ID
+                                </label>
+                                <input
+                                    type="number"
+                                    id="criteria_value"
+                                    name="criteria_value"
+                                    value={criteriaValue}
+                                    onChange={handleCriteriaValueChange}
+                                    className="w-full p-2 border border-gray-300 rounded-md"
+                                    min="1"
+                                    required={criteriaType !== 'registration'}
+                                />
+                            </div>
+                        );
+                    case 'questions_count':
+                        return (
+                            <div className="mt-2">
+                                <label htmlFor="criteria_value" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Gereken Soru Sayısı
+                                </label>
+                                <input
+                                    type="number"
+                                    id="criteria_value"
+                                    name="criteria_value"
+                                    value={criteriaValue}
+                                    onChange={handleCriteriaValueChange}
+                                    className="w-full p-2 border border-gray-300 rounded-md"
+                                    min="1"
+                                    required={criteriaType !== 'registration'}
+                                />
+                            </div>
+                        );
+                    case 'registration':
+                    default:
+                        return (
+                            <p className="text-sm text-gray-500 mt-2">
+                                Bu kriter için ek parametre gerekmemektedir.
+                            </p>
+                        );
+                }
+            };
 
             return (
                 <form method="post" className="bg-white shadow-md rounded-lg p-6">
@@ -371,6 +459,37 @@
                                 ))}
                             </div>
                         </div>
+                    </div>
+
+                    {/* Yeni eklenen Rozet Kriterleri bölümü */}
+                    <div className="mb-6 border-t pt-6">
+                        <h3 className="text-lg font-medium text-gray-800 mb-3">Rozet Kazanma Koşulu</h3>
+
+                        <div className="mb-4">
+                            <label htmlFor="criteria_type" className="block text-sm font-medium text-gray-700 mb-1">
+                                Koşul Türü
+                            </label>
+                            <select
+                                id="criteria_type"
+                                name="criteria_type"
+                                value={criteriaType}
+                                onChange={handleCriteriaTypeChange}
+                                className="w-full p-2 border border-gray-300 rounded-md"
+                            >
+                                {criteriaTypes.map(type => (
+                                    <option key={type.id} value={type.id}>{type.label}</option>
+                                ))}
+                            </select>
+                            <p className="text-sm text-gray-500 mt-1">
+                                {(criteriaTypes.find(t => t.id === criteriaType) || {}).description || ''}
+                            </p>
+                        </div>
+
+                        {renderCriteriaValueInput()}
+
+                        {criteriaErrors.map((error, index) => (
+                            <p key={index} className="text-sm text-red-600 mt-1">{error}</p>
+                        ))}
                     </div>
 
                     <div className="mb-6">

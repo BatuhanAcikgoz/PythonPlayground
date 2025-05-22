@@ -1,5 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
+
+from app.forms.badges import BadgeForm
+from app.models.badge_criteria import BadgeCriteria
+from app.models.badges import Badges
 from app.models.settings import Setting
 from app.forms.admin import SettingForm
 from app.models.base import db
@@ -330,57 +334,95 @@ def badges():
 
     return render_template('admin/badges.html', badge=badges_data)
 
-@admin_bp.route('/badges/new', methods=['GET', 'POST'])
+
+@login_required
 @admin_required
+@admin_bp.route('/badges/new', methods=['GET', 'POST'])
 def new_badge():
-    from app.forms.badges import BadgeForm
-    from app.models.badges import Badges
+    """Yeni rozet oluşturma sayfası"""
+    form = CSRFProtectForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            name = request.form['name'].strip()
+            description = request.form['description'].strip()
+            icon = request.form['icon'].strip()
+            color = request.form['color'].strip()
+            criteria_type = request.form['criteria_type']
+            criteria_value = request.form.get('criteria_value', '')
 
-    form = BadgeForm()
+            # Basit doğrulama
+            if not name or not description or not icon:
+                flash('Tüm alanları doldurun', 'error')
+                return render_template('admin/new_badge.html', form=form)
 
-    if form.validate_on_submit():
-        badge = Badges(
-            name=form.name.data,
-            description=form.description.data,
-            icon=form.icon.data,
-            color=form.color.data,
-        )
+            # Rozet nesnesini oluştur
+            badge = Badges(
+                name=name,
+                description=description,
+                icon=icon,
+                color=color
+            )
+            db.session.add(badge)
+            db.session.flush()  # badge.id değerini almak için
 
-        db.session.add(badge)
-        db.session.commit()
+            # Rozet kriteri oluştur
+            criteria = BadgeCriteria(
+                badge_id=badge.id,
+                criteria_type=criteria_type,
+                criteria_value=criteria_value if criteria_value else None
+            )
+            db.session.add(criteria)
 
-        flash('Badge başarıyla oluşturuldu.', 'success')
-        return redirect(url_for('admin.badges'))
+            db.session.commit()
+            flash('Rozet başarıyla eklendi', 'success')
+            return redirect(url_for('admin.badges'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Rozet eklenirken hata oluştu: {str(e)}', 'error')
 
     return render_template('admin/new_badge.html', form=form)
 
+
 @admin_bp.route('/badges/<int:id>/edit', methods=['GET', 'POST'])
+@login_required
 @admin_required
 def edit_badge(id):
-    from app.forms.badges import BadgeForm
-    from app.models.badges import Badges
-
     badge = Badges.query.get_or_404(id)
-    form = BadgeForm(obj=badge)
+    criteria = BadgeCriteria.query.filter_by(id=id).first()
+    form = BadgeForm()
 
     if form.validate_on_submit():
-        form.populate_obj(badge)
-        db.session.commit()
+        # Rozet bilgilerini güncelle
+        badge.name = form.name.data
+        badge.description = form.description.data
+        badge.icon = form.icon.data
+        badge.color = form.color.data
 
-        flash('Badge başarıyla güncellendi.', 'success')
+        # Kriter bilgilerini güncelle
+        if not criteria:
+            criteria = BadgeCriteria(badge_id=badge.id)
+            db.session.add(criteria)
+
+        criteria.criteria_type = request.form.get('criteria_type', 'registration')
+        criteria.criteria_value = request.form.get(
+            'criteria_value') if criteria.criteria_type != 'registration' else None
+
+        db.session.commit()
+        flash('Rozet başarıyla güncellendi!', 'success')
         return redirect(url_for('admin.badges'))
 
+    # Şablona gönderilecek veriyi hazırla
     badge_data = {
         'id': badge.id,
         'name': badge.name,
         'description': badge.description,
         'icon': badge.icon,
-        'color': badge.color
+        'color': badge.color,
+        'criteria_type': criteria.criteria_type if criteria else 'registration',
+        'criteria_value': criteria.criteria_value if criteria and criteria.criteria_value else ''
     }
 
     return render_template('admin/edit_badge.html', badge=badge_data, form=form)
-
-    return render_template('admin/edit_badge.html', form=form, badge=badge)
 
 @admin_bp.route('/badges/<int:id>/delete', methods=['POST'])
 @admin_required
