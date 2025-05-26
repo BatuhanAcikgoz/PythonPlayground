@@ -214,6 +214,35 @@ def new_programming_question():
 
     return render_template('admin/new_programming_question.html', form=form)
 
+@admin_bp.route('/programming-questions/new_ai', methods=['GET', 'POST'])
+@admin_required
+def new_ai_programming_question():
+    from app.forms.programming import ProgrammingQuestionForm
+    from app.models.programming_question import ProgrammingQuestion
+
+    form = ProgrammingQuestionForm()
+
+    if form.validate_on_submit():
+        question = ProgrammingQuestion(
+            title=form.title.data,
+            description=form.description.data,
+            difficulty=form.difficulty.data,
+            points=form.points.data,
+            example_input=form.example_input.data,
+            example_output=form.example_output.data,
+            function_name=form.function_name.data,
+            solution_code=form.solution_code.data,
+            test_inputs=form.test_inputs.data
+        )
+
+        db.session.add(question)
+        db.session.commit()
+
+        flash('AI programlama sorusu başarıyla oluşturuldu.', 'success')
+        return redirect(url_for('admin.programming_questions'))
+
+    return render_template('admin/generate_ai_question.html', form=form)
+
 
 @admin_bp.route('/programming-questions/<int:id>/edit', methods=['GET', 'POST'])
 @admin_required

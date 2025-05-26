@@ -139,7 +139,7 @@
 
                 React.useEffect(() => {
                     // API'den son soruları çek (şimdi urls nesnesinden alıyoruz)
-                    fetch(urls.api.lastQuestions)
+                    fetch("/api/last-questions-detail")
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error('Sorular yüklenirken hata oluştu');

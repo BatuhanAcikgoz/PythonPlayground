@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Yapay Zeka ile Soru Oluştur - Admin Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <!-- CodeMirror for code editing -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <!-- Markdown Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        html, body, #root {
+            height: 100%;
+        }
+        #root {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .CodeMirror {
+            height: auto;
+            min-height: 200px;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <!-- Define global variables for component access -->
+    <script>
+        window.APP_DATA = {
+            isLoggedIn: {{ current_user.is_authenticated|tojson }},
+            userData: {
+                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
+                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
+            },
+            // Header translations
+            headerTrans: {
+                appName: {{ _('app_name')|tojson|safe }},
+                tagline: {{ _('app_tagline')|tojson|safe }},
+                home: {{ _('home')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
+                leaderboard: {{ _('leaderboard')|tojson|safe }},
+                about: {{ _('about')|tojson|safe }},
+                logout: {{ _('logout')|tojson|safe }},
+                login: {{ _('login')|tojson|safe }},
+                register: {{ _('register')|tojson|safe }},
+                profile: {{ _('profile')|tojson|safe }},
+                settings: {{ _('settings')|tojson|safe }}
+            },
+            formData: {
+                csrf_token: "{{ csrf_token() }}"
+            },
+            // Footer translations
+            footerTrans: {
+                allRights: {{ _('all_rights')|tojson|safe }},
+                platformDesc: {{ _('platform_desc')|tojson|safe }}
+            },
+            // Current language
+            currentLang: {{ session.get('language', 'tr')|tojson }}
+        };
+    </script>
+
+    <!-- Load component scripts -->
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
+
+    <script type="text/babel">
+        const FormField = ({ label, id, error, children, hint }) => {
+            return (
+                <div className="mb-5">
+                    <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                    {children}
+                    {hint && <div className="mt-1 text-xs text-gray-500">{hint}</div>}
+                    {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+                </div>
+            );
+        };
+
+        const CodeEditor = ({ id, name, value, onChange }) => {
+            const textareaRef = React.useRef(null);
+            const editorRef = React.useRef(null);
+
+            React.useEffect(() => {
+                if (textareaRef.current && !editorRef.current) {
+                    editorRef.current = CodeMirror.fromTextArea(textareaRef.current, {
+                        mode: "python",
+                        lineNumbers: true,
+                        indentUnit: 4,
+                        lineWrapping: true
+                    });
+
+                    editorRef.current.on('change', (instance) => {
+                        const value = instance.getValue();
+                        if (onChange) onChange(value);
+                    });
+                }
+
+                return () => {
+                    if (editorRef.current) {
+                        editorRef.current.toTextArea();
+                        editorRef.current = null;
+                    }
+                };
+            }, []);
+
+            React.useEffect(() => {
+                if (editorRef.current && value !== undefined) {
+                    const currentValue = editorRef.current.getValue();
+                    if (value !== currentValue) {
+                        editorRef.current.setValue(value);
+                    }
+                }
+            }, [value]);
+
+            return (
+                <textarea
+                    ref={textareaRef}
+                    id={id}
+                    name={name}
+                    defaultValue={value || ''}
+                    className="hidden" // Hidden as CodeMirror replaces this
+                />
+            );
+        };
+
+        const AIQuestionGenerator = () => {
+            const [loading, setLoading] = React.useState(false);
+            const [error, setError] = React.useState(null);
+            const [generatedQuestion, setGeneratedQuestion] = React.useState(null);
+            const [savedSuccess, setSavedSuccess] = React.useState(false);
+
+            const [formData, setFormData] = React.useState({
+                difficulty_level: 1,
+                topic: "genel",
+                description_hint: "",
+                function_name_hint: "",
+                tags: []
+            });
+
+            const [questionData, setQuestionData] = React.useState({
+                title: "",
+                description: "",
+                function_name: "",
+                difficulty: 1,
+                topic: "",
+                points: 10,
+                example_input: "",
+                example_output: "",
+                test_inputs: "[]",
+                solution_code: ""
+            });
+
+            const topics = [
+                { value: "genel", label: "Genel (Rastgele)" },
+                { value: "veri yapıları", label: "Veri Yapıları" },
+                { value: "algoritmalar", label: "Algoritmalar" },
+                { value: "string işleme", label: "String İşleme" },
+                { value: "matematik", label: "Matematik" },
+                { value: "sayı teorisi", label: "Sayı Teorisi" },
+                { value: "arama", label: "Arama" },
+                { value: "sıralama", label: "Sıralama" },
+                { value: "dinamik programlama", label: "Dinamik Programlama" },
+                { value: "graf teorisi", label: "Graf Teorisi" },
+                { value: "olasılık", label: "Olasılık" },
+                { value: "istatistik", label: "İstatistik" }
+            ];
+
+            const availableTags = [
+                "python", "algoritma", "programlama", "veri yapıları", "string", "liste",
+                "dizi", "sözlük", "recursion", "özyineleme", "matematik", "sayılar"
+            ];
+
+            const handleChange = (e) => {
+                const { name, value } = e.target;
+                setFormData({
+                    ...formData,
+                    [name]: value
+                });
+            };
+
+            const handleTagToggle = (tag) => {
+                setFormData(prevState => {
+                    const currentTags = [...prevState.tags];
+                    if (currentTags.includes(tag)) {
+                        return {
+                            ...prevState,
+                            tags: currentTags.filter(t => t !== tag)
+                        };
+                    } else {
+                        return {
+                            ...prevState,
+                            tags: [...currentTags, tag]
+                        };
+                    }
+                });
+            };
+
+            const handleQuestionDataChange = (e) => {
+                const { name, value } = e.target;
+                setQuestionData({
+                    ...questionData,
+                    [name]: value
+                });
+            };
+
+            const handleCodeChange = (value) => {
+                setQuestionData({
+                    ...questionData,
+                    solution_code: value
+                });
+            };
+
+            // Soru oluşturma API isteği
+            const generateQuestion = async () => {
+                setLoading(true);
+                setError(null);
+
+                try {
+                    // Form değerlerini doğru ID'lerle oku
+                    // Form değerlerini doğru ID'lerle oku
+                    const difficultyLevel = parseInt(document.getElementById('difficulty_level').value) || 1;
+                    const topic = document.getElementById('topic').value || 'genel';
+                    const descriptionHint = document.getElementById('description_hint').value || '';
+                    const functionNameHint = document.getElementById('function_name_hint').value || '';
+
+                    // Etiketleri al (çoklu seçim olabilir)
+                    let selectedTags = [];
+                    const tagsElement = document.getElementById('tags');
+                    if (tagsElement && tagsElement.options) {
+                        for (let i = 0; i < tagsElement.options.length; i++) {
+                            if (tagsElement.options[i].selected) {
+                                selectedTags.push(tagsElement.options[i].value);
+                            }
+                        }
+                    }
+
+                    const requestData = {
+                        difficulty_level: difficultyLevel,
+                        topic: topic,
+                        description_hint: descriptionHint,
+                        function_name_hint: functionNameHint,
+                        tags: selectedTags
+                    };
+                    const response = await fetch('/api/generate-question', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    const data = await response.json();
+
+                    if (data.error) {
+                        setError(data.error);
+                    } else {
+                        // Dönen verileri form alanlarına atama
+                        setGeneratedQuestion({
+                            title: data.title || "",
+                            description: data.description || "",
+                            function_name: data.function_name || "",
+                            difficulty: data.difficulty || 1,
+                            topic: data.topic || "",
+                            points: data.points || 10,
+                            example_input: data.example_input || "Örnek girdi yok",
+                            example_output: data.example_output || "Örnek çıktı yok",
+                            test_inputs: data.test_inputs || "[]",
+                            solution_code: data.solution_code || ""
+                        });
+                    }
+                } catch (err) {
+                    setError("Soru oluşturulurken bir hata oluştu: " + err.message);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const saveQuestion = async () => {
+                setLoading(true);
+                setError(null);
+
+                try {
+                    const response = await fetch('/api/admin/programming-questions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': APP_DATA.formData.csrf_token
+                        },
+                        signal: AbortSignal.timeout(100000), // 10 seconds timeout
+                        body: JSON.stringify(questionData)
+                    });
+
+                    const data = await response.json();
+
+                    if (data.error) {
+                        setError(data.error);
+                    } else {
+                        setSavedSuccess(true);
+                        // Reset after 3 seconds
+                        setTimeout(() => {
+                            setSavedSuccess(false);
+                        }, 3000);
+                    }
+                } catch (err) {
+                    setError("Kaydetme sırasında bir hata oluştu: " + err.message);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="bg-white shadow-md rounded-lg p-6">
+                    {!generatedQuestion ? (
+                        // Soru oluşturma formu
+                        <div>
+                            <h2 className="text-xl font-semibold mb-4">Yapay Zeka ile Soru Oluştur</h2>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <FormField label="Zorluk Seviyesi" id="difficulty_level" hint="Oluşturulacak sorunun zorluk derecesi">
+                                    <select
+                                        id="difficulty_level"
+                                        name="difficulty_level"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        value={formData.difficulty_level}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="1">Kolay</option>
+                                        <option value="2">Orta</option>
+                                        <option value="3">Zor</option>
+                                        <option value="4">Çok Zor</option>
+                                    </select>
+                                </FormField>
+
+                                <FormField label="Konu" id="topic" hint="Soru hangi konu hakkında olsun?">
+                                    <select
+                                        id="topic"
+                                        name="topic"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        value={formData.topic}
+                                        onChange={handleChange}
+                                    >
+                                        {topics.map(topic => (
+                                            <option key={topic.value} value={topic.value}>{topic.label}</option>
+                                        ))}
+                                    </select>
+                                </FormField>
+                            </div>
+
+                            <FormField label="Soru İpucu (İsteğe Bağlı)" id="description_hint"
+                                       hint="Sorunun ne hakkında olmasını istiyorsanız açıklayın. Örn: 'Bir sayı dizisindeki en büyük toplamı bulan bir soru olsun'">
+                                <textarea
+                                    id="description_hint"
+                                    name="description_hint"
+                                    rows="3"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    value={formData.description_hint}
+                                    onChange={handleChange}
+                                    placeholder="Oluşturulacak sorunun içeriğini tarif edin..."
+                                ></textarea>
+                            </FormField>
+
+                            <FormField label="Fonksiyon Adı Önerisi (İsteğe Bağlı)" id="function_name_hint"
+                                       hint="Çözüm fonksiyonunun adını belirtin. Örn: 'max_subarray_sum'">
+                                <input
+                                    type="text"
+                                    id="function_name_hint"
+                                    name="function_name_hint"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    value={formData.function_name_hint}
+                                    onChange={handleChange}
+                                    placeholder="Fonksiyon adı önerisi"
+                                />
+                            </FormField>
+
+                            <FormField label="Etiketler (İsteğe Bağlı)" id="tags" hint="Soru ile ilgili etiketleri seçin">
+                                <div className="flex flex-wrap gap-2">
+                                    {availableTags.map(tag => (
+                                        <button
+                                            key={tag}
+                                            type="button"
+                                            className={`px-3 py-1 text-sm rounded-full ${
+                                                formData.tags.includes(tag)
+                                                    ? 'bg-blue-500 text-white'
+                                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                            }`}
+                                            onClick={() => handleTagToggle(tag)}
+                                        >
+                                            {tag}
+                                        </button>
+                                    ))}
+                                </div>
+                            </FormField>
+
+                            {error && (
+                                <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
+                                    <p className="font-medium">Hata!</p>
+                                    <p>{error}</p>
+                                </div>
+                            )}
+
+                            <div className="mt-6">
+                                <button
+                                    type="button"
+                                    className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center justify-center"
+                                    onClick={generateQuestion}
+                                    disabled={loading}
+                                >
+                                    {loading ? (
+                                        <React.Fragment>
+                                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Soru Oluşturuluyor...
+                                        </React.Fragment>
+                                    ) : (
+                                        "Yapay Zeka ile Soru Oluştur"
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        // Oluşturulan soruyu düzenleme formu
+                        <div>
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-xl font-semibold">Oluşturulan Soru</h2>
+                                <button
+                                    type="button"
+                                    className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md text-sm"
+                                    onClick={() => setGeneratedQuestion(null)}
+                                >
+                                    Yeni Soru Oluştur
+                                </button>
+                            </div>
+
+                            <FormField label="Soru Başlığı" id="title">
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    value={questionData.title}
+                                    onChange={handleQuestionDataChange}
+                                    required
+                                />
+                            </FormField>
+
+                            <FormField label="Soru Açıklaması (Markdown destekler)" id="description">
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    rows="5"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    value={questionData.description}
+                                    onChange={handleQuestionDataChange}
+                                    required
+                                ></textarea>
+                            </FormField>
+
+                            {% raw %}
+                            <div className="my-4">
+                                <h3 className="font-medium mb-2">Önizleme:</h3>
+                                <div className="p-4 border border-gray-300 rounded-md bg-gray-50 prose max-w-none"
+                                     dangerouslySetInnerHTML={{ __html: marked.parse(questionData.description) }}
+                                ></div>
+                            </div>
+                            {% endraw %}
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                                <FormField label="Zorluk Seviyesi" id="difficulty">
+                                    <select
+                                        id="difficulty"
+                                        name="difficulty"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        value={questionData.difficulty}
+                                        onChange={handleQuestionDataChange}
+                                        required
+                                    >
+                                        <option value="1">Kolay</option>
+                                        <option value="2">Orta</option>
+                                        <option value="3">Zor</option>
+                                        <option value="4">Çok Zor</option>
+                                    </select>
+                                </FormField>
+
+                                <FormField label="Konu" id="topic">
+                                    <select
+                                        id="topic"
+                                        name="topic"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        value={questionData.topic}
+                                        onChange={handleQuestionDataChange}
+                                        required
+                                    >
+                                        {topics.map(topic => (
+                                            <option key={topic.value} value={topic.value}>{topic.label}</option>
+                                        ))}
+                                    </select>
+                                </FormField>
+
+                                <FormField label="Puan Değeri" id="points">
+                                    <input
+                                        type="number"
+                                        id="points"
+                                        name="points"
+                                        min="1"
+                                        max="100"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        value={questionData.points}
+                                        onChange={handleQuestionDataChange}
+                                        required
+                                    />
+                                </FormField>
+
+                                <FormField label="Fonksiyon Adı" id="function_name">
+                                    <input
+                                        type="text"
+                                        id="function_name"
+                                        name="function_name"
+                                        placeholder="örn: topla"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        value={questionData.function_name}
+                                        onChange={handleQuestionDataChange}
+                                        required
+                                    />
+                                </FormField>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                                <FormField label="Örnek Girdi" id="example_input">
+                                    <textarea
+                                        id="example_input"
+                                        name="example_input"
+                                        rows="3"
+                                        placeholder="örn: 5, 3"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        value={questionData.example_input}
+                                        onChange={handleQuestionDataChange}
+                                        required
+                                    ></textarea>
+                                </FormField>
+
+                                <FormField label="Örnek Çıktı" id="example_output">
+                                    <textarea
+                                        id="example_output"
+                                        name="example_output"
+                                        rows="3"
+                                        placeholder="örn: 8"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        value={questionData.example_output}
+                                        onChange={handleQuestionDataChange}
+                                        required
+                                    ></textarea>
+                                </FormField>
+                            </div>
+
+                            <FormField label="Çözüm Kodu (Python)" id="solution_code">
+                                <div className="mb-1 text-xs text-gray-600">
+                                    Fonksiyon adıyla aynı isimde bir Python fonksiyonu yazın. Bu kod, kullanıcı çözümlerini doğrulamak için kullanılacak.
+                                </div>
+                                <CodeEditor
+                                    id="solution_code"
+                                    name="solution_code"
+                                    value={questionData.solution_code}
+                                    onChange={handleCodeChange}
+                                />
+                            </FormField>
+
+                            <FormField label="Test Girdileri (JSON)" id="test_inputs">
+                                <div className="mb-1 text-xs text-gray-600">
+                                    Test girdilerinizi JSON array formatında yazın. Her bir test bir array olmalı ve fonksiyon parametrelerine karşılık gelmelidir.
+                                </div>
+                                <textarea
+                                    id="test_inputs"
+                                    name="test_inputs"
+                                    rows="5"
+                                    placeholder='[
+    [5, 3],
+    [10, 20],
+    [0, 0]
+]'
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    value={questionData.test_inputs}
+                                    onChange={handleQuestionDataChange}
+                                    required
+                                ></textarea>
+                            </FormField>
+
+                            {error && (
+                                <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
+                                    <p className="font-medium">Hata!</p>
+                                    <p>{error}</p>
+                                </div>
+                            )}
+
+                            {savedSuccess && (
+                                <div className="mb-4 p-3 bg-green-100 border border-green-300 text-green-700 rounded-md">
+                                    <p className="font-medium">Başarılı!</p>
+                                    <p>Soru başarıyla kaydedildi.</p>
+                                </div>
+                            )}
+
+                            <div className="flex justify-between mt-8">
+                                <a href="{{ url_for('admin.programming_questions') }}" className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md">İptal</a>
+                                <button
+                                    type="button"
+                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
+                                    onClick={saveQuestion}
+                                    disabled={loading}
+                                >
+                                    {loading ? "Kaydediliyor..." : "Soruyu Kaydet"}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const App = () => {
+            return (
+                <React.Fragment>
+                    <Header />
+                    <div className="flex flex-grow">
+                        <AdminSidebar />
+
+                        <main className="flex-grow p-6">
+                            <div className="container mx-auto max-w-6xl">
+                                <h1 className="text-2xl font-bold mb-6">Yapay Zeka ile Soru Oluştur</h1>
+
+                                <AIQuestionGenerator />
+                            </div>
+                        </main>
+                    </div>
+                    <Footer />
+                </React.Fragment>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

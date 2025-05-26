@@ -19,9 +19,7 @@ def admin_required(f):
 
 
 @api_bp.route('/<path:endpoint>', methods=['GET', 'POST', 'PUT', 'DELETE'])
-@admin_required
 def proxy(endpoint):
-    # FastAPI adresi - önce admin yetkisini kontrol ediyoruz
     fastapi_url = "http://127.0.0.1:8000/api/" + endpoint
 
     # Request metoduna göre FastAPI'ye istek yap
@@ -30,13 +28,13 @@ def proxy(endpoint):
 
         # İsteği yönlendir
         if request.method == 'GET':
-            resp = requests.get(fastapi_url, params=request.args, headers=headers, timeout=5)
+            resp = requests.get(fastapi_url, params=request.args, headers=headers, timeout=60)
         elif request.method == 'POST':
-            resp = requests.post(fastapi_url, json=request.get_json(), headers=headers, timeout=5)
+            resp = requests.post(fastapi_url, json=request.get_json(), headers=headers, timeout=60)
         elif request.method == 'PUT':
-            resp = requests.put(fastapi_url, json=request.get_json(), headers=headers, timeout=5)
+            resp = requests.put(fastapi_url, json=request.get_json(), headers=headers, timeout=60)
         elif request.method == 'DELETE':
-            resp = requests.delete(fastapi_url, headers=headers, timeout=5)
+            resp = requests.delete(fastapi_url, headers=headers, timeout=60)
 
         return jsonify(resp.json()), resp.status_code
 

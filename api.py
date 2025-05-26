@@ -1321,11 +1321,6 @@ def get_user_profile(username: str, current_user_id: Optional[int] = None, db=De
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-class QuestionGenerationRequest(BaseModel):
-    difficulty_level: int = 1
-    topic: str = "genel"
-    tags: list = []
-
 class GeneratedQuestionResponse(BaseModel):
     title: str = ""
     description: str = ""
@@ -1340,9 +1335,15 @@ class GeneratedQuestionResponse(BaseModel):
     error: Optional[str] = None
     debug_info: Optional[str] = None
 
+class QuestionGenerationRequest(BaseModel):
+    difficulty_level: int = 1
+    topic: str = "genel"
+    description_hint: str = ""  # Kullanıcının açıkladığı soru ipucu
+    function_name_hint: str = ""  # Fonksiyon adı önerisi (opsiyonel)
+    tags: list = []
 
 @api.post("/api/generate-question", response_model=GeneratedQuestionResponse)
-def generate_programming_question(difficulty_level: int = 2, db=Depends(get_db)):
+def generate_programming_question(request: QuestionGenerationRequest, db=Depends(get_db)):
     """Yapay zeka kullanarak yeni bir programlama sorusu oluşturur"""
     try:
         # Varsayılan sonuç şablonunu başlangıçta oluştur
@@ -1350,9 +1351,9 @@ def generate_programming_question(difficulty_level: int = 2, db=Depends(get_db))
             "title": "",
             "description": "",
             "function_name": "",
-            "difficulty": difficulty_level,
-            "topic": "",
-            "points": 10 + difficulty_level * 5,
+            "difficulty": request.difficulty_level,
+            "topic": request.topic,
+            "points": 10 + request.difficulty_level * 5,
             "example_input": "Örnek girdi yok",
             "example_output": "Örnek çıktı yok",
             "test_inputs": "[]",
@@ -1371,34 +1372,50 @@ def generate_programming_question(difficulty_level: int = 2, db=Depends(get_db))
         enabled = settings.get('ai_enable_features', 'true').lower() == 'true'
 
         if not enabled:
-            data["error"] = "AI özellikleri sistem ayarlarından devre dışı bırakılmış."
-            return data
+            return {"error": "Yapay zeka özellikleri şu anda devre dışı.", **data}
 
         # Zorluk seviyesi açıklamaları
         difficulty_desc = {
-            1: "Kolay (Başlangıç seviyesi programcılar için)",
-            2: "Orta (Temel Python bilgisi gerektirir)",
-            3: "Zor (İleri düzey algoritmik düşünme gerektirir)",
-            4: "Çok Zor (Karmaşık algoritmalar ve optimizasyon gerektirir)"
+            1: "Kolay",
+            2: "Orta",
+            3: "Zor",
+            4: "Çok Zor"
         }
 
         # Mevcut soru başlıklarını al
         existing_titles_query = text("SELECT title FROM programming_question")
         existing_titles = [row.title for row in db.execute(existing_titles_query)]
 
-        # Rastgele konu seçimi
-        topics = ["veri yapıları", "algoritmalar", "string işleme", "matematik",
-                  "sayı teorisi", "arama", "sıralama", "dinamik programlama", "graf teorisi", "olasılık", "istatistik"]
-        import random
-        topic = random.choice(topics)
-        selected_tags = random.sample(["python", "algoritma", "programlama", "veri yapıları"], 3)
+        # Konu kontrolü - eğer boş veya "genel" ise rastgele konu seç
+        topic = request.topic
+        if not topic or topic == "genel":
+            topics = ["veri yapıları", "algoritmalar", "string işleme", "matematik",
+                      "sayı teorisi", "arama", "sıralama", "dinamik programlama",
+                      "graf teorisi", "olasılık", "istatistik"]
+            import random
+            topic = random.choice(topics)
+            data["topic"] = topic
+
+        # Etiketler kontrolü
+        selected_tags = request.tags
+        if not selected_tags:
+            selected_tags = random.sample(["python", "algoritma", "programlama", "veri yapıları"], 3)
+
+        # Kullanıcının verdiği ipuçlarını prompt'a ekle
+        description_hint = ""
+        if request.description_hint:
+            description_hint = f"\nSoru İpucu: {request.description_hint}"
+
+        function_name_hint = ""
+        if request.function_name_hint:
+            function_name_hint = f"\nFonksiyon Adı Önerisi: {request.function_name_hint}"
 
         # AI prompt hazırla
         prompt = f"""Bir Python programlama sorusu oluştur.
 
-Zorluk seviyesi: {difficulty_desc.get(difficulty_level, 'Orta')}
+Zorluk seviyesi: {difficulty_desc.get(request.difficulty_level, 'Orta')}
 Konu: {topic}
-Etiketler: {', '.join(selected_tags)}
+Etiketler: {', '.join(selected_tags)}{description_hint}{function_name_hint}
 
 KATI KURALLAR:
 * HackerRank'e veya LeetCode'dakine benzer sorular oluştur
@@ -1421,24 +1438,24 @@ Yanıtını JSON formatında oluştur:
 {{
   "title": "Kısa ve açıklayıcı soru başlığı",
   "description": "Markdown formatında soru açıklaması örnek girdiler ve çıktılarla destekle",
-  "function_name": "python_fonksiyon_adi",
-  "difficulty": {difficulty_level},
+  "function_name": "{request.function_name_hint if request.function_name_hint else "python_fonksiyon_adi"}",
+  "difficulty": {request.difficulty_level},
   "topic": "{topic}",
-  "points": {10 + difficulty_level * 5},
+  "points": {10 + request.difficulty_level * 5},
   "example_input": "Örnek girdi",
   "example_output": "Örnek çıktı",
   "test_inputs": [[1, 2], [3, 4]] (2 parametreli fonksiyon için örnek) parametre sayısı ve her bir testin içindeki girdi sayısı aynı olmalı, sadece parametrelerin alacağı değerler olmalı çıktılar bu kısımda olmamalı!,
-  "solution_code": "def python_fonksiyon_adi(param1, param2):\\n    return sonuc"
+  "solution_code": "def {request.function_name_hint if request.function_name_hint else "python_fonksiyon_adi"}(param1, param2):\\n    return sonuc"
 }}"""
 
         # AI client oluştur ve soru iste
         client = AIClient(api_provider, api_key, model_name)
         response = client.chat_completion([
-            {"role": "system",
-             "content": "Sen bir Python programlama eğitmenisin. Amacın öğrenciler için özgün, çözülebilir ve öğretici programlama soruları üretmek."},
+            {"role": "system", "content": "Sen bir Python programlama eğitmenisin. Öğrencilere algoritma ve veri yapıları öğretmek için programlama soruları hazırlıyorsun."},
             {"role": "user", "content": prompt}
         ])
 
+        # Kalan kod aynı şekilde kalacak (JSON işleme ve hata yönetimi)
         # Yanıt içeriğini text formatına çevir
         response_text = ""
         if isinstance(response, dict):
@@ -1471,12 +1488,11 @@ Yanıtını JSON formatında oluştur:
 
             for i, match in enumerate(json_matches):
                 try:
-                    match_data = json.loads(match)
-                    json_data = match_data
-                    debug_info["ayrıştırma_denemeleri"].append(f"Regex match {i + 1} başarılı")
+                    json_data = json.loads(match)
+                    debug_info["ayrıştırma_denemeleri"].append(f"JSON bloğu {i+1} başarılı")
                     break
-                except:
-                    debug_info["ayrıştırma_denemeleri"].append(f"Regex match {i + 1} başarısız")
+                except Exception as e:
+                    debug_info["ayrıştırma_denemeleri"].append(f"JSON bloğu {i+1} hatası: {str(e)}")
 
         # Strateji 3: Kod blokları içinde ara
         if not json_data:
@@ -1485,20 +1501,19 @@ Yanıtını JSON formatında oluştur:
 
             for i, block in enumerate(code_blocks):
                 try:
-                    block_data = json.loads(block)
-                    json_data = block_data
-                    debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i + 1} başarılı")
+                    json_data = json.loads(block)
+                    debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i+1} başarılı")
                     break
-                except:
-                    debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i + 1} başarısız")
+                except Exception as e:
+                    debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i+1} hatası: {str(e)}")
 
         # Eğer JSON ayrıştırılabildiyse verileri güncelle
         if json_data:
             # Zorluk seviyesi ve puan
             if "difficulty" in json_data:
-                data["difficulty"] = int(json_data["difficulty"])
+                data["difficulty"] = json_data["difficulty"]
             if "points" in json_data:
-                data["points"] = int(json_data["points"])
+                data["points"] = json_data["points"]
 
             # Temel alan kontrolü
             for field in ["title", "description", "function_name", "solution_code"]:
@@ -1517,10 +1532,15 @@ Yanıtını JSON formatında oluştur:
 
             # Test girdileri
             if "test_inputs" in json_data:
-                if isinstance(json_data["test_inputs"], list):
-                    data["test_inputs"] = json.dumps(json_data["test_inputs"])
-                else:
-                    data["test_inputs"] = json_data["test_inputs"]
+                try:
+                    # Test girdilerini string olarak sakla
+                    if isinstance(json_data["test_inputs"], str):
+                        data["test_inputs"] = json_data["test_inputs"]
+                    else:
+                        data["test_inputs"] = json.dumps(json_data["test_inputs"])
+                except Exception as e:
+                    data["test_inputs"] = "[]"
+                    data["error"] = f"Test girdileri ayrıştırma hatası: {str(e)}"
         else:
             # JSON ayrıştırılamadıysa hata döndür
             data["error"] = "JSON ayrıştırma hatası: AI yanıtı beklenen formatta değil"
@@ -1549,9 +1569,9 @@ Yanıtını JSON formatında oluştur:
             "title": "",
             "description": "",
             "function_name": "",
-            "difficulty": difficulty_level,
-            "topic": topic,
-            "points": 10 + difficulty_level * 5,
+            "difficulty": request.difficulty_level,
+            "topic": request.topic,
+            "points": 10 + request.difficulty_level * 5,
             "example_input": "Örnek girdi yok",
             "example_output": "Örnek çıktı yok",
             "test_inputs": "[]",
