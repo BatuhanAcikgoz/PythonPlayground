@@ -91,6 +91,7 @@
                 description: {{ question.description|tojson|safe }},
                 difficulty: {{ question.difficulty|tojson }},
                 points: {{ question.points|tojson }},
+                topic: {{ question.topic|tojson|safe }},
                 function_name: {{ question.function_name|tojson|safe }},
                 example_input: {{ question.example_input|tojson|safe }},
                 example_output: {{ question.example_output|tojson|safe }},
@@ -217,7 +218,7 @@
                         ></textarea>
                     </FormField>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         <FormField
                             label="Zorluk"
                             id="difficulty"
@@ -233,6 +234,32 @@
                                 <option value="1">Kolay</option>
                                 <option value="2">Orta</option>
                                 <option value="3">Zor</option>
+                            </select>
+                        </FormField>
+
+                        <FormField
+                            label="Konu"
+                            id="topic"
+                            error={formErrors.topic ? formErrors.topic.join(', ') : ''}
+                        >
+                            <select
+                                id="topic"
+                                name="topic"
+                                defaultValue={formData.topic}
+                                className="form-input"
+                                required
+                            >
+                                <option value="veri yapıları">Veri Yapıları</option>
+                                <option value="algoritmalar">Algoritmalar</option>
+                                <option value="string işleme">String İşleme</option>
+                                <option value="matematik">Matematik</option>
+                                <option value="sayı teorisi">Sayı Teorisi</option>
+                                <option value="arama">Arama</option>
+                                <option value="sıralama">Sıralama</option>
+                                <option value="dinamik programlama">Dinamik Programlama</option>
+                                <option value="graf teorisi">Graf Teorisi</option>
+                                <option value="olasılık">Olasılık</option>
+                                <option value="istatistik">İstatistik</option>
                             </select>
                         </FormField>
 

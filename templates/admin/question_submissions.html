@@ -74,7 +74,8 @@
                 title: {{ question.title|tojson|safe }},
                 difficulty: {{ question.difficulty }},
                 function_name: {{ question.function_name|tojson|safe }},
-                points: {{ question.points }}
+                points: {{ question.points }},
+                topic: {{ question.topic|tojson|safe }},
             },
             submissions: [
                 {% for submission in submissions %}
@@ -197,10 +198,14 @@
                                 </div>
 
                                 <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                         <div>
                                             <p className="text-gray-600 font-medium">Zorluk</p>
                                             <p>{['', 'Kolay', 'Orta-Kolay', 'Orta', 'Orta-Zor', 'Zor'][APP_DATA.question.difficulty]}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-gray-600 font-medium">Kategori</p>
+                                            <p>{APP_DATA.question.topic ? APP_DATA.question.topic : 'Belirtilmemiş'}</p>
                                         </div>
                                         <div>
                                             <p className="text-gray-600 font-medium">Fonksiyon Adı</p>

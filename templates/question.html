@@ -91,6 +91,7 @@
                 title: {{ question.title|tojson|safe }},
                 description: {{ question.description|tojson|safe }},
                 difficulty: {{ question.difficulty }},
+                topic: {{ question.topic|tojson|safe }},
                 points: {{ question.points }},
                 function_name: {{ question.function_name|tojson|safe }},
                 example_input: {{ question.example_input|tojson|safe }},
@@ -119,6 +120,7 @@
                 4: { text: 'Çok Zor', color: 'bg-red-100 text-red-800' }
             };
 
+
             const { text, color } = levels[level] || { text: 'Bilinmiyor', color: 'bg-gray-100 text-gray-800' };
 
             return (
@@ -127,6 +129,40 @@
                 </span>
             );
         };
+
+        const Topics = ({topic}) => {
+    // topic diziye çevrilir (eğer dizi değilse)
+    const topics = Array.isArray(topic) ? topic : [topic];
+
+    const topicColors = {
+        "veri yapıları": "bg-blue-100 text-blue-800",
+        "algoritmalar": "bg-green-100 text-green-800",
+        "string işleme": "bg-purple-100 text-purple-800",
+        "matematik": "bg-red-100 text-red-800",
+        "sayı teorisi": "bg-yellow-100 text-yellow-800",
+        "arama": "bg-indigo-100 text-indigo-800",
+        "sıralama": "bg-pink-100 text-pink-800",
+        "dinamik programlama": "bg-cyan-100 text-cyan-800",
+        "graf teorisi": "bg-emerald-100 text-emerald-800",
+        "olasılık": "bg-orange-100 text-orange-800",
+        "istatistik": "bg-teal-100 text-teal-800"
+    };
+
+    const capitalizeFirstLetter = (str) => {
+        return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    };
+
+    return (
+        <div className="flex flex-wrap gap-2">
+            {topics.map((t, index) => (
+                <span key={index}
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${topicColors[t.toLowerCase()] || 'bg-gray-100 text-gray-800'}`}>
+                    {capitalizeFirstLetter(t)}
+                </span>
+            ))}
+        </div>
+    );
+};
 
         const CodeEditor = ({ id, name, defaultValue, onChange }) => {
             const editorRef = React.useRef(null);
@@ -325,6 +361,7 @@
                             <h1 className="text-2xl font-bold">{question.title}</h1>
                             <div className="flex items-center mt-2 space-x-4">
                                 <DifficultyBadge level={question.difficulty} />
+                                <Topics topic={question.topic} />
                                 <span className="text-sm text-gray-600">{question.points} puan</span>
                             </div>
                         </div>

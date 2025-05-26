@@ -159,7 +159,7 @@
                         ></textarea>
                     </FormField>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                         <FormField label="Zorluk Seviyesi" id="difficulty" error={formErrors.difficulty && formErrors.difficulty[0]}>
                             <select
                                 id="difficulty"
@@ -172,6 +172,28 @@
                                 <option value="2">Orta</option>
                                 <option value="3">Zor</option>
                                 <option value="4">Çok Zor</option>
+                            </select>
+                        </FormField>
+
+                        <FormField label="Konu" id="topic" error={formErrors.topic && formErrors.topic[0]}>
+                            <select
+                                id="topic"
+                                name="topic"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            >
+                                <option value="">Seçiniz...</option>
+                                <option value="veri yapıları">Veri Yapıları</option>
+                                <option value="algoritmalar">Algoritmalar</option>
+                                <option value="string işleme">String İşleme</option>
+                                <option value="matematik">Matematik</option>
+                                <option value="sayı teorisi">Sayı Teorisi</option>
+                                <option value="arama">Arama</option>
+                                <option value="sıralama">Sıralama</option>
+                                <option value="dinamik programlama">Dinamik Programlama</option>
+                                <option value="graf teorisi">Graf Teorisi</option>
+                                <option value="olasılık">Olasılık</option>
+                                <option value="istatistik">İstatistik</option>
                             </select>
                         </FormField>
 

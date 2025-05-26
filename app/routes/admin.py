@@ -9,6 +9,7 @@ from app.forms.admin import SettingForm
 from app.models.base import db
 from app.models.user import User, Role
 from app.forms import UserForm
+from flask_wtf import FlaskForm
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -340,7 +341,7 @@ def badges():
 @admin_bp.route('/badges/new', methods=['GET', 'POST'])
 def new_badge():
     """Yeni rozet oluşturma sayfası"""
-    form = CSRFProtectForm()
+    form = FlaskForm()
     if request.method == 'POST' and form.validate_on_submit():
         try:
             name = request.form['name'].strip()

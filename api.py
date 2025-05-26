@@ -1321,10 +1321,6 @@ def get_user_profile(username: str, current_user_id: Optional[int] = None, db=De
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-from pydantic import BaseModel
-
-
 class QuestionGenerationRequest(BaseModel):
     difficulty_level: int = 1
     topic: str = "genel"
@@ -1342,6 +1338,7 @@ class GeneratedQuestionResponse(BaseModel):
     test_inputs: str = "[]"
     solution_code: str = ""
     error: Optional[str] = None
+    debug_info: Optional[str] = None
 
 
 @api.post("/api/generate-question", response_model=GeneratedQuestionResponse)
@@ -1456,7 +1453,7 @@ Yanıtını JSON formatında oluştur:
 
         # Debug bilgilerini topla
         debug_info = {
-            "raw_response": response_text[:1000] + "..." if len(response_text) > 1000 else response_text,
+            "raw_response": response_text,
             "ayrıştırma_denemeleri": []
         }
 
@@ -1527,7 +1524,7 @@ Yanıtını JSON formatında oluştur:
         else:
             # JSON ayrıştırılamadıysa hata döndür
             data["error"] = "JSON ayrıştırma hatası: AI yanıtı beklenen formatta değil"
-            data["debug_info"] = debug_info
+            data["debug_info"] = json.dumps(debug_info)
             return data
 
         # Sonuç kontrolü - temel alanlar var mı?
@@ -1547,8 +1544,7 @@ Yanıtını JSON formatında oluştur:
             "error": f"Soru üretme hatası: {str(e)}",
             "debug_info": {
                 "traceback": error_details,
-                "response_text": response_text[:1000] + "..." if 'response_text' in locals() and len(
-                    response_text) > 1000 else response_text if 'response_text' in locals() else "Yanıt alınamadı"
+                "response_text": response_text if 'response_text' in locals() else "Yanıt alınamadı"
             },
             "title": "",
             "description": "",

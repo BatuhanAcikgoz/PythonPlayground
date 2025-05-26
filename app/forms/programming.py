@@ -11,6 +11,21 @@ class ProgrammingQuestionForm(FlaskForm):
                           coerce=int,
                           validators=[DataRequired()])
     points = IntegerField('Puan', validators=[DataRequired(), NumberRange(min=1)])
+    topic = SelectField('Konu',
+                        validators=[DataRequired()],
+                        choices=[
+                            ('veri yapıları', 'Veri Yapıları'),
+                            ('algoritmalar', 'Algoritmalar'),
+                            ('string işleme', 'String İşleme'),
+                            ('matematik', 'Matematik'),
+                            ('sayı teorisi', 'Sayı Teorisi'),
+                            ('arama', 'Arama'),
+                            ('sıralama', 'Sıralama'),
+                            ('dinamik programlama', 'Dinamik Programlama'),
+                            ('graf teorisi', 'Graf Teorisi'),
+                            ('olasılık', 'Olasılık'),
+                            ('istatistik', 'İstatistik')
+                        ])
     example_input = TextAreaField('Örnek Girdi')
     example_output = TextAreaField('Örnek Çıktı')
     function_name = StringField('Fonksiyon Adı', validators=[DataRequired(), Length(max=100)])
