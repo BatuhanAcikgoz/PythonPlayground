@@ -1435,6 +1435,13 @@ KATI KURALLAR:
 * Olabildiğince az kütüphane bilgisi isteyen sorular hazırla
 * Yanıt kesinlikle JSON formatında olmalı öbür türlüsü kabul edilmiyor!!!
 
+YANIT FORMATLAMASI:
+* Yanıtını SADECE geçerli bir JSON nesnesi olarak formatla
+* Başka açıklama veya metin EKLEME, SADECE JSON nesnesini döndür
+* JSON anahtarlarını çift tırnak içinde yaz: "title", "description" vb.
+* JSON'un ilk ve son satırında sadece açılış ve kapanış süslü parantezleri olmalı
+* JSON alanlarında Türkçe karakterleri düzgün kullan
+
 Ürettiğin soru aşağıdaki mevcut sorulardan TAMAMEN farklı olmalı:
 {', '.join(existing_titles[:10])}
 
