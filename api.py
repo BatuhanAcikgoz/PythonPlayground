@@ -1513,14 +1513,10 @@ Yanıtını JSON formatında oluştur:
 
             for i, block in enumerate(code_blocks):
                 try:
-                    # Temizleme işlemi
+                    # Temizleme işlemi (sadece gerekli temizleme)
                     cleaned_block = block.strip()
 
-                    # Kontrol karakterlerini temizle ama bazı özel karakterleri koru
-                    cleaned_block = ''.join(ch for ch in cleaned_block
-                                            if ord(ch) >= 32 or ch in '\n\r\t')
-
-                    # JSON ayrıştırmayı dene
+                    # JSON'u doğrudan ayrıştırmayı dene
                     json_data = json.loads(cleaned_block)
                     debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i + 1} başarılı")
                     break
@@ -1528,41 +1524,44 @@ Yanıtını JSON formatında oluştur:
                     debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i + 1} hatası: {str(e)}")
 
                     try:
-                        # Alternatif 1: Kaçış dizilerini düzelt
-                        fixed_escapes = re.sub(r'\\([^\\"])', r'\\\\\1', cleaned_block)
-                        json_data = json.loads(fixed_escapes)
-                        debug_info["ayrıştırma_denemeleri"].append(f"Kaçış dizileri düzeltmesi başarılı")
+                        # Unicode karakterleri çözümle
+                        decoded_block = bytes(cleaned_block, 'utf-8').decode('unicode_escape')
+                        json_data = json.loads(decoded_block)
+                        debug_info["ayrıştırma_denemeleri"].append(f"Unicode çözümleme başarılı")
                         break
                     except Exception as e2:
-                        debug_info["ayrıştırma_denemeleri"].append(f"Kaçış dizileri düzeltmesi hatası: {str(e2)}")
+                        debug_info["ayrıştırma_denemeleri"].append(f"Unicode çözümleme hatası: {str(e2)}")
 
                         try:
-                            # Alternatif 2: JSON anahtarlarını ve değerlerini doğrudan çıkar
-                            pattern = r'"([^"]+)":\s*"([^"]*)"'
-                            matches = re.findall(pattern, cleaned_block)
+                            # Manuel JSON ayrıştırma - anahtar ve değer çiftlerini al
+                            # Önce string değerler
+                            string_pattern = r'"([^"]+)":\s*"([^"]*(?:\\.[^"]*)*)"'
+                            string_matches = re.findall(string_pattern, cleaned_block)
                             parsed_json = {}
 
-                            for key, value in matches:
-                                parsed_json[key] = value
+                            for key, value in string_matches:
+                                parsed_json[key] = value.replace('\\n', '\n').replace('\\t', '\t')
 
-                            # Diğer veri tiplerini (sayılar, listeler) ekle
+                            # Sayısal değerler
                             num_pattern = r'"([^"]+)":\s*(\d+)'
                             num_matches = re.findall(num_pattern, cleaned_block)
                             for key, value in num_matches:
                                 if key not in parsed_json:
                                     parsed_json[key] = int(value)
 
-                            # Liste verileri için
-                            list_pattern = r'"([^"]+)":\s*(\[.*?\])'
+                            # Liste değerleri
+                            list_pattern = r'"([^"]+)":\s*(\[[\s\S]*?\])'
                             list_matches = re.findall(list_pattern, cleaned_block)
                             for key, value in list_matches:
                                 if key not in parsed_json:
                                     try:
+                                        # Liste değerini JSON olarak ayrıştır
                                         parsed_json[key] = json.loads(value)
                                     except:
-                                        # Basit listeleri manuel işle
+                                        # Ayrıştırma başarısız olursa original değeri koru
                                         parsed_json[key] = value
 
+                            # Gerekli tüm alanların var olduğunu kontrol et
                             if parsed_json and "title" in parsed_json and "description" in parsed_json:
                                 json_data = parsed_json
                                 debug_info["ayrıştırma_denemeleri"].append(f"Manuel ayrıştırma başarılı")
