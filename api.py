@@ -1508,16 +1508,67 @@ Yanıtını JSON formatında oluştur:
 
         # Strateji 3: Kod blokları içinde ara
         if not json_data:
-            code_blocks = re.findall(r'```(?:json)?\s*([\s\S]*?)\s*```', response_text)
+            code_blocks = re.findall(r'```(?:json)?\s*([\s\S]*?)```', response_text)
             debug_info["code_blocks_count"] = len(code_blocks)
 
             for i, block in enumerate(code_blocks):
                 try:
-                    json_data = json.loads(block)
-                    debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i+1} başarılı")
+                    # Temizleme işlemi
+                    cleaned_block = block.strip()
+
+                    # Kontrol karakterlerini temizle ama bazı özel karakterleri koru
+                    cleaned_block = ''.join(ch for ch in cleaned_block
+                                            if ord(ch) >= 32 or ch in '\n\r\t')
+
+                    # JSON ayrıştırmayı dene
+                    json_data = json.loads(cleaned_block)
+                    debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i + 1} başarılı")
                     break
                 except Exception as e:
-                    debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i+1} hatası: {str(e)}")
+                    debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i + 1} hatası: {str(e)}")
+
+                    try:
+                        # Alternatif 1: Kaçış dizilerini düzelt
+                        fixed_escapes = re.sub(r'\\([^\\"])', r'\\\\\1', cleaned_block)
+                        json_data = json.loads(fixed_escapes)
+                        debug_info["ayrıştırma_denemeleri"].append(f"Kaçış dizileri düzeltmesi başarılı")
+                        break
+                    except Exception as e2:
+                        debug_info["ayrıştırma_denemeleri"].append(f"Kaçış dizileri düzeltmesi hatası: {str(e2)}")
+
+                        try:
+                            # Alternatif 2: JSON anahtarlarını ve değerlerini doğrudan çıkar
+                            pattern = r'"([^"]+)":\s*"([^"]*)"'
+                            matches = re.findall(pattern, cleaned_block)
+                            parsed_json = {}
+
+                            for key, value in matches:
+                                parsed_json[key] = value
+
+                            # Diğer veri tiplerini (sayılar, listeler) ekle
+                            num_pattern = r'"([^"]+)":\s*(\d+)'
+                            num_matches = re.findall(num_pattern, cleaned_block)
+                            for key, value in num_matches:
+                                if key not in parsed_json:
+                                    parsed_json[key] = int(value)
+
+                            # Liste verileri için
+                            list_pattern = r'"([^"]+)":\s*(\[.*?\])'
+                            list_matches = re.findall(list_pattern, cleaned_block)
+                            for key, value in list_matches:
+                                if key not in parsed_json:
+                                    try:
+                                        parsed_json[key] = json.loads(value)
+                                    except:
+                                        # Basit listeleri manuel işle
+                                        parsed_json[key] = value
+
+                            if parsed_json and "title" in parsed_json and "description" in parsed_json:
+                                json_data = parsed_json
+                                debug_info["ayrıştırma_denemeleri"].append(f"Manuel ayrıştırma başarılı")
+                                break
+                        except Exception as e3:
+                            debug_info["ayrıştırma_denemeleri"].append(f"Manuel ayrıştırma hatası: {str(e3)}")
 
         # Eğer JSON ayrıştırılabildiyse verileri güncelle
         if json_data:
