@@ -99,7 +99,8 @@
                 const fetchProfileData = async () => {
                     try {
                         setIsLoading(true);
-                        const response = await fetch(`/api/user-profile/${username}?current_user_id=${window.APP_DATA.userData.id}`);
+                        const userId = (window.APP_DATA.userData && window.APP_DATA.userData.id) ? window.APP_DATA.userData.id : 0;
+                        const response = await fetch(`/api/user-profile/${username}?current_user_id=${userId}`);
 
                         if (!response.ok) {
                             throw new Error(`HTTP error! Status: ${response.status}`);

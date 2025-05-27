@@ -53,14 +53,16 @@ def register():
 
     return render_template('register.html', form=form)
 
+
 @auth_bp.route('/profil/<string:username>')
 def profile(username):
-    if not current_user.is_authenticated:
-        flash('Lütfen önce giriş yapın.')
-        return redirect(url_for('auth.login'))
-
     user = User.query.filter_by(username=username).first()
-    return render_template('profile.html', user=current_user)
+    if not user:
+        flash('Kullanıcı bulunamadı.', 'error')
+        return redirect(url_for('main.index'))
+
+    return render_template('profile.html', user=user)
+
 
 @auth_bp.route('/profil')
 def my_profile():

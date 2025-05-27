@@ -1177,16 +1177,21 @@ class UserProfileData(BaseModel):
     username: str
     email: str
     joinDate: Optional[str]
-    isCurrentUser: bool
+    isCurrentUser: bool = False
     badges: List[Badge]
     stats: UserStats
     activities: List[Activity]
     dailyActivity: List[dict]
 
+from fastapi import Query
+
 @api.get("/api/user-profile/{username}", response_model=UserProfileData)
-def get_user_profile(username: str, current_user_id: Optional[int] = None, db=Depends(get_db)):
+def get_user_profile(username: str, current_user_id: Optional[int] = "0", db=Depends(get_db)):
     """Kullanıcının profil verilerini döndürür"""
     try:
+        # Eğer current_user_id null olarak gelirse None olarak ayarla
+        if current_user_id is None:
+            current_user_id = None
         # Kullanıcıyı bul
         user_query = text("""
                           SELECT id, username, email, created_at
@@ -1305,7 +1310,7 @@ def get_user_profile(username: str, current_user_id: Optional[int] = None, db=De
             "username": user.username,
             "email": user.email,
             "joinDate": user.created_at.strftime('%Y-%m-%d') if user.created_at else None,
-            "isCurrentUser": is_current_user,
+            "isCurrentUser": current_user_id == user.id if current_user_id else False,
             "badges": badges,
             "stats": {
                 "solvedProblems": stats.solved_problems if stats else 0,

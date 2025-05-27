@@ -305,13 +305,19 @@ def generate_questions_on_startup(app):
         for difficulty in difficulty_levels:
             try:
                 current_app.logger.info(f"Zorluk seviyesi {difficulty} için soru üretiliyor...")
+                import json
+                # JSON request body olarak gönder, query parametreleri olarak değil
+                url = "http://127.0.0.1:8000/api/generate-question"
+                headers = {"Content-Type": "application/json"}
+                data = {
+                    "difficulty_level": difficulty,
+                    "topic": "",
+                    "description_hint": "",
+                    "function_name_hint": "",
+                    "tags": []
+                }
 
-                # FastAPI endpoint'ine istek gönder
-                response = requests.post(
-                    "http://127.0.0.1:8000/api/generate-question",
-                    params={"difficulty_level": difficulty},
-                    timeout=1800  # 180 saniye timeout
-                )
+                response = requests.post(url, headers=headers, data=json.dumps(data))
 
                 if response.status_code == 200:
                     question_data = response.json()
