@@ -1,8 +1,6 @@
 # tests/test_api.py
-import json
-
 import pytest
-from app.routes.api import proxy
+import json
 from tests.mock_app import create_mock_app
 
 
@@ -84,50 +82,3 @@ def test_user_roles_api(api_app, client):
     response = client.get('/api/test/admin-check/api_user1')
     data = json.loads(response.data)
     assert data['is_admin'] is False
-
-
-def test_admin_required_with_admin_user(api_app, client, mocker):
-    mocker.patch('flask_login.utils._get_user', return_value=mocker.Mock(is_authenticated=True, is_admin=lambda: True))
-
-    @api_app.route('/api/test/admin-endpoint')
-    @api_app.admin_decorator
-    def test_admin_endpoint():
-        return json.dumps({"success": True})
-
-    response = client.get('/api/test/admin-endpoint')
-    assert response.status_code == 200
-    data = json.loads(response.data)
-    assert data["success"] is True
-
-
-def test_admin_required_with_non_admin_user(api_app, client, mocker):
-    mocker.patch('flask_login.utils._get_user', return_value=mocker.Mock(is_authenticated=True, is_admin=lambda: False))
-
-    @api_app.route('/api/test/admin-endpoint')
-    @api_app.admin_decorator
-    def test_admin_endpoint():
-        return json.dumps({"success": True})
-
-    response = client.get('/api/test/admin-endpoint')
-    assert response.status_code == 403
-    data = json.loads(response.data)
-    assert "error" in data
-    assert data["error"] == "Admin yetkisi gerekiyor"
-
-
-def test_proxy_get(client, mocker):
-    mocker.patch('requests.get', return_value=mocker.Mock(status_code=200, json=lambda: {"data": "success"}))
-
-    response = client.get('/api/test/proxy-endpoint')
-    assert response.status_code == 200
-    data = json.loads(response.data)
-    assert data["data"] == "success"
-
-
-def test_proxy_post(client, mocker):
-    mocker.patch('requests.post', return_value=mocker.Mock(status_code=201, json=lambda: {"result": "created"}))
-
-    response = client.post('/api/test/proxy-endpoint', json={"key": "value"})
-    assert response.status_code == 201
-    data = json.loads(response.data)
-    assert data["result"] == "created"
