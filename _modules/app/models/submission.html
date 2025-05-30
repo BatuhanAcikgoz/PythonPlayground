@@ -276,6 +276,35 @@
 <div class="viewcode-block" id="Submission">
 <a class="viewcode-back" href="../../../app.models.html#app.models.submission.Submission">[belgeler]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Submission</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Submission sınıfı, kullanıcıların bir soruya göndermiş olduğu çözüm kodlarının</span>
+<span class="sd">    veritabanında saklanması ve yönetilmesi için bir model sağlar.</span>
+
+<span class="sd">    Bu sınıf, kullanıcıların herhangi bir programlama sorusuna yüklediği kod çözümünü,</span>
+<span class="sd">    bu çözümün test sonuçlarını ve başarı durumunu barındırır. Aynı zamanda kullanıcıya</span>
+<span class="sd">    ait belirli sorular için doğru çözümün olup olmadığını kontrol etmek için de araçlar</span>
+<span class="sd">    sunar.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        id: Her gönderim için benzersiz bir tanımlayıcı.</span>
+<span class="sd">        user_id: Gönderimi yapan kullanıcının ID değeri.</span>
+<span class="sd">        question_id: Çözümün ilişkilendirildiği sorunun ID değeri.</span>
+<span class="sd">        code: Kullanıcının gönderdiği çözümün kaynak kodu.</span>
+<span class="sd">        is_correct: Çözümün doğru olup olmadığını belirten bayrak.</span>
+<span class="sd">        test_results: Çözüm için yapılan testlerin sonuçları. JSON formatındadır.</span>
+<span class="sd">        execution_time: Gönderimin testlerde çalıştırılma süresi.</span>
+<span class="sd">        error_message: Test sırasında oluşan hata mesajları.</span>
+<span class="sd">        created_at: Gönderimin oluşturulma tarihi ve saati.</span>
+
+<span class="sd">    Attributes (Relationships):</span>
+<span class="sd">        user: Gönderimi gerçekleştiren kullanıcı ile ilişki sağlar.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        save_submission: Yeni bir gönderimi veritabanına kaydeder.</span>
+<span class="sd">        has_correct_submission: Belirli bir kullanıcı ve sorunun doğru çözüm gönderimini</span>
+<span class="sd">                                olup olmadığını kontrol eder.</span>
+<span class="sd">        result_summary: Gönderim için test sonuçlarının özet bilgisini döner.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;user.id&#39;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">question_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;programming_question.id&#39;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -290,9 +319,28 @@
     <span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;User&#39;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="n">db</span><span class="o">.</span><span class="n">backref</span><span class="p">(</span><span class="s1">&#39;submissions&#39;</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provides a string representation of the Submission object for easier debugging</span>
+<span class="sd">        and output formatting. The returned string contains the Submission ID, the User ID</span>
+<span class="sd">        associated with the submission, and the Question ID for which the submission was made.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: The string representation of the Submission instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;Submission </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1"> by User </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="si">}</span><span class="s1"> for Question </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">question_id</span><span class="si">}</span><span class="s1">&gt;&#39;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Submission sınıfının bir örneğini başlatmak için kullanılan yapılandırıcıdır.</span>
+<span class="sd">        Bu yapılandırıcı, verilen anahtar kelime argümanlarını işler ve test_results adlı</span>
+<span class="sd">        bir anahtar varsa, bunun bir sözlük olup olmadığını kontrol eder. Eğer bir sözlük ise,</span>
+<span class="sd">        JSON formatına dönüştürür ve parent class&#39;ın yapılandırıcısına aktarır.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kwargs: Anahtar kelime argümanları. `test_results` anahtarı sözlük ise JSON</span>
+<span class="sd">            formatına dönüştürülür.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># test_results dictionary ise JSON&#39;a dönüştür</span>
         <span class="k">if</span> <span class="s1">&#39;test_results&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;test_results&#39;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;test_results&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;test_results&#39;</span><span class="p">])</span>
@@ -303,6 +351,20 @@
 <a class="viewcode-back" href="../../../app.models.html#app.models.submission.Submission.save_submission">[belgeler]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">save_submission</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">question</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">evaluation_result</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bir SQLAlchemy modeli kullanarak bir kod gönderimini kaydeder. Bu metod, bir kullanıcı tarafından</span>
+<span class="sd">        gerçekleştirilen kod gönderiminin veritabanına kaydedilmesini sağlar. Gönderim bilgileri, kod</span>
+<span class="sd">        değerlendirme sonuçları, yürütme süresi ve hatalar gibi detayları içerir.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            question (Question): Kullanıcı tarafından çözülmeye çalışılan soru nesnesi.</span>
+<span class="sd">            code (str): Gönderilen kod.</span>
+<span class="sd">            evaluation_result (dict): Kodun değerlendirilmesi sırasında alınan sonuçlar. Bu sözlük &#39;is_correct&#39;,</span>
+<span class="sd">                                       &#39;execution_time&#39; ve &#39;error_message&#39; gibi anahtarları içerir.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Submission: Yeni kaydedilen gönderim nesnesi.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">submission</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">user_id</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
             <span class="n">question_id</span><span class="o">=</span><span class="n">question</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
@@ -322,7 +384,20 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_correct_submission</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">question_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Kullanıcının belirli bir soru için doğru çözüm gönderip göndermediğini kontrol eder</span>
+<span class="sd">        Checks if a user has a correct submission for a specific question.</span>
+
+<span class="sd">        This class method determines whether there exists at least one correct</span>
+<span class="sd">        submission for a given user and question combination. The correctness</span>
+<span class="sd">        of the submission is verified by the `is_correct` flag in the database</span>
+<span class="sd">        record.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            user_id (int): The ID of the user.</span>
+<span class="sd">            question_id (int): The ID of the question.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if a correct submission exists for the user and question,</span>
+<span class="sd">            False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span>
             <span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span>
@@ -333,7 +408,18 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">result_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Test sonuçlarının özeti&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        result_summary özelliği, bir dizi test sonucunu değerlendirerek özet bir sonuç döndürmek için kullanılır.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Eğer test sonuçları mevcut değilse &quot;Sonuç bulunamadı&quot; mesajını döndürür. Test sonuçları JSON formatında düzgün</span>
+<span class="sd">            işlenebilirse ve tüm testler başarılıysa &quot;Tüm testler başarılı&quot; mesajını döndürür. Eğer başarısız testler varsa,</span>
+<span class="sd">            başarısız test sayısını içeren bir mesaj döner, örneğin: &quot;2 test başarısız&quot;. JSON yükleme işlemi sırasında hata</span>
+<span class="sd">            oluşursa &quot;Sonuç ayrıştırılamadı&quot; döndürür.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_results</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;Sonuç bulunamadı&quot;</span>
 

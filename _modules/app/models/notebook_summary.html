@@ -274,6 +274,23 @@
 <div class="viewcode-block" id="NotebookSummary">
 <a class="viewcode-back" href="../../../app.models.html#app.models.notebook_summary.NotebookSummary">[belgeler]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NotebookSummary</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    NotebookSummary sınıfı, veritabanı için bir model tanımlar ve Jupyter Notebook&#39;larıyla ilgili</span>
+<span class="sd">    özet bilgileri ve açıklamaları saklamak amacıyla kullanılır.</span>
+
+<span class="sd">    Bu sınıf, bir Jupyter Notebook dosyasının dosya yolu, özeti, kodların açıklamaları, son güncelleme</span>
+<span class="sd">    tarihi ve varsa oluşabilecek hata mesajlarını veritabanında saklamak için tasarlanmıştır. Özet</span>
+<span class="sd">    üzerinde düzenlemeler yapmak, notebook hakkında bilgi almak veya hataları incelemek için</span>
+<span class="sd">    kullanılabilir.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        id (int): Her notebook kaydı için benzersiz birincil anahtar değeri.</span>
+<span class="sd">        notebook_path (str): Notebook dosyasının tam dosya yolu. Tekil olmalıdır ve boş bırakılamaz.</span>
+<span class="sd">        summary (Optional[str]): Notebook içeriğinin özeti. Null olabilir.</span>
+<span class="sd">        code_explanation (Optional[str]): Notebook&#39;taki kodların açıklamaları. Null olabilir.</span>
+<span class="sd">        last_updated (datetime): Kaydın son güncelleme zamanı. Varsayılan olarak mevcut zaman atanır.</span>
+<span class="sd">        error (Optional[str]): Eğer varsa, notebook ile ilgili bir hata mesajı. Null olabilir.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">notebook_path</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">summary</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -282,6 +299,16 @@
     <span class="n">error</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        __repr__</span>
+
+<span class="sd">        Temsil edici bir dize döndürür. Bu yöntem, NotebookSummary nesnesini anlaşılır bir</span>
+<span class="sd">        şekilde metin biçiminde ifade etmek için kullanılır. Özellikle hata ayıklama ve</span>
+<span class="sd">        günlük kaydı işlemleri için faydalıdır.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: NotebookSummary nesnesini temsil eden bir metin dizesi.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;NotebookSummary </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">notebook_path</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
 
 </pre></div>

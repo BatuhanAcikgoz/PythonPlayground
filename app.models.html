@@ -293,6 +293,78 @@
 <dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.notebook_summary.</span></span><span class="sig-name descname"><span class="pre">NotebookSummary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/notebook_summary.html#NotebookSummary"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<p>NotebookSummary sınıfı, veritabanı için bir model tanımlar ve Jupyter Notebook’larıyla ilgili
+özet bilgileri ve açıklamaları saklamak amacıyla kullanılır.</p>
+<p>Bu sınıf, bir Jupyter Notebook dosyasının dosya yolu, özeti, kodların açıklamaları, son güncelleme
+tarihi ve varsa oluşabilecek hata mesajlarını veritabanında saklamak için tasarlanmıştır. Özet
+üzerinde düzenlemeler yapmak, notebook hakkında bilgi almak veya hataları incelemek için
+kullanılabilir.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.id" title="Link to this definition">¶</a></dt>
+<dd><p>Her notebook kaydı için benzersiz birincil anahtar değeri.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.notebook_path">
+<span class="sig-name descname"><span class="pre">notebook_path</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.notebook_path" title="Link to this definition">¶</a></dt>
+<dd><p>Notebook dosyasının tam dosya yolu. Tekil olmalıdır ve boş bırakılamaz.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.summary" title="Link to this definition">¶</a></dt>
+<dd><p>Notebook içeriğinin özeti. Null olabilir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.code_explanation">
+<span class="sig-name descname"><span class="pre">code_explanation</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.code_explanation" title="Link to this definition">¶</a></dt>
+<dd><p>Notebook’taki kodların açıklamaları. Null olabilir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.last_updated">
+<span class="sig-name descname"><span class="pre">last_updated</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.last_updated" title="Link to this definition">¶</a></dt>
+<dd><p>Kaydın son güncelleme zamanı. Varsayılan olarak mevcut zaman atanır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.error">
+<span class="sig-name descname"><span class="pre">error</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.error" title="Link to this definition">¶</a></dt>
+<dd><p>Eğer varsa, notebook ile ilgili bir hata mesajı. Null olabilir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
 <p>A simple constructor that allows initialization from kwargs.</p>
 <p>Sets attributes on the constructed instance using the names and
 values in <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
@@ -300,28 +372,28 @@ values in <code class="docutils literal notranslate"><span class="pre">kwargs</s
 attributes of the instance’s class are allowed. These could be,
 for example, any mapped columns or relationships.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.code_explanation">
-<span class="sig-name descname"><span class="pre">code_explanation</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.code_explanation" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">code_explanation</span></span><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.error">
-<span class="sig-name descname"><span class="pre">error</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.error" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">error</span></span><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.id" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.last_updated">
-<span class="sig-name descname"><span class="pre">last_updated</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.last_updated" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">last_updated</span></span><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.notebook_path">
-<span class="sig-name descname"><span class="pre">notebook_path</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.notebook_path" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">notebook_path</span></span><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -337,8 +409,8 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.notebook_summary.NotebookSummary.summary">
-<span class="sig-name descname"><span class="pre">summary</span></span><a class="headerlink" href="#app.models.notebook_summary.NotebookSummary.summary" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">summary</span></span><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -350,6 +422,158 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.programming_question.</span></span><span class="sig-name descname"><span class="pre">ProgrammingQuestion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/programming_question.html#ProgrammingQuestion"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<p>Programlama sorularını temsil eden bir sınıf.</p>
+<p>Bu sınıf, bir programlama sorusunun özelliklerini ve bu soruya bağlı diğer verileri
+depolamak için tasarlanmıştır. Sorunun başlığı, zorluk seviyesi, örnek giriş-çıkış
+verileri, çözüm kodu gibi bilgileri içerir. Bu sınıf genellikle veritabanında
+programlama sorularını saklamak ve ilgili kayıtları ilişkilendirmek için kullanılır.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.id" title="Link to this definition">¶</a></dt>
+<dd><p>Soru için benzersiz bir tanımlayıcı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.title">
+<span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.title" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun başlığı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.description" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun tam açıklaması.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.difficulty">
+<span class="sig-name descname"><span class="pre">difficulty</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.difficulty" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun zorluk seviyesi, varsayılan olarak 1’dir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.topic">
+<span class="sig-name descname"><span class="pre">topic</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.topic" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun ele aldığı konu/başlık.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.points">
+<span class="sig-name descname"><span class="pre">points</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.points" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun çözümü için verilecek puan, varsayılan olarak 10’dur.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.example_input">
+<span class="sig-name descname"><span class="pre">example_input</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.example_input" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun örnek giriş verisi.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.example_output">
+<span class="sig-name descname"><span class="pre">example_output</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.example_output" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun örnek çıkış verisi.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.function_name">
+<span class="sig-name descname"><span class="pre">function_name</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.function_name" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun beklediği başlıca fonksiyon ismi.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.solution_code">
+<span class="sig-name descname"><span class="pre">solution_code</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.solution_code" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun çözüm kodu.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.test_inputs">
+<span class="sig-name descname"><span class="pre">test_inputs</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.test_inputs" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun test giriş verileri.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.created_at" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun oluşturulma tarihi ve saati.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.updated_at">
+<span class="sig-name descname"><span class="pre">updated_at</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.updated_at" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun en son güncellenme tarihi ve saati.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="simple">
+<dt>Relationships:</dt><dd><p>submissions: Soruyla ilişkili gönderimler (Submission modeli ile ilişki).</p>
+</dd>
+</dl>
 <p>A simple constructor that allows initialization from kwargs.</p>
 <p>Sets attributes on the constructed instance using the names and
 values in <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
@@ -357,43 +581,43 @@ values in <code class="docutils literal notranslate"><span class="pre">kwargs</s
 attributes of the instance’s class are allowed. These could be,
 for example, any mapped columns or relationships.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.created_at">
-<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.created_at" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.description">
-<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.description" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.difficulty">
-<span class="sig-name descname"><span class="pre">difficulty</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.difficulty" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">difficulty</span></span><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.example_input">
-<span class="sig-name descname"><span class="pre">example_input</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.example_input" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">example_input</span></span><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.example_output">
-<span class="sig-name descname"><span class="pre">example_output</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.example_output" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">example_output</span></span><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.function_name">
-<span class="sig-name descname"><span class="pre">function_name</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.function_name" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">function_name</span></span><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.id" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.points">
-<span class="sig-name descname"><span class="pre">points</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.points" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">points</span></span><a class="headerlink" href="#id13" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -409,8 +633,8 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.solution_code">
-<span class="sig-name descname"><span class="pre">solution_code</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.solution_code" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">solution_code</span></span><a class="headerlink" href="#id14" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -419,23 +643,23 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.test_inputs">
-<span class="sig-name descname"><span class="pre">test_inputs</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.test_inputs" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">test_inputs</span></span><a class="headerlink" href="#id15" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.title">
-<span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.title" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id16">
+<span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#id16" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.topic">
-<span class="sig-name descname"><span class="pre">topic</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.topic" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id17">
+<span class="sig-name descname"><span class="pre">topic</span></span><a class="headerlink" href="#id17" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.programming_question.ProgrammingQuestion.updated_at">
-<span class="sig-name descname"><span class="pre">updated_at</span></span><a class="headerlink" href="#app.models.programming_question.ProgrammingQuestion.updated_at" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id18">
+<span class="sig-name descname"><span class="pre">updated_at</span></span><a class="headerlink" href="#id18" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -447,6 +671,11 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <dt class="sig sig-object py" id="app.models.settings.Setting">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.settings.</span></span><span class="sig-name descname"><span class="pre">Setting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/settings.html#Setting"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.settings.Setting" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<p>Veritabanı modeli ile uygulama ayarlarını yönetir.</p>
+<p>Bu sınıf, uygulamanın dinamik ayarlarını yönetmek için bir model sunar. Ayarlar
+anahtar-değer çiftleri şeklinde saklanır ve gerekli olduğunda ayarın tipi
+dönüştürülerek kullanılabilir. Ayrıca, ayarlarda oluşturma veya güncelleme
+işlemlerini kolay bir şekilde yapmak için çeşitli yardımcı yöntemler içerir.</p>
 <p>A simple constructor that allows initialization from kwargs.</p>
 <p>Sets attributes on the constructed instance using the names and
 values in <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
@@ -456,13 +685,45 @@ for example, any mapped columns or relationships.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.settings.Setting.get">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/settings.html#Setting.get"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.settings.Setting.get" title="Link to this definition">¶</a></dt>
-<dd><p>Belirli bir anahtarın değerini döndür</p>
+<dd><p>classmethod get metodu, ayarları sorgulayıp anahtar değeri ile eşleşen ayarı döndürmek için kullanılır.
+Ayarlara karşılık gelen değer, ayarın türüne göre uygun şekilde dönüştürülür. Eğer herhangi bir eşleşen
+ayar bulunmazsa varsayılan değer döndürülür.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – Aranan ayarın anahtar değeri.</p></li>
+<li><p><strong>default</strong> (<em>Optional</em><em>[</em><em>Any</em><em>]</em>) – Ayar bulunamadığında döndürülecek olan varsayılan değer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Anahtar ile eşleşen ayarın değeri, ayar bulunamazsa varsayılan değer döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.settings.Setting.set">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/settings.html#Setting.set"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.settings.Setting.set" title="Link to this definition">¶</a></dt>
-<dd><p>Ayarı güncelle veya oluştur</p>
+<dd><p>Sınıfın ayarlarını yapılandırma ve yönetme işlemleri için kullanılan bir yöntemi
+tanımlar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – Ayar için kullanılacak anahtar.</p></li>
+<li><p><strong>value</strong> (<em>Any</em>) – Ayar için atanacak değer.</p></li>
+<li><p><strong>type</strong> (<em>str</em><em>, </em><em>optional</em>) – Ayarın türünü belirtir. Varsayılan olarak None.</p></li>
+<li><p><strong>category</strong> (<em>str</em><em>, </em><em>optional</em>) – Ayarın kategorisini belirtir. Varsayılan olarak None.</p></li>
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – Ayara ilişkin açıklama metni sağlar. Varsayılan
+olarak None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -512,7 +773,38 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <dl class="py function">
 <dt class="sig sig-object py" id="app.models.settings.add_ai_settings">
 <span class="sig-prename descclassname"><span class="pre">app.models.settings.</span></span><span class="sig-name descname"><span class="pre">add_ai_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/settings.html#add_ai_settings"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.settings.add_ai_settings" title="Link to this definition">¶</a></dt>
-<dd><p>AI ayarlarını Settings tablosuna ekler - Sadece Gemini API için</p>
+<dd><p>add_ai_settings fonksiyonu, AI ile ilgili yapılandırma ayarlarını veri tabanına
+eklemek için oluşturulmuştur. Eğer belirli bir ayar veri tabanında zaten mevcut
+değilse, ayar eklenir. Mevcut ayarlara müdahale edilmez. Bu fonksiyon,
+yazılımın kullanıcı tarafından aktif edilen ya da yapılandırılan AI özelliklerini
+kullanabilmesine olanak tanır.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.settings.ai_settings">
+<span class="sig-prename descclassname"><span class="pre">app.models.settings.</span></span><span class="sig-name descname"><span class="pre">ai_settings</span></span><a class="headerlink" href="#app.models.settings.ai_settings" title="Link to this definition">¶</a></dt>
+<dd><p>AI yapılandırma ayarlarını içeren bir liste. Her bir</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">ayar,</span> <span class="pre">açıklama,</span> <span class="pre">tip,</span> <span class="pre">kategori,</span> <span class="pre">anahtar</span> <span class="pre">ve</span> <span class="pre">varsayılan</span> <span class="pre">değere</span> <span class="pre">sahiptir.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -522,51 +814,178 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <dt class="sig sig-object py" id="app.models.submission.Submission">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.submission.</span></span><span class="sig-name descname"><span class="pre">Submission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.submission.Submission" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
-<p>A simple constructor that allows initialization from kwargs.</p>
-<p>Sets attributes on the constructed instance using the names and
-values in <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
-<p>Only keys that are present as
-attributes of the instance’s class are allowed. These could be,
-for example, any mapped columns or relationships.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="app.models.submission.Submission.has_correct_submission">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">has_correct_submission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">question_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission.has_correct_submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.submission.Submission.has_correct_submission" title="Link to this definition">¶</a></dt>
-<dd><p>Kullanıcının belirli bir soru için doğru çözüm gönderip göndermediğini kontrol eder</p>
+<p>Submission sınıfı, kullanıcıların bir soruya göndermiş olduğu çözüm kodlarının
+veritabanında saklanması ve yönetilmesi için bir model sağlar.</p>
+<p>Bu sınıf, kullanıcıların herhangi bir programlama sorusuna yüklediği kod çözümünü,
+bu çözümün test sonuçlarını ve başarı durumunu barındırır. Aynı zamanda kullanıcıya
+ait belirli sorular için doğru çözümün olup olmadığını kontrol etmek için de araçlar
+sunar.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.submission.Submission.id" title="Link to this definition">¶</a></dt>
+<dd><p>Her gönderim için benzersiz bir tanımlayıcı.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="app.models.submission.Submission.save_submission">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_submission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">question</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluation_result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission.save_submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.submission.Submission.save_submission" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#app.models.submission.Submission.user_id" title="Link to this definition">¶</a></dt>
+<dd><p>Gönderimi yapan kullanıcının ID değeri.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.question_id">
+<span class="sig-name descname"><span class="pre">question_id</span></span><a class="headerlink" href="#app.models.submission.Submission.question_id" title="Link to this definition">¶</a></dt>
+<dd><p>Çözümün ilişkilendirildiği sorunun ID değeri.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.submission.Submission.code">
 <span class="sig-name descname"><span class="pre">code</span></span><a class="headerlink" href="#app.models.submission.Submission.code" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.created_at">
-<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#app.models.submission.Submission.created_at" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.error_message">
-<span class="sig-name descname"><span class="pre">error_message</span></span><a class="headerlink" href="#app.models.submission.Submission.error_message" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.execution_time">
-<span class="sig-name descname"><span class="pre">execution_time</span></span><a class="headerlink" href="#app.models.submission.Submission.execution_time" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#app.models.submission.Submission.id" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kullanıcının gönderdiği çözümün kaynak kodu.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.submission.Submission.is_correct">
 <span class="sig-name descname"><span class="pre">is_correct</span></span><a class="headerlink" href="#app.models.submission.Submission.is_correct" title="Link to this definition">¶</a></dt>
+<dd><p>Çözümün doğru olup olmadığını belirten bayrak.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.test_results">
+<span class="sig-name descname"><span class="pre">test_results</span></span><a class="headerlink" href="#app.models.submission.Submission.test_results" title="Link to this definition">¶</a></dt>
+<dd><p>Çözüm için yapılan testlerin sonuçları. JSON formatındadır.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.execution_time">
+<span class="sig-name descname"><span class="pre">execution_time</span></span><a class="headerlink" href="#app.models.submission.Submission.execution_time" title="Link to this definition">¶</a></dt>
+<dd><p>Gönderimin testlerde çalıştırılma süresi.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.error_message">
+<span class="sig-name descname"><span class="pre">error_message</span></span><a class="headerlink" href="#app.models.submission.Submission.error_message" title="Link to this definition">¶</a></dt>
+<dd><p>Test sırasında oluşan hata mesajları.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#app.models.submission.Submission.created_at" title="Link to this definition">¶</a></dt>
+<dd><p>Gönderimin oluşturulma tarihi ve saati.</p>
+</dd></dl>
+
+<dl class="simple">
+<dt>Attributes (Relationships):</dt><dd><p>user: Gönderimi gerçekleştiren kullanıcı ile ilişki sağlar.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.models.submission.Submission.save_submission">
+<span class="sig-name descname"><span class="pre">save_submission</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission.save_submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.submission.Submission.save_submission" title="Link to this definition">¶</a></dt>
+<dd><p>Yeni bir gönderimi veritabanına kaydeder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.models.submission.Submission.has_correct_submission">
+<span class="sig-name descname"><span class="pre">has_correct_submission</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission.has_correct_submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.submission.Submission.has_correct_submission" title="Link to this definition">¶</a></dt>
+<dd><p>Belirli bir kullanıcı ve sorunun doğru çözüm gönderimini
+olup olmadığını kontrol eder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.models.submission.Submission.result_summary">
+<span class="sig-name descname"><span class="pre">result_summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.models.submission.Submission.result_summary" title="Link to this definition">¶</a></dt>
+<dd><p>Gönderim için test sonuçlarının özet bilgisini döner.</p>
+</dd></dl>
+
+<p>Submission sınıfının bir örneğini başlatmak için kullanılan yapılandırıcıdır.
+Bu yapılandırıcı, verilen anahtar kelime argümanlarını işler ve test_results adlı
+bir anahtar varsa, bunun bir sözlük olup olmadığını kontrol eder. Eğer bir sözlük ise,
+JSON formatına dönüştürür ve parent class’ın yapılandırıcısına aktarır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kwargs</strong> – Anahtar kelime argümanları. <cite>test_results</cite> anahtarı sözlük ise JSON</p></li>
+<li><p><strong>dönüştürülür.</strong> (<em>formatına</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="id19">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">has_correct_submission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">question_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission.has_correct_submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#id19" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if a user has a correct submission for a specific question.</p>
+<p>This class method determines whether there exists at least one correct
+submission for a given user and question combination. The correctness
+of the submission is verified by the <cite>is_correct</cite> flag in the database
+record.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>int</em>) – The ID of the user.</p></li>
+<li><p><strong>question_id</strong> (<em>int</em>) – The ID of the question.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if a correct submission exists for the user and question,
+False otherwise.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id20">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_submission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">question</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluation_result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/submission.html#Submission.save_submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#id20" title="Link to this definition">¶</a></dt>
+<dd><p>Bir SQLAlchemy modeli kullanarak bir kod gönderimini kaydeder. Bu metod, bir kullanıcı tarafından
+gerçekleştirilen kod gönderiminin veritabanına kaydedilmesini sağlar. Gönderim bilgileri, kod
+değerlendirme sonuçları, yürütme süresi ve hatalar gibi detayları içerir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>question</strong> (<em>Question</em>) – Kullanıcı tarafından çözülmeye çalışılan soru nesnesi.</p></li>
+<li><p><strong>code</strong> (<em>str</em>) – Gönderilen kod.</p></li>
+<li><p><strong>evaluation_result</strong> (<em>dict</em>) – Kodun değerlendirilmesi sırasında alınan sonuçlar. Bu sözlük ‘is_correct’,
+‘execution_time’ ve ‘error_message’ gibi anahtarları içerir.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Yeni kaydedilen gönderim nesnesi.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#app.models.submission.Submission" title="app.models.submission.Submission">Submission</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id21">
+<span class="sig-name descname"><span class="pre">code</span></span><a class="headerlink" href="#id21" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id22">
+<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#id22" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id23">
+<span class="sig-name descname"><span class="pre">error_message</span></span><a class="headerlink" href="#id23" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id24">
+<span class="sig-name descname"><span class="pre">execution_time</span></span><a class="headerlink" href="#id24" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id25">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#id25" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id26">
+<span class="sig-name descname"><span class="pre">is_correct</span></span><a class="headerlink" href="#id26" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -582,19 +1001,35 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.question_id">
-<span class="sig-name descname"><span class="pre">question_id</span></span><a class="headerlink" href="#app.models.submission.Submission.question_id" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id27">
+<span class="sig-name descname"><span class="pre">question_id</span></span><a class="headerlink" href="#id27" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="app.models.submission.Submission.result_summary">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">result_summary</span></span><a class="headerlink" href="#app.models.submission.Submission.result_summary" title="Link to this definition">¶</a></dt>
-<dd><p>Test sonuçlarının özeti</p>
+<dt class="sig sig-object py" id="id28">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">result_summary</span></span><a class="headerlink" href="#id28" title="Link to this definition">¶</a></dt>
+<dd><p>result_summary özelliği, bir dizi test sonucunu değerlendirerek özet bir sonuç döndürmek için kullanılır.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.models.submission.Submission.None">
+<span class="sig-name descname"><span class="pre">None</span></span><a class="headerlink" href="#app.models.submission.Submission.None" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Eğer test sonuçları mevcut değilse “Sonuç bulunamadı” mesajını döndürür. Test sonuçları JSON formatında düzgün
+işlenebilirse ve tüm testler başarılıysa “Tüm testler başarılı” mesajını döndürür. Eğer başarısız testler varsa,
+başarısız test sayısını içeren bir mesaj döner, örneğin: “2 test başarısız”. JSON yükleme işlemi sırasında hata
+oluşursa “Sonuç ayrıştırılamadı” döndürür.</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.test_results">
-<span class="sig-name descname"><span class="pre">test_results</span></span><a class="headerlink" href="#app.models.submission.Submission.test_results" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id29">
+<span class="sig-name descname"><span class="pre">test_results</span></span><a class="headerlink" href="#id29" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -603,8 +1038,8 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="app.models.submission.Submission.user_id">
-<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#app.models.submission.Submission.user_id" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id30">
+<span class="sig-name descname"><span class="pre">user_id</span></span><a class="headerlink" href="#id30" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -616,6 +1051,11 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <dt class="sig sig-object py" id="app.models.user.Role">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.user.</span></span><span class="sig-name descname"><span class="pre">Role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#Role"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.Role" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<p>Role sınıfı, veritabanında bir rol modelini temsil eder.</p>
+<p>Bu sınıf, rolün kimliği, adı ve isteğe bağlı açıklamasını içeren bir veritabanı
+tablosu tanımlar. Uygulama boyunca erişilebilir rolleri yönetmek için
+kullanılır. Her bir rol, benzersiz bir ada sahiptir ve hem kimlik hem de ad
+alanları zorunludur.</p>
 <p>A simple constructor that allows initialization from kwargs.</p>
 <p>Sets attributes on the constructed instance using the names and
 values in <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
@@ -655,6 +1095,12 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <dt class="sig sig-object py" id="app.models.user.User">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.models.user.</span></span><span class="sig-name descname"><span class="pre">User</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">UserMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p>
+<p>Kullanıcı verilerini temsil eden bir model sınıfı.</p>
+<p>User sınıfı, kullanıcıya ait temel bilgileri, rollerini ve şifreleme işlemlerini
+yönetir. <cite>UserMixin</cite> özelliğiyle kimlik doğrulama işlemleri için gerekli
+metotlara sahiptir ve <cite>db.Model</cite> taban sınıfını kullanır. Bu sınıf, bir
+veritabanı tablosu olarak yapılandırılmış ve her kullanıcı nesnesi bir
+kayıt olarak saklanacak şekilde tasarlanmıştır.</p>
 <p>A simple constructor that allows initialization from kwargs.</p>
 <p>Sets attributes on the constructed instance using the names and
 values in <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
@@ -664,27 +1110,94 @@ for example, any mapped columns or relationships.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.user.User.check_password">
 <span class="sig-name descname"><span class="pre">check_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.check_password"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.check_password" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Parolayı hashlenmiş haliyle karşılaştırmak için kullanılan bir yöntem.</p>
+<p>Bu yöntem, kullanıcının verdiği parolayı daha önce kaydedilmiş hashlenmiş
+parola ile karşılaştırmak için kullanılabilir. Parolanın doğru olup
+olmadığını döner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>password</strong> (<em>str</em>) – Karşılaştırılacak kullanıcı parolası.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parolanın hashlenmiş değeri ile eşleşip eşleşmediğini belirten bir bool
+değer.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.user.User.has_role">
 <span class="sig-name descname"><span class="pre">has_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.has_role"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.has_role" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Belirtilen kullanıcı rolleri arasında verilen rol adına sahip bir rolün bulunup bulunmadığını kontrol eden bir
+fonksiyon. Bir kullanıcının belirli bir role sahip olup olmadığını anlamak için kullanılır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>role_name</strong> – Kontrol edilecek rolün adı.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Kullanıcı belirtilen role sahipse True, aksi takdirde False döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.user.User.is_admin">
 <span class="sig-name descname"><span class="pre">is_admin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.is_admin"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.is_admin" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Kullanıcının “admin” rolüne sahip olup olmadığını kontrol eder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Kullanıcı “admin” rolüne sahipse True, aksi halde False.</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.user.User.is_teacher">
 <span class="sig-name descname"><span class="pre">is_teacher</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.is_teacher"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.is_teacher" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Belirtilen kullanıcı için öğretmen olup olmadığını kontrol eden bir fonksiyon.</p>
+<p>Bu fonksiyon, kullanıcının yetkilerini analiz ederek, öğretmen veya yönetici
+yetkisine sahip olup olmadığını belirler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Kullanıcının öğretmen ya da yönetici olup olmadığı bilgisini döner.</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.models.user.User.set_password">
 <span class="sig-name descname"><span class="pre">set_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">password</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/models/user.html#User.set_password"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.models.user.User.set_password" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Şifre hash’ini oluşturup saklayan bir metot.</p>
+<p>Bu metot, verilen şifreyi hash’leyerek saklar. Şifre hash’i oluşturmak
+için kullanılacak algoritma ve fonksiyon <cite>generate_password_hash</cite> olarak
+belirlenmiştir. Şifre hash’i güvenli bir şekilde, ham şifreyi saklamadan
+işlenir ve <cite>password_hash</cite> değişkeninde saklanır. Metot, özellikle
+kullanıcı doğrulama işlemleri öncesinde şifrelerin güvenli bir şekilde
+saklanmasını sağlamak için tasarlanmıştır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>password</strong> (<em>str</em>) – Kullanıcının ham şifresi. Hash’lenip saklanmak</p></li>
+<li><p><strong>işlenecektir.</strong> (<em>üzere</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.models.user.User.created_at">
@@ -808,34 +1321,53 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <li><a class="reference internal" href="#module-app.models.base">app.models.base module</a></li>
 <li><a class="reference internal" href="#module-app.models.notebook_summary">app.models.notebook_summary module</a><ul>
 <li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary"><code class="docutils literal notranslate"><span class="pre">NotebookSummary</span></code></a><ul>
-<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.code_explanation"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.code_explanation</span></code></a></li>
-<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.error"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.error</span></code></a></li>
 <li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.id"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.id</span></code></a></li>
-<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.last_updated"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.last_updated</span></code></a></li>
 <li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.notebook_path"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.notebook_path</span></code></a></li>
-<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.query"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.query</span></code></a></li>
 <li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.summary"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.summary</span></code></a></li>
+<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.code_explanation"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.code_explanation</span></code></a></li>
+<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.last_updated"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.last_updated</span></code></a></li>
+<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.error"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.error</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.code_explanation</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.error</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.id</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.last_updated</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.notebook_path</span></code></a></li>
+<li><a class="reference internal" href="#app.models.notebook_summary.NotebookSummary.query"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.query</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">NotebookSummary.summary</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-app.models.programming_question">app.models.programming_question module</a><ul>
 <li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion</span></code></a><ul>
-<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.created_at"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.created_at</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.id"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.id</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.title"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.title</span></code></a></li>
 <li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.description"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.description</span></code></a></li>
 <li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.difficulty"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.difficulty</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.topic"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.topic</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.points"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.points</span></code></a></li>
 <li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.example_input"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.example_input</span></code></a></li>
 <li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.example_output"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.example_output</span></code></a></li>
 <li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.function_name"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.function_name</span></code></a></li>
-<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.id"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.id</span></code></a></li>
-<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.points"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.points</span></code></a></li>
-<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.query"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.query</span></code></a></li>
 <li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.solution_code"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.solution_code</span></code></a></li>
-<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.submissions"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.submissions</span></code></a></li>
 <li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.test_inputs"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.test_inputs</span></code></a></li>
-<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.title"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.title</span></code></a></li>
-<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.topic"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.topic</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.created_at"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.created_at</span></code></a></li>
 <li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.updated_at"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.updated_at</span></code></a></li>
+<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.created_at</span></code></a></li>
+<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.description</span></code></a></li>
+<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.difficulty</span></code></a></li>
+<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.example_input</span></code></a></li>
+<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.example_output</span></code></a></li>
+<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.function_name</span></code></a></li>
+<li><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.id</span></code></a></li>
+<li><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.points</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.query"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.query</span></code></a></li>
+<li><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.solution_code</span></code></a></li>
+<li><a class="reference internal" href="#app.models.programming_question.ProgrammingQuestion.submissions"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.submissions</span></code></a></li>
+<li><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.test_inputs</span></code></a></li>
+<li><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.title</span></code></a></li>
+<li><a class="reference internal" href="#id17"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.topic</span></code></a></li>
+<li><a class="reference internal" href="#id18"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestion.updated_at</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -853,25 +1385,43 @@ customized per-model by overriding <code class="xref py py-attr docutils literal
 <li><a class="reference internal" href="#app.models.settings.Setting.value"><code class="docutils literal notranslate"><span class="pre">Setting.value</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#app.models.settings.add_ai_settings"><code class="docutils literal notranslate"><span class="pre">add_ai_settings()</span></code></a></li>
+<li><a class="reference internal" href="#app.models.settings.add_ai_settings"><code class="docutils literal notranslate"><span class="pre">add_ai_settings()</span></code></a><ul>
+<li><a class="reference internal" href="#app.models.settings.ai_settings"><code class="docutils literal notranslate"><span class="pre">ai_settings</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-app.models.submission">app.models.submission module</a><ul>
 <li><a class="reference internal" href="#app.models.submission.Submission"><code class="docutils literal notranslate"><span class="pre">Submission</span></code></a><ul>
-<li><a class="reference internal" href="#app.models.submission.Submission.has_correct_submission"><code class="docutils literal notranslate"><span class="pre">Submission.has_correct_submission()</span></code></a></li>
-<li><a class="reference internal" href="#app.models.submission.Submission.save_submission"><code class="docutils literal notranslate"><span class="pre">Submission.save_submission()</span></code></a></li>
-<li><a class="reference internal" href="#app.models.submission.Submission.code"><code class="docutils literal notranslate"><span class="pre">Submission.code</span></code></a></li>
-<li><a class="reference internal" href="#app.models.submission.Submission.created_at"><code class="docutils literal notranslate"><span class="pre">Submission.created_at</span></code></a></li>
-<li><a class="reference internal" href="#app.models.submission.Submission.error_message"><code class="docutils literal notranslate"><span class="pre">Submission.error_message</span></code></a></li>
-<li><a class="reference internal" href="#app.models.submission.Submission.execution_time"><code class="docutils literal notranslate"><span class="pre">Submission.execution_time</span></code></a></li>
 <li><a class="reference internal" href="#app.models.submission.Submission.id"><code class="docutils literal notranslate"><span class="pre">Submission.id</span></code></a></li>
-<li><a class="reference internal" href="#app.models.submission.Submission.is_correct"><code class="docutils literal notranslate"><span class="pre">Submission.is_correct</span></code></a></li>
-<li><a class="reference internal" href="#app.models.submission.Submission.query"><code class="docutils literal notranslate"><span class="pre">Submission.query</span></code></a></li>
-<li><a class="reference internal" href="#app.models.submission.Submission.question_id"><code class="docutils literal notranslate"><span class="pre">Submission.question_id</span></code></a></li>
-<li><a class="reference internal" href="#app.models.submission.Submission.result_summary"><code class="docutils literal notranslate"><span class="pre">Submission.result_summary</span></code></a></li>
-<li><a class="reference internal" href="#app.models.submission.Submission.test_results"><code class="docutils literal notranslate"><span class="pre">Submission.test_results</span></code></a></li>
-<li><a class="reference internal" href="#app.models.submission.Submission.user"><code class="docutils literal notranslate"><span class="pre">Submission.user</span></code></a></li>
 <li><a class="reference internal" href="#app.models.submission.Submission.user_id"><code class="docutils literal notranslate"><span class="pre">Submission.user_id</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.question_id"><code class="docutils literal notranslate"><span class="pre">Submission.question_id</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.code"><code class="docutils literal notranslate"><span class="pre">Submission.code</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.is_correct"><code class="docutils literal notranslate"><span class="pre">Submission.is_correct</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.test_results"><code class="docutils literal notranslate"><span class="pre">Submission.test_results</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.execution_time"><code class="docutils literal notranslate"><span class="pre">Submission.execution_time</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.error_message"><code class="docutils literal notranslate"><span class="pre">Submission.error_message</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.created_at"><code class="docutils literal notranslate"><span class="pre">Submission.created_at</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.save_submission"><code class="docutils literal notranslate"><span class="pre">Submission.save_submission()</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.has_correct_submission"><code class="docutils literal notranslate"><span class="pre">Submission.has_correct_submission()</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.result_summary"><code class="docutils literal notranslate"><span class="pre">Submission.result_summary()</span></code></a></li>
+<li><a class="reference internal" href="#id19"><code class="docutils literal notranslate"><span class="pre">Submission.has_correct_submission()</span></code></a></li>
+<li><a class="reference internal" href="#id20"><code class="docutils literal notranslate"><span class="pre">Submission.save_submission()</span></code></a></li>
+<li><a class="reference internal" href="#id21"><code class="docutils literal notranslate"><span class="pre">Submission.code</span></code></a></li>
+<li><a class="reference internal" href="#id22"><code class="docutils literal notranslate"><span class="pre">Submission.created_at</span></code></a></li>
+<li><a class="reference internal" href="#id23"><code class="docutils literal notranslate"><span class="pre">Submission.error_message</span></code></a></li>
+<li><a class="reference internal" href="#id24"><code class="docutils literal notranslate"><span class="pre">Submission.execution_time</span></code></a></li>
+<li><a class="reference internal" href="#id25"><code class="docutils literal notranslate"><span class="pre">Submission.id</span></code></a></li>
+<li><a class="reference internal" href="#id26"><code class="docutils literal notranslate"><span class="pre">Submission.is_correct</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.query"><code class="docutils literal notranslate"><span class="pre">Submission.query</span></code></a></li>
+<li><a class="reference internal" href="#id27"><code class="docutils literal notranslate"><span class="pre">Submission.question_id</span></code></a></li>
+<li><a class="reference internal" href="#id28"><code class="docutils literal notranslate"><span class="pre">Submission.result_summary</span></code></a><ul>
+<li><a class="reference internal" href="#app.models.submission.Submission.None"><code class="docutils literal notranslate"><span class="pre">Submission.None</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id29"><code class="docutils literal notranslate"><span class="pre">Submission.test_results</span></code></a></li>
+<li><a class="reference internal" href="#app.models.submission.Submission.user"><code class="docutils literal notranslate"><span class="pre">Submission.user</span></code></a></li>
+<li><a class="reference internal" href="#id30"><code class="docutils literal notranslate"><span class="pre">Submission.user_id</span></code></a></li>
 </ul>
 </li>
 </ul>

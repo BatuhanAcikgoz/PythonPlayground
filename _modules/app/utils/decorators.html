@@ -274,9 +274,51 @@
 <div class="viewcode-block" id="role_required">
 <a class="viewcode-back" href="../../../app.utils.html#app.utils.decorators.role_required">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">role_required</span><span class="p">(</span><span class="n">role_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Role tabanlı erişim kontrolü için bir decorator.</span>
+
+<span class="sd">    Bu decorator, bir kullanıcının belirli bir role sahip olup olmadığını kontrol eder. Eğer kullanıcı</span>
+<span class="sd">    oturum açmamışsa, giriş sayfasına yönlendirilir. Ayrıca kullanıcı, beklenen role sahip değilse</span>
+<span class="sd">    403 (Forbidden) hatası döner. Aksi takdirde, hedef işlev normal şekilde çalıştırılır.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        role_name: str - Doğrulama yapılacak rolün adı.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        403: Kullanıcının erişmek istediği kaynağa yetkisi olmadığında ortaya çıkar.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        function: Hedef işlevi doğrulama mekanizmasıyla sarmalayan yeni işlev.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bir decorator fonksiyonu olan `role_required`, bir kullanıcının belirli bir role sahip olup olmadığını kontrol etmek için kullanılır.</span>
+<span class="sd">        Kullanıcı rolü kontrol altında değilse belirlenen işlemler gerçekleştirilir, aksi halde ilgili rota çalıştırılır.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            role_name (str): Kontrol edilecek kullanıcı rolünün adı.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Callable: Orijinal fonksiyonun çalışabilmesi için dekore edilmiş bir fonksiyon döndürür.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">decorated_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Bir Flask rotasına erişim kontrolü ekleyen bir dekoratördür. Kullanıcının kimlik doğrulamasını</span>
+<span class="sd">            ve bir role sahip olup olmadığını kontrol eder. Kimliği doğrulanmamış kullanıcıyı oturum</span>
+<span class="sd">            açma sayfasına yönlendirir, uygun role sahip olmayan kullanıcıya ise yetkisiz erişim (403)</span>
+<span class="sd">            hatası döner.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                f (Callable): Sarmalanacak olan işlev.</span>
+
+<span class="sd">            Returns:</span>
+<span class="sd">                Callable: Erişim kontrolü uygulayan yeni bir işlev.</span>
+
+<span class="sd">            Raises:</span>
+<span class="sd">                werkzeug.exceptions.HTTPException: Eğer kullanıcı yeterli izinlere sahip değilse,</span>
+<span class="sd">                403 hatası tetiklenir.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;auth.login&#39;</span><span class="p">,</span> <span class="nb">next</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="p">))</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">has_role</span><span class="p">(</span><span class="n">role_name</span><span class="p">):</span>

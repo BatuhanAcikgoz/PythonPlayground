@@ -283,7 +283,15 @@
 <div class="viewcode-block" id="NotebookService">
 <a class="viewcode-back" href="../../../app.services.html#app.services.notebook_service.NotebookService">[belgeler]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NotebookService</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;NotebookService sınıfı, Jupyter notebook&#39;ları ile etkileşim ve kod çalıştırma işlemlerini yönetir.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    NotebookService sınıfı, Jupyter Notebook dosyalarını yönetmek, kod çalıştırmak ve Socket.IO desteği ile</span>
+<span class="sd">    çıktıları paylaşmak için araçlar sağlar.</span>
+
+<span class="sd">    Bu sınıf, bir repository yönetimi yaparak notebook dosyalarını indirebilir veya</span>
+<span class="sd">    güncelleyebilir. Ayrıca, bir kullanıcı için kod çalıştırma ortamını simule eder</span>
+<span class="sd">    ve Socket.IO entegrasyonu ile etkileşimli çıktı sunabilir. Seçenek olarak, kodu</span>
+<span class="sd">    direkt olarak çalıştırma ve çıktısını döndürme yeteneklerine de sahiptir.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Repository URL ve klasör yolunu tanımla</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repo_url</span> <span class="o">=</span> <span class="s1">&#39;https://github.com/msy-bilecik/ist204_2025&#39;</span>
@@ -295,7 +303,19 @@
 <div class="viewcode-block" id="NotebookService.ensure_repo_exists">
 <a class="viewcode-back" href="../../../app.services.html#app.services.notebook_service.NotebookService.ensure_repo_exists">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ensure_repo_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Repository klonlama veya güncelleme işlemi&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ensure_repo_exists fonksiyonu, bir Git reposunun belirtilen dizinde mevcut</span>
+<span class="sd">        olup olmadığını kontrol eder ve mevcut değilse klonlama işlemi yapar. Eğer</span>
+<span class="sd">        repo zaten mevcutsa, güncelleme işlemi gerçekleştirilir. Güncelleme sırasında</span>
+<span class="sd">        hata oluşması durumunda repo yeniden sıfırdan klonlanır. İşlem sonunda</span>
+<span class="sd">        klonlanan veya güncellenen repo dizininin yolunu döndürür.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Klonlanan veya güncellenmiş olan repo dizininin yolu. Eğer hata oluşursa None döner.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_dir</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Repository </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_dir</span><span class="si">}</span><span class="s2"> dizinine klonlanıyor&quot;</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
@@ -324,7 +344,23 @@
 <div class="viewcode-block" id="NotebookService.get_notebook">
 <a class="viewcode-back" href="../../../app.services.html#app.services.notebook_service.NotebookService.get_notebook">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_notebook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notebook_path</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Belirtilen yoldaki notebook dosyasını açar ve içeriğini döndürür&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Belirtilen yolda bulunan Jupyter not defterini yükleyen ve içeriğini bir sözlük yapısında</span>
+<span class="sd">        dönen bir yöntem. Girdi olarak gelen not defteri dosyasının güvenlik önlemleriyle kontrolü</span>
+<span class="sd">        sağlanır, ardından JSON biçiminde yüklenerek nbformat kütüphanesi yardımıyla doğrulanır</span>
+<span class="sd">        ve okunur.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            notebook_path (str): Yüklenmek istenen Jupyter not defterinin yolu.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Optional[dict]: Başarıyla yüklenen not defteri dosyasının içerik bilgilerini içeren bir</span>
+<span class="sd">            sözlük. Eğer yükleme başarısız olursa None döner.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: Geçersiz bir yol belirtilmişse veya path traversal güvenlik hatası oluşmuşsa.</span>
+<span class="sd">            FileNotFoundError: Belirtilen dosya yolu mevcut değilse.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">repo_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensure_repo_exists</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">repo_dir</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -364,7 +400,22 @@
 <div class="viewcode-block" id="NotebookService.run_code">
 <a class="viewcode-back" href="../../../app.services.html#app.services.notebook_service.NotebookService.run_code">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Kodu çalıştırır ve sonucu döndürür (Socket.IO olmadan)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Belirtilen kodun bir alt işlemde çalıştırılmasını ve kodun çıktısını döndürmeyi amaçlayan bir fonksiyon.</span>
+
+<span class="sd">        Functions:</span>
+<span class="sd">            run_code: Kullanıcı ID&#39;sine bağlı veya kullanıcı ID&#39;siz kodun çalıştırılmasını sağlar.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            code (str): Çalıştırılacak Python kodunu içeren metin.</span>
+<span class="sd">            user_id (Optional[int]): Kullanıcı kimliğini temsil eden opsiyonel bir parametre.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Kodun başarıyla çalışıp çalışmadığını ve çıktı ya da hata mesajını içeren bir sözlük döndürür.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: Alt işlem çalıştırılırken oluşan tüm hataları kapsar.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Kodu alt işlemde çalıştır</span>
             <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
@@ -387,7 +438,32 @@
 <div class="viewcode-block" id="NotebookService.handle_socket_run_code">
 <a class="viewcode-back" href="../../../app.services.html#app.services.notebook_service.NotebookService.handle_socket_run_code">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">handle_socket_run_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">socketio</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Socket.IO ile kodu çalıştır ve çıktıyı Socket.IO kullanarak gönder&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kullanıcı tarafından gönderilen Python kodunu bir &quot;sandbox&quot; ortamında çalıştıran, çıktılarını</span>
+<span class="sd">        gerçek zamanlı olarak bir Socket.IO bağlantısı üzerinden ileten ve gerektiğinde kullanıcıdan</span>
+<span class="sd">        input alarak yürütmeyi sürdüren bir işlevdir. Kullanıcıların kod çalıştırma süreçlerini izleyebilmesine</span>
+<span class="sd">        ve dışarıdan gelen inputlarla yönlendirebilmesine imkan tanır.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            code: str</span>
+<span class="sd">                Çalıştırılacak Python kodu.</span>
+<span class="sd">            user_id: str</span>
+<span class="sd">                Kullanıcının kimliğini belirten bir tanıtıcı.</span>
+<span class="sd">            socketio: SocketIO, optional</span>
+<span class="sd">                Socket.IO bağlantı nesnesi. Varsayılan olarak None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict</span>
+<span class="sd">                İşlevin başarı durumunu belirten bir sözlük.</span>
+<span class="sd">                Örneğin:</span>
+<span class="sd">                {&#39;success&#39;: True} başarılı işlem sonrası döndürülür.</span>
+<span class="sd">                {&#39;success&#39;: False, &#39;error&#39;: &#39;Hata mesajı&#39;} hata durumunda döndürülür.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception</span>
+<span class="sd">                Gönderilen kodun yürütülmesi sırasında oluşabilecek tüm istisnalar yakalanır</span>
+<span class="sd">                ve Socket.IO bağlantısına bir hata çıktısı olarak iletilir.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">socketio</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;success&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Socket.IO bağlantısı bulunamadı&#39;</span><span class="p">}</span>
 
@@ -407,6 +483,16 @@
 
         <span class="c1"># Özel input fonksiyonu</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">custom_input</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            NotebookService sınıfı, bir kullanıcıdan bir kod parçasını çalıştırma talebi alarak bu süreci yönetir</span>
+<span class="sd">            ve sonuçları istemciye uygun bir şekilde iletir. Kodu yürütme sırasında gerektiğinde kullanıcıdan</span>
+<span class="sd">            girdi almayı destekler ve istemciye parçalı çıktı gönderebilir.</span>
+
+<span class="sd">            Metotlar:</span>
+<span class="sd">                - handle_socket_run_code: Gelen kod çalıştırma taleplerini işler, çıktıları gerekirse parçalı şekilde iletir.</span>
+
+<span class="sd">            Metotların detaylı açıklamaları aşağıda verilmiştir.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
             <span class="c1"># Bekleyen çıktıyı önce gönder</span>
             <span class="k">nonlocal</span> <span class="n">last_output_position</span>
             <span class="n">current_output</span> <span class="o">=</span> <span class="n">redirected_output</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()[</span><span class="n">last_output_position</span><span class="p">:]</span>
@@ -493,14 +579,34 @@
 <div class="viewcode-block" id="NotebookService.set_input_response">
 <a class="viewcode-back" href="../../../app.services.html#app.services.notebook_service.NotebookService.set_input_response">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_input_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Socket.IO input_response olayı için işleyici&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fonksiyon bir değer alır ve bu değeri input_response niteliğine atar.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            value: Atanacak değer. Parametre tipi belirtilmediğinden</span>
+<span class="sd">                   çağrıyla bu sorumluluk geliştiriciye bırakılmıştır.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_response</span> <span class="o">=</span> <span class="n">value</span></div>
 
 
 <div class="viewcode-block" id="NotebookService.reset_namespace">
 <a class="viewcode-back" href="../../../app.services.html#app.services.notebook_service.NotebookService.reset_namespace">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset_namespace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Kullanıcının namespace&#39;ini sıfırla&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kullanıcıya ait ad alanını varsayılan değerlerine sıfırlayan bir fonksiyon.</span>
+
+<span class="sd">        Bu fonksiyon, kullanıcının mevcut ad alanını temizler ve varsayılan &#39;__builtins__&#39; ile yeniden</span>
+<span class="sd">        başlatır. Kullanıcının kimliğini temel alarak ad alanını günceller ya da oluşturur.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_id (str): Ad alanı sıfırlanacak kullanıcının benzersiz kimlik numarası.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">user_namespaces</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;__builtins__&#39;</span><span class="p">:</span> <span class="n">builtins</span><span class="p">}</span></div>
 </div>
 

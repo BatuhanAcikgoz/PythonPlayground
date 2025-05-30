@@ -292,6 +292,17 @@
     <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Singleton tasarım deseni ile EventManager sınıfının tek bir örneğinin oluşturulmasını</span>
+<span class="sd">        ve bu örnek üzerinden kullanıcı tanımlı olayların yönetimini sağlar.</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            _instance (EventManager): Sınıfın tek örneğini saklar.</span>
+<span class="sd">            _handlers (dict): Her bir olay türü için bir dizi işlemci (handler) listesi içerir.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            EventManager: Sınıfın mevcut bir örneğini döner ya da bir örnek oluşturur.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">EventManager</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">_handlers</span> <span class="o">=</span> <span class="p">{</span><span class="n">event_type</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">event_type</span> <span class="ow">in</span> <span class="n">EventType</span><span class="p">}</span>

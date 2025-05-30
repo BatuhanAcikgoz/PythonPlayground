@@ -279,7 +279,18 @@
 <div class="viewcode-block" id="clone_repo">
 <a class="viewcode-back" href="../../../app.routes.html#app.routes.main.clone_repo">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">clone_repo</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Repository klonlama veya güncelleme işlemi&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Repository&#39;yi klonlayan veya mevcut ise güncelleyen bir fonksiyon.</span>
+
+<span class="sd">    Bu fonksiyon, belirtilen bir URL&#39;den bir GitHub repository&#39;sini çalışma</span>
+<span class="sd">    dizinine indirir ya da halihazırda dizinde bulunuyorsa güncellemeye çalışır.</span>
+<span class="sd">    Eğer güncelleme işlemi başarısız olursa, mevcut repository dizinini siler ve</span>
+<span class="sd">    temiz bir şekilde yeniden klonlar.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Klonlanan veya güncellenen repository&#39;nin dizin yolu. Eğer işlem</span>
+<span class="sd">        başarısız olursa None döndürülür.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">repo_url</span> <span class="o">=</span> <span class="s1">&#39;https://github.com/msy-bilecik/ist204_2025&#39;</span>
     <span class="n">repo_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;notebooks_repo&#39;</span><span class="p">)</span>
 
@@ -308,6 +319,22 @@
 <a class="viewcode-back" href="../../../app.routes.html#app.routes.main.index">[belgeler]</a>
 <span class="nd">@main_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bu fonksiyon, belirli bir dizindeki notebook dosyalarını kontrol eder ve</span>
+<span class="sd">    bunları görüntülemek için bir HTML şablonuna yönlendirir. Eğer dizin veya</span>
+<span class="sd">    notebook dosyaları mevcut değilse, bu duruma uygun hata mesajları döndürür.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        HTML şablonu (str): &#39;index.html&#39; şablonu, notebook dosyalarını ve/veya hata</span>
+<span class="sd">        mesajlarını içerir.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Exception: Repository klonlama işlemi sırasında oluşan hatalar</span>
+<span class="sd">                    iletilir.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Notebook dosyalarını kontrol et</span>
     <span class="n">repo_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;notebooks_repo&#39;</span><span class="p">)</span>
     <span class="n">notebooks</span> <span class="o">=</span> <span class="p">[]</span>
@@ -350,6 +377,20 @@
 <a class="viewcode-back" href="../../../app.routes.html#app.routes.main.redirect_notebook">[belgeler]</a>
 <span class="nd">@main_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;path:path&gt;&#39;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">redirect_notebook</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rota işlevi. Verilen yolun (path) bir Jupyter Notebook dosyasına</span>
+<span class="sd">    işaret edip etmediğini kontrol eder. Eğer yol bir `.ipynb` dosyasına</span>
+<span class="sd">    işaret ediyorsa, bu dosya için bir yönlendirme yapar. Aksi takdirde</span>
+<span class="sd">    bir 404 hata sayfasını render eder.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        path (str): İşleme alınacak olan yolun tam adı.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Werkzeug Response: Eğer yol bir Jupyter Notebook dosyasına işaret</span>
+<span class="sd">        ediyorsa bir yönlendirme cevabı döner. Yol `.ipynb` dosyası değilse,</span>
+<span class="sd">        404 hata sayfasını bir HTTP 404 durumu ile birlikte döner.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ipynb&#39;</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;notebook.view&#39;</span><span class="p">,</span> <span class="n">notebook_path</span><span class="o">=</span><span class="n">path</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;404.html&#39;</span><span class="p">),</span> <span class="mi">404</span></div>
@@ -360,6 +401,25 @@
 <span class="nd">@main_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/refresh_repo&#39;</span><span class="p">)</span>
 <span class="nd">@login_required</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">refresh_repo</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ana bloğa ait &#39;/refresh_repo&#39; yolunu işleyen ve kullanıcı deposunu</span>
+<span class="sd">    güncelleyen bir Flask endpoint fonksiyonudur.</span>
+
+<span class="sd">    Functions:</span>
+<span class="sd">        refresh_repo: Kullanıcı oturum açmış ve gerekli yetkilere sahipse,</span>
+<span class="sd">                      kaydedilmiş notebook deposunu güncelleyen veya klonlayan</span>
+<span class="sd">                      bir işlevdir.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Werkzeug.wrappers.response.Response: Yönlendirme metodu ile ana sayfaya</span>
+<span class="sd">                                             yönlendirme veya ilgili flash mesajları</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Kullanıcı yetkisini kontrol et</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">is_admin</span><span class="p">()</span> <span class="ow">or</span> <span class="n">current_user</span><span class="o">.</span><span class="n">is_teacher</span><span class="p">()):</span>
         <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Bu işlem için yetkiniz bulunmuyor.&#39;</span><span class="p">)</span>
@@ -384,6 +444,15 @@
 <a class="viewcode-back" href="../../../app.routes.html#app.routes.main.set_language">[belgeler]</a>
 <span class="nd">@main_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/language/&lt;language&gt;&#39;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_language</span><span class="p">(</span><span class="n">language</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rota handlerı belirli bir dil seçimini oturumda saklar ve önceki sayfaya ya da ana sayfaya yönlendirir.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        language (str): Kullanıcının seçtiği dil kodu.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        werkzeug.wrappers.response.Response: Kullanıcıyı önceki sayfaya ya da ana sayfaya yönlendiren yanıt.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">session</span><span class="p">[</span><span class="s1">&#39;language&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">language</span>
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">referrer</span> <span class="ow">or</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;main.index&#39;</span><span class="p">))</span></div>
 
@@ -392,6 +461,21 @@
 <a class="viewcode-back" href="../../../app.routes.html#app.routes.main.serve_component">[belgeler]</a>
 <span class="nd">@main_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/components/&lt;path:filename&gt;&#39;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">serve_component</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask route işlevi: Belirtilen dosyanın sunulmasını sağlar.</span>
+
+<span class="sd">    Bu işlev, belirtilen bir dosya yolunu alır ve server tarafından belirtilen</span>
+<span class="sd">    dizinde bulunan dosyayı istemciye sunar. Bu işlev, genellikle statik dosyaları</span>
+<span class="sd">    dinamik bir şekilde sunmak için kullanılır.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): Sunulacak dosyanın yolu. Yol, işlev için belirtilmiş</span>
+<span class="sd">            olan &#39;templates/js/components&#39; dizinine bağlıdır.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        flask.wrappers.Response: Flask tarafından oluşturulmuş HTTP cevabı. Bu</span>
+<span class="sd">            cevap istemciye belirtilen dosya içeriğini sunar.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="s1">&#39;templates/js/components&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
 
 
@@ -399,7 +483,14 @@
 <a class="viewcode-back" href="../../../app.routes.html#app.routes.main.leaderboard">[belgeler]</a>
 <span class="nd">@main_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/leaderboard&#39;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">leaderboard</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Liderlik tablosu sayfasını görüntüler&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bu fonksiyon, &#39;/leaderboard&#39; rotasında çalışan bir Flask rota fonksiyonudur ve</span>
+<span class="sd">    `leaderboard.html` adlı HTML şablonunu döndürür. Uygulamanın liderlik tablosu</span>
+<span class="sd">    sayfasını oluşturur.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Flask.Response: `leaderboard.html` şablonunu içeren HTTP yanıtı.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;leaderboard.html&#39;</span><span class="p">)</span></div>
 
 
@@ -407,7 +498,13 @@
 <a class="viewcode-back" href="../../../app.routes.html#app.routes.main.about">[belgeler]</a>
 <span class="nd">@main_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/about&#39;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">about</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hakkında sayfasını görüntüler&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask Blueprint route &quot;/about&quot; fonksiyonunu tanımlayan işlev. Bu işlev, &quot;/about&quot; rotasına yapılan</span>
+<span class="sd">    GET istekleri için belirli bir HTML şablonunu döndürmek amacıyla kullanılır.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Response: Flask tarafından döndürülen ve belirtilen şablonu içeren HTTP yanıtı.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;about.html&#39;</span><span class="p">)</span></div>
 
 </pre></div>

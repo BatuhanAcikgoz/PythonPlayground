@@ -279,9 +279,38 @@
 <div class="viewcode-block" id="admin_required">
 <a class="viewcode-back" href="../../../app.routes.html#app.routes.api.admin_required">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">admin_required</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bir Flask dekoratörü olan `admin_required`, yalnızca admin yetkisine sahip</span>
+<span class="sd">    olan kullanıcıların belirli bir rota veya işlevi kullanmasına izin verilmesini</span>
+<span class="sd">    sağlar. Kullanıcı admin değilse, bir hata mesajı ve 403 durum kodu döner.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f (Callable): Dekore edilecek işlev.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Callable: Bünyesinde admin yetkisi kontrolü bulunan yeni işlev.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        403: Eğer kullanıcı admin değilse ve rota erişimine yetkisi yoksa bu durum</span>
+<span class="sd">        kodu ile hata mesajı döner.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="nd">@login_required</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">decorated_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bir Flask wrapper fonksiyonudur. Bu dekoratör, yalnızca yönetici yetkisi bulunan</span>
+<span class="sd">        kullanıcıların erişebilmesini sağlamak için kullanılır. Eğer giriş yapmış olan</span>
+<span class="sd">        kullanıcı yönetici değilse, bir hata mesajı döndürür.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            f (Callable): Dekore edilecek olan işlev.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Callable: Yönetici yetki kontrolü uygulanmış işlev.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            403: Giriş yapan kullanıcı yönetici değilse, HTTP 403 hatası döner.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">is_admin</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Admin yetkisi gerekiyor&quot;</span><span class="p">}),</span> <span class="mi">403</span>
         <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -294,6 +323,28 @@
 <a class="viewcode-back" href="../../../app.routes.html#app.routes.api.proxy">[belgeler]</a>
 <span class="nd">@api_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;path:endpoint&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="s1">&#39;PUT&#39;</span><span class="p">,</span> <span class="s1">&#39;DELETE&#39;</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">proxy</span><span class="p">(</span><span class="n">endpoint</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bir Flask route fonksiyonu olan `proxy`, çeşitli HTTP yöntemleriyle yapılan istekleri,</span>
+<span class="sd">    FastAPI&#39;ye bir proxy görevi görerek yönlendirir. Gelen istek metodu ve içeriklerine</span>
+<span class="sd">    göre FastAPI&#39;ye uygun bir HTTP isteği yapılır. Alınan yanıt, istemciye aktarılır.</span>
+
+<span class="sd">    @parameters:</span>
+<span class="sd">    endpoint: str</span>
+<span class="sd">        FastAPI içerisinde yönlendirilmek istenen endpoint. Gelen istekten</span>
+<span class="sd">        alınan yol, FastAPI&#39;nin kök URL&#39;sine eklenerek kullanılır.</span>
+
+<span class="sd">    @raises:</span>
+<span class="sd">    requests.RequestException</span>
+<span class="sd">        FastAPI&#39;ye erişim sırasında meydana gelebilecek bir HTTP hata durumunda</span>
+<span class="sd">        tetiklenir. Flask uygulaması içinde bu durum ele alınır, hata kaydedilir</span>
+<span class="sd">        ve istemciye uygun bir hata yanıtı döndürülür.</span>
+
+<span class="sd">    @returns:</span>
+<span class="sd">    tuple</span>
+<span class="sd">        FastAPI&#39;ye yapılan istek sonucunda alınan yanıt (JSON olarak biçimlendirilmiş</span>
+<span class="sd">        içerik ve HTTP durum kodu). Eğer proxy başarısız olursa Flask uygulaması</span>
+<span class="sd">        üzerinden bir hata mesajı ve durum kodu döner.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fastapi_url</span> <span class="o">=</span> <span class="s2">&quot;http://127.0.0.1:8000/api/&quot;</span> <span class="o">+</span> <span class="n">endpoint</span>
 
     <span class="c1"># Request metoduna göre FastAPI&#39;ye istek yap</span>

@@ -292,12 +292,55 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.api.admin_required">
 <span class="sig-prename descclassname"><span class="pre">app.routes.api.</span></span><span class="sig-name descname"><span class="pre">admin_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/api.html#admin_required"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.api.admin_required" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Bir Flask dekoratörü olan <cite>admin_required</cite>, yalnızca admin yetkisine sahip
+olan kullanıcıların belirli bir rota veya işlevi kullanmasına izin verilmesini
+sağlar. Kullanıcı admin değilse, bir hata mesajı ve 403 durum kodu döner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekore edilecek işlev.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Bünyesinde admin yetkisi kontrolü bulunan yeni işlev.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>403</strong> – Eğer kullanıcı admin değilse ve rota erişimine yetkisi yoksa bu durum</p></li>
+<li><p><strong>kodu ile hata mesajı döner.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.api.proxy">
 <span class="sig-prename descclassname"><span class="pre">app.routes.api.</span></span><span class="sig-name descname"><span class="pre">proxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/api.html#proxy"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.api.proxy" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Bir Flask route fonksiyonu olan <cite>proxy</cite>, çeşitli HTTP yöntemleriyle yapılan istekleri,
+FastAPI’ye bir proxy görevi görerek yönlendirir. Gelen istek metodu ve içeriklerine
+göre FastAPI’ye uygun bir HTTP isteği yapılır. Alınan yanıt, istemciye aktarılır.</p>
+<p>&#64;parameters:
+endpoint: str</p>
+<blockquote>
+<div><p>FastAPI içerisinde yönlendirilmek istenen endpoint. Gelen istekten
+alınan yol, FastAPI’nin kök URL’sine eklenerek kullanılır.</p>
+</div></blockquote>
+<p>&#64;raises:
+requests.RequestException</p>
+<blockquote>
+<div><p>FastAPI’ye erişim sırasında meydana gelebilecek bir HTTP hata durumunda
+tetiklenir. Flask uygulaması içinde bu durum ele alınır, hata kaydedilir
+ve istemciye uygun bir hata yanıtı döndürülür.</p>
+</div></blockquote>
+<p>&#64;returns:
+tuple</p>
+<blockquote>
+<div><p>FastAPI’ye yapılan istek sonucunda alınan yanıt (JSON olarak biçimlendirilmiş
+içerik ve HTTP durum kodu). Eğer proxy başarısız olursa Flask uygulaması
+üzerinden bir hata mesajı ve durum kodu döner.</p>
+</div></blockquote>
+</dd></dl>
 
 </section>
 <section id="app-routes-auth-module">
@@ -308,45 +351,173 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.main.about">
 <span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">about</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#about"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.about" title="Link to this definition">¶</a></dt>
-<dd><p>Hakkında sayfasını görüntüler</p>
+<dd><p>Flask Blueprint route “/about” fonksiyonunu tanımlayan işlev. Bu işlev, “/about” rotasına yapılan
+GET istekleri için belirli bir HTML şablonunu döndürmek amacıyla kullanılır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Flask tarafından döndürülen ve belirtilen şablonu içeren HTTP yanıtı.</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.main.clone_repo">
 <span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">clone_repo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#clone_repo"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.clone_repo" title="Link to this definition">¶</a></dt>
-<dd><p>Repository klonlama veya güncelleme işlemi</p>
+<dd><p>Repository’yi klonlayan veya mevcut ise güncelleyen bir fonksiyon.</p>
+<p>Bu fonksiyon, belirtilen bir URL’den bir GitHub repository’sini çalışma
+dizinine indirir ya da halihazırda dizinde bulunuyorsa güncellemeye çalışır.
+Eğer güncelleme işlemi başarısız olursa, mevcut repository dizinini siler ve
+temiz bir şekilde yeniden klonlar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Klonlanan veya güncellenen repository’nin dizin yolu. Eğer işlem
+başarısız olursa None döndürülür.</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.main.index">
 <span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#index"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.index" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Bu fonksiyon, belirli bir dizindeki notebook dosyalarını kontrol eder ve
+bunları görüntülemek için bir HTML şablonuna yönlendirir. Eğer dizin veya
+notebook dosyaları mevcut değilse, bu duruma uygun hata mesajları döndürür.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>‘index.html’ şablonu, notebook dosyalarını ve/veya hata
+mesajlarını içerir.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HTML şablonu (str)</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Repository klonlama işlemi sırasında oluşan hatalar
+    iletilir.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.main.leaderboard">
 <span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">leaderboard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#leaderboard"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.leaderboard" title="Link to this definition">¶</a></dt>
-<dd><p>Liderlik tablosu sayfasını görüntüler</p>
+<dd><p>Bu fonksiyon, ‘/leaderboard’ rotasında çalışan bir Flask rota fonksiyonudur ve
+<cite>leaderboard.html</cite> adlı HTML şablonunu döndürür. Uygulamanın liderlik tablosu
+sayfasını oluşturur.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>leaderboard.html</cite> şablonunu içeren HTTP yanıtı.</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p>Flask.Response</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.main.redirect_notebook">
 <span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">redirect_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#redirect_notebook"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.redirect_notebook" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Rota işlevi. Verilen yolun (path) bir Jupyter Notebook dosyasına
+işaret edip etmediğini kontrol eder. Eğer yol bir <cite>.ipynb</cite> dosyasına
+işaret ediyorsa, bu dosya için bir yönlendirme yapar. Aksi takdirde
+bir 404 hata sayfasını render eder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – İşleme alınacak olan yolun tam adı.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eğer yol bir Jupyter Notebook dosyasına işaret
+ediyorsa bir yönlendirme cevabı döner. Yol <cite>.ipynb</cite> dosyası değilse,
+404 hata sayfasını bir HTTP 404 durumu ile birlikte döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Werkzeug Response</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.main.refresh_repo">
 <span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">refresh_repo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#refresh_repo"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.refresh_repo" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Ana bloğa ait ‘/refresh_repo’ yolunu işleyen ve kullanıcı deposunu
+güncelleyen bir Flask endpoint fonksiyonudur.</p>
+<dl class="simple">
+<dt>Functions:</dt><dd><dl class="simple">
+<dt>refresh_repo: Kullanıcı oturum açmış ve gerekli yetkilere sahipse,</dt><dd><p>kaydedilmiş notebook deposunu güncelleyen veya klonlayan
+bir işlevdir.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Yönlendirme metodu ile ana sayfaya</dt><dd><p>yönlendirme veya ilgili flash mesajları</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Werkzeug.wrappers.response.Response</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.main.serve_component">
 <span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">serve_component</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#serve_component"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.serve_component" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Flask route işlevi: Belirtilen dosyanın sunulmasını sağlar.</p>
+<p>Bu işlev, belirtilen bir dosya yolunu alır ve server tarafından belirtilen
+dizinde bulunan dosyayı istemciye sunar. Bu işlev, genellikle statik dosyaları
+dinamik bir şekilde sunmak için kullanılır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Sunulacak dosyanın yolu. Yol, işlev için belirtilmiş
+olan ‘templates/js/components’ dizinine bağlıdır.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Flask tarafından oluşturulmuş HTTP cevabı. Bu</dt><dd><p>cevap istemciye belirtilen dosya içeriğini sunar.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>flask.wrappers.Response</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.main.set_language">
 <span class="sig-prename descclassname"><span class="pre">app.routes.main.</span></span><span class="sig-name descname"><span class="pre">set_language</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">language</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/main.html#set_language"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.main.set_language" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Rota handlerı belirli bir dil seçimini oturumda saklar ve önceki sayfaya ya da ana sayfaya yönlendirir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>language</strong> (<em>str</em>) – Kullanıcının seçtiği dil kodu.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Kullanıcıyı önceki sayfaya ya da ana sayfaya yönlendiren yanıt.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>werkzeug.wrappers.response.Response</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-app.routes.notebook">
@@ -354,22 +525,86 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.notebook.register_socketio_handlers">
 <span class="sig-prename descclassname"><span class="pre">app.routes.notebook.</span></span><span class="sig-name descname"><span class="pre">register_socketio_handlers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">socketio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/notebook.html#register_socketio_handlers"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.notebook.register_socketio_handlers" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Belirtilen socket.io olayları için handler fonksiyonlarını kaydeder. Bu handlers’lar, gelen socket.io
+isteklerini işleyerek uygun hizmetlere yönlendirme yapar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>socketio</strong> – Socket.IO kullanımı için gereken nesne.</p>
+</dd>
+</dl>
+<p>Decorator-based event handlers:</p>
+<p>‘run_code’: Kullanıcıdan gelen kod çalıştırma isteğini işler ve kodun gerekli hizmete gönderilmesini sağlar.
+‘input_response’: Kullanıcıdan gelen giriş yanıtlarını işler ve belirtilen değerleri kaydeder.
+‘connect’: Socket.IO bağlantısı sırasında kullanıcı kimlik doğrulamasını kontrol eder ve
+gerekli oturum başlatma işlemlerini yapar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – Args veya fire edilen event’teki eksik veya hatalı verilerden dolayı gerçekleşebilir.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.notebook.run">
 <span class="sig-prename descclassname"><span class="pre">app.routes.notebook.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/notebook.html#run"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.notebook.run" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Fonksiyon, POST yöntemi ile çalıştırılacak bir API uç noktası tanımlar. Kullanıcı doğrulaması
+ile korunan bu uç nokta, gelen JSON formatındaki kodu çalıştırır ve sonucu JSON formatında
+geri döner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Çalıştırılan kodun çıktısını JSON formatında döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.notebook.summary">
 <span class="sig-prename descclassname"><span class="pre">app.routes.notebook.</span></span><span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/notebook.html#summary"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.notebook.summary" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Route işlevi, belirli bir notebook’un özet bilgilerini almak için bir Flask endpoint’idir. Kullanıcı
+oturum açmış durumda olmalıdır ve notebook belirtilen yol aracılığıyla seçilir. Önce notebook’un
+varlığı kontrol edilir, ardından özet bilgileri FastAPI proxy çağrısıyla veya veritabanı sorgusuyla
+alınır. Elde edilen özet bilgileri uygun şablon ile render edilir ve istemciye sunulur.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>notebook_path</strong> (<em>str</em>) – Özet bilgileri alınacak notebook’un yolunu belirtir.</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Kullanıcıya render edilmiş özet bilgilerini içeren bir HTML sayfası döndürür.</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p>Flask Response</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.notebook.view">
 <span class="sig-prename descclassname"><span class="pre">app.routes.notebook.</span></span><span class="sig-name descname"><span class="pre">view</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/notebook.html#view"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.notebook.view" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Notebook gösterim rotası. Bu işlev, kullanıcıların bir not defterini görüntülemesine olanak tanır. Kullanıcı oturumu
+gerekir. Eğer istenilen not defteri bulunamazsa veya yükleme sırasında bir hata oluşursa bir hata mesajı ile ana
+sayfaya yönlendirilir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>notebook_path</strong> (<em>str</em>) – Görüntülenmek istenen not defterinin yolu.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Eğer not defteri başarıyla yüklenirse not defteri görüntüleyici şablonunu döner. Aksi halde kullanıcı,
+hata mesajı ile ana sayfaya yönlendirilir.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="app-routes-programming-module">

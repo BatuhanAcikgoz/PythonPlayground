@@ -290,41 +290,151 @@
 <dt class="sig sig-object py" id="app.services.notebook_service.NotebookService">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.services.notebook_service.</span></span><span class="sig-name descname"><span class="pre">NotebookService</span></span><a class="reference internal" href="_modules/app/services/notebook_service.html#NotebookService"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.services.notebook_service.NotebookService" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>NotebookService sınıfı, Jupyter notebook’ları ile etkileşim ve kod çalıştırma işlemlerini yönetir.</p>
+<p>NotebookService sınıfı, Jupyter Notebook dosyalarını yönetmek, kod çalıştırmak ve Socket.IO desteği ile
+çıktıları paylaşmak için araçlar sağlar.</p>
+<p>Bu sınıf, bir repository yönetimi yaparak notebook dosyalarını indirebilir veya
+güncelleyebilir. Ayrıca, bir kullanıcı için kod çalıştırma ortamını simule eder
+ve Socket.IO entegrasyonu ile etkileşimli çıktı sunabilir. Seçenek olarak, kodu
+direkt olarak çalıştırma ve çıktısını döndürme yeteneklerine de sahiptir.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="app.services.notebook_service.NotebookService.ensure_repo_exists">
 <span class="sig-name descname"><span class="pre">ensure_repo_exists</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/services/notebook_service.html#NotebookService.ensure_repo_exists"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.services.notebook_service.NotebookService.ensure_repo_exists" title="Link to this definition">¶</a></dt>
-<dd><p>Repository klonlama veya güncelleme işlemi</p>
+<dd><p>ensure_repo_exists fonksiyonu, bir Git reposunun belirtilen dizinde mevcut
+olup olmadığını kontrol eder ve mevcut değilse klonlama işlemi yapar. Eğer
+repo zaten mevcutsa, güncelleme işlemi gerçekleştirilir. Güncelleme sırasında
+hata oluşması durumunda repo yeniden sıfırdan klonlanır. İşlem sonunda
+klonlanan veya güncellenen repo dizininin yolunu döndürür.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Klonlanan veya güncellenmiş olan repo dizininin yolu. Eğer hata oluşursa None döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.services.notebook_service.NotebookService.get_notebook">
 <span class="sig-name descname"><span class="pre">get_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">notebook_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/services/notebook_service.html#NotebookService.get_notebook"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.services.notebook_service.NotebookService.get_notebook" title="Link to this definition">¶</a></dt>
-<dd><p>Belirtilen yoldaki notebook dosyasını açar ve içeriğini döndürür</p>
+<dd><p>Belirtilen yolda bulunan Jupyter not defterini yükleyen ve içeriğini bir sözlük yapısında
+dönen bir yöntem. Girdi olarak gelen not defteri dosyasının güvenlik önlemleriyle kontrolü
+sağlanır, ardından JSON biçiminde yüklenerek nbformat kütüphanesi yardımıyla doğrulanır
+ve okunur.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>notebook_path</strong> (<em>str</em>) – Yüklenmek istenen Jupyter not defterinin yolu.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Başarıyla yüklenen not defteri dosyasının içerik bilgilerini içeren bir
+sözlük. Eğer yükleme başarısız olursa None döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[dict]</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – Geçersiz bir yol belirtilmişse veya path traversal güvenlik hatası oluşmuşsa.</p></li>
+<li><p><strong>FileNotFoundError</strong> – Belirtilen dosya yolu mevcut değilse.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.services.notebook_service.NotebookService.handle_socket_run_code">
 <span class="sig-name descname"><span class="pre">handle_socket_run_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">socketio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/services/notebook_service.html#NotebookService.handle_socket_run_code"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.services.notebook_service.NotebookService.handle_socket_run_code" title="Link to this definition">¶</a></dt>
-<dd><p>Socket.IO ile kodu çalıştır ve çıktıyı Socket.IO kullanarak gönder</p>
+<dd><p>Kullanıcı tarafından gönderilen Python kodunu bir “sandbox” ortamında çalıştıran, çıktılarını
+gerçek zamanlı olarak bir Socket.IO bağlantısı üzerinden ileten ve gerektiğinde kullanıcıdan
+input alarak yürütmeyi sürdüren bir işlevdir. Kullanıcıların kod çalıştırma süreçlerini izleyebilmesine
+ve dışarıdan gelen inputlarla yönlendirebilmesine imkan tanır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>code</strong> – str
+Çalıştırılacak Python kodu.</p></li>
+<li><p><strong>user_id</strong> – str
+Kullanıcının kimliğini belirten bir tanıtıcı.</p></li>
+<li><p><strong>socketio</strong> – SocketIO, optional
+Socket.IO bağlantı nesnesi. Varsayılan olarak None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>dict</dt><dd><p>İşlevin başarı durumunu belirten bir sözlük.
+Örneğin:
+{‘success’: True} başarılı işlem sonrası döndürülür.
+{‘success’: False, ‘error’: ‘Hata mesajı’} hata durumunda döndürülür.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – Gönderilen kodun yürütülmesi sırasında oluşabilecek tüm istisnalar yakalanır
+    ve Socket.IO bağlantısına bir hata çıktısı olarak iletilir.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.services.notebook_service.NotebookService.reset_namespace">
 <span class="sig-name descname"><span class="pre">reset_namespace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/services/notebook_service.html#NotebookService.reset_namespace"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.services.notebook_service.NotebookService.reset_namespace" title="Link to this definition">¶</a></dt>
-<dd><p>Kullanıcının namespace’ini sıfırla</p>
+<dd><p>Kullanıcıya ait ad alanını varsayılan değerlerine sıfırlayan bir fonksiyon.</p>
+<p>Bu fonksiyon, kullanıcının mevcut ad alanını temizler ve varsayılan ‘__builtins__’ ile yeniden
+başlatır. Kullanıcının kimliğini temel alarak ad alanını günceller ya da oluşturur.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<em>str</em>) – Ad alanı sıfırlanacak kullanıcının benzersiz kimlik numarası.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.services.notebook_service.NotebookService.run_code">
 <span class="sig-name descname"><span class="pre">run_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/services/notebook_service.html#NotebookService.run_code"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.services.notebook_service.NotebookService.run_code" title="Link to this definition">¶</a></dt>
-<dd><p>Kodu çalıştırır ve sonucu döndürür (Socket.IO olmadan)</p>
+<dd><p>Belirtilen kodun bir alt işlemde çalıştırılmasını ve kodun çıktısını döndürmeyi amaçlayan bir fonksiyon.</p>
+<dl class="simple">
+<dt>Functions:</dt><dd><p>run_code: Kullanıcı ID’sine bağlı veya kullanıcı ID’siz kodun çalıştırılmasını sağlar.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>code</strong> (<em>str</em>) – Çalıştırılacak Python kodunu içeren metin.</p></li>
+<li><p><strong>user_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – Kullanıcı kimliğini temsil eden opsiyonel bir parametre.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Kodun başarıyla çalışıp çalışmadığını ve çıktı ya da hata mesajını içeren bir sözlük döndürür.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Alt işlem çalıştırılırken oluşan tüm hataları kapsar.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.services.notebook_service.NotebookService.set_input_response">
 <span class="sig-name descname"><span class="pre">set_input_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/services/notebook_service.html#NotebookService.set_input_response"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.services.notebook_service.NotebookService.set_input_response" title="Link to this definition">¶</a></dt>
-<dd><p>Socket.IO input_response olayı için işleyici</p>
+<dd><p>Fonksiyon bir değer alır ve bu değeri input_response niteliğine atar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Atanacak değer. Parametre tipi belirtilmediğinden
+çağrıyla bu sorumluluk geliştiriciye bırakılmıştır.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

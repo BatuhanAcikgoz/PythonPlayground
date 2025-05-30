@@ -281,17 +281,42 @@
 <div class="viewcode-block" id="Role">
 <a class="viewcode-back" href="../../../app.models.html#app.models.user.Role">[belgeler]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Role</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Role sınıfı, veritabanında bir rol modelini temsil eder.</span>
+
+<span class="sd">    Bu sınıf, rolün kimliği, adı ve isteğe bağlı açıklamasını içeren bir veritabanı</span>
+<span class="sd">    tablosu tanımlar. Uygulama boyunca erişilebilir rolleri yönetmek için</span>
+<span class="sd">    kullanılır. Her bir rol, benzersiz bir ada sahiptir ve hem kimlik hem de ad</span>
+<span class="sd">    alanları zorunludur.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">description</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">255</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bir Role nesnesinin okunabilir temsili oluşturan __repr__ yöntemi. Yöntem,</span>
+<span class="sd">        Role nesnesinin &#39;name&#39; niteliğini kullanarak geriye bilgi verici bir</span>
+<span class="sd">        string döndürür.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Role nesnesinin okunabilir temsili.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;Role </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
 
 
 <div class="viewcode-block" id="User">
 <a class="viewcode-back" href="../../../app.models.html#app.models.user.User">[belgeler]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span><span class="n">UserMixin</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Kullanıcı verilerini temsil eden bir model sınıfı.</span>
+
+<span class="sd">    User sınıfı, kullanıcıya ait temel bilgileri, rollerini ve şifreleme işlemlerini</span>
+<span class="sd">    yönetir. `UserMixin` özelliğiyle kimlik doğrulama işlemleri için gerekli</span>
+<span class="sd">    metotlara sahiptir ve `db.Model` taban sınıfını kullanır. Bu sınıf, bir</span>
+<span class="sd">    veritabanı tablosu olarak yapılandırılmış ve her kullanıcı nesnesi bir</span>
+<span class="sd">    kayıt olarak saklanacak şekilde tasarlanmıştır.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">username</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">120</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -303,30 +328,90 @@
 <div class="viewcode-block" id="User.set_password">
 <a class="viewcode-back" href="../../../app.models.html#app.models.user.User.set_password">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Şifre hash&#39;ini oluşturup saklayan bir metot.</span>
+
+<span class="sd">        Bu metot, verilen şifreyi hash&#39;leyerek saklar. Şifre hash&#39;i oluşturmak</span>
+<span class="sd">        için kullanılacak algoritma ve fonksiyon `generate_password_hash` olarak</span>
+<span class="sd">        belirlenmiştir. Şifre hash&#39;i güvenli bir şekilde, ham şifreyi saklamadan</span>
+<span class="sd">        işlenir ve `password_hash` değişkeninde saklanır. Metot, özellikle</span>
+<span class="sd">        kullanıcı doğrulama işlemleri öncesinde şifrelerin güvenli bir şekilde</span>
+<span class="sd">        saklanmasını sağlamak için tasarlanmıştır.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            password (str): Kullanıcının ham şifresi. Hash&#39;lenip saklanmak</span>
+<span class="sd">            üzere işlenecektir.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">password_hash</span> <span class="o">=</span> <span class="n">generate_password_hash</span><span class="p">(</span><span class="n">password</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="User.check_password">
 <a class="viewcode-back" href="../../../app.models.html#app.models.user.User.check_password">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parolayı hashlenmiş haliyle karşılaştırmak için kullanılan bir yöntem.</span>
+
+<span class="sd">        Bu yöntem, kullanıcının verdiği parolayı daha önce kaydedilmiş hashlenmiş</span>
+<span class="sd">        parola ile karşılaştırmak için kullanılabilir. Parolanın doğru olup</span>
+<span class="sd">        olmadığını döner.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        password : str</span>
+<span class="sd">            Karşılaştırılacak kullanıcı parolası.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Parolanın hashlenmiş değeri ile eşleşip eşleşmediğini belirten bir bool</span>
+<span class="sd">            değer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">check_password_hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">password_hash</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="User.has_role">
 <a class="viewcode-back" href="../../../app.models.html#app.models.user.User.has_role">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_role</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">role_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Belirtilen kullanıcı rolleri arasında verilen rol adına sahip bir rolün bulunup bulunmadığını kontrol eden bir</span>
+<span class="sd">        fonksiyon. Bir kullanıcının belirli bir role sahip olup olmadığını anlamak için kullanılır.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            role_name: Kontrol edilecek rolün adı.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: Kullanıcı belirtilen role sahipse True, aksi takdirde False döner.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">role</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">role_name</span> <span class="k">for</span> <span class="n">role</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">roles</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="User.is_admin">
 <a class="viewcode-back" href="../../../app.models.html#app.models.user.User.is_admin">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_admin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kullanıcının &quot;admin&quot; rolüne sahip olup olmadığını kontrol eder.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: Kullanıcı &quot;admin&quot; rolüne sahipse True, aksi halde False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_role</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="User.is_teacher">
 <a class="viewcode-back" href="../../../app.models.html#app.models.user.User.is_teacher">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_teacher</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Belirtilen kullanıcı için öğretmen olup olmadığını kontrol eden bir fonksiyon.</span>
+
+<span class="sd">        Bu fonksiyon, kullanıcının yetkilerini analiz ederek, öğretmen veya yönetici</span>
+<span class="sd">        yetkisine sahip olup olmadığını belirler.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: Kullanıcının öğretmen ya da yönetici olup olmadığı bilgisini döner.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_role</span><span class="p">(</span><span class="s1">&#39;teacher&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_admin</span><span class="p">()</span></div>
 </div>
 

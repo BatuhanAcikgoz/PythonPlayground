@@ -283,7 +283,17 @@
 <div class="viewcode-block" id="notebook_accessed_handler">
 <a class="viewcode-back" href="../../../app.events.html#app.events.handlers.notebook_accessed_handler">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">notebook_accessed_handler</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Notebook erişildiğinde çalışacak handler&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    notebook_accessed_handler(data)</span>
+
+<span class="sd">    Belirtilen veri sözlüğünü kullanarak bir kullanıcı tarafından bir not defterine erişim </span>
+<span class="sd">    olduğunu kaydeder. Kullanıcı adını ve not defteri kimliğini alır ve bu bilgileri bir </span>
+<span class="sd">    log mesajı olarak kaydeder.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        data (dict): Kullanıcı adı (&quot;username&quot;) ve not defteri kimliğini (&quot;notebook_id&quot;) </span>
+<span class="sd">        içeren bir sözlük. Varsayılan değerler olarak &quot;bilinmeyen&quot; atanır.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">username</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="s2">&quot;bilinmeyen&quot;</span><span class="p">)</span>
     <span class="n">notebook_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;notebook_id&quot;</span><span class="p">,</span> <span class="s2">&quot;bilinmeyen&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2"> kullanıcısı </span><span class="si">{</span><span class="n">notebook_id</span><span class="si">}</span><span class="s2"> numaralı not defterine erişti&quot;</span><span class="p">)</span></div>
@@ -293,7 +303,18 @@
 <div class="viewcode-block" id="notebook_summary_viewed_handler">
 <a class="viewcode-back" href="../../../app.events.html#app.events.handlers.notebook_summary_viewed_handler">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">notebook_summary_viewed_handler</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Notebook özeti görüntülendiğinde çalışacak handler&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    notebook_summary_viewed_handler işlevi, kullanıcı tarafından bir not defterinin </span>
+<span class="sd">    özetinin görüntülenme olayını işlemektedir ve bu işlemi günlükleme (loglama) </span>
+<span class="sd">    yaparak kayıt altına alır.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        data (dict): Kullanıcının &quot;username&quot; ve &quot;notebook_id&quot; bilgilerini içeren bir sözlük.</span>
+
+<span class="sd">    Notlar:</span>
+<span class="sd">        Eğer &quot;username&quot; veya &quot;notebook_id&quot; ilgili sözlükte bulunmuyorsa, işlev sırasıyla </span>
+<span class="sd">        &quot;bilinmeyen&quot; değerini kullanır.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">username</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="s2">&quot;bilinmeyen&quot;</span><span class="p">)</span>
     <span class="n">notebook_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;notebook_id&quot;</span><span class="p">,</span> <span class="s2">&quot;bilinmeyen&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2"> kullanıcısı </span><span class="si">{</span><span class="n">notebook_id</span><span class="si">}</span><span class="s2"> numaralı not defterinin özetini görüntüledi&quot;</span><span class="p">)</span></div>
@@ -305,7 +326,21 @@
 <div class="viewcode-block" id="user_registered_handler">
 <a class="viewcode-back" href="../../../app.events.html#app.events.handlers.user_registered_handler">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">user_registered_handler</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kullanıcı kaydolduğunda çalışacak handler&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Kullanıcı kayıt işlemi sırasında gerçekleştirilecek durumları ele alan fonksiyon.</span>
+
+<span class="sd">    Bu fonksiyon, yeni kaydolan bir kullanıcı için belirli bir işlemi yürütür. Kullanıcı</span>
+<span class="sd">    ismini loglar ve kullanıcı ID&#39;si mevcutsa, kayıt ile ilişkili rozetlerin kontrol</span>
+<span class="sd">    edilmesi ve verilebilmesi için uygun yöntemi çağırır.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (dict): Kullanıcı ile ilgili bilgileri içeren bir sözlük. `username` ve </span>
+<span class="sd">            `user_id` anahtarlarını içerebilir. `username` bulunamazsa, varsayılan </span>
+<span class="sd">            olarak &quot;bilinmeyen&quot; değeri kullanılır.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">username</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="s2">&quot;bilinmeyen&quot;</span><span class="p">)</span>
     <span class="n">user_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">)</span>
 
@@ -320,7 +355,19 @@
 <div class="viewcode-block" id="question_solved_handler">
 <a class="viewcode-back" href="../../../app.events.html#app.events.handlers.question_solved_handler">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">question_solved_handler</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Bir soru çözüldüğünde çalışacak handler&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Kullanıcıların soruları çözmesi durumunda çağrılan bir olay işleyicisidir. Kullanıcının puanını günceller</span>
+<span class="sd">    ve ilgili rozetleri değerlendirerek gereken ödülleri verir.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        data (dict): İşlemle ilgili bilgileri içeren bir sözlük olup &quot;user_id&quot; ve &quot;question_id&quot; gibi anahtarlar içerir.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Exception: Veri tabanı işlemleri sırasında veya diğer işlemlerde bir hata oluşursa bu durum kaydedilir.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">user_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">)</span>
     <span class="n">question_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;question_id&quot;</span><span class="p">,</span> <span class="s2">&quot;bilinmeyen&quot;</span><span class="p">)</span>
 
@@ -379,7 +426,22 @@
 <div class="viewcode-block" id="points_updated_handler">
 <a class="viewcode-back" href="../../../app.events.html#app.events.handlers.points_updated_handler">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">points_updated_handler</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kullanıcı puanları güncellendiğinde çalışacak handler&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Points updated handler fonksiyonu.</span>
+
+<span class="sd">    Bu fonksiyon, belirli bir kullanıcının puanlarının güncellenmesi durumunda çağrılır ve ilgili</span>
+<span class="sd">    rozeti kazanıp kazanmadığını kontrol eder. Fonksiyon herhangi bir dönüş değeri sağlamaz.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (dict): Güncellenen veri sözlüğü. Bu sözlükte, puanı güncellenen kullanıcıya</span>
+<span class="sd">        ilişkin bilgiler yer alır. &#39;user_id&#39; anahtarı ile kullanıcı kimliği belirtilirken,</span>
+<span class="sd">        &#39;points&#39; anahtarı ile kullanıcının yeni puan değeri sağlanır.</span>
+<span class="sd">        Varsayılan olarak &#39;points&#39; değeri 0&#39;dır.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Bu fonksiyon doğrudan bir hata yükseltmez ancak dolaylı hatalar, rozet kontrolü</span>
+<span class="sd">        yapılan `check_and_award_badges_for_points` fonksiyonundan gelebilir.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">user_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">)</span>
     <span class="n">points</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
@@ -393,7 +455,21 @@
 <div class="viewcode-block" id="award_badge">
 <a class="viewcode-back" href="../../../app.events.html#app.events.handlers.award_badge">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">award_badge</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">badge_id</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kullanıcıya rozet verir. Zaten verilmişse işlem yapmaz.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Kullanıcıya bir rozet verme işlemini gerçekleştirir. Verilen rozetin daha önce</span>
+<span class="sd">    kullanıcıya atanıp atanmadığını kontrol eder. Eğer rozet daha önce kullanıcıya</span>
+<span class="sd">    atanmadıysa, rozet atama işlemini tamamlar, ardından ilgili bir olayı tetikler.</span>
+<span class="sd">    İşlem sırasında bir hata oluşursa, hata günlüğe kaydedilir ve işlem geri alınır.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        user_id (int): Rozetin atanacağı kullanıcının kimliği.</span>
+<span class="sd">        badge_id (int): Atanacak rozeti temsil eden kimlik.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: Rozetin başarılı bir şekilde atanıp atanmadığını belirten bir sonuç.</span>
+<span class="sd">        Eğer rozet daha önce kullanıcıya atanmışsa ya da bir hata oluşmuşsa</span>
+<span class="sd">        False döner, aksi durumda True döner.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># Rozet daha önce verilmiş mi kontrol et</span>
         <span class="n">existing</span> <span class="o">=</span> <span class="n">UserBadge</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">user_id</span><span class="p">,</span> <span class="n">badge_id</span><span class="o">=</span><span class="n">badge_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
@@ -425,7 +501,16 @@
 <div class="viewcode-block" id="check_and_award_badges_for_registration">
 <a class="viewcode-back" href="../../../app.events.html#app.events.handlers.check_and_award_badges_for_registration">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_and_award_badges_for_registration</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kayıt olma rozetlerini kontrol eder ve verir&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bu fonksiyon, kullanıcının kayıt işlemi sırasında belirli rozet kriterlerini karşılayıp</span>
+<span class="sd">    karşılamadığını kontrol eder ve uygun rozetleri verir.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        user_id: Rozet verilecek olan kullanıcının kimlik numarası.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">registration_criteria</span> <span class="o">=</span> <span class="n">BadgeCriteria</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span>
         <span class="n">criteria_type</span><span class="o">=</span><span class="n">BadgeCriteria</span><span class="o">.</span><span class="n">TYPE_REGISTRATION</span>
     <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
@@ -438,7 +523,21 @@
 <div class="viewcode-block" id="check_and_award_badges_for_question">
 <a class="viewcode-back" href="../../../app.events.html#app.events.handlers.check_and_award_badges_for_question">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_and_award_badges_for_question</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">question_id</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Belirli soru çözme rozetlerini kontrol eder ve verir&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Belirli bir soru ve kullanıcı için kriterleri kontrol edip uygun olan rozetleri kullanıcıya</span>
+<span class="sd">    verir. Rozet kriterleri, BadgeCriteria modelinden çekilerek her biri doğrulanır ve sağlanan</span>
+<span class="sd">    koşullara uygun olduğu durumda kullanıcıya ilgili rozet atanır.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        user_id (int): Rozet verilecek kullanıcının benzersiz kimliği.</span>
+<span class="sd">        question_id (int): Kontrol edilecek sorunun benzersiz kimliği.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">question_criteria</span> <span class="o">=</span> <span class="n">BadgeCriteria</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span>
         <span class="n">criteria_type</span><span class="o">=</span><span class="n">BadgeCriteria</span><span class="o">.</span><span class="n">TYPE_QUESTION_SOLVED</span>
     <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
@@ -456,7 +555,21 @@
 <div class="viewcode-block" id="check_and_award_badges_for_question_count">
 <a class="viewcode-back" href="../../../app.events.html#app.events.handlers.check_and_award_badges_for_question_count">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_and_award_badges_for_question_count</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Çözülen soru sayısı rozetlerini kontrol eder ve verir&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bu fonksiyon, bir kullanıcının doğru çözdüğü soruların sayısına bağlı olarak, bu kriteri</span>
+<span class="sd">    karşılayan rozetleri kazandırır.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    user_id : int</span>
+<span class="sd">        Rozet kazanımı için değerlendirilecek kullanıcının kimlik numarası.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - Kullanıcının doğru çözdüğü benzersiz soruların sayısı veri tabanından sorgulanır.</span>
+<span class="sd">    - Rozet kriterleri veri tabanından alınır ve kullanıcının çözüm sayısıyla karşılaştırılır.</span>
+<span class="sd">    - Kriterler karşılandığı takdirde ilgili rozet kullanıcıya atanır.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Doğru çözülmüş benzersiz soruların sayısını al</span>
     <span class="n">solved_count</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Submission</span><span class="o">.</span><span class="n">question_id</span><span class="p">)</span>\
         <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Submission</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">Submission</span><span class="o">.</span><span class="n">is_correct</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span>\
@@ -477,7 +590,19 @@
 <div class="viewcode-block" id="check_and_award_badges_for_points">
 <a class="viewcode-back" href="../../../app.events.html#app.events.handlers.check_and_award_badges_for_points">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_and_award_badges_for_points</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Puan eşiği rozetlerini kontrol eder ve verir&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bir kullanıcının aldığı puanlara göre rozet ödüllerini kontrol eder ve uygun rozetleri</span>
+<span class="sd">    kazandırır. Rozet ödüllerini belirlemek için puan eşiklerini denetler.</span>
+
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        user_id (int): Rozet kontrolünün gerçekleştirileceği kullanıcının ID&#39;si.</span>
+<span class="sd">        points (int): Kullanıcının değerlendirme için sahip olduğu puan.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Kullanıcı ID&#39;si veya puan değeri geçersiz ise.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">point_criteria</span> <span class="o">=</span> <span class="n">BadgeCriteria</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span>
         <span class="n">criteria_type</span><span class="o">=</span><span class="n">BadgeCriteria</span><span class="o">.</span><span class="n">TYPE_POINT_THRESHOLD</span>
     <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
@@ -492,7 +617,19 @@
 <div class="viewcode-block" id="register_default_handlers">
 <a class="viewcode-back" href="../../../app.events.html#app.events.handlers.register_default_handlers">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_default_handlers</span><span class="p">(</span><span class="n">event_manager</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Varsayılan handler&#39;ları event manager&#39;a kaydeder&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    register_default_handlers fonksiyonu, belirtilen bir EventManager nesnesine varsayılan</span>
+<span class="sd">    olay işleyicilerini kaydeder. Bu işlem, belirli olay türleri için uygun işleyicilerin</span>
+<span class="sd">    tanımlanmasını sağlar ve olayların doğru bir şekilde ele alınmasını mümkün kılar.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        event_manager (EventManager): Olay işleyicilerinin kaydedileceği EventManager</span>
+<span class="sd">        nesnesi.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: event_manager argümanı doğru bir EventManager nesnesi değilse.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">event_manager</span><span class="o">.</span><span class="n">register_handler</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">USER_REGISTERED</span><span class="p">,</span> <span class="n">user_registered_handler</span><span class="p">)</span>
     <span class="n">event_manager</span><span class="o">.</span><span class="n">register_handler</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">QUESTION_SOLVED</span><span class="p">,</span> <span class="n">question_solved_handler</span><span class="p">)</span>
     <span class="n">event_manager</span><span class="o">.</span><span class="n">register_handler</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">USER_POINTS_UPDATED</span><span class="p">,</span> <span class="n">points_updated_handler</span><span class="p">)</span>

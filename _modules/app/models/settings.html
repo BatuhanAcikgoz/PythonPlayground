@@ -272,6 +272,14 @@
 <div class="viewcode-block" id="Setting">
 <a class="viewcode-back" href="../../../app.models.html#app.models.settings.Setting">[belgeler]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Setting</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Veritabanı modeli ile uygulama ayarlarını yönetir.</span>
+
+<span class="sd">    Bu sınıf, uygulamanın dinamik ayarlarını yönetmek için bir model sunar. Ayarlar</span>
+<span class="sd">    anahtar-değer çiftleri şeklinde saklanır ve gerekli olduğunda ayarın tipi</span>
+<span class="sd">    dönüştürülerek kullanılabilir. Ayrıca, ayarlarda oluşturma veya güncelleme</span>
+<span class="sd">    işlemlerini kolay bir şekilde yapmak için çeşitli yardımcı yöntemler içerir.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;settings&#39;</span>
 
     <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -285,7 +293,18 @@
 <a class="viewcode-back" href="../../../app.models.html#app.models.settings.Setting.get">[belgeler]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Belirli bir anahtarın değerini döndür&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        classmethod get metodu, ayarları sorgulayıp anahtar değeri ile eşleşen ayarı döndürmek için kullanılır.</span>
+<span class="sd">        Ayarlara karşılık gelen değer, ayarın türüne göre uygun şekilde dönüştürülür. Eğer herhangi bir eşleşen</span>
+<span class="sd">        ayar bulunmazsa varsayılan değer döndürülür.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            key (str): Aranan ayarın anahtar değeri.</span>
+<span class="sd">            default (Optional[Any]): Ayar bulunamadığında döndürülecek olan varsayılan değer.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Any: Anahtar ile eşleşen ayarın değeri, ayar bulunamazsa varsayılan değer döner.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">setting</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">setting</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">default</span>
@@ -305,7 +324,21 @@
 <a class="viewcode-back" href="../../../app.models.html#app.models.settings.Setting.set">[belgeler]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ayarı güncelle veya oluştur&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sınıfın ayarlarını yapılandırma ve yönetme işlemleri için kullanılan bir yöntemi</span>
+<span class="sd">        tanımlar.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (str): Ayar için kullanılacak anahtar.</span>
+<span class="sd">            value (Any): Ayar için atanacak değer.</span>
+<span class="sd">            type (str, optional): Ayarın türünü belirtir. Varsayılan olarak None.</span>
+<span class="sd">            category (str, optional): Ayarın kategorisini belirtir. Varsayılan olarak None.</span>
+<span class="sd">            description (str, optional): Ayara ilişkin açıklama metni sağlar. Varsayılan</span>
+<span class="sd">                olarak None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">setting</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">setting</span><span class="p">:</span>
@@ -331,7 +364,26 @@
 <div class="viewcode-block" id="add_ai_settings">
 <a class="viewcode-back" href="../../../app.models.html#app.models.settings.add_ai_settings">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">add_ai_settings</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;AI ayarlarını Settings tablosuna ekler - Sadece Gemini API için&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    add_ai_settings fonksiyonu, AI ile ilgili yapılandırma ayarlarını veri tabanına</span>
+<span class="sd">    eklemek için oluşturulmuştur. Eğer belirli bir ayar veri tabanında zaten mevcut</span>
+<span class="sd">    değilse, ayar eklenir. Mevcut ayarlara müdahale edilmez. Bu fonksiyon,</span>
+<span class="sd">    yazılımın kullanıcı tarafından aktif edilen ya da yapılandırılan AI özelliklerini</span>
+<span class="sd">    kullanabilmesine olanak tanır.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        ai_settings (list): AI yapılandırma ayarlarını içeren bir liste. Her bir</span>
+<span class="sd">        ayar, açıklama, tip, kategori, anahtar ve varsayılan değere sahiptir.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ai_settings</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;ai_enable_features&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s1">&#39;True&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;bool&#39;</span><span class="p">,</span> <span class="s1">&#39;category&#39;</span><span class="p">:</span> <span class="s1">&#39;ai&#39;</span><span class="p">,</span>
          <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;AI özelliklerinin kullanımını etkinleştirir&#39;</span><span class="p">},</span>

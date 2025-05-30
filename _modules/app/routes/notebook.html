@@ -280,6 +280,18 @@
 <span class="nd">@notebook_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;path:notebook_path&gt;&#39;</span><span class="p">)</span>
 <span class="nd">@login_required</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">view</span><span class="p">(</span><span class="n">notebook_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Notebook gösterim rotası. Bu işlev, kullanıcıların bir not defterini görüntülemesine olanak tanır. Kullanıcı oturumu</span>
+<span class="sd">    gerekir. Eğer istenilen not defteri bulunamazsa veya yükleme sırasında bir hata oluşursa bir hata mesajı ile ana</span>
+<span class="sd">    sayfaya yönlendirilir.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        notebook_path (str): Görüntülenmek istenen not defterinin yolu.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Response: Eğer not defteri başarıyla yüklenirse not defteri görüntüleyici şablonunu döner. Aksi halde kullanıcı,</span>
+<span class="sd">        hata mesajı ile ana sayfaya yönlendirilir.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">notebook</span> <span class="o">=</span> <span class="n">notebook_service</span><span class="o">.</span><span class="n">get_notebook</span><span class="p">(</span><span class="n">notebook_path</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">notebook</span><span class="p">:</span>
         <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Notebook bulunamadı veya yüklenemedi.&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">)</span>
@@ -292,6 +304,17 @@
 <span class="nd">@notebook_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/run&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="nd">@login_required</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fonksiyon, POST yöntemi ile çalıştırılacak bir API uç noktası tanımlar. Kullanıcı doğrulaması</span>
+<span class="sd">    ile korunan bu uç nokta, gelen JSON formatındaki kodu çalıştırır ve sonucu JSON formatında</span>
+<span class="sd">    geri döner.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Response: Çalıştırılan kodun çıktısını JSON formatında döner.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">notebook_service</span><span class="o">.</span><span class="n">run_code</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
@@ -301,18 +324,71 @@
 <div class="viewcode-block" id="register_socketio_handlers">
 <a class="viewcode-back" href="../../../app.routes.html#app.routes.notebook.register_socketio_handlers">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_socketio_handlers</span><span class="p">(</span><span class="n">socketio</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    register_socketio_handlers(socketio)</span>
+
+<span class="sd">    Belirtilen socket.io olayları için handler fonksiyonlarını kaydeder. Bu handlers&#39;lar, gelen socket.io</span>
+<span class="sd">    isteklerini işleyerek uygun hizmetlere yönlendirme yapar.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        socketio: Socket.IO kullanımı için gereken nesne.</span>
+
+<span class="sd">    Decorator-based event handlers:</span>
+
+<span class="sd">    &#39;run_code&#39;: Kullanıcıdan gelen kod çalıştırma isteğini işler ve kodun gerekli hizmete gönderilmesini sağlar.</span>
+<span class="sd">    &#39;input_response&#39;: Kullanıcıdan gelen giriş yanıtlarını işler ve belirtilen değerleri kaydeder.</span>
+<span class="sd">    &#39;connect&#39;: Socket.IO bağlantısı sırasında kullanıcı kimlik doğrulamasını kontrol eder ve</span>
+<span class="sd">    gerekli oturum başlatma işlemlerini yapar.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: Args veya fire edilen event&#39;teki eksik veya hatalı verilerden dolayı gerçekleşebilir.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@socketio</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;run_code&#39;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">handle_run_code</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        register_socketio_handlers fonksiyonu soket tabanlı dinleyiciler oluşturur ve bu dinleyicilere</span>
+<span class="sd">        spesifik event işlemleri tanımlar. Bu, özellikle &#39;run_code&#39; event&#39;ini işler ve gönderilen kodu,</span>
+<span class="sd">        ilgili kullanıcı bilgisi ile işleyen bir hizmete yönlendirir.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            socketio: Flask-SocketIO örneği olup, WebSocket bağlantılarını ve event&#39;lerini yönetir.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">code</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span>
         <span class="n">user_id</span> <span class="o">=</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span>
         <span class="n">notebook_service</span><span class="o">.</span><span class="n">handle_socket_run_code</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">socketio</span><span class="p">)</span>
 
     <span class="nd">@socketio</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;input_response&#39;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">handle_input_response</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fonksiyon, Flask-SocketIO ile ilgili olay işleyicilerini kaydeder ve belirli bir olay</span>
+<span class="sd">        oluştuğunda yürütülecek olan işlevi tanımlar. Bu işleyiciler, istemci tarafından gönderilen</span>
+<span class="sd">        verilere yanıt olarak sunucu tarafında işlem yapılmasını sağlar.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            socketio: Flask-SocketIO nesnesi. Olay işleyicilerinin kaydedileceği nesne.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">notebook_service</span><span class="o">.</span><span class="n">set_input_response</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
 
     <span class="nd">@socketio</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;connect&#39;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">handle_connect</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Socket.IO bağlantı işleyicilerini kayıt eder.</span>
+
+<span class="sd">        Bu fonksiyon, verilen Socket.IO nesnesine bağlantı işleyicilerini ekler.</span>
+<span class="sd">        Fonksiyon içinde tanımlanan `handle_connect` işlevi, istemcinin web soketi</span>
+<span class="sd">        bağlantısının başarılı şekilde gerçekleştiği durumda çağrılır.</span>
+
+<span class="sd">        Fonksiyonun temel amacı, kullanıcı doğrulandıktan sonra ilgili oturum</span>
+<span class="sd">        için not defteri hizmetlerini sıfırlamaktır.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            socketio: Socket.IO uygulama nesnesi.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Bu fonksiyon doğrudan bir hata yükseltmez fakat içindeki çağrılar hata</span>
+<span class="sd">            oluşturabilir. Örneğin, `current_user` doğrulaması veya</span>
+<span class="sd">            `notebook_service.reset_namespace` çağrısı başarısız olabilir.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">current_user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
             <span class="n">notebook_service</span><span class="o">.</span><span class="n">reset_namespace</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
 
@@ -323,6 +399,21 @@
 <span class="nd">@notebook_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/summary/&lt;path:notebook_path&gt;&#39;</span><span class="p">)</span>
 <span class="nd">@login_required</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="n">notebook_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Route işlevi, belirli bir notebook&#39;un özet bilgilerini almak için bir Flask endpoint&#39;idir. Kullanıcı</span>
+<span class="sd">    oturum açmış durumda olmalıdır ve notebook belirtilen yol aracılığıyla seçilir. Önce notebook&#39;un</span>
+<span class="sd">    varlığı kontrol edilir, ardından özet bilgileri FastAPI proxy çağrısıyla veya veritabanı sorgusuyla</span>
+<span class="sd">    alınır. Elde edilen özet bilgileri uygun şablon ile render edilir ve istemciye sunulur.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        notebook_path (str): Özet bilgileri alınacak notebook&#39;un yolunu belirtir.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Flask Response: Kullanıcıya render edilmiş özet bilgilerini içeren bir HTML sayfası döndürür.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">notebook_path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;notebook/summary/&#39;</span><span class="p">):</span>
         <span class="n">notebook_path</span> <span class="o">=</span> <span class="n">notebook_path</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;notebook/summary/&#39;</span><span class="p">):]</span>
 

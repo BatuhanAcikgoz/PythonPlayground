@@ -346,6 +346,38 @@ hangi handler’ların çalıştırılacağını belirlemek ve olayları tetikle
 kullanılır. Bu sınıf, yalnızca bir kez oluşturulabilen bir Singleton sınıfı
 olarak implement edilmiştir. Ayrıca, her bir olay türü için ilgili handler’ları
 dinamik olarak kaydetme ve çalıştırma işlevselliğine sahiptir.</p>
+<p>Singleton tasarım deseni ile EventManager sınıfının tek bir örneğinin oluşturulmasını
+ve bu örnek üzerinden kullanıcı tanımlı olayların yönetimini sağlar.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.events.event_manager.EventManager._instance">
+<span class="sig-name descname"><span class="pre">_instance</span></span><a class="headerlink" href="#app.events.event_manager.EventManager._instance" title="Link to this definition">¶</a></dt>
+<dd><p>Sınıfın tek örneğini saklar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#app.events.event_manager.EventManager" title="app.events.event_manager.EventManager">EventManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.events.event_manager.EventManager._handlers">
+<span class="sig-name descname"><span class="pre">_handlers</span></span><a class="headerlink" href="#app.events.event_manager.EventManager._handlers" title="Link to this definition">¶</a></dt>
+<dd><p>Her bir olay türü için bir dizi işlemci (handler) listesi içerir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Sınıfın mevcut bir örneğini döner ya da bir örnek oluşturur.</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#app.events.event_manager.EventManager" title="app.events.event_manager.EventManager">EventManager</a></p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="app.events.event_manager.EventManager.register_handler">
 <span class="sig-name descname"><span class="pre">register_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/event_manager.html#EventManager.register_handler"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.event_manager.EventManager.register_handler" title="Link to this definition">¶</a></dt>
@@ -400,67 +432,216 @@ Varsayılan olarak boş bir sözlük atanır.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.events.handlers.award_badge">
 <span class="sig-prename descclassname"><span class="pre">app.events.handlers.</span></span><span class="sig-name descname"><span class="pre">award_badge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">badge_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/handlers.html#award_badge"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.handlers.award_badge" title="Link to this definition">¶</a></dt>
-<dd><p>Kullanıcıya rozet verir. Zaten verilmişse işlem yapmaz.</p>
+<dd><p>Kullanıcıya bir rozet verme işlemini gerçekleştirir. Verilen rozetin daha önce
+kullanıcıya atanıp atanmadığını kontrol eder. Eğer rozet daha önce kullanıcıya
+atanmadıysa, rozet atama işlemini tamamlar, ardından ilgili bir olayı tetikler.
+İşlem sırasında bir hata oluşursa, hata günlüğe kaydedilir ve işlem geri alınır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>int</em>) – Rozetin atanacağı kullanıcının kimliği.</p></li>
+<li><p><strong>badge_id</strong> (<em>int</em>) – Atanacak rozeti temsil eden kimlik.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rozetin başarılı bir şekilde atanıp atanmadığını belirten bir sonuç.
+Eğer rozet daha önce kullanıcıya atanmışsa ya da bir hata oluşmuşsa
+False döner, aksi durumda True döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.events.handlers.check_and_award_badges_for_points">
 <span class="sig-prename descclassname"><span class="pre">app.events.handlers.</span></span><span class="sig-name descname"><span class="pre">check_and_award_badges_for_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/handlers.html#check_and_award_badges_for_points"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.handlers.check_and_award_badges_for_points" title="Link to this definition">¶</a></dt>
-<dd><p>Puan eşiği rozetlerini kontrol eder ve verir</p>
+<dd><p>Bir kullanıcının aldığı puanlara göre rozet ödüllerini kontrol eder ve uygun rozetleri
+kazandırır. Rozet ödüllerini belirlemek için puan eşiklerini denetler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>int</em>) – Rozet kontrolünün gerçekleştirileceği kullanıcının ID’si.</p></li>
+<li><p><strong>points</strong> (<em>int</em>) – Kullanıcının değerlendirme için sahip olduğu puan.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Kullanıcı ID’si veya puan değeri geçersiz ise.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.events.handlers.check_and_award_badges_for_question">
 <span class="sig-prename descclassname"><span class="pre">app.events.handlers.</span></span><span class="sig-name descname"><span class="pre">check_and_award_badges_for_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">question_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/handlers.html#check_and_award_badges_for_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.handlers.check_and_award_badges_for_question" title="Link to this definition">¶</a></dt>
-<dd><p>Belirli soru çözme rozetlerini kontrol eder ve verir</p>
+<dd><p>Belirli bir soru ve kullanıcı için kriterleri kontrol edip uygun olan rozetleri kullanıcıya
+verir. Rozet kriterleri, BadgeCriteria modelinden çekilerek her biri doğrulanır ve sağlanan
+koşullara uygun olduğu durumda kullanıcıya ilgili rozet atanır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_id</strong> (<em>int</em>) – Rozet verilecek kullanıcının benzersiz kimliği.</p></li>
+<li><p><strong>question_id</strong> (<em>int</em>) – Kontrol edilecek sorunun benzersiz kimliği.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.events.handlers.check_and_award_badges_for_question_count">
 <span class="sig-prename descclassname"><span class="pre">app.events.handlers.</span></span><span class="sig-name descname"><span class="pre">check_and_award_badges_for_question_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/handlers.html#check_and_award_badges_for_question_count"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.handlers.check_and_award_badges_for_question_count" title="Link to this definition">¶</a></dt>
-<dd><p>Çözülen soru sayısı rozetlerini kontrol eder ve verir</p>
+<dd><p>Bu fonksiyon, bir kullanıcının doğru çözdüğü soruların sayısına bağlı olarak, bu kriteri
+karşılayan rozetleri kazandırır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_id</strong> (<em>int</em>) – Rozet kazanımı için değerlendirilecek kullanıcının kimlik numarası.</p>
+</dd>
+</dl>
+<p class="rubric">Notlar</p>
+<ul class="simple">
+<li><p>Kullanıcının doğru çözdüğü benzersiz soruların sayısı veri tabanından sorgulanır.</p></li>
+<li><p>Rozet kriterleri veri tabanından alınır ve kullanıcının çözüm sayısıyla karşılaştırılır.</p></li>
+<li><p>Kriterler karşılandığı takdirde ilgili rozet kullanıcıya atanır.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.events.handlers.check_and_award_badges_for_registration">
 <span class="sig-prename descclassname"><span class="pre">app.events.handlers.</span></span><span class="sig-name descname"><span class="pre">check_and_award_badges_for_registration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/handlers.html#check_and_award_badges_for_registration"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.handlers.check_and_award_badges_for_registration" title="Link to this definition">¶</a></dt>
-<dd><p>Kayıt olma rozetlerini kontrol eder ve verir</p>
+<dd><p>Bu fonksiyon, kullanıcının kayıt işlemi sırasında belirli rozet kriterlerini karşılayıp
+karşılamadığını kontrol eder ve uygun rozetleri verir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>user_id</strong> – Rozet verilecek olan kullanıcının kimlik numarası.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.events.handlers.notebook_accessed_handler">
 <span class="sig-prename descclassname"><span class="pre">app.events.handlers.</span></span><span class="sig-name descname"><span class="pre">notebook_accessed_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/handlers.html#notebook_accessed_handler"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.handlers.notebook_accessed_handler" title="Link to this definition">¶</a></dt>
-<dd><p>Notebook erişildiğinde çalışacak handler</p>
+<dd><p>Belirtilen veri sözlüğünü kullanarak bir kullanıcı tarafından bir not defterine erişim
+olduğunu kaydeder. Kullanıcı adını ve not defteri kimliğini alır ve bu bilgileri bir
+log mesajı olarak kaydeder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>dict</em>) – Kullanıcı adı (“username”) ve not defteri kimliğini (“notebook_id”)</p></li>
+<li><p><strong>atanır.</strong> (<em>içeren bir sözlük. Varsayılan değerler olarak &quot;bilinmeyen&quot;</em>)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.events.handlers.notebook_summary_viewed_handler">
 <span class="sig-prename descclassname"><span class="pre">app.events.handlers.</span></span><span class="sig-name descname"><span class="pre">notebook_summary_viewed_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/handlers.html#notebook_summary_viewed_handler"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.handlers.notebook_summary_viewed_handler" title="Link to this definition">¶</a></dt>
-<dd><p>Notebook özeti görüntülendiğinde çalışacak handler</p>
+<dd><p>notebook_summary_viewed_handler işlevi, kullanıcı tarafından bir not defterinin
+özetinin görüntülenme olayını işlemektedir ve bu işlemi günlükleme (loglama)
+yaparak kayıt altına alır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – Kullanıcının “username” ve “notebook_id” bilgilerini içeren bir sözlük.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Notlar:</dt><dd><p>Eğer “username” veya “notebook_id” ilgili sözlükte bulunmuyorsa, işlev sırasıyla
+“bilinmeyen” değerini kullanır.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.events.handlers.points_updated_handler">
 <span class="sig-prename descclassname"><span class="pre">app.events.handlers.</span></span><span class="sig-name descname"><span class="pre">points_updated_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/handlers.html#points_updated_handler"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.handlers.points_updated_handler" title="Link to this definition">¶</a></dt>
-<dd><p>Kullanıcı puanları güncellendiğinde çalışacak handler</p>
+<dd><p>Points updated handler fonksiyonu.</p>
+<p>Bu fonksiyon, belirli bir kullanıcının puanlarının güncellenmesi durumunda çağrılır ve ilgili
+rozeti kazanıp kazanmadığını kontrol eder. Fonksiyon herhangi bir dönüş değeri sağlamaz.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>dict</em>) – Güncellenen veri sözlüğü. Bu sözlükte, puanı güncellenen kullanıcıya</p></li>
+<li><p><strong>belirtilirken</strong> (<em>ilişkin bilgiler yer alır. 'user_id' anahtarı ile kullanıcı kimliği</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param ‘points’ anahtarı ile kullanıcının yeni puan değeri sağlanır.:
+:param Varsayılan olarak ‘points’ değeri 0’dır.:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Bu fonksiyon doğrudan bir hata yükseltmez ancak dolaylı hatalar</strong><strong>, </strong><strong>rozet kontrolü</strong> – </p></li>
+<li><p><strong>yapılan check_and_award_badges_for_points fonksiyonundan gelebilir.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.events.handlers.question_solved_handler">
 <span class="sig-prename descclassname"><span class="pre">app.events.handlers.</span></span><span class="sig-name descname"><span class="pre">question_solved_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/handlers.html#question_solved_handler"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.handlers.question_solved_handler" title="Link to this definition">¶</a></dt>
-<dd><p>Bir soru çözüldüğünde çalışacak handler</p>
+<dd><p>Kullanıcıların soruları çözmesi durumunda çağrılan bir olay işleyicisidir. Kullanıcının puanını günceller
+ve ilgili rozetleri değerlendirerek gereken ödülleri verir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – İşlemle ilgili bilgileri içeren bir sözlük olup “user_id” ve “question_id” gibi anahtarlar içerir.</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Veri tabanı işlemleri sırasında veya diğer işlemlerde bir hata oluşursa bu durum kaydedilir.</p>
+</dd>
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.events.handlers.register_default_handlers">
 <span class="sig-prename descclassname"><span class="pre">app.events.handlers.</span></span><span class="sig-name descname"><span class="pre">register_default_handlers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_manager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/handlers.html#register_default_handlers"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.handlers.register_default_handlers" title="Link to this definition">¶</a></dt>
-<dd><p>Varsayılan handler’ları event manager’a kaydeder</p>
+<dd><p>register_default_handlers fonksiyonu, belirtilen bir EventManager nesnesine varsayılan
+olay işleyicilerini kaydeder. Bu işlem, belirli olay türleri için uygun işleyicilerin
+tanımlanmasını sağlar ve olayların doğru bir şekilde ele alınmasını mümkün kılar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_manager</strong> (<a class="reference internal" href="#app.events.event_manager.EventManager" title="app.events.event_manager.EventManager"><em>EventManager</em></a>) – Olay işleyicilerinin kaydedileceği EventManager</p></li>
+<li><p><strong>nesnesi.</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – event_manager argümanı doğru bir EventManager nesnesi değilse.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app.events.handlers.user_registered_handler">
 <span class="sig-prename descclassname"><span class="pre">app.events.handlers.</span></span><span class="sig-name descname"><span class="pre">user_registered_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/handlers.html#user_registered_handler"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.handlers.user_registered_handler" title="Link to this definition">¶</a></dt>
-<dd><p>Kullanıcı kaydolduğunda çalışacak handler</p>
+<dd><p>Kullanıcı kayıt işlemi sırasında gerçekleştirilecek durumları ele alan fonksiyon.</p>
+<p>Bu fonksiyon, yeni kaydolan bir kullanıcı için belirli bir işlemi yürütür. Kullanıcı
+ismini loglar ve kullanıcı ID’si mevcutsa, kayıt ile ilişkili rozetlerin kontrol
+edilmesi ve verilebilmesi için uygun yöntemi çağırır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – Kullanıcı ile ilgili bilgileri içeren bir sözlük. <cite>username</cite> ve
+<cite>user_id</cite> anahtarlarını içerebilir. <cite>username</cite> bulunamazsa, varsayılan
+olarak “bilinmeyen” değeri kullanılır.</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -530,6 +711,8 @@ Varsayılan olarak boş bir sözlük atanır.</p></li>
 </li>
 <li><a class="reference internal" href="#module-app.events.event_manager">app.events.event_manager module</a><ul>
 <li><a class="reference internal" href="#app.events.event_manager.EventManager"><code class="docutils literal notranslate"><span class="pre">EventManager</span></code></a><ul>
+<li><a class="reference internal" href="#app.events.event_manager.EventManager._instance"><code class="docutils literal notranslate"><span class="pre">EventManager._instance</span></code></a></li>
+<li><a class="reference internal" href="#app.events.event_manager.EventManager._handlers"><code class="docutils literal notranslate"><span class="pre">EventManager._handlers</span></code></a></li>
 <li><a class="reference internal" href="#app.events.event_manager.EventManager.register_handler"><code class="docutils literal notranslate"><span class="pre">EventManager.register_handler()</span></code></a></li>
 <li><a class="reference internal" href="#app.events.event_manager.EventManager.trigger_event"><code class="docutils literal notranslate"><span class="pre">EventManager.trigger_event()</span></code></a></li>
 </ul>

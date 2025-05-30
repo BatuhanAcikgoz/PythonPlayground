@@ -274,6 +274,32 @@
 <div class="viewcode-block" id="ProgrammingQuestion">
 <a class="viewcode-back" href="../../../app.models.html#app.models.programming_question.ProgrammingQuestion">[belgeler]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ProgrammingQuestion</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Programlama sorularını temsil eden bir sınıf.</span>
+
+<span class="sd">    Bu sınıf, bir programlama sorusunun özelliklerini ve bu soruya bağlı diğer verileri</span>
+<span class="sd">    depolamak için tasarlanmıştır. Sorunun başlığı, zorluk seviyesi, örnek giriş-çıkış</span>
+<span class="sd">    verileri, çözüm kodu gibi bilgileri içerir. Bu sınıf genellikle veritabanında</span>
+<span class="sd">    programlama sorularını saklamak ve ilgili kayıtları ilişkilendirmek için kullanılır.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        id (int): Soru için benzersiz bir tanımlayıcı.</span>
+<span class="sd">        title (str): Sorunun başlığı.</span>
+<span class="sd">        description (str): Sorunun tam açıklaması.</span>
+<span class="sd">        difficulty (int): Sorunun zorluk seviyesi, varsayılan olarak 1&#39;dir.</span>
+<span class="sd">        topic (str): Sorunun ele aldığı konu/başlık.</span>
+<span class="sd">        points (int): Sorunun çözümü için verilecek puan, varsayılan olarak 10&#39;dur.</span>
+<span class="sd">        example_input (str): Sorunun örnek giriş verisi.</span>
+<span class="sd">        example_output (str): Sorunun örnek çıkış verisi.</span>
+<span class="sd">        function_name (str): Sorunun beklediği başlıca fonksiyon ismi.</span>
+<span class="sd">        solution_code (str): Sorunun çözüm kodu.</span>
+<span class="sd">        test_inputs (str): Sorunun test giriş verileri.</span>
+<span class="sd">        created_at (datetime): Sorunun oluşturulma tarihi ve saati.</span>
+<span class="sd">        updated_at (datetime): Sorunun en son güncellenme tarihi ve saati.</span>
+
+<span class="sd">    Relationships:</span>
+<span class="sd">        submissions: Soruyla ilişkili gönderimler (Submission modeli ile ilişki).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">title</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">description</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -291,6 +317,17 @@
     <span class="n">submissions</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">relationship</span><span class="p">(</span><span class="s1">&#39;Submission&#39;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="s1">&#39;question&#39;</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Represent the ProgrammingQuestion instance as a string.</span>
+
+<span class="sd">        This method provides a clear, human-readable string representation of</span>
+<span class="sd">        a ProgrammingQuestion instance, useful for debugging or logging</span>
+<span class="sd">        purposes.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: A string representation of the ProgrammingQuestion instance</span>
+<span class="sd">            in the format &quot;&lt;ProgrammingQuestion {self.title}&gt;&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&lt;ProgrammingQuestion </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s1">&gt;&#39;</span></div>
 
 </pre></div>
