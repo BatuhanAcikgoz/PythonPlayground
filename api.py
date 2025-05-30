@@ -1441,6 +1441,8 @@ YANIT FORMATLAMASI:
 * JSON anahtarlarını çift tırnak içinde yaz: "title", "description" vb.
 * JSON'un ilk ve son satırında sadece açılış ve kapanış süslü parantezleri olmalı
 * JSON alanlarında Türkçe karakterleri düzgün kullan
+* Tüm string değerler çift tırnak içinde olmalı
+* JSON değerlerinde kaçış karakterlerini doğru kullan (\\n, \\t, \\" vb.)
 
 Ürettiğin soru aşağıdaki mevcut sorulardan TAMAMEN farklı olmalı:
 {', '.join(existing_titles[:10])}
@@ -1463,7 +1465,7 @@ Yanıtını JSON formatında oluştur:
         # AI client oluştur ve soru iste
         client = AIClient(api_provider, api_key, model_name)
         response = client.chat_completion([
-            {"role": "system", "content": "Sen bir Python programlama eğitmenisin. Öğrencilere algoritma ve veri yapıları öğretmek için programlama soruları hazırlıyorsun."},
+            {"role": "system", "content": "Sen bir Python programlama eğitmenisin ve öğrencilere programlama soruları hazırlıyorsun. SADECE JSON formatında yanıt ver, başka hiçbir açıklama veya metin ekleme. Cevabın geçerli bir JSON nesnesi olmalı."},
             {"role": "user", "content": prompt}
         ])
 

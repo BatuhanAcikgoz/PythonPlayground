@@ -3,6 +3,7 @@
 <head>
     <title>Yapay Zeka ile Soru Oluştur - Admin Panel</title>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -62,12 +63,10 @@
             formData: {
                 csrf_token: "{{ csrf_token() }}"
             },
-            // Footer translations
             footerTrans: {
                 allRights: {{ _('all_rights')|tojson|safe }},
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
-            // Current language
             currentLang: {{ session.get('language', 'tr')|tojson }}
         };
     </script>
@@ -141,6 +140,10 @@
             const [error, setError] = React.useState(null);
             const [generatedQuestion, setGeneratedQuestion] = React.useState(null);
             const [savedSuccess, setSavedSuccess] = React.useState(false);
+            const editorRef = React.useRef(null);
+
+            // forceUpdate için basit bir reducer ekleyin
+            const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
             const [formData, setFormData] = React.useState({
                 difficulty_level: 1,
@@ -163,6 +166,63 @@
                 solution_code: ""
             });
 
+            // JSON string doğrulama ve düzeltme fonksiyonu
+            const validateAndFixJSON = (jsonString, defaultValue = "[]") => {
+                try {
+                    // Önce JSON'ı ayrıştırmayı dene
+                    JSON.parse(jsonString);
+                    return jsonString; // Geçerliyse aynısını döndür
+                } catch (e) {
+                    console.error("Geçersiz JSON formatı, düzeltmeye çalışılıyor:", jsonString);
+
+                    try {
+                        // Eksik parantezleri otomatik olarak tamamlamaya çalış
+                        let fixedJson = jsonString.trim();
+
+                        // İç diziler için kapanış parantezi kontrolü
+                        const openBrackets = (fixedJson.match(/\[/g) || []).length;
+                        const closeBrackets = (fixedJson.match(/\]/g) || []).length;
+
+                        // Eksik kapanış parantezlerini ekle
+                        if (openBrackets > closeBrackets) {
+                            for (let i = 0; i < openBrackets - closeBrackets; i++) {
+                                fixedJson += ']';
+                            }
+                        }
+
+                        // Özel durum: Yarım kalmış iç dizi
+                        if (fixedJson.match(/\[\s*\[\s*.*[^\]]\s*$/)) {
+                            fixedJson += ']';
+                        }
+
+                        // Kontrol et
+                        JSON.parse(fixedJson);
+                        console.log("JSON düzeltildi:", fixedJson);
+                        return fixedJson;
+                    } catch (e2) {
+                        console.error("JSON düzeltme başarısız:", e2);
+
+                        // Daha agresif düzeltme girişimi
+                        try {
+                            // Dizinin başlangıcını ve sonunu düzelt
+                            let fixedJson = jsonString.trim();
+                            if (!fixedJson.startsWith('[')) fixedJson = '[' + fixedJson;
+                            if (!fixedJson.endsWith(']')) fixedJson += ']';
+
+                            // İç içe diziyi düzelt
+                            fixedJson = fixedJson.replace(/\[([^\[\]]*?)(?!\])$/, '[$1]');
+
+                            // Kontrol et
+                            JSON.parse(fixedJson);
+                            return fixedJson;
+                        } catch (e3) {
+                            console.error("Agresif JSON düzeltme de başarısız:", e3);
+                            return defaultValue;
+                        }
+                    }
+                }
+            };
+
             const topics = [
                 { value: "genel", label: "Genel (Rastgele)" },
                 { value: "veri yapıları", label: "Veri Yapıları" },
@@ -170,12 +230,16 @@
                 { value: "string işleme", label: "String İşleme" },
                 { value: "matematik", label: "Matematik" },
                 { value: "sayı teorisi", label: "Sayı Teorisi" },
-                { value: "arama", label: "Arama" },
+                { value: "istatistik", label: "İstatistik" },
+                { value: "veri bilimi", label: "Veri Bilimi" },
                 { value: "sıralama", label: "Sıralama" },
                 { value: "dinamik programlama", label: "Dinamik Programlama" },
                 { value: "graf teorisi", label: "Graf Teorisi" },
-                { value: "olasılık", label: "Olasılık" },
-                { value: "istatistik", label: "İstatistik" }
+                { value: "arama algoritmaları", label: "Arama Algoritmaları" },
+                { value: "matris işlemleri", label: "Matris İşlemleri" },
+                { value: "kombinatorik", label: "Kombinatorik" },
+                { value: "bit manipülasyonu", label: "Bit Manipülasyonu" },
+                { value: "dosya işlemleri", label: "Dosya İşlemleri" }
             ];
 
             const availableTags = [
@@ -223,52 +287,74 @@
                 });
             };
 
+            // generatedQuestion değiştiğinde tetiklenecek useEffect
+            React.useEffect(() => {
+                if (generatedQuestion) {
+                    console.log("generatedQuestion değişti:", generatedQuestion);
+                    setQuestionData(generatedQuestion);
+
+                    // Zorla form alanlarını güncelle
+                    setTimeout(() => {
+                        Object.keys(generatedQuestion).forEach(key => {
+                            const element = document.getElementById(key);
+                            if (element) {
+                                if (element.tagName === 'SELECT') {
+                                    element.value = generatedQuestion[key];
+                                } else if (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT') {
+                                    element.value = generatedQuestion[key];
+                                }
+                            }
+                        });
+
+                        // CodeMirror için özel güncelleme
+                        if (editorRef && editorRef.current) {
+                            editorRef.current.setValue(generatedQuestion.solution_code || "");
+                        }
+
+                        forceUpdate(); // Zorla yeniden render
+                    }, 200);
+                }
+            }, [generatedQuestion]);
+
             // Soru oluşturma API isteği
             const generateQuestion = async () => {
                 setLoading(true);
                 setError(null);
 
                 try {
-                    // Form değerlerini doğru ID'lerle oku
-                    // Form değerlerini doğru ID'lerle oku
-                    const difficultyLevel = parseInt(document.getElementById('difficulty_level').value) || 1;
-                    const topic = document.getElementById('topic').value || 'genel';
-                    const descriptionHint = document.getElementById('description_hint').value || '';
-                    const functionNameHint = document.getElementById('function_name_hint').value || '';
-
-                    // Etiketleri al (çoklu seçim olabilir)
-                    let selectedTags = [];
-                    const tagsElement = document.getElementById('tags');
-                    if (tagsElement && tagsElement.options) {
-                        for (let i = 0; i < tagsElement.options.length; i++) {
-                            if (tagsElement.options[i].selected) {
-                                selectedTags.push(tagsElement.options[i].value);
-                            }
-                        }
-                    }
-
+                    // Form verilerini React state'inden kullan
                     const requestData = {
-                        difficulty_level: difficultyLevel,
-                        topic: topic,
-                        description_hint: descriptionHint,
-                        function_name_hint: functionNameHint,
-                        tags: selectedTags
+                        difficulty_level: parseInt(formData.difficulty_level),
+                        topic: formData.topic,
+                        description_hint: formData.description_hint,
+                        function_name_hint: formData.function_name_hint,
+                        tags: formData.tags
                     };
+
                     const response = await fetch('/api/generate-question', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': APP_DATA.formData.csrf_token
                         },
                         body: JSON.stringify(requestData)
                     });
+
+                    if (!response.ok) {
+                        throw new Error(`API hatası: ${response.status} ${response.statusText}`);
+                    }
 
                     const data = await response.json();
 
                     if (data.error) {
                         setError(data.error);
                     } else {
-                        // Dönen verileri form alanlarına atama
-                        setGeneratedQuestion({
+                        // Test inputs JSON'ını doğrula ve düzelt
+                        const fixedTestInputs = validateAndFixJSON(data.test_inputs || "[]");
+                        console.log("Düzeltilmiş test girdileri:", fixedTestInputs);
+
+                        // Önce questionData'yı doğrudan güncelle
+                        const newQuestionData = {
                             title: data.title || "",
                             description: data.description || "",
                             function_name: data.function_name || "",
@@ -277,14 +363,29 @@
                             points: data.points || 10,
                             example_input: data.example_input || "Örnek girdi yok",
                             example_output: data.example_output || "Örnek çıktı yok",
-                            test_inputs: data.test_inputs || "[]",
+                            test_inputs: fixedTestInputs,
                             solution_code: data.solution_code || ""
-                        });
+                        };
+
+                        setQuestionData(newQuestionData); // Önce questionData'yı güncelle
+                        setGeneratedQuestion(newQuestionData); // Sonra generatedQuestion'ı güncelle
+
+                        // Zorla form alanlarını güncelle
+                        setTimeout(() => {
+                            const inputs = document.querySelectorAll('input, textarea, select');
+                            inputs.forEach(input => {
+                                if (newQuestionData[input.name]) {
+                                    input.value = newQuestionData[input.name];
+                                }
+                            });
+                        }, 100);
                     }
                 } catch (err) {
                     setError("Soru oluşturulurken bir hata oluştu: " + err.message);
+                    console.error("Soru oluşturma hatası:", err);
                 } finally {
                     setLoading(false);
+                    setTimeout(() => forceUpdate(), 300); // Zorla yeniden render
                 }
             };
 
@@ -293,15 +394,40 @@
                 setError(null);
 
                 try {
-                    const response = await fetch('/api/admin/programming-questions', {
+                    // Test inputs formatını kontrol et ve düzelt
+                    let validTestInputs = questionData.test_inputs;
+                    try {
+                        JSON.parse(questionData.test_inputs);
+                    } catch (e) {
+                        validTestInputs = validateAndFixJSON(questionData.test_inputs, "[[]]");
+
+                        // State'i güncelle ki kullanıcı düzeltilmiş versiyonu görebilsin
+                        setQuestionData(prev => ({
+                            ...prev,
+                            test_inputs: validTestInputs
+                        }));
+
+                        // Yeniden render için
+                        forceUpdate();
+                    }
+
+                    // saveQuestion fonksiyonunda endpoint değişikliği yapalım
+                    const response = await fetch('/api/programming-question', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-Token': APP_DATA.formData.csrf_token
                         },
-                        signal: AbortSignal.timeout(100000), // 10 seconds timeout
-                        body: JSON.stringify(questionData)
+                        signal: AbortSignal.timeout(100000), // 100 saniye timeout
+                        body: JSON.stringify({
+                            ...questionData,
+                            test_inputs: validTestInputs
+                        })
                     });
+
+                    if (!response.ok) {
+                        throw new Error(`API hatası: ${response.status} ${response.statusText}`);
+                    }
 
                     const data = await response.json();
 
@@ -309,13 +435,14 @@
                         setError(data.error);
                     } else {
                         setSavedSuccess(true);
-                        // Reset after 3 seconds
+                        // 3 saniye sonra başarı mesajını kaldır
                         setTimeout(() => {
                             setSavedSuccess(false);
                         }, 3000);
                     }
                 } catch (err) {
                     setError("Kaydetme sırasında bir hata oluştu: " + err.message);
+                    console.error("Kaydetme hatası:", err);
                 } finally {
                     setLoading(false);
                 }
@@ -329,7 +456,7 @@
                             <h2 className="text-xl font-semibold mb-4">Yapay Zeka ile Soru Oluştur</h2>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                <FormField label="Zorluk Seviyesi" id="difficulty_level" hint="Oluşturulacak sorunun zorluk derecesi">
+                                <FormField label="Zorluk Seviyesi" id="difficulty_level">
                                     <select
                                         id="difficulty_level"
                                         name="difficulty_level"
@@ -337,14 +464,14 @@
                                         value={formData.difficulty_level}
                                         onChange={handleChange}
                                     >
-                                        <option value="1">Kolay</option>
-                                        <option value="2">Orta</option>
-                                        <option value="3">Zor</option>
-                                        <option value="4">Çok Zor</option>
+                                        <option value="1">Kolay (1)</option>
+                                        <option value="2">Orta (2)</option>
+                                        <option value="3">Zor (3)</option>
+                                        <option value="4">Çok Zor (4)</option>
                                     </select>
                                 </FormField>
 
-                                <FormField label="Konu" id="topic" hint="Soru hangi konu hakkında olsun?">
+                                <FormField label="Konu" id="topic">
                                     <select
                                         id="topic"
                                         name="topic"
@@ -360,7 +487,7 @@
                             </div>
 
                             <FormField label="Soru İpucu (İsteğe Bağlı)" id="description_hint"
-                                       hint="Sorunun ne hakkında olmasını istiyorsanız açıklayın. Örn: 'Bir sayı dizisindeki en büyük toplamı bulan bir soru olsun'">
+                                       hint="Sorunun ne hakkında olması gerektiğini belirtin. Örn: 'Bir diziyi sırala ve ortadaki elemanı bul'">
                                 <textarea
                                     id="description_hint"
                                     name="description_hint"
@@ -368,7 +495,6 @@
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     value={formData.description_hint}
                                     onChange={handleChange}
-                                    placeholder="Oluşturulacak sorunun içeriğini tarif edin..."
                                 ></textarea>
                             </FormField>
 
@@ -381,7 +507,6 @@
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     value={formData.function_name_hint}
                                     onChange={handleChange}
-                                    placeholder="Fonksiyon adı önerisi"
                                 />
                             </FormField>
 
@@ -391,7 +516,7 @@
                                         <button
                                             key={tag}
                                             type="button"
-                                            className={`px-3 py-1 text-sm rounded-full ${
+                                            className={`px-3 py-1 rounded-full text-sm ${
                                                 formData.tags.includes(tag)
                                                     ? 'bg-blue-500 text-white'
                                                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -414,21 +539,11 @@
                             <div className="mt-6">
                                 <button
                                     type="button"
-                                    className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center justify-center"
+                                    className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
                                     onClick={generateQuestion}
                                     disabled={loading}
                                 >
-                                    {loading ? (
-                                        <React.Fragment>
-                                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                            Soru Oluşturuluyor...
-                                        </React.Fragment>
-                                    ) : (
-                                        "Yapay Zeka ile Soru Oluştur"
-                                    )}
+                                    {loading ? "Soru Üretiliyor..." : "Yapay Zeka ile Soru Oluştur"}
                                 </button>
                             </div>
                         </div>
@@ -439,7 +554,7 @@
                                 <h2 className="text-xl font-semibold">Oluşturulan Soru</h2>
                                 <button
                                     type="button"
-                                    className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md text-sm"
+                                    className="px-4 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md"
                                     onClick={() => setGeneratedQuestion(null)}
                                 >
                                     Yeni Soru Oluştur
@@ -462,8 +577,8 @@
                                 <textarea
                                     id="description"
                                     name="description"
-                                    rows="5"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    rows="6"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     value={questionData.description}
                                     onChange={handleQuestionDataChange}
                                     required
@@ -474,8 +589,8 @@
                             <div className="my-4">
                                 <h3 className="font-medium mb-2">Önizleme:</h3>
                                 <div className="p-4 border border-gray-300 rounded-md bg-gray-50 prose max-w-none"
-                                     dangerouslySetInnerHTML={{ __html: marked.parse(questionData.description) }}
-                                ></div>
+                                     dangerouslySetInnerHTML={{ __html: marked.parse(questionData.description) }}>
+                                </div>
                             </div>
                             {% endraw %}
 
@@ -489,26 +604,23 @@
                                         onChange={handleQuestionDataChange}
                                         required
                                     >
-                                        <option value="1">Kolay</option>
-                                        <option value="2">Orta</option>
-                                        <option value="3">Zor</option>
-                                        <option value="4">Çok Zor</option>
+                                        <option value="1">Kolay (1)</option>
+                                        <option value="2">Orta (2)</option>
+                                        <option value="3">Zor (3)</option>
+                                        <option value="4">Çok Zor (4)</option>
                                     </select>
                                 </FormField>
 
                                 <FormField label="Konu" id="topic">
-                                    <select
+                                    <input
+                                        type="text"
                                         id="topic"
                                         name="topic"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         value={questionData.topic}
                                         onChange={handleQuestionDataChange}
                                         required
-                                    >
-                                        {topics.map(topic => (
-                                            <option key={topic.value} value={topic.value}>{topic.label}</option>
-                                        ))}
-                                    </select>
+                                    />
                                 </FormField>
 
                                 <FormField label="Puan Değeri" id="points">
@@ -530,7 +642,6 @@
                                         type="text"
                                         id="function_name"
                                         name="function_name"
-                                        placeholder="örn: topla"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         value={questionData.function_name}
                                         onChange={handleQuestionDataChange}
@@ -545,7 +656,6 @@
                                         id="example_input"
                                         name="example_input"
                                         rows="3"
-                                        placeholder="örn: 5, 3"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         value={questionData.example_input}
                                         onChange={handleQuestionDataChange}
@@ -558,7 +668,6 @@
                                         id="example_output"
                                         name="example_output"
                                         rows="3"
-                                        placeholder="örn: 8"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         value={questionData.example_output}
                                         onChange={handleQuestionDataChange}
@@ -569,7 +678,7 @@
 
                             <FormField label="Çözüm Kodu (Python)" id="solution_code">
                                 <div className="mb-1 text-xs text-gray-600">
-                                    Fonksiyon adıyla aynı isimde bir Python fonksiyonu yazın. Bu kod, kullanıcı çözümlerini doğrulamak için kullanılacak.
+                                    Öğrencilerin görevi tamamlaması için gereken Python kodu
                                 </div>
                                 <CodeEditor
                                     id="solution_code"
@@ -581,17 +690,17 @@
 
                             <FormField label="Test Girdileri (JSON)" id="test_inputs">
                                 <div className="mb-1 text-xs text-gray-600">
-                                    Test girdilerinizi JSON array formatında yazın. Her bir test bir array olmalı ve fonksiyon parametrelerine karşılık gelmelidir.
+                                    Test girdilerini JSON formatında belirtin. Örnek: '[
+    [1, 2, 3],
+    [5, 3],
+    [10, 20],
+    [0, 0]
+]'
                                 </div>
                                 <textarea
                                     id="test_inputs"
                                     name="test_inputs"
                                     rows="5"
-                                    placeholder='[
-    [5, 3],
-    [10, 20],
-    [0, 0]
-]'
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     value={questionData.test_inputs}
                                     onChange={handleQuestionDataChange}
