@@ -42,23 +42,29 @@ api.add_middleware(
     allow_headers=["*"],
 )
 
-
-# Veritabanı oturumu dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-# Admin yetkilendirme (basit)
-def get_current_admin():
-    # Gerçek bir uygulamada JWT token vb. ile yetkilendirme yapılmalı
-    return {"is_admin": True}
-
+# BaseModeller
 
 class ServerStatus(BaseModel):
+    """ServerStatus sınıfı, sunucunun durum bilgilerini depolamak ve yönetmek
+    amacıyla tasarlanmıştır.
+
+    Bu sınıf, belirli bir sunucunun Python, Flask ve MySQL gibi yazılım
+    sürümleri ile ilgili bilgilerini, RAM kullanımı, CPU kullanımı ve süreçlerin
+    RAM tüketimini takip etmek amacıyla kullanılır. Sunucunun güncel durumu
+    hakkında bilgi sağlamak için yapılandırılmıştır.
+
+    Attributes:
+        python_version (str): Kullanılan Python sürümünü belirtir.
+        flask_version (str): Kullanılan Flask sürümünü belirtir.
+        mysql_version (str): Kullanılan MySQL sürümünü belirtir.
+        ram_used (float): Kullanılan RAM miktarını belirtir (GB cinsinden).
+        ram_total (float): Toplam RAM kapasitesini belirtir (GB cinsinden).
+        cpu_usage (float): CPU kullanım yüzdesini belirtir.
+        process_ram_used (float): Süreç tarafından kullanılan RAM miktarını belirtir
+        (GB cinsinden).
+        process_ram_allocated (float): Süreç tarafından tahsis edilen RAM miktarını
+        belirtir (GB cinsinden).
+    """
     python_version: str
     flask_version: str
     mysql_version: str
@@ -68,9 +74,420 @@ class ServerStatus(BaseModel):
     process_ram_used: float
     process_ram_allocated: float
 
+# User model - sadece API amaçlı
+class UserRole(BaseModel):
+    """
+    UserRole sınıfı, bir kullanıcı rolünü temsil eder.
+
+    Bu sınıf, kullanıcıların bağlı oldukları rollerin kimliğini ve adını saklamak
+    için bir model sunar. Özellikle, kullanıcı rolü ile ilgili işlem ve sorgulamalar
+    için temel bir veri yapısı olarak kullanılır.
+
+    Attributes:
+        id (int): Kullanıcı rolüne atanmış tekil kimlik numarasıdır.
+        name (str): Kullanıcı rolünün adını tutar.
+    """
+    id: int
+    name: str
+
+class UserData(BaseModel):
+    """
+    Kullanıcı verilerini temsil eden bir model sınıfı.
+
+    Bu sınıf bir kullanıcının bilgilerinin saklanması ve işlenmesi için kullanılır. Kullanıcı
+    kendine ait bir kimlik numarası, kullanıcı adı, e-posta adresi, kayıt tarihi
+    ve rol listesi gibi bilgileri içerir. Bu model kullanıcılarla ilgili operasyonlarda
+    merkezi bir veri taşıma nesnesi olarak kullanılabilir.
+    """
+    id: int
+    username: str
+    email: str
+    registered: str
+    roles: List[str]
+
+class EvaluationRequest(BaseModel):
+    """
+    EvaluationRequest sınıfı, kullanıcı kodunun belirli bir işlev için test edilmesi
+    için gerekli olan verileri temsil eder.
+
+    Bu sınıf, bir fonksiyonun adı, kodu, test girdileri ve çözüm kodu gibi bilgileri
+    depolamak ve değerlendirme süreçlerinde kullanılmak üzere yapılandırılmıştır.
+    Kullanıcı kodunu test etmek ve doğrulamak için gerekli olan tüm bilgileri içerir.
+    """
+    code: str
+    function_name: str
+    test_inputs: str
+    solution_code: str
+
+class EvaluationResult(BaseModel):
+    """
+    EvaluationResult, yapılan bir değerlendirmenin sonuçlarını tutmak
+    için kullanılan bir veri modelini temsil eder.
+
+    Bu sınıf, bir değerlendirme işleminde toplanan verilerin detaylarını
+    ve sonuçlarını saklamak amacıyla kullanılır. Test sonuçları, geçen
+    ve kalan testlerin sayısı, hata detayları ve genel doğruluk durumu gibi
+    bilgiler içerir. Bu model, değerlendirme sonuçlarının yapılandırılmış
+    bir formatta sunulması için tasarlanmıştır.
+    """
+    is_correct: bool
+    execution_time: float
+    errors: List[str]
+    test_count: int
+    passed_tests: int
+    failed_tests: int
+    test_results: Optional[dict] = None
+
+# --- AI Notebook Summary Modelleri ---
+class NotebookSummaryRequest(BaseModel):
+    """
+    NotebookSummaryRequest sınıfı bir deftere ait özet bilgilerini tutmak
+    ve işlemler sırasında kullanılabilmek amacıyla oluşturulmuştur.
+
+    Bu sınıf, bir deftere ait yolu tanımlamak için kullanılan bir veri modelini
+    temsil eder. Model, doğrulama ve yapılandırma işlemlerinde yardımcı olması
+    için BaseModel'den türetilmiştir.
+    """
+    notebook_path: str
+
+
+class NotebookSummaryResponse(BaseModel):
+    """
+    NotebookSummaryResponse sınıfı, bir not defterinin özet içeriğini, kod açıklamasını,
+    son güncelleme tarihini ve isteğe bağlı olarak bir hata mesajını temsil eder.
+
+    Bu sınıf, not defteri içeriğinin hızlı bir şekilde özetlenmesini ve açıklanmasını sağlamak
+    için kullanılır. Ayrıca, güncel olmayan veya hata içeren içerikleri takip edebilmek için
+    isteğe bağlı bir hata mesajı alanı içerir. Veriler Pydantic tabanlı, güçlü tip kontrolü
+    ile modelleme yapılmıştır.
+
+    Attributes:
+        summary (str): Not defteri özetini açıklayan metin.
+        code_explanation (str): Kodun işleyişini veya amacını açıklayan metin.
+        last_updated (str): Not defterinin en son güncellenme tarihi.
+        error (Optional[str]): (Varsayılan: Yok) Mevcutsa hata mesajını içeren metin.
+    """
+    summary: str
+    code_explanation: str
+    last_updated: str
+    error: Optional[str] = None
+
+class DetailedQuestion(BaseModel):
+    """
+    Bir soruyu temsil eden sınıf.
+
+    DetailedQuestion sınıfı, bir soru ile ilgili ayrıntılı bilgileri
+    tutmak amacıyla kullanılır. Sorunun kimlik bilgisi, başlık, açıklama,
+    zorluk seviyesi, puanı ve oluşturulma ile güncellenme zamanlarını
+    saklar. Bu sınıf BaseModel sınıfından türetilmiştir.
+    """
+    id: int
+    title: str
+    description: str
+    difficulty: int
+    points: int
+    updated_at: str
+    created_at: str
+
+class LeaderboardEntry(BaseModel):
+    """
+    LeaderboardEntry, kullanıcıların sıralamalarını, puanlarını ve kullanıcı adlarını
+    temsili bir model olarak tutar.
+
+    Bu sınıf, belirli bir liderlik tablosunda bir kullanıcı sıralaması ile ilgili bilgileri
+    erişmek ve temsil etmek için kullanılır. Kullanıcı adına, sıralamasına ve kazandığı
+    puanlara dair verileri depolar.
+    """
+    username: str
+    points: int
+    rank: int
+
+class LeaderboardResponse(BaseModel):
+    """
+    LeaderboardResponse sınıfı, liderlik tablosu verilerini temsil eder ve
+    ilgili özellikleri içerir.
+
+    Bu sınıf, kullanıcıların liderlik tablosundaki verileri depolamak için
+    kullanılır. Kullanıcı bilgilerini, toplam kullanıcı sayısını ve bir
+    sayfada gösterilen maksimum kullanıcı sayısını tutar.
+
+    Attributes:
+        users (List[LeaderboardEntry]): Liderlik tablosunda yer alan kullanıcı
+        girişlerini tutan bir liste.
+
+        total (int): Liderlik tablosundaki toplam kullanıcı sayısı.
+
+        limit (int): Liderlik tablosunda bir sayfada gösterilecek maksimum
+        kullanıcı sayısı.
+    """
+    users: List[LeaderboardEntry]
+    total: int
+    limit: int
+
+class SubmissionDetail(BaseModel):
+    """
+    SubmissionDetail sınıfı, bir kullanıcı gönderim detaylarını temsil eder.
+
+    Bu sınıf, bir kullanıcının soru çözme aktiviteleri ve sonuçları ile ilgili verileri
+    yönetmek için kullanılır. Bir gönderimin doğru olup olmadığı, hangi soruya ait olduğu
+    ve ne zaman yapıldığı gibi bilgileri içerir.
+    """
+    id: int
+    user_id: int
+    username: str
+    question_id: int
+    question_title: str
+    is_correct: bool
+    execution_time: float
+    created_at: str
+
+class Badge(BaseModel):
+    """
+    Badge sınıfını temsil eder.
+
+    Kullanıcıların sahip olabileceği rozeti tanımlayan bir sınıftır. Bu rozetler,
+    belirli bir kimlik numarası, ad, simge ve açıklama bilgilerini içerir. Rozetler,
+    sistemde kullanıcılara ait belirli bir başarıyı ya da özelliği göstermek için
+    kullanılabilir.
+    """
+    id: int
+    name: str
+    icon: str
+    description: str
+
+class Activity(BaseModel):
+    """
+    Bir etkinliği temsil eder.
+
+    Activity sınıfı, etkinliklerin bilgilerini saklamak için tasarlanmış
+    bir veri modelidir. Bu sınıf, etkinlik kimliği, türü, içeriği ve tarih
+    bilgilerini içerir. Etkinliklerin farklı özelliklerini ve içeriklerini
+    yapılandırılmış bir şekilde saklamak için kullanılabilir.
+    """
+    id: int
+    type: str
+    content: dict
+    date: str
+
+class UserStats(BaseModel):
+    """
+    Kullanıcı istatistiklerini temsil eden sınıf.
+
+    Bu sınıf, bir kullanıcının çözdüğü sorunların sayısını, kod yazdığı günlerin
+    sayısını, aktif günlerin ardışık serisini ve çözülen sorunların yüzdesini
+    içeren istatistiksel bilgileri depolamak için kullanılır.
+
+    Attributes:
+        solvedProblems (int): Kullanıcının çözdüğü toplam sorun sayısı.
+        codingDays (int): Kullanıcının kod yazdığı toplam gün sayısı.
+        activeDaysStreak (int): Kullanıcının ardışık aktif olduğu gün sayısı.
+        solutedProblemsPercentage (float): Çözülen sorunların yüzdesi.
+    """
+    solvedProblems: int
+    codingDays: int
+    activeDaysStreak: int
+    solutedProblemsPercentage: float
+
+class UserProfileData(BaseModel):
+    """
+    Temel olarak bir kullanıcı profili verilerini temsil eder.
+
+    UserProfileData sınıfı, bir kullanıcının profil bilgilerini ve buna ilişkin
+    çeşitli verileri tutar. Bu sınıf, pyydantic'in BaseModel sınıfından türetilmiştir
+    ve kullanıcı bilgileri, rozetler, aktiviteler gibi verilerin bir arada yönetilmesini
+    sağlar. Kullanıcı hakkındaki istatistiksel bilgileri ve günlük aktiviteleri de
+    barındırır.
+    """
+    username: str
+    email: str
+    joinDate: Optional[str]
+    isCurrentUser: bool = False
+    badges: List[Badge]
+    stats: UserStats
+    activities: List[Activity]
+    dailyActivity: List[dict]
+
+class GeneratedQuestionResponse(BaseModel):
+    """
+    GeneratedQuestionResponse sınıfı, bir sorunun özelliklerini temsil eden bir veri modelidir.
+
+    Bu sınıf, bir programlama sorusunun çeşitli özelliklerini tutmak için kullanılır. Özellikle
+    başlık, açıklama, ilgili işlev adı, zorluk derecesi, konu, puan ve örnek giriş/çıkış gibi
+    özellikleri içerir. Ayrıca, çözüm kodu, test girdileri ve hata ile debug bilgilerini tutmak
+    için de kullanılabilir. Bu sınıf, genellikle veri taşımak amacıyla kullanılır ve BaseModel
+    türetilmiştir.
+
+    Attributes:
+        title (str): Sorunun başlığı. Varsayılan olarak boş bir dize.
+        description (str): Sorunun açıklaması. Varsayılan olarak boş bir dize.
+        function_name (str): Sorunun çözümüne ait işlevin adı. Varsayılan olarak boş bir dize.
+        difficulty (int): Sorunun zorluk derecesi. Varsayılan olarak 1.
+        topic (str): Sorunun ait olduğu konu. Varsayılan olarak boş bir dize.
+        points (int): Sorudan kazanılabilecek puan. Varsayılan olarak 10.
+        example_input (str): Örnek giriş verisi. Varsayılan olarak "Örnek girdi yok".
+        example_output (str): Örnek çıktı verisi. Varsayılan olarak "Örnek çıktı yok".
+        test_inputs (str): Sorunun test edilmesi için kullanılacak giriş verileri. Varsayılan olarak "[]".
+        solution_code (str): Sorunun ilgili çözüm kodu. Varsayılan olarak boş bir dize.
+        error (Optional[str]): Çözümden kaynaklanabilecek hata mesajı. Varsayılan olarak None.
+        debug_info (Optional[str]): Debugging sürecinde kullanılabilecek ek bilgiler. Varsayılan olarak None.
+    """
+    title: str = ""
+    description: str = ""
+    function_name: str = ""
+    difficulty: int = 1
+    topic: str = ""
+    points: int = 10
+    example_input: str = "Örnek girdi yok"
+    example_output: str = "Örnek çıktı yok"
+    test_inputs: str = "[]"
+    solution_code: str = ""
+    error: Optional[str] = None
+    debug_info: Optional[str] = None
+
+class QuestionGenerationRequest(BaseModel):
+    """
+    Soru oluşturma isteğini temsil eden bir sınıf.
+
+    Bu sınıf, belirli bir konuda ve belirli bir zorluk seviyesinde soru oluşturma
+    isteğini tanımlar. Kullanıcının sağladığı açıklamalar veya öneriler,
+    soru oluşturma sürecini daha verimli hale getirmek için kullanılabilir.
+    """
+    difficulty_level: int = 1
+    topic: str = "genel"
+    description_hint: str = ""  # Kullanıcının açıkladığı soru ipucu
+    function_name_hint: str = ""  # Fonksiyon adı önerisi (opsiyonel)
+    tags: list = []
+
+class EventRequest(BaseModel):
+    event_type: str
+    data: Dict[str, Any]
+
+# AI model ile iletişim için yardımcı sınıf
+class AIClient:
+    def __init__(self, api_provider, api_key, model_name):
+        self.api_provider = api_provider
+        self.api_key = api_key
+        self.model = model_name
+        self.base_url = "https://generativelanguage.googleapis.com/v1"
+
+    def chat_completion(self, messages, max_tokens=100000):
+        try:
+            # Gemini API
+            if self.api_provider == "gemini":
+                import google.generativeai as genai
+                genai.configure(api_key=self.api_key)
+
+                # Model adını düzelt
+                gemini_model = self.model
+                if "models/" in gemini_model:
+                    gemini_model = gemini_model.replace("models/", "")
+
+                # Gemini 1.5 modellerini doğru formatta kullan
+                if gemini_model == "gemini-1.5-pro":
+                    gemini_model = "gemini-1.5-pro-latest"
+                elif gemini_model == "gemini-1.5-flash":
+                    gemini_model = "gemini-1.5-flash-latest"
+
+                # Mesajları Gemini formatına dönüştürme
+                system_prompt = None
+                user_messages = []
+                assistant_messages = []
+
+                for msg in messages:
+                    if msg["role"] == "system":
+                        system_prompt = msg["content"]
+                    elif msg["role"] == "user":
+                        user_messages.append(msg["content"])
+                    elif msg["role"] == "assistant":
+                        assistant_messages.append(msg["content"])
+
+                gen_config = genai.GenerationConfig(max_output_tokens=max_tokens)
+                gen_model = genai.GenerativeModel(model_name=gemini_model, generation_config=gen_config)
+
+                chat = gen_model.start_chat()
+
+                if system_prompt:
+                    chat.send_message(f"SYSTEM: {system_prompt}")
+
+                for i in range(max(len(user_messages), len(assistant_messages))):
+                    if i < len(user_messages):
+                        if i < len(assistant_messages):
+                            chat.send_message(user_messages[i])
+                            chat.send_message(assistant_messages[i])
+                        else:
+                            prompt = user_messages[i]
+                    if i < len(assistant_messages) and i >= len(user_messages):
+                        chat.send_message(assistant_messages[i])
+
+                prompt = user_messages[-1] if user_messages else (
+                        system_prompt or "Notebook hakkında bilgi verir misiniz?")
+
+                response = chat.send_message(prompt)
+
+                return {"content": response.text if hasattr(response, 'text') else str(response)}
+
+            else:
+                return {"error": "Desteklenmeyen AI sağlayıcısı"}
+
+        except Exception as e:
+            return {"error": str(e)}
+
+# Veritabanı oturumu dependency
+def get_db():
+    """
+    Bu fonksiyon, bir veritabanı oturumu oluşturup bu oturumu sağlayarak işlem
+    tamamlandığında oturumu düzgün bir şekilde kapatmayı garanti eder. Veritabanı
+    oturumlarının güvenli bir şekilde oluşturulmasını ve sonunda serbest
+    bırakılmasını sağlar. Bu yöntem, veritabanı işlemleri sırasında kaynak
+    yönetimini optimize eder.
+
+    Yields:
+        sqlalchemy.orm.Session: Oluşturulmuş veritabanı oturumu.
+    """
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+# Admin yetkilendirme (basit)
+def get_current_admin():
+    """
+    Fonksiyonun özeti:
+    Bu fonksiyon, varsayılan olarak bir yöneticinin kimliğinin elde edilmesinde kullanılır.
+    Gerçek bir uygulamada, bu işlem genellikle bir JWT tokeni ya da farklı bir
+    yetkilendirme mekanizması aracılığıyla yapılmalıdır. Burada yalnızca örnek bir
+    sözlük döndürülmektedir.
+
+    Returns:
+        dict: Kullanıcının yönetici olup olmadığını belirten bir sözlük.
+    """
+    # Gerçek bir uygulamada JWT token vb. ile yetkilendirme yapılmalı
+    return {"is_admin": True}
+
 
 @api.get("/api/server-status", response_model=ServerStatus)
 def server_status(admin: dict = Depends(get_current_admin), db=Depends(get_db)):
+    """
+    Hizmetin sağlıklı çalışırlığını göstermek için sunucu durum bilgilerini döndüren bir API fonksiyonu.
+    Bu yöntem, sistemin güncel durumunu ve performansını değerlendirmek için kullanılır.
+
+    Args:
+        admin (dict, optional): Geçerli yöneticiyi döndüren bir bağımlılık.
+        db: Veritabanı bağlantısını sağlayan bağımlılık.
+
+    Returns:
+        dict: Sunucu ve süreç bilgilerini içeren bir sözlük. Dönen anahtarlar şunlardır:
+            - python_version (str): Python'un mevcut sürümü.
+            - flask_version (str): Flask framework'ünün sürümü.
+            - mysql_version (str): MySQL veritabanının mevcut sürümü.
+            - ram_used (float): Toplam sistemde kullanılan RAM miktarı (GB cinsinden).
+            - ram_total (float): Sistemdeki toplam RAM miktarı (GB cinsinden).
+            - cpu_usage (float): Yüzdesel olarak sistem CPU kullanım oranı.
+            - process_ram_used (float): Çalışmakta olan sürecin kullandığı RAM miktarı (GB cinsinden).
+            - process_ram_allocated (float): Çalışmakta olan sürecin tahsis edilen RAM miktarı (GB cinsinden).
+    """
     # Python sürümü
     python_version = platform.python_version()
 
@@ -105,21 +522,6 @@ def server_status(admin: dict = Depends(get_current_admin), db=Depends(get_db)):
         'process_ram_used': process_ram_used,
         'process_ram_allocated': process_ram_allocated
     }
-
-
-# User model - sadece API amaçlı
-class UserRole(BaseModel):
-    id: int
-    name: str
-
-
-class UserData(BaseModel):
-    id: int
-    username: str
-    email: str
-    registered: str
-    roles: List[str]
-
 
 @api.get("/api/recent-users", response_model=List[UserData])
 def recent_users(admin: dict = Depends(get_current_admin), db=Depends(get_db)):
@@ -156,22 +558,6 @@ def recent_users(admin: dict = Depends(get_current_admin), db=Depends(get_db)):
         })
 
     return users
-
-class EvaluationRequest(BaseModel):
-    code: str
-    function_name: str
-    test_inputs: str
-    solution_code: str
-
-class EvaluationResult(BaseModel):
-    is_correct: bool
-    execution_time: float
-    errors: List[str]
-    test_count: int
-    passed_tests: int
-    failed_tests: int
-    test_results: Optional[dict] = None
-
 
 def check_indentation(code: str):
     """Kod içindeki girinti hatalarını ve sözdizimi hatalarını kontrol eder"""
@@ -408,88 +794,6 @@ def run_tests(user_function, solution_function, test_inputs):
             all_correct = False
 
     return test_results, passed_tests, failed_tests, all_correct, error_messages
-
-# --- AI Notebook Summary Modelleri ---
-class NotebookSummaryRequest(BaseModel):
-    notebook_path: str
-
-
-class NotebookSummaryResponse(BaseModel):
-    summary: str
-    code_explanation: str
-    last_updated: str
-    error: Optional[str] = None
-
-
-# AI model ile iletişim için yardımcı sınıf
-class AIClient:
-    def __init__(self, api_provider, api_key, model_name):
-        self.api_provider = api_provider
-        self.api_key = api_key
-        self.model = model_name
-        self.base_url = "https://generativelanguage.googleapis.com/v1"
-
-    def chat_completion(self, messages, max_tokens=100000):
-        try:
-            # Gemini API
-            if self.api_provider == "gemini":
-                import google.generativeai as genai
-                genai.configure(api_key=self.api_key)
-
-                # Model adını düzelt
-                gemini_model = self.model
-                if "models/" in gemini_model:
-                    gemini_model = gemini_model.replace("models/", "")
-
-                # Gemini 1.5 modellerini doğru formatta kullan
-                if gemini_model == "gemini-1.5-pro":
-                    gemini_model = "gemini-1.5-pro-latest"
-                elif gemini_model == "gemini-1.5-flash":
-                    gemini_model = "gemini-1.5-flash-latest"
-
-                # Mesajları Gemini formatına dönüştürme
-                system_prompt = None
-                user_messages = []
-                assistant_messages = []
-
-                for msg in messages:
-                    if msg["role"] == "system":
-                        system_prompt = msg["content"]
-                    elif msg["role"] == "user":
-                        user_messages.append(msg["content"])
-                    elif msg["role"] == "assistant":
-                        assistant_messages.append(msg["content"])
-
-                gen_config = genai.GenerationConfig(max_output_tokens=max_tokens)
-                gen_model = genai.GenerativeModel(model_name=gemini_model, generation_config=gen_config)
-
-                chat = gen_model.start_chat()
-
-                if system_prompt:
-                    chat.send_message(f"SYSTEM: {system_prompt}")
-
-                for i in range(max(len(user_messages), len(assistant_messages))):
-                    if i < len(user_messages):
-                        if i < len(assistant_messages):
-                            chat.send_message(user_messages[i])
-                            chat.send_message(assistant_messages[i])
-                        else:
-                            prompt = user_messages[i]
-                    if i < len(assistant_messages) and i >= len(user_messages):
-                        chat.send_message(assistant_messages[i])
-
-                prompt = user_messages[-1] if user_messages else (
-                        system_prompt or "Notebook hakkında bilgi verir misiniz?")
-
-                response = chat.send_message(prompt)
-
-                return {"content": response.text if hasattr(response, 'text') else str(response)}
-
-            else:
-                return {"error": "Desteklenmeyen AI sağlayıcısı"}
-
-        except Exception as e:
-            return {"error": str(e)}
 
 
 @api.post("/api/notebook-summary", response_model=NotebookSummaryResponse)
@@ -866,17 +1170,6 @@ KESİN KISITLAMALAR: Kesinlikle önceki analizlere atıfta bulunma, Özür dilem
             "error": f"Notebook özeti oluşturulurken hata: {str(e)}"
         }
 
-from typing import Optional, List
-
-class DetailedQuestion(BaseModel):
-    id: int
-    title: str
-    description: str
-    difficulty: int
-    points: int
-    updated_at: str
-    created_at: str
-
 @api.get("/api/last-questions-detail", response_model=List[DetailedQuestion])
 def get_last_questions_detail(limit: Optional[int] = 5, db=Depends(get_db)):
     """
@@ -933,29 +1226,6 @@ def get_last_questions_detail(limit: Optional[int] = 5, db=Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-class LeaderboardEntry(BaseModel):
-    """
-    Bir liderlik tablosu girdisi için veri modelini temsil eder.
-
-    LeaderboardEntry sınıfı, bir kullanıcının liderlik tablosundaki durumunu temsil
-    eder. Kullanicinin adını, puanını ve sıralamasını içerir.
-
-    Attributes:
-        username (str): Kullanıcının kullanıcı adı.
-        points (int): Kullanıcının kazandığı puan sayısı.
-        rank (int): Kullanıcının liderlik tablosundaki sıralaması.
-    """
-    username: str
-    points: int
-    rank: int
-
-
-class LeaderboardResponse(BaseModel):
-    users: List[LeaderboardEntry]
-    total: int
-    limit: int
-
 @api.get("/api/leaderboard", response_model=LeaderboardResponse)
 def get_leaderboard_api(limit: int = 20, db=Depends(get_db)):
     """
@@ -1006,16 +1276,6 @@ def get_leaderboard_api(limit: int = 20, db=Depends(get_db)):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-class SubmissionDetail(BaseModel):
-    id: int
-    user_id: int
-    username: str
-    question_id: int
-    question_title: str
-    is_correct: bool
-    execution_time: float
-    created_at: str
 
 @api.get("/api/last-submissions", response_model=List[SubmissionDetail])
 def get_last_submissions(limit: Optional[int] = 10, db=Depends(get_db)):
@@ -1151,39 +1411,6 @@ def chart_activity_stats(days: Optional[int] = 30, db=Depends(get_db)):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-class Badge(BaseModel):
-    id: int
-    name: str
-    icon: str
-    description: str
-
-
-class Activity(BaseModel):
-    id: int
-    type: str
-    content: dict
-    date: str
-
-
-class UserStats(BaseModel):
-    solvedProblems: int
-    codingDays: int
-    activeDaysStreak: int
-    solutedProblemsPercentage: float
-
-
-class UserProfileData(BaseModel):
-    username: str
-    email: str
-    joinDate: Optional[str]
-    isCurrentUser: bool = False
-    badges: List[Badge]
-    stats: UserStats
-    activities: List[Activity]
-    dailyActivity: List[dict]
-
-from fastapi import Query
 
 @api.get("/api/user-profile/{username}", response_model=UserProfileData)
 def get_user_profile(username: str, current_user_id: Optional[int] = "0", db=Depends(get_db)):
@@ -1325,27 +1552,6 @@ def get_user_profile(username: str, current_user_id: Optional[int] = "0", db=Dep
         raise ex
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-class GeneratedQuestionResponse(BaseModel):
-    title: str = ""
-    description: str = ""
-    function_name: str = ""
-    difficulty: int = 1
-    topic: str = ""
-    points: int = 10
-    example_input: str = "Örnek girdi yok"
-    example_output: str = "Örnek çıktı yok"
-    test_inputs: str = "[]"
-    solution_code: str = ""
-    error: Optional[str] = None
-    debug_info: Optional[str] = None
-
-class QuestionGenerationRequest(BaseModel):
-    difficulty_level: int = 1
-    topic: str = "genel"
-    description_hint: str = ""  # Kullanıcının açıkladığı soru ipucu
-    function_name_hint: str = ""  # Fonksiyon adı önerisi (opsiyonel)
-    tags: list = []
 
 @api.post("/api/generate-question", response_model=GeneratedQuestionResponse)
 def generate_programming_question(request: QuestionGenerationRequest, db=Depends(get_db)):
@@ -1641,10 +1847,6 @@ Yanıtını JSON formatında oluştur:
             "test_inputs": "[]",
             "solution_code": ""
         }
-
-class EventRequest(BaseModel):
-    event_type: str
-    data: Dict[str, Any]
 
 @api.post("/api/trigger-event")
 def trigger_event(request: EventRequest):

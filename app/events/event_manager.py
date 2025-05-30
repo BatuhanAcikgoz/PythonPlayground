@@ -21,6 +21,17 @@ class EventManager:
     _instance = None
 
     def __new__(cls):
+        """
+        Singleton tasarım deseni ile EventManager sınıfının tek bir örneğinin oluşturulmasını
+        ve bu örnek üzerinden kullanıcı tanımlı olayların yönetimini sağlar.
+
+        Attributes:
+            _instance (EventManager): Sınıfın tek örneğini saklar.
+            _handlers (dict): Her bir olay türü için bir dizi işlemci (handler) listesi içerir.
+
+        Returns:
+            EventManager: Sınıfın mevcut bir örneğini döner ya da bir örnek oluşturur.
+        """
         if cls._instance is None:
             cls._instance = super(EventManager, cls).__new__(cls)
             cls._instance._handlers = {event_type: [] for event_type in EventType}

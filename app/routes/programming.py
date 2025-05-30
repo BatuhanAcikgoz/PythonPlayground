@@ -18,7 +18,23 @@ programming_bp = Blueprint('programming', __name__)
 @programming_bp.route('/questions')
 @login_required
 def questions():
-    """Programlama sorularını listeler"""
+    """
+    Fonksiyon, "/questions" adlı bir route tanımlar ve oturum açmış kullanıcılar için
+    mevcut programlama sorularını görüntüler. Sorular zorluk derecesine göre sıralanır ve
+    her bir soru için kullanıcının önceki çözümlerine bakarak çözülüp çözülmediği bilgisi
+    eklenir. Sonuç, bir HTML şablonuna gönderilir ve kullanıcıya soruların listesi
+    görüntülenir.
+
+    Args:
+        None
+
+    Returns:
+        flask.Response: Soruların listelendiği 'questions.html' şablonunun oluşturulmuş
+        yanıtını döner.
+
+    Raises:
+        None
+    """
     questions = ProgrammingQuestion.query.order_by(ProgrammingQuestion.difficulty).all()
 
     # Her soru için kullanıcının çözüp çözmediğini kontrol et
@@ -29,7 +45,25 @@ def questions():
 
 
 def generate_starter_code(question):
-    """Sorunun test girdilerine göre başlangıç kodu oluşturur"""
+    """
+    generate_starter_code fonksiyonu, verilen bir soruya dayalı olarak Python başlatıcı kodu üreten bir yardımcı
+    fonksiyondur. Fonksiyon, soru verilerini analiz ederek otomatik bir şablon oluşturur. Özellikle, test girdileri,
+    çözüm kodu ve beklenen dönüş türleri gibi parametrelerden yararlanır.
+
+    Parameters:
+        question (Any):
+            Fonksiyona geçtiğiniz soru nesnesi. Bu nesne aşağıdaki özellikleri içermelidir:
+            - function_name: String, oluşturulacak fonksiyonun adı.
+            - test_inputs: JSON formatında, test giriş verileri.
+            - solution_code: String, kabul edilen çözüm kodu.
+
+    Returns:
+        str:
+            Verilen kurallara göre Python başlangıç şablon kodunu içeren bir metin döndürür.
+
+    Raises:
+        None
+    """
     import json
 
     function_name = question.function_name
@@ -95,7 +129,20 @@ def generate_starter_code(question):
 @programming_bp.route('/questions/<int:id>')
 @login_required
 def question(id):
-    """Belirtilen programlama sorusunu gösterir"""
+    """
+    Görselleştirme ve kullanıcı etkileşimleri için bir programlama sorusunun detaylarını içeren bir
+    sayfanın görüntülenmesini sağlayan bir fonksiyon. Soruları çözme durumu ve önceki gönderimler
+    kontrol edilerek kullanıcı deneyimi optimize edilir.
+
+    Arguments:
+        id (int): Görüntülenecek programlama sorusunun kimliği.
+
+    Returns:
+        Response: Şablon render edilerek oluşturulan HTTP cevabını döner.
+
+    Raises:
+        404 Not Found: Eğer verilen id ile eşleşen bir programlama sorusu bulunamazsa hata yükselir.
+    """
     question = ProgrammingQuestion.query.get_or_404(id)
 
     # Kullanıcının bu soruyu daha önce doğru çözüp çözmediğini kontrol et
@@ -123,6 +170,21 @@ def question(id):
 @programming_bp.route('/questions/<int:id>/submit', methods=['POST'])
 @login_required
 def submit_solution(id):
+    """
+    submit_solution fonksiyonu bir programlama sorusuna yönelik kod çözümünün gönderilmesine olanak tanıyan bir HTTP POST route'udur.
+    Kullanıcıdan gelen çözüm kodunu, ilgili sorunun işlev ismini ve test verilerini değerlendirerek,
+    sonuçları veritabanına kaydeder ve başarı durumuna göre kullanıcıyı bilgilendirir ya da hata mesajları döner.
+
+    Args:
+        id (int): Değerlendirilecek sorunun kimlik numarası.
+
+    Raises:
+        None.
+
+    Returns:
+        Werkzeug Response: Gönderme işlemini tamamladıktan sonra kullanıcıyı uygun bir sayfaya yönlendiren cevap.
+
+    """
     question = ProgrammingQuestion.query.get_or_404(id)
     form = SolutionSubmitForm()
 
@@ -175,7 +237,22 @@ def submit_solution(id):
 @programming_bp.route('/submissions/<int:id>')
 @login_required
 def submission(id):
-    """Belirli bir gönderimi gösterir"""
+    """
+    Bu fonksiyon belirtilen bir gönderimi yükler ve doğrular. Gönderim yalnızca, ilgili
+    kullanıcıya aitse veya kullanıcının 'teacher' ya da 'admin' rolü varsa görüntülenebilir.
+
+    Arguments:
+        id: int
+            Görüntülenmek istenen gönderimin ID değeri.
+
+    Returns:
+        TemplateResponse
+            "Gönderim detayları" sayfası için bir şablon yanıt döndürür.
+
+    Raises:
+        NotFound
+            Verilen ID ile eşleşen bir gönderim bulunamazsa, bir HTTP 404 Hatası oluşturur.
+    """
     submission = Submission.query.get_or_404(id)
 
     # Sadece kendi gönderimleri veya öğretmen/admin rolüne sahipse göster
@@ -190,7 +267,19 @@ def submission(id):
 @programming_bp.route('/my-submissions')
 @login_required
 def my_submissions():
-    """Kullanıcının gönderimleri"""
+    """
+    Bir kullanıcının kendi gönderimlerini listeleyen bir rota işlevi.
+
+    Kullanıcı oturumunu kontrol eder. Kullanıcının ID'sine göre veritabanındaki
+    Submission modelinden ilgili gönderimleri alır ve gönderim tarihine göre sıralar.
+    Listeyi HTML şablonuna göndererek sunar.
+
+    Args:
+        None
+
+    Returns:
+        flask.Response: HTML şablonu yanıtı ile birlikte döner.
+    """
     submissions = Submission.query.filter_by(user_id=current_user.id) \
         .order_by(Submission.created_at.desc()).all()
 
@@ -200,7 +289,25 @@ def my_submissions():
 @programming_bp.route('/questions/<int:id>/evaluate', methods=['POST'])
 @login_required
 def evaluate_code(id):
-    """AJAX ile kod değerlendirme"""
+    """
+    Bu işlev, belirli bir soru için kullanıcının gönderdiği kodu değerlendirmek amacıyla bir API'ye
+    istekte bulunur. Kodun doğruluğunu kontrol eder, test girdilerine göre sonucu işler ve API'den
+    alınan yanıtı kullanıcıya döner. API bağlantı hataları ve geçersiz form verileri gibi durumlar
+    için hataları JSON formatında döner.
+
+    Args:
+        id (int): Değerlendirilecek sorunun benzersiz kimliği.
+
+    Raises:
+        requests.RequestException: Eğer API bağlantısında bir sorun olursa hata fırlatır.
+
+    Returns:
+        flask.Response: Kod doğruluğu ve ilişkili sonuçları içeren JSON formatındaki yanıt. Olası
+        durum kodları şunlardır:
+            - 200: Kod başarıyla değerlendirildi ve sonuç döndü.
+            - 400: Geçersiz form verileri gönderildi.
+            - 500: Kod değerlendirme servisi geçici olarak kullanılamıyor.
+    """
     question = ProgrammingQuestion.query.get_or_404(id)
     form = CodeEvaluationForm()
 

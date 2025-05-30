@@ -1,6 +1,14 @@
 from app.models.base import db
 
 class Setting(db.Model):
+    """
+    Veritabanı modeli ile uygulama ayarlarını yönetir.
+
+    Bu sınıf, uygulamanın dinamik ayarlarını yönetmek için bir model sunar. Ayarlar
+    anahtar-değer çiftleri şeklinde saklanır ve gerekli olduğunda ayarın tipi
+    dönüştürülerek kullanılabilir. Ayrıca, ayarlarda oluşturma veya güncelleme
+    işlemlerini kolay bir şekilde yapmak için çeşitli yardımcı yöntemler içerir.
+    """
     __tablename__ = 'settings'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -12,7 +20,18 @@ class Setting(db.Model):
 
     @classmethod
     def get(cls, key, default=None):
-        """Belirli bir anahtarın değerini döndür"""
+        """
+        classmethod get metodu, ayarları sorgulayıp anahtar değeri ile eşleşen ayarı döndürmek için kullanılır.
+        Ayarlara karşılık gelen değer, ayarın türüne göre uygun şekilde dönüştürülür. Eğer herhangi bir eşleşen
+        ayar bulunmazsa varsayılan değer döndürülür.
+
+        Parameters:
+            key (str): Aranan ayarın anahtar değeri.
+            default (Optional[Any]): Ayar bulunamadığında döndürülecek olan varsayılan değer.
+
+        Returns:
+            Any: Anahtar ile eşleşen ayarın değeri, ayar bulunamazsa varsayılan değer döner.
+        """
         setting = cls.query.filter_by(key=key).first()
         if not setting:
             return default
@@ -29,7 +48,21 @@ class Setting(db.Model):
 
     @classmethod
     def set(cls, key, value, type=None, category=None, description=None):
-        """Ayarı güncelle veya oluştur"""
+        """
+        Sınıfın ayarlarını yapılandırma ve yönetme işlemleri için kullanılan bir yöntemi
+        tanımlar.
+
+        Args:
+            key (str): Ayar için kullanılacak anahtar.
+            value (Any): Ayar için atanacak değer.
+            type (str, optional): Ayarın türünü belirtir. Varsayılan olarak None.
+            category (str, optional): Ayarın kategorisini belirtir. Varsayılan olarak None.
+            description (str, optional): Ayara ilişkin açıklama metni sağlar. Varsayılan
+                olarak None.
+
+        Returns:
+            None
+        """
         setting = cls.query.filter_by(key=key).first()
 
         if setting:
@@ -51,7 +84,26 @@ class Setting(db.Model):
             db.session.add(setting)
 
 def add_ai_settings():
-    """AI ayarlarını Settings tablosuna ekler - Sadece Gemini API için"""
+    """
+    add_ai_settings fonksiyonu, AI ile ilgili yapılandırma ayarlarını veri tabanına
+    eklemek için oluşturulmuştur. Eğer belirli bir ayar veri tabanında zaten mevcut
+    değilse, ayar eklenir. Mevcut ayarlara müdahale edilmez. Bu fonksiyon,
+    yazılımın kullanıcı tarafından aktif edilen ya da yapılandırılan AI özelliklerini
+    kullanabilmesine olanak tanır.
+
+    Attributes:
+        ai_settings (list): AI yapılandırma ayarlarını içeren bir liste. Her bir
+        ayar, açıklama, tip, kategori, anahtar ve varsayılan değere sahiptir.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+
+    Raises:
+        None
+    """
     ai_settings = [
         {'key': 'ai_enable_features', 'value': 'True', 'type': 'bool', 'category': 'ai',
          'description': 'AI özelliklerinin kullanımını etkinleştirir'},

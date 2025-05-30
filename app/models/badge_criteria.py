@@ -3,6 +3,13 @@ from enum import Enum
 
 
 class CriteriaType(Enum):
+    """
+    CriteriaType, ödüllendirme kriterlerini temsil eden enum sınıfıdır.
+
+    Bu sınıf, belirli ödüllendirme kriterlerini tanımlamak ve sınıflandırmak amacıyla
+    kullanılır. Enum yapısı ile farklı kriter türlerini sembolik isimler aracılığıyla
+    ifade eder.
+    """
     TYPE_REGISTRATION = "registration"
     TYPE_POINT_THRESHOLD = "point_threshold"
     TYPE_QUESTION_SOLVED = "question_solved"
@@ -10,6 +17,38 @@ class CriteriaType(Enum):
 
 
 class BadgeCriteria(db.Model):
+    """
+    BadgeCriteria sınıfı kriterleri tanımlar ve işlemlerini gerçekleştirir.
+
+    Bu sınıf, ödül sisteminde kullanılan kriterlerin tanımlanmasını ve işlenmesini sağlar. Farklı
+    kriter tipleri (örneğin, kayıt, puan eşiği, çözülmüş soru vb.) için gerekli bilgilerin
+    saklanması ve bu kriterlerin bir kullanıcı tarafından karşılanıp karşılanmadığının kontrol
+    edilmesi gibi işlemleri gerçekleştirir. Ayrıca badge nesneleri ile ilişkilidir.
+
+    Attributes:
+        TYPE_REGISTRATION: str
+            Kullanıcı kaydı üzerine bir kriteri temsil eder.
+        TYPE_POINT_THRESHOLD: str
+            Kullanıcının belirli bir puan eşiğini geçmesini gerektiren bir kriteri temsil eder.
+        TYPE_QUESTION_SOLVED: str
+            Kullanıcının belirli bir soruyu çözmesini gerektiren bir kriteri temsil eder.
+        TYPE_QUESTIONS_COUNT: str
+            Kullanıcının belirli sayıda soru çözmesini gerektiren bir kriteri temsil eder.
+        id: int
+            Kriterin benzersiz kimliği.
+        badge_id: int
+            Kriterin bağlı olduğu badge'in kimliği.
+        criteria_type: str
+            Kriter tipi.
+        criteria_value: str
+            Kriter için gereken eşik ya da değer.
+        created_at: datetime
+            Kriterin oluşturulduğu tarih ve saat.
+        updated_at: datetime
+            Kriterin güncellendiği tarih ve saat.
+        badge: Badges
+            Kriterin ilişkilendirildiği badge nesnesi.
+    """
     __tablename__ = 'badge_criteria'
 
     TYPE_REGISTRATION = "registration"
@@ -28,10 +67,30 @@ class BadgeCriteria(db.Model):
     badge = db.relationship('Badges', backref=db.backref('criteria', lazy=True, cascade='all, delete-orphan'))
 
     def __repr__(self):
+        """
+        __repr__ özel metodu, BadgeCriteria nesnesinin metinsel temsili için özelleştirilmiş
+        bir string döndürür. Bu, genellikle nesnenin okunabilir bir özetini sağlar ve hata
+        ayıklama veya kayıt işlemleri sırasında kullanışlıdır.
+
+        Returns:
+            str: BadgeCriteria nesnesini temsil eden özelleştirilmiş string.
+        """
         return f'<BadgeCriteria {self.criteria_type} for Badge {self.badge_id}>'
 
     def is_satisfied_by(self, user):
-        """Kullanıcının bu kriteri karşılayıp karşılamadığını kontrol eder"""
+        """
+        Belirli bir kullanıcı ve kriter türüne göre kriterin sağlanıp sağlanmadığını kontrol eder.
+
+        Bu metod, farklı kriter türleri ve değerlerini temel alarak, bir kullanıcının belirli koşulları
+        sağlayıp sağlamadığını değerlendirir. Değerlendirme işlemi kullanıcının verisine ve ilgili
+        kriterin belirttiği koşullara bağlıdır.
+
+        Args:
+            user (User): Kriter değerlendirilirken kontrol edilecek kullanıcının örneği.
+
+        Returns:
+            bool: Sağlanan kriteri kullanıcının karşılayıp karşılamadığına bağlı olarak True veya False döner.
+        """
         from app.models.user import User
         from app.models.submission import Submission
         from sqlalchemy import func
@@ -78,11 +137,28 @@ class BadgeCriteria(db.Model):
         return False
 
     def get_criteria_value(self):
-        """Kriter değerini döndürür"""
+        """
+        Bu yöntem, `criteria_value` özelliğinin değerini döndürmek için
+        kullanılır. Özellik, sınıf içindeki belirli bir kriterin değerini
+        temsil eder ve bu değer çağrıldığında erişilebilir hale gelir.
+
+        Returns:
+            Any: `criteria_value` özelliğinin değeri.
+        """
         return self.criteria_value
 
     def get_value(self):
-        """Kriter değerini döndürür"""
+        """
+        Bu fonksiyon, bir nesne içinde yer alan 'criteria_value' özelliğini kontrol ederek dönüş
+        değerini belirler. Eğer 'criteria_value' özelliği bir tamsayıya dönüştürülebiliyorsa bu
+        tamsayı değeri döndürülür. Aksi takdirde 'criteria_value' olduğu gibi döndürülür. Eğer
+        'criteria_value' None ise None değerini döndürür.
+
+        Returns:
+            int | str | None: Fonksiyon, 'criteria_value' özelliğini tamsayıya dönüştürebilirse
+            bir tamsayı değer döndürür, dönüştürmeyi başaramazsa string değer döndürür. Eğer
+            'criteria_value' None ise None döner.
+        """
         if self.criteria_value:
             try:
                 return int(self.criteria_value)

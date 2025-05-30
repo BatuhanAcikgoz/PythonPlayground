@@ -4,8 +4,13 @@ from wtforms.validators import DataRequired
 
 
 class BadgeForm(FlaskForm):
-    """
-    Form for creating and updating badges.
+    """BadgeForm, bir form sınıfıdır ve genellikle kullanıcıdan belirli bilgileri
+    toplamak için kullanılır.
+
+    Bu sınıf, belirli rozet bilgilerini almak veya işlemek için oluşturulmuştur.
+    Flask-WTF paketine dayanır ve çeşitli alanlardan oluşur. Her alan için belirli
+    validasyon kuralları belirlenmiştir, böylece doğru ve eksiksiz bilgi girişi
+    sağlanabilir.
     """
     name = StringField('Badge Name', validators=[DataRequired()])
     description = StringField('Description', validators=[DataRequired()])
