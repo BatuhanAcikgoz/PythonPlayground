@@ -38,7 +38,6 @@
 <body class="bg-gray-50">
     <div id="root"></div>
 
-    <!-- Define global variables for component access -->
     <script>
         window.APP_DATA = {
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
@@ -46,7 +45,6 @@
                 username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
                 email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
             },
-            // Header translations
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
@@ -71,7 +69,6 @@
         };
     </script>
 
-    <!-- Load component scripts -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
@@ -130,7 +127,7 @@
                     id={id}
                     name={name}
                     defaultValue={value || ''}
-                    className="hidden" // Hidden as CodeMirror replaces this
+                    className="hidden"
                 />
             );
         };
@@ -142,7 +139,7 @@
             const [savedSuccess, setSavedSuccess] = React.useState(false);
             const editorRef = React.useRef(null);
 
-            // forceUpdate için basit bir reducer ekleyin
+            // forceUpdate için basit bir reducer ekleyin yeniden render için
             const [, forceUpdate] = React.useReducer(x => x + 1, 0);
 
             const [formData, setFormData] = React.useState({
@@ -202,7 +199,7 @@
                     } catch (e2) {
                         console.error("JSON düzeltme başarısız:", e2);
 
-                        // Daha agresif düzeltme girişimi
+                        // Daha detaylı düzeltme girişimi
                         try {
                             // Dizinin başlangıcını ve sonunu düzelt
                             let fixedJson = jsonString.trim();
@@ -216,7 +213,7 @@
                             JSON.parse(fixedJson);
                             return fixedJson;
                         } catch (e3) {
-                            console.error("Agresif JSON düzeltme de başarısız:", e3);
+                            console.error("Detaylı JSON düzeltme de başarısız:", e3);
                             return defaultValue;
                         }
                     }

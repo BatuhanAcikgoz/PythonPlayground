@@ -12,7 +12,7 @@ class ProgrammingQuestion(db.Model):
     example_input = db.Column(db.Text)
     example_output = db.Column(db.Text)
     function_name = db.Column(db.String(100), nullable=False)
-    solution_code = db.Column(db.Text, nullable=False)  # Admin'in çözümü
+    solution_code = db.Column(db.Text, nullable=False)
     test_inputs = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

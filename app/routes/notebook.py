@@ -43,7 +43,6 @@ def register_socketio_handlers(socketio):
 @notebook_bp.route('/summary/<path:notebook_path>')
 @login_required
 def summary(notebook_path):
-    # URL'deki '/notebook/summary/' öneki dosya yoluna dahil edilmiş olabilir
     if notebook_path.startswith('notebook/summary/'):
         notebook_path = notebook_path[len('notebook/summary/'):]
 

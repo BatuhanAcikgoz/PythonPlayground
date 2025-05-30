@@ -27,7 +27,6 @@
 <body class="bg-gray-50">
     <div id="root"></div>
 
-    <!-- Define global variables for component access -->
     <script>
         window.APP_DATA = {
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
@@ -56,7 +55,6 @@
             adminData: {
                 users: {{ users|tojson|safe }}
             },
-            // URL'leri url_for ile tanımlıyoruz
             urls: {
                 adminIndex: "{{ url_for('admin.index') }}",
                 adminUsers: "{{ url_for('admin.users') }}",
@@ -69,7 +67,6 @@
         };
     </script>
 
-    <!-- Load component scripts -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
@@ -81,7 +78,6 @@
 
     <script type="text/babel">
         const App = () => {
-            // Translations
             const translations = {
                 admin_panel: {{ _('admin_panel')|tojson|safe }},
                 dashboard: {{ _('dashboard')|tojson|safe }} || "Dashboard",

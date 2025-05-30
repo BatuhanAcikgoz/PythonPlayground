@@ -39,16 +39,13 @@
 <body class="bg-gray-50">
     <div id="root"></div>
 
-    <!-- Define global variables for component access -->
     <script>
         window.APP_DATA = {
-            // User information
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
             userData: {
                 username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
                 email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
             },
-            // Header translations
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
@@ -62,14 +59,11 @@
                 profile: "Profile",
                 settings: "Settings"
             },
-            // Footer translations
             footerTrans: {
                 allRights: {{ _('all_rights')|tojson|safe }},
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
-            // Current language
             currentLang: {{ session.get('language', 'tr')|tojson }},
-            // URL'leri url_for ile tanımlıyoruz
             urls: {
                 home: "{{ url_for('main.index') }}",
                 viewNotebook: "{{ url_for('notebook.view', notebook_path='dummy') }}".replace('/dummy', '/'),
@@ -86,12 +80,10 @@
         };
     </script>
 
-    <!-- Load component scripts -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
     <script type="text/babel">
-        // CodeBlock bileşeni
         const CodeMirrorEditor = ({ value, onChange, disabled, readOnly }) => {
             const editorRef = React.useRef(null);
             const cmRef = React.useRef(null);
@@ -155,13 +147,13 @@
             );
         };
 
-        const NotebookViewer = ({ notebook, translations, urls }) => {
+        const NotebookViewer = ({ notebook, translations}) => {
             const [socket, setSocket] = React.useState(null);
             const [consoleOutput, setConsoleOutput] = React.useState([]);
             const [inputValue, setInputValue] = React.useState('');
             const [isInputMode, setIsInputMode] = React.useState(false);
             const [commandHistory, setCommandHistory] = React.useState([]);
-            const [historyIndex, setHistoryIndex] = React.useState(-1);
+            const [, setHistoryIndex] = React.useState(-1);
             const [isExecuting, setIsExecuting] = React.useState(false);
 
             const consoleOutputRef = React.useRef(null);
@@ -193,15 +185,11 @@
                     newSocket.disconnect();
                 };
             }, []);
-
-            // Scroll console output to bottom when updated
             React.useEffect(() => {
                 if (consoleOutputRef.current) {
                     consoleOutputRef.current.scrollTop = consoleOutputRef.current.scrollHeight;
                 }
             }, [consoleOutput]);
-
-            // Initialize marked for rendering markdown
             React.useEffect(() => {
                 marked.setOptions({
                     breaks: true,
@@ -230,7 +218,7 @@
 
             return (
                 <div className="flex flex-col md:flex-row h-[calc(100vh-220px)] bg-white rounded-lg shadow-md overflow-hidden p-5">
-                    {/* Notebook Content */}
+                    {/* Notebook İçeriği */}
                     <div className="w-full md:w-1/2 overflow-y-auto p-6 border-r border-gray-200">
                         {notebook.cells.map((cell, index) => (
                             <div key={index} className={`mb-6 pl-4 ${cell.cell_type === 'code' ? 'border-l-4 border-blue-500' : 'border-l-4 border-green-500'}`}>
@@ -266,7 +254,7 @@
                         ))}
                     </div>
 
-                    {/* Console Section */}
+                    {/* Console Kısmı */}
                     <div className="w-full md:w-1/2 flex flex-col">
                         <div className="flex-1 bg-gray-900 text-gray-100 overflow-y-auto" ref={consoleOutputRef}>
                             {consoleOutput.map((item, index) => (

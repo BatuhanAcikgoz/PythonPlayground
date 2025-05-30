@@ -33,8 +33,6 @@
 </head>
 <body class="bg-gray-50">
     <div id="root"></div>
-
-    <!-- Global değişkenleri tanımla -->
     <script>
         window.APP_DATA = {
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
@@ -60,19 +58,18 @@
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
             currentLang: {{ session.get('language', 'tr')|tojson }},
-            // URL'leri url_for ile tanımlıyoruz
             urls: {
                 home: "{{ url_for('main.index') }}",
                 leaderboard: "{{ url_for('main.leaderboard') }}",
                 about: "{{ url_for('main.about') }}",
                 adminIndex: "{{ url_for('admin.index') }}",
-                viewProfile: "{{ url_for('auth.profile', username=0) }}", // Bu endpoint için uygun url_for eklenmelidir
+                viewProfile: "{{ url_for('auth.profile', username=0) }}",
                 setLanguage: {
                     tr: "{{ url_for('main.set_language', language='tr') }}",
                     en: "{{ url_for('main.set_language', language='en') }}"
                 },
                 api: {
-                    leaderboard: "/api/leaderboard" // API endpoint için uygun url_for eklenmelidir
+                    leaderboard: "/api/leaderboard"
                 }
             }
         };
@@ -85,7 +82,6 @@
     <script type="text/babel">
         const App = () => {
             // Flask şablonundan veri al
-            const users = {{ users|tojson|safe if users is defined else '[]' }};
             const urls = window.APP_DATA.urls;
 
             const LeaderboardTable = () => {

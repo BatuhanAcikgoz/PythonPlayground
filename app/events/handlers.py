@@ -16,7 +16,6 @@ def notebook_accessed_handler(data):
     username = data.get("username", "bilinmeyen")
     notebook_id = data.get("notebook_id", "bilinmeyen")
     logger.info(f"{username} kullanıcısı {notebook_id} numaralı not defterine erişti")
-    # Burada erişim istatistiklerini güncelleme gibi işlemler yapılabilir
 
 
 def notebook_summary_viewed_handler(data):
@@ -24,7 +23,6 @@ def notebook_summary_viewed_handler(data):
     username = data.get("username", "bilinmeyen")
     notebook_id = data.get("notebook_id", "bilinmeyen")
     logger.info(f"{username} kullanıcısı {notebook_id} numaralı not defterinin özetini görüntüledi")
-    # Burada erişim istatistiklerini güncelleme gibi işlemler yapılabilir
 
 logger = logging.getLogger(__name__)
 

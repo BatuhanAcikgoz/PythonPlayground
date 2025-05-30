@@ -44,7 +44,6 @@
 <body class="bg-gray-50">
     <div id="root"></div>
 
-    <!-- Define global variables for component access -->
     <script>
         window.APP_DATA = {
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
@@ -81,7 +80,6 @@
                     {% endfor %}
                 {% endwith %}
             ],
-            // Submission data
             submission: {
                 id: {{ submission.id }},
                 code: {{ submission.code|tojson|safe }},
@@ -108,12 +106,10 @@
         };
     </script>
 
-    <!-- Load component scripts -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
     <script type="text/babel">
-        // CodeEditor component
         const CodeEditor = ({ id, name, value, onChange, readOnly }) => {
             const editorRef = React.useRef(null);
             const textareaRef = React.useRef(null);

@@ -9,7 +9,6 @@ main_bp = Blueprint('main', __name__)
 
 def clone_repo():
     """Repository klonlama veya güncelleme işlemi"""
-    # REPO_URL'yi doğrudan tanımla - app_legacy'den alındı
     repo_url = 'https://github.com/msy-bilecik/ist204_2025'
     repo_dir = os.path.join(os.getcwd(), 'notebooks_repo')
 
@@ -107,14 +106,11 @@ def set_language(language):
 
 @main_bp.route('/components/<path:filename>')
 def serve_component(filename):
-    # JSX bileşenleri templates/js/components klasöründe
     return send_from_directory('templates/js/components', filename)
 
 @main_bp.route('/leaderboard')
 def leaderboard():
     """Liderlik tablosu sayfasını görüntüler"""
-    # Template'e sadece temel parametreleri geçirelim,
-    # veriler API'den React bileşeniyle çekilecek
     return render_template('leaderboard.html')
 
 @main_bp.route('/about')

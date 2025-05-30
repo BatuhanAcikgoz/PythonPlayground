@@ -36,10 +36,10 @@
             position: absolute;
             z-index: 1;
             bottom: 125%;
-            right: 0; /* Sol hiza yerine sağa hizala */
+            right: 0;
             opacity: 0;
             transition: opacity 0.3s;
-            white-space: normal; /* Yazının tooltip içinde sarmasına izin ver */
+            white-space: normal;
         }
         .tooltip-container:hover .tooltip {
             visibility: visible;
@@ -49,7 +49,7 @@
             content: "";
             position: absolute;
             top: 100%;
-            right: 35px; /* Ok pozisyonunu sağa doğru ayarla */
+            right: 35px;
             border-width: 5px;
             border-style: solid;
             border-color: #555 transparent transparent transparent;
@@ -59,7 +59,6 @@
 <body class="bg-gray-50">
     <div id="root"></div>
 
-    <!-- Define global variables for component access -->
     <script>
         window.APP_DATA = {
             // Flash mesajları
@@ -119,7 +118,6 @@
         };
     </script>
 
-    <!-- Load component scripts -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 

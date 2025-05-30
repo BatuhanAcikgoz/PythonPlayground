@@ -32,8 +32,6 @@ class SettingForm(FlaskForm):
     mail_username = StringField('Mail Kullanıcı Adı')
     mail_password = PasswordField('Mail Şifresi')
     mail_use_tls = SelectField('Mail TLS', choices=[('1', 'Evet'), ('0', 'Hayır')])
-
-    # AI ile ilgili form alanları
     enable_ai_features = SelectField('AI Özellikleri', choices=[('1', 'Açık'), ('0', 'Kapalı')])
     api_provider = SelectField('API Sağlayıcı',
                                choices=[('gemini', 'Google Gemini')],

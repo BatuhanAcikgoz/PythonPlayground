@@ -52,7 +52,7 @@ def generate_starter_code(question):
                 parameters.append(param_name)
                 param_types.append(param_type)
 
-            # Dönüş tipini belirle (admin çözümünü çalıştırarak)
+            # Dönüş tipini belirleyen kısım (admin çözümünü çalıştırarak kontrol sağlanır)
             try:
                 admin_namespace = {}
                 exec(question.solution_code, admin_namespace)
@@ -80,15 +80,16 @@ def generate_starter_code(question):
     param_docs_str = "\n    ".join(param_docs)
 
     # Başlangıç kodu şablonu
-    return f"""def {function_name}({params_str}):
-        \"\"\"
-        {question.title} için çözüm fonksiyonu
+    return \
+    f"""def {function_name}({params_str}):
+    \"\"\"
+    {question.title} için çözüm fonksiyonu
 
-        {param_docs_str}
+    {param_docs_str}
 
-        @return: ({return_type})
-        \"\"\"
-        # Çözümünüzü buraya yazın
+    @return: ({return_type})
+    \"\"\"
+    # Çözümünüzü buraya yazın
     """
 
 @programming_bp.route('/questions/<int:id>')
@@ -152,7 +153,6 @@ def submit_solution(id):
         db.session.commit()
 
         # Bildirim veya rozet kontrolleri
-
         if result.get('is_correct', False):
             event_manager.trigger_event(EventType.QUESTION_SOLVED, {
                 'user_id': submission.user_id,

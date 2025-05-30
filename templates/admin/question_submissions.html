@@ -40,7 +40,6 @@
 <body class="bg-gray-50">
     <div id="root"></div>
 
-    <!-- Define global variables for component access -->
     <script>
         window.APP_DATA = {
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
@@ -48,7 +47,6 @@
                 username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
                 email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
             },
-            // Header translations
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
@@ -62,12 +60,10 @@
                 profile: {{ _('profile')|tojson|safe }},
                 settings: {{ _('settings')|tojson|safe }}
             },
-            // Footer translations
             footerTrans: {
                 allRights: {{ _('all_rights')|tojson|safe }},
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
-            // Current language
             currentLang: {{ session.get('language', 'tr')|tojson }},
             question: {
                 id: {{ question.id }},
@@ -111,7 +107,6 @@
         };
     </script>
 
-    <!-- Load component scripts -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
@@ -201,7 +196,7 @@
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                         <div>
                                             <p className="text-gray-600 font-medium">Zorluk</p>
-                                            <p>{['', 'Kolay', 'Orta-Kolay', 'Orta', 'Orta-Zor', 'Zor'][APP_DATA.question.difficulty]}</p>
+                                            <p>{['Kolay', 'Orta', 'Zor', 'Çok Zor'][APP_DATA.question.difficulty]}</p>
                                         </div>
                                         <div>
                                             <p className="text-gray-600 font-medium">Kategori</p>

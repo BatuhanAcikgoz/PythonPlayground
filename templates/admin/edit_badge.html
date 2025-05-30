@@ -50,7 +50,6 @@
 <body class="bg-gray-50">
     <div id="root"></div>
 
-    <!-- Define global variables for component access -->
     <script>
         window.APP_DATA = {
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
@@ -85,7 +84,6 @@
         };
     </script>
 
-    <!-- Load component scripts -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
@@ -101,15 +99,6 @@
             const [loading, setLoading] = React.useState(true);
 
             // Temel emojiler (API yanıt vermezse bunlar gösterilir)
-            const fallbackEmojis = [
-                '🏆', '🥇', '🥈', '🥉', '🎖️', '⭐', '🌟', '✨', '💫', '🔥',
-                '💡', '📚', '👨‍🎓', '👩‍🎓', '🧠', '🚀', '💻', '⚡', '🎯', '🏅',
-                '🐍', '🐘', '🦊', '🦁', '🦄', '🐢', '🦔', '🦉', '🧩', '🎓',
-                '🎮', '🎲', '🎨', '🎭', '🎬', '💎', '🎪', '📊', '📈', '🛠️',
-                '👍', '👑', '🔍', '📱', '💼', '📝', '🧩', '🧪', '🔬', '🧮',
-                '📊', '📈', '📉', '💯', '📋', '✅', '✓', '☑️', '📌', '⚙️'
-            ];
-
             React.useEffect(() => {
                 const fetchEmojis = async () => {
                     try {
@@ -267,13 +256,13 @@
             const [selectedEmoji, setSelectedEmoji] = React.useState(badge.icon || '🏆');
             const [showEmojiSelector, setShowEmojiSelector] = React.useState(false);
             const [selectedColor, setSelectedColor] = React.useState(badge.color || '#3b82f6');
-            const [nameErrors, setNameErrors] = React.useState([]);
-            const [descriptionErrors, setDescriptionErrors] = React.useState([]);
+            const [nameErrors] = React.useState([]);
+            const [descriptionErrors] = React.useState([]);
 
             // Kriter türleri ve açıklamaları
             const [criteriaType, setCriteriaType] = React.useState(badge.criteria_type || 'registration');
             const [criteriaValue, setCriteriaValue] = React.useState(badge.criteria_value || '');
-            const [criteriaErrors, setCriteriaErrors] = React.useState([]);
+            const [criteriaErrors] = React.useState([]);
 
             const criteriaTypes = [
                 { id: 'registration', label: 'Kayıt Olunca', description: 'Kullanıcı platforma kayıt olduğunda bu rozeti alır.' },

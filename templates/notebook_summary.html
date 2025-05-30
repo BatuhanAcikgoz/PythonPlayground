@@ -217,7 +217,7 @@
                 {
                     category: "{{ category }}",
                     message: "{{ message }}"
-                }{{ "," if not loop.last }}
+                },{{ "," if not loop.last }}
                 {% endfor %}
             ],
             // Kullanıcı bilgileri
@@ -243,7 +243,6 @@
             },
             // Mevcut dil
             currentLang: {{ session.get('language', 'tr')|tojson }},
-            // URL'leri url_for ile tanımlıyoruz
             urls: {
                 home: "{{ url_for('main.index') }}",
                 viewNotebook: "{{ url_for('notebook.view', notebook_path='dummy') }}".replace('/dummy', '/'),
@@ -256,7 +255,6 @@
         };
     </script>
 
-    <!-- Load component scripts -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 

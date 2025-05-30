@@ -35,7 +35,6 @@
 <body class="bg-gray-50">
     <div id="root"></div>
 
-    <!-- Define global variables for component access -->
     <script>
         window.APP_DATA = {
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
@@ -43,7 +42,6 @@
                 username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
                 email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
             },
-            // Header translations
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
@@ -65,17 +63,14 @@
                     {{ field|tojson|safe }}: {{ errors|tojson|safe }}{{ "," if not loop.last }}
                 {% endfor %}
             },
-            // Footer translations
             footerTrans: {
                 allRights: {{ _('all_rights')|tojson|safe }},
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
-            // Current language
             currentLang: {{ session.get('language', 'tr')|tojson }}
         };
     </script>
 
-    <!-- Load component scripts -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
@@ -107,8 +102,6 @@
                     editorRef.current.on('change', (instance) => {
                         const value = instance.getValue();
                         if (onChange) onChange(value);
-
-                        // Update hidden textarea for form submission
                         textareaRef.current.value = value;
                     });
                 }
@@ -127,7 +120,7 @@
                     id={id}
                     name={name}
                     defaultValue={defaultValue || ''}
-                    className="hidden" // Hidden as CodeMirror replaces this
+                    className="hidden"
                 />
             );
         };

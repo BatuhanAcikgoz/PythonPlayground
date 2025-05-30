@@ -39,7 +39,6 @@
 <body class="bg-gray-50">
     <div id="root"></div>
 
-    <!-- Define global variables for component access -->
     <script>
         window.APP_DATA = {
             // Flash mesajlarını ekle
@@ -53,13 +52,11 @@
                     {% endfor %}
                 {% endwith %}
             ],
-            // User information
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
             userData: {
                 username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
                 email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
             },
-            // Header translations
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
@@ -73,14 +70,11 @@
                 profile: {{ _('profile')|tojson|safe }},
                 settings: {{ _('settings')|tojson|safe }}
             },
-            // Footer translations
             footerTrans: {
                 allRights: {{ _('all_rights')|tojson|safe }},
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
-            // Current language
             currentLang: {{ session.get('language', 'tr')|tojson }},
-            // URL'leri url_for ile tanımlıyoruz
             urls: {
                 home: "{{ url_for('main.index') }}",
                 adminIndex: "{{ url_for('admin.index') }}",
@@ -97,7 +91,7 @@
                     en: "{{ url_for('main.set_language', language='en') }}"
                 },
                 api: {
-                    lastQuestions: "/api/last-questions-detail", // API endpoint için uygun url_for eklenmelidir
+                    lastQuestions: "/api/last-questions-detail",
                     questions: "/api/questions",
                     leaderboard: "/api/leaderboard"
                 }
@@ -105,20 +99,16 @@
         };
     </script>
 
-    <!-- Load component scripts -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
     <script type="text/babel">
         const App = () => {
-            // Flask template data with translations
             const notebooks = {{ notebooks|tojson|safe }};
             const errorMessage = {{ error_message|tojson|safe }};
             const isAdmin = {{ 'true' if current_user.is_authenticated and current_user.is_admin() else 'false' }};
             const isTeacher = {{ 'true' if current_user.is_authenticated and current_user.is_teacher() else 'false' }};
             const urls = window.APP_DATA.urls;
-
-            // Pass translations to React
             const translations = {
                 notebookLib: {{ _('notebook_lib')|tojson|safe }},
                 adminPanel: {{ _('admin_panel')|tojson|safe }},
@@ -304,7 +294,7 @@
                                 </div>
                             </div>
 
-                            {/* Only show repository refresh for teachers and admins */}
+                            {/* Repo yenileme butonunu sadece admin ve öğretmenlere göster  */}
                             {(isTeacher || isAdmin) && (
                                 <div className="mt-8">
                                     <a

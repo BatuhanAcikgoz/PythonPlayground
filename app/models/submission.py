@@ -10,8 +10,8 @@ class Submission(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('programming_question.id'), nullable=False)
     code = db.Column(db.Text, nullable=False)
     is_correct = db.Column(db.Boolean, default=False)
-    test_results = db.Column(db.Text)  # JSON verisini metin olarak saklayacak
-    execution_time = db.Column(db.Float)  # Milisaniye cinsinden çalışma süresi
+    test_results = db.Column(db.Text)
+    execution_time = db.Column(db.Float)
     error_message = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -35,7 +35,7 @@ class Submission(db.Model):
             question_id=question.id,
             code=code,
             is_correct=evaluation_result['is_correct'],
-            test_results=evaluation_result,  # __init__ içinde JSON'a dönüştürülecek
+            test_results=evaluation_result,
             execution_time=evaluation_result.get('execution_time', 0),
             error_message=evaluation_result.get('error_message', ''),
         )

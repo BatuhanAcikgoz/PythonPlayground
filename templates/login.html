@@ -23,7 +23,6 @@
     </style>
 </head>
 <body class="bg-gray-50">
-    <!-- React uygulaması için root div -->
     <div id="root"></div>
 
     <!-- Flash mesajları için ayrı div - React dışında işlenecek -->
@@ -71,8 +70,6 @@
             </div>
         </form>
     </div>
-
-    <!-- Globals -->
     <script>
         window.APP_DATA = {
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
@@ -98,8 +95,6 @@
             currentLang: {{ session.get('language', 'tr')|tojson }}
         };
     </script>
-
-    <!-- Component scripts -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
