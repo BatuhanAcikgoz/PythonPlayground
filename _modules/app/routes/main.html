@@ -280,7 +280,6 @@
 <a class="viewcode-back" href="../../../app.routes.html#app.routes.main.clone_repo">[belgeler]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">clone_repo</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Repository klonlama veya güncelleme işlemi&quot;&quot;&quot;</span>
-    <span class="c1"># REPO_URL&#39;yi doğrudan tanımla - app_legacy&#39;den alındı</span>
     <span class="n">repo_url</span> <span class="o">=</span> <span class="s1">&#39;https://github.com/msy-bilecik/ist204_2025&#39;</span>
     <span class="n">repo_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s1">&#39;notebooks_repo&#39;</span><span class="p">)</span>
 
@@ -393,7 +392,6 @@
 <a class="viewcode-back" href="../../../app.routes.html#app.routes.main.serve_component">[belgeler]</a>
 <span class="nd">@main_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/components/&lt;path:filename&gt;&#39;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">serve_component</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-    <span class="c1"># JSX bileşenleri templates/js/components klasöründe</span>
     <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="s1">&#39;templates/js/components&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
 
 
@@ -402,8 +400,6 @@
 <span class="nd">@main_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/leaderboard&#39;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">leaderboard</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Liderlik tablosu sayfasını görüntüler&quot;&quot;&quot;</span>
-    <span class="c1"># Template&#39;e sadece temel parametreleri geçirelim,</span>
-    <span class="c1"># veriler API&#39;den React bileşeniyle çekilecek</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;leaderboard.html&#39;</span><span class="p">)</span></div>
 
 

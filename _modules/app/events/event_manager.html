@@ -279,7 +279,15 @@
 <div class="viewcode-block" id="EventManager">
 <a class="viewcode-back" href="../../../app.events.html#app.events.event_manager.EventManager">[belgeler]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EventManager</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Olay yöneticisi sınıfı&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    EventManager sınıfı olay yönetimi için bir Singleton tasarım deseni uygular.</span>
+
+<span class="sd">    EventManager sınıfı, sistemdeki olayları yönetmek, belirli olay türleri için</span>
+<span class="sd">    hangi handler&#39;ların çalıştırılacağını belirlemek ve olayları tetiklemek için</span>
+<span class="sd">    kullanılır. Bu sınıf, yalnızca bir kez oluşturulabilen bir Singleton sınıfı</span>
+<span class="sd">    olarak implement edilmiştir. Ayrıca, her bir olay türü için ilgili handler&#39;ları</span>
+<span class="sd">    dinamik olarak kaydetme ve çalıştırma işlevselliğine sahiptir.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -291,15 +299,39 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handler&#39;ları başlatma&quot;&quot;&quot;</span>
-        <span class="c1"># Varsayılan handler&#39;lar burada yüklenebilir</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bu metod, nesnenin gerekli başlangıç durumunu ayarlamak için kullanılan yardımcı</span>
+<span class="sd">        bir metottur. Varsayılan işleyicileri yükler ve ilgili işlemleri gerçekleştirir.</span>
+<span class="sd">        Bu işlem, nesne kullanımına başlamadan önce yapılması gereken önemli bir</span>
+<span class="sd">        hazırlık aşamasıdır.</span>
+
+<span class="sd">        Yöntem, diğer sınırlı işlevlere bağımlıdır ve bu işlevlerin doğrudan bir</span>
+<span class="sd">        dönüş olmayabilir.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: Eğer varsayılan işleyici kaydı sırasında bir hata meydana</span>
+<span class="sd">            gelirse bu hata oluşabilir.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">.handlers</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_default_handlers</span>
         <span class="n">register_default_handlers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 <div class="viewcode-block" id="EventManager.register_handler">
 <a class="viewcode-back" href="../../../app.events.html#app.events.event_manager.EventManager.register_handler">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">register_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_type</span><span class="p">:</span> <span class="n">EventType</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Belirli bir olay türü için handler ekler&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Belirli bir olay türü için işleyici (handler) kaydeden bir yöntemdir. Her bir olay türü için birden fazla</span>
+<span class="sd">        işleyici kaydedilebilir. Kaydedilen işleyiciler, ilgili olay tetiklendiğinde çalıştırılacaktır.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event_type (EventType): İşleyici eklenecek olay türü.</span>
+<span class="sd">            handler (Callable): Olay tetiklendiğinde çalıştırılacak işlevsel işleyici.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">event_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handlers</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_handlers</span><span class="p">[</span><span class="n">event_type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -310,7 +342,25 @@
 <div class="viewcode-block" id="EventManager.trigger_event">
 <a class="viewcode-back" href="../../../app.events.html#app.events.event_manager.EventManager.trigger_event">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">trigger_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_type</span><span class="p">:</span> <span class="n">EventType</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Olayı tetikleyip ilgili handler&#39;ları çalıştırır&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Belirtilen türde bir olayı tetikler ve ilgili handler&#39;ları çalıştırır.</span>
+
+<span class="sd">        Bu metod, bir olay türüne bağlı tüm kayıtlı handler&#39;lardan başlamak üzere,</span>
+<span class="sd">        her bir handler&#39;ı teker teker çağırır. Eğer bir handler çalıştırılırken</span>
+<span class="sd">        bir istisna meydana gelirse, bu bilgi kaydedilir, ancak diğer handler&#39;ların</span>
+<span class="sd">        çalıştırılmasına devam edilir. Eğer belirtilen olay türü için herhangi bir</span>
+<span class="sd">        handler bulunamazsa, bir uyarı loglanır ve metod işlem yapmadan sonlanır.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event_type (EventType): Tetiklenecek olayın türü.</span>
+<span class="sd">            data (Dict[str, Any], optional): Handler&#39;lara aktarılacak ek bilgiler.</span>
+<span class="sd">                Varsayılan olarak boş bir sözlük atanır.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: Herhangi bir handler çağrısı sırasında meydana gelebilecek</span>
+<span class="sd">                istisnalar loglanır, ancak dışarıya iletilmez. Dışa aktarılabilir</span>
+<span class="sd">                istisna durumlarını kontrol etmeniz gerekmez.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -329,7 +379,6 @@
 
 
 
-<span class="c1"># Global event manager instance</span>
 <span class="n">event_manager</span> <span class="o">=</span> <span class="n">EventManager</span><span class="p">()</span>
 </pre></div>
         </article>

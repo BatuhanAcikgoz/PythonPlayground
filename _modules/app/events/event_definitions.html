@@ -273,15 +273,22 @@
 <div class="viewcode-block" id="EventType">
 <a class="viewcode-back" href="../../../app.events.html#app.events.event_definitions.EventType">[belgeler]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EventType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sistem içindeki olayların tanımlanması&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    EventType sınıfı, farklı olay türlerini temsil etmek için kullanılan bir enum sınıfıdır.</span>
+
+<span class="sd">    Bu sınıf, genellikle bir sistemde meydana gelen olayların belirli bir türünü tanımlamak ve</span>
+<span class="sd">    bu türlere göre işlem yapmak için kullanılır. Örneğin, kullanıcı kaydı, giriş yapma, bir</span>
+<span class="sd">    sorunun çözülmesi gibi olay türlerini ayırt etmek adına kullanılabilir. Her olay türü için</span>
+<span class="sd">    bir enum öğesi tanımlanmıştır, böylece kullanımı hem tutarlı hem de daha anlaşılır hale</span>
+<span class="sd">    gelmiştir.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">USER_REGISTERED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">USER_LOGGED_IN</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">QUESTION_SOLVED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">NOTEBOOK_ACCESSED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">NOTEBOOK_SUMMARY_VIEWED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
-    <span class="c1"># Yeni event tipi</span>
-    <span class="n">BADGE_AWARDED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>  <span class="c1"># Rozet verildiğinde</span>
-    <span class="n">USER_POINTS_UPDATED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>  <span class="c1"># Puanlar güncellendiğinde</span></div>
+    <span class="n">BADGE_AWARDED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">USER_POINTS_UPDATED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
 
 </pre></div>
         </article>

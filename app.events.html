@@ -290,7 +290,12 @@
 <dt class="sig sig-object py" id="app.events.event_definitions.EventType">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.events.event_definitions.</span></span><span class="sig-name descname"><span class="pre">EventType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/event_definitions.html#EventType"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.event_definitions.EventType" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<p>Sistem içindeki olayların tanımlanması</p>
+<p>EventType sınıfı, farklı olay türlerini temsil etmek için kullanılan bir enum sınıfıdır.</p>
+<p>Bu sınıf, genellikle bir sistemde meydana gelen olayların belirli bir türünü tanımlamak ve
+bu türlere göre işlem yapmak için kullanılır. Örneğin, kullanıcı kaydı, giriş yapma, bir
+sorunun çözülmesi gibi olay türlerini ayırt etmek adına kullanılabilir. Her olay türü için
+bir enum öğesi tanımlanmıştır, böylece kullanımı hem tutarlı hem de daha anlaşılır hale
+gelmiştir.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="app.events.event_definitions.EventType.BADGE_AWARDED">
 <span class="sig-name descname"><span class="pre">BADGE_AWARDED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#app.events.event_definitions.EventType.BADGE_AWARDED" title="Link to this definition">¶</a></dt>
@@ -335,17 +340,29 @@
 <dt class="sig sig-object py" id="app.events.event_manager.EventManager">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.events.event_manager.</span></span><span class="sig-name descname"><span class="pre">EventManager</span></span><a class="reference internal" href="_modules/app/events/event_manager.html#EventManager"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.event_manager.EventManager" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Olay yöneticisi sınıfı</p>
+<p>EventManager sınıfı olay yönetimi için bir Singleton tasarım deseni uygular.</p>
+<p>EventManager sınıfı, sistemdeki olayları yönetmek, belirli olay türleri için
+hangi handler’ların çalıştırılacağını belirlemek ve olayları tetiklemek için
+kullanılır. Bu sınıf, yalnızca bir kez oluşturulabilen bir Singleton sınıfı
+olarak implement edilmiştir. Ayrıca, her bir olay türü için ilgili handler’ları
+dinamik olarak kaydetme ve çalıştırma işlevselliğine sahiptir.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="app.events.event_manager.EventManager.register_handler">
 <span class="sig-name descname"><span class="pre">register_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/event_manager.html#EventManager.register_handler"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.event_manager.EventManager.register_handler" title="Link to this definition">¶</a></dt>
-<dd><p>Belirli bir olay türü için handler ekler</p>
+<dd><p>Belirli bir olay türü için işleyici (handler) kaydeden bir yöntemdir. Her bir olay türü için birden fazla
+işleyici kaydedilebilir. Kaydedilen işleyiciler, ilgili olay tetiklendiğinde çalıştırılacaktır.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>event_type</strong> (<a class="reference internal" href="#app.events.event_definitions.EventType" title="app.events.event_definitions.EventType"><em>EventType</em></a>)</p></li>
-<li><p><strong>handler</strong> (<em>Callable</em>)</p></li>
+<li><p><strong>event_type</strong> (<a class="reference internal" href="#app.events.event_definitions.EventType" title="app.events.event_definitions.EventType"><em>EventType</em></a>) – İşleyici eklenecek olay türü.</p></li>
+<li><p><strong>handler</strong> (<em>Callable</em>) – Olay tetiklendiğinde çalıştırılacak işlevsel işleyici.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -353,13 +370,24 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="app.events.event_manager.EventManager.trigger_event">
 <span class="sig-name descname"><span class="pre">trigger_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/events/event_manager.html#EventManager.trigger_event"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.events.event_manager.EventManager.trigger_event" title="Link to this definition">¶</a></dt>
-<dd><p>Olayı tetikleyip ilgili handler’ları çalıştırır</p>
+<dd><p>Belirtilen türde bir olayı tetikler ve ilgili handler’ları çalıştırır.</p>
+<p>Bu metod, bir olay türüne bağlı tüm kayıtlı handler’lardan başlamak üzere,
+her bir handler’ı teker teker çağırır. Eğer bir handler çalıştırılırken
+bir istisna meydana gelirse, bu bilgi kaydedilir, ancak diğer handler’ların
+çalıştırılmasına devam edilir. Eğer belirtilen olay türü için herhangi bir
+handler bulunamazsa, bir uyarı loglanır ve metod işlem yapmadan sonlanır.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>event_type</strong> (<a class="reference internal" href="#app.events.event_definitions.EventType" title="app.events.event_definitions.EventType"><em>EventType</em></a>)</p></li>
-<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>event_type</strong> (<a class="reference internal" href="#app.events.event_definitions.EventType" title="app.events.event_definitions.EventType"><em>EventType</em></a>) – Tetiklenecek olayın türü.</p></li>
+<li><p><strong>data</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>optional</em>) – Handler’lara aktarılacak ek bilgiler.
+Varsayılan olarak boş bir sözlük atanır.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Herhangi bir handler çağrısı sırasında meydana gelebilecek
+    istisnalar loglanır, ancak dışarıya iletilmez. Dışa aktarılabilir
+    istisna durumlarını kontrol etmeniz gerekmez.</p>
 </dd>
 </dl>
 </dd></dl>

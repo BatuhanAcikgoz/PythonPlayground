@@ -323,7 +323,6 @@
 <span class="nd">@notebook_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/summary/&lt;path:notebook_path&gt;&#39;</span><span class="p">)</span>
 <span class="nd">@login_required</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="n">notebook_path</span><span class="p">):</span>
-    <span class="c1"># URL&#39;deki &#39;/notebook/summary/&#39; öneki dosya yoluna dahil edilmiş olabilir</span>
     <span class="k">if</span> <span class="n">notebook_path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;notebook/summary/&#39;</span><span class="p">):</span>
         <span class="n">notebook_path</span> <span class="o">=</span> <span class="n">notebook_path</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;notebook/summary/&#39;</span><span class="p">):]</span>
 
