@@ -314,25 +314,25 @@ kullanıcıların belirli bir işlevi çalıştırabilmesine olanak tanır.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.badges">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">badges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#badges"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.badges" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -341,25 +341,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.delete_badge">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">delete_badge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#delete_badge"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.delete_badge" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -368,25 +368,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.delete_programming_question">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">delete_programming_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#delete_programming_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.delete_programming_question" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -395,25 +395,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.edit_badge">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">edit_badge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#edit_badge"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.edit_badge" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -422,25 +422,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.edit_programming_question">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">edit_programming_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#edit_programming_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.edit_programming_question" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -449,25 +449,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.edit_user">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">edit_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#edit_user"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.edit_user" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -476,25 +476,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.index">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#index"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.index" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -503,25 +503,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.new_ai_programming_question">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">new_ai_programming_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#new_ai_programming_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.new_ai_programming_question" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -530,25 +530,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.new_badge">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">new_badge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#new_badge"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.new_badge" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -557,25 +557,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.new_programming_question">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">new_programming_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#new_programming_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.new_programming_question" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -584,25 +584,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.programming_questions">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">programming_questions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#programming_questions"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.programming_questions" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -611,25 +611,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.question_submissions">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">question_submissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#question_submissions"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.question_submissions" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -638,25 +638,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.settings">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#settings"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.settings" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -665,25 +665,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.test_programming_question">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">test_programming_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#test_programming_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.test_programming_question" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -692,25 +692,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.users">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">users</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#users"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.users" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -719,25 +719,25 @@ before executing the original function.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.admin.view_programming_question">
 <span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">view_programming_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#view_programming_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.view_programming_question" title="Link to this definition">¶</a></dt>
-<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
-role to access a specific view or endpoint in a Flask application. It
-ensures that only users with the ‘admin’ role can proceed to the decorated
-view while others are redirected to the main index page.</p>
+<dd><p>Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için ‘admin’
+rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+getirir ve ‘admin’ rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Dekorasyon yapılacak fonksiyon.</p>
 </dd>
 <dt class="field-even">Dönüşler<span class="colon">:</span></dt>
-<dd class="field-even"><p>A decorated function that checks the user’s privileges
-before executing the original function.</p>
+<dd class="field-even"><p>İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+fonksiyonu döner.</p>
 </dd>
 <dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Callable</p>
 </dd>
 <dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
-<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+<li><p><strong>Hiçbir hata fırlatılmaz</strong><strong>, </strong><strong>ancak gerekli yetkilere sahip olmayan</strong> – </p></li>
+<li><p><strong>kullanıcılar yönlendirilir ve erişim engellenir.</strong> – </p></li>
 </ul>
 </dd>
 </dl>

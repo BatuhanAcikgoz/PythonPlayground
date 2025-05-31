@@ -306,21 +306,21 @@
     <span class="nd">@login_required</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">decorated_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This function is a decorator used to enforce that a user has the &#39;admin&#39;</span>
-<span class="sd">        role to access a specific view or endpoint in a Flask application. It</span>
-<span class="sd">        ensures that only users with the &#39;admin&#39; role can proceed to the decorated</span>
-<span class="sd">        view while others are redirected to the main index page.</span>
+<span class="sd">        Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için &#39;admin&#39;</span>
+<span class="sd">        rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale</span>
+<span class="sd">        getirir ve &#39;admin&#39; rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse</span>
+<span class="sd">        uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">            f (Callable): The Flask route handler function to be decorated.</span>
+<span class="sd">            f (Callable): Dekorasyon yapılacak fonksiyon.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Callable: A decorated function that checks the user&#39;s privileges</span>
-<span class="sd">            before executing the original function.</span>
+<span class="sd">            Callable: İşlem için gerekli kontrolleri yaptıktan sonra orijinal</span>
+<span class="sd">            fonksiyonu döner.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            Redirects the user to the main index page with an error flash message</span>
-<span class="sd">            if the user is not logged in or does not have the &#39;admin&#39; role.</span>
+<span class="sd">            Hiçbir hata fırlatılmaz, ancak gerekli yetkilere sahip olmayan</span>
+<span class="sd">            kullanıcılar yönlendirilir ve erişim engellenir.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">has_role</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">):</span>
             <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Bu sayfaya erişim izniniz yok.&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">)</span>
