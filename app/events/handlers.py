@@ -1,6 +1,4 @@
 # app/events/handlers.py
-import logging
-from .event_definitions import EventType
 from app.models.badges import Badges
 from app.models.badge_criteria import BadgeCriteria
 from app.models.user_badges import UserBadge

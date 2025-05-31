@@ -1280,7 +1280,21 @@ def get_leaderboard_api(limit: int = 20, db=Depends(get_db)):
 @api.get("/api/last-submissions", response_model=List[SubmissionDetail])
 def get_last_submissions(limit: Optional[int] = 10, db=Depends(get_db)):
     """
-    En son yapılan çözüm gönderimlerini listeler.
+    API'ye yapılan son gönderimlerin bir listesini döndürür. Gönderimler, kullanıcı bilgileri,
+    soru başlığı ve diğer detaylarla birlikte en son tarihe göre sıralanmıştır ve belirtilen
+    limit kadar alınır. SQL sorgusu doğrudan veritabanında yürütülür ve veriler yapısal bir
+    liste olarak geri döndürülür.
+
+    Args:
+        limit (Optional[int], default=10): Döndürülmesi istenen en fazla gönderim sayısını belirler.
+        db: Veritabanı bağlantısı için bağımlılık fonksiyonu.
+
+    Returns:
+        List[Dict]: Her biri gönderim bilgilerini içeren sözlüklerden oluşan bir liste.
+
+    Raises:
+        HTTPException: Sunucu kaynaklı bir hata meydana geldiğinde, ayrıntılı hata mesajıyla birlikte
+        500 durumu döner.
     """
     try:
         sql_query = text("""
@@ -1317,7 +1331,22 @@ from typing import Optional
 
 @api.get("/api/chart/registrations")
 def chart_daily_registrations(days: Optional[int] = 30, db=Depends(get_db)):
-    """Son X gün içindeki günlük kullanıcı kayıtlarını döndürür"""
+    """
+    Fonksiyona dair detaylı açıklama ve işlev hakkında bilgi sağlar. Bu fonksiyon, belirli bir tarih aralığında yapılan kullanıcı
+    kayıtlarının günlük dağılımını veritabanından sorgular ve formatlanmış bir biçimde geri döner.
+
+    Args:
+        days (Optional[int]): Son X günü belirtir. Varsayılan değer 30'dur.
+        db: Veritabanı bağlantısı için gerekli bağımlılık (Depends(get_db)).
+
+    Return:
+        list[dict]:
+            Her bir tarih için kayıtlı kullanıcı sayısını içeren bir liste döner. Liste,
+            {"date": "yyyy-mm-dd", "count": int} yapısında sözlüklerden oluşur.
+
+    Raises:
+        HTTPException: Bir hatayla karşılaşıldığında, hata kodu 500 ve hata detayı fırlatılır.
+    """
     try:
         sql_query = text("""
             SELECT DATE(created_at) as date, COUNT(*) as count
@@ -1342,7 +1371,31 @@ def chart_daily_registrations(days: Optional[int] = 30, db=Depends(get_db)):
 
 @api.get("/api/chart/solved-questions")
 def chart_solved_questions(days: Optional[int] = 30, db=Depends(get_db)):
-    """Son X gün içindeki çözülen soruların sayısını döndürür"""
+    """
+    Handle API endpoint to fetch solved questions chart data.
+
+    This endpoint retrieves the count of correctly solved questions grouped
+    by date for the specified number of recent days. If no number of days is
+    provided, the default value of 30 days is used. The data is fetched from the
+    database and returned as a list of dictionaries where each dictionary contains
+    a date and the corresponding count.
+
+    Parameters:
+        days (Optional[int]): The number of recent days to include in the query.
+                             Defaults to 30 days if not specified. Must be a
+                             positive integer.
+        db: The database connection dependency injected via FastAPI's Dependency
+            Injection mechanism.
+
+    Returns:
+        list[dict]: A list of dictionaries where each dictionary contains a 'date'
+                    as a string formatted as YYYY-MM-DD and a 'count' as an integer
+                    representing the number of solved questions for that date.
+
+    Raises:
+        HTTPException: Raised when there is any error while executing the database
+                       query or processing the results.
+    """
     try:
         sql_query = text("""
             SELECT DATE(created_at) as date, COUNT(*) as count
@@ -1367,7 +1420,25 @@ def chart_solved_questions(days: Optional[int] = 30, db=Depends(get_db)):
 
 @api.get("/api/chart/activity-stats")
 def chart_activity_stats(days: Optional[int] = 30, db=Depends(get_db)):
-    """Son X gün içindeki platform aktivitelerine ait özet istatistikler"""
+    """
+    Bu fonksiyon, belirli bir zaman dilimi için kullanıcı aktivitesine ait istatistiksel bilgileri
+    sorgular ve döner. Yeni kullanıcı sayısı, toplam çözüm sayısı, doğru çözüm sayısı ve aktif
+    kullanıcı sayısını içerir.
+
+    Parameters:
+        days (Optional[int]): İstatistiklerin hesaplanacağı gün sayısı. Varsayılan değer 30'dur.
+        db: Veritabanı oturumu, get_db bağımlılığı ile elde edilir.
+
+    Returns:
+        dict: İstatistik verilerini içeren bir sözlük döner. Dönen sözlük:
+            - "new_users" (int): Belirtilen süre içinde kaydolmuş yeni kullanıcıların sayısı
+            - "total_submissions" (int): Belirtilen süre içinde yapılan toplam çözüm sayısı
+            - "correct_submissions" (int): Belirtilen süre içinde doğru çözülen soru sayısı
+            - "active_users" (int): Belirtilen süre içinde aktif olarak işlem yapmış kullanıcı sayısı
+
+    Raises:
+        HTTPException: Bir hata oluştuğunda 500 durum koduyla hata mesajı döner.
+    """
     try:
         # Yeni kullanıcı kaydı sayısı
         users_query = text("""
@@ -1414,7 +1485,26 @@ def chart_activity_stats(days: Optional[int] = 30, db=Depends(get_db)):
 
 @api.get("/api/user-profile/{username}", response_model=UserProfileData)
 def get_user_profile(username: str, current_user_id: Optional[int] = "0", db=Depends(get_db)):
-    """Kullanıcının profil verilerini döndürür"""
+    """
+    get_user_profile fonksiyonu, kullanıcı adına göre kullanıcı bilgilerini, istatistiklerini,
+    rozetlerini ve aktivitelerini döndüren bir API endpoint'idir. Bunun yanı sıra, son 7 günlük
+    aktivite verilerini gün bazında kullanıcıya detaylı bir şekilde sunar ve mevcut oturumdaki
+    kullanıcı ile sorgulanan profilin eşleşip eşleşmediğini kontrol eder.
+
+    Arguments:
+        username (str): Sorgulanan kullanıcı adı.
+        current_user_id (Optional[int]): Oturum açmış kullanıcının kimlik bilgisi.
+                                          Varsayılan olarak "0" değeri kullanılır.
+        db: Veritabanı bağlantısını sağlayan bağımlılık.
+
+    Return:
+        dict: Kullanıcı profili, istatistikler, aktiviteler, rozetler ve günlük aktiviteleri
+              içeren bir sözlük.
+
+    Raises:
+        HTTPException: Eğer kullanıcı bulunamazsa veya herhangi bir dahili sunucu hatası
+                       oluşursa bu hata fırlatılır.
+    """
     try:
         # Eğer current_user_id null olarak gelirse None olarak ayarla
         if current_user_id is None:
@@ -1555,7 +1645,38 @@ def get_user_profile(username: str, current_user_id: Optional[int] = "0", db=Dep
 
 @api.post("/api/generate-question", response_model=GeneratedQuestionResponse)
 def generate_programming_question(request: QuestionGenerationRequest, db=Depends(get_db)):
-    """Yapay zeka kullanarak yeni bir programlama sorusu oluşturur"""
+    """
+    Bir Python FastAPI endpointi olarak, bu fonksiyon gelen istek üzerine yapay zeka yardımıyla yeni bir
+    programlama sorusu üretmek görevini üstlenir. Fonksiyon, kullanıcının verdiği talimatlar ve zorluk
+    seviyesine göre bir soru hazırlar ve bu soruda gereken veri gibi çeşitli bileşenleri ayarlar.
+
+    Attributes:
+        @api.post("/api/generate-question"): Bu fonksiyonun bir REST API endpointi olarak tanımlandığını ve
+        POST metodunu kullandığını belirtir.
+        response_model (GeneratedQuestionResponse): Yanıt modelinin türü. Üretilecek sonucun bu modele uygun
+        olması beklenir.
+
+    Args:
+        request (QuestionGenerationRequest): API çağrısı sırasında gelen ve kullanılacak veri. Bu model,
+        soru oluşturma isteğini tanımlar ve kullanıcıdan gelen bilgileri içerir.
+        db: Veritabanı bağlantısı (SQLAlchemy Depends tipi). Sistemde yapılan sorgular için kullanılır.
+
+    Returns:
+        dict: Üretilen programlama sorusunu temsil eden (veya hata durumunda hata mesajını içeren) bir JSON nesnesi döner.
+
+    Raises:
+        Bu metod herhangi bir özel tipte hata fırlatmaz. Ancak yapay zeka API'sine yapılan gönderim sırasında bir hata
+        yaşanırsa JSON ayrıştırma hataları oluşabilir ya da veritabanı bağlantı sorunları doğabilir.
+
+    Functions:
+        Bu endpoint, talep edilen parametrelere uygun bir programlama sorusu üretmek için aşağıdaki başlıca adımları izler:
+        1. Varsayılan soru alanlarının doldurulması.
+        2. Veritabanından ayar bilgileri alınması ve AI API sağlayıcısının başlatılması.
+        3. Kullanıcının belirttiği zorluk seviyesi ve konuya göre bir yapay zeka istemcisi oluşturulması.
+        4. Belirli kriterlere uygun bir prompt oluşturulması.
+        5. Yapay zeka istemcisinden gelen yanıtın JSON formatında işlenmesi.
+        6. Uygun formatta bir soru döndürülmesi veya hata mesajı sağlanması.
+    """
     try:
         # Varsayılan sonuç şablonunu başlangıçta oluştur
         data = {
@@ -1850,7 +1971,16 @@ Yanıtını JSON formatında oluştur:
 
 @api.post("/api/trigger-event")
 def trigger_event(request: EventRequest):
-    """Belirtilen olayı tetikler ve ilgili verileri işler"""
+    """
+    Bir HTTP POST isteği alarak bir olay türü tetikleyen fonksiyon.
+
+    Parametreler:
+        request (EventRequest): Tetiklenmek istenilen olay türü ve
+        olayla ilgili veri içeren nesne.
+
+    Dönen:
+        dict: İşlem sonucunu ve ilgili mesajı içeren bir sözlük.
+    """
     try:
         # String olarak gelen event türünü EventType'a çevir
         event_type = EventType[request.event_type]
