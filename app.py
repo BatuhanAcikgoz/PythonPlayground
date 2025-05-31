@@ -9,14 +9,14 @@ from app.models.base import db
 from app.models.user import User
 from app.routes import register_routes
 from config import Config
-import colorlog
+from colorlog import StreamHandler, ColoredFormatter
 import logging
 
 
 def setup_logger():
     """Renkli loglamayı yapılandırır"""
-    handler = colorlog.StreamHandler()
-    handler.setFormatter(colorlog.ColoredFormatter(
+    handler = StreamHandler()
+    handler.setFormatter(ColoredFormatter(
         '%(log_color)s%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         log_colors={
             'DEBUG': 'cyan',
