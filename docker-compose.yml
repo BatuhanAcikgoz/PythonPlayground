@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     ports:
       - "5000:5000"  # Flask uygulaması
-      - "8000:8000"  # FastAPI
+      - "7923:7923"  # FastAPI
     volumes:
       - ./:/app
       - notebooks:/app/notebooks_repo
