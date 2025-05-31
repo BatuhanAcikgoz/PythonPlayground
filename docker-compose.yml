@@ -43,7 +43,7 @@ services:
     container_name: python-platform-adminer
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8181:8181"  # Adminer arayüzü
     depends_on:
       - db
     networks:
