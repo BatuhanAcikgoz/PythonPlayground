@@ -3,6 +3,8 @@ from flask import Blueprint, jsonify, request, current_app
 from flask_login import current_user, login_required
 from functools import wraps
 
+from config import Config
+
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 
 
@@ -71,7 +73,7 @@ def proxy(endpoint):
         içerik ve HTTP durum kodu). Eğer proxy başarısız olursa Flask uygulaması
         üzerinden bir hata mesajı ve durum kodu döner.
     """
-    fastapi_url = "http://127.0.0.1:8000/api/" + endpoint
+    fastapi_url = Config.FASTAPI_DOMAIN+":"+Config.FASTAPI_PORT+"/api/" + endpoint
 
     # Request metoduna göre FastAPI'ye istek yap
     try:

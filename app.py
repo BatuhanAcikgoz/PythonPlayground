@@ -236,7 +236,7 @@ def run_fastapi():
     """
     try:
         # FastAPI'yi uvicorn ile başlat (reload devre dışı bırakıldı)
-        uvicorn.run("api:api", host="127.0.0.1", port=8000, reload=False)
+        uvicorn.run("api:api", host="127.0.0.1", port=int(Config.FASTAPI_PORT), reload=False)
     except Exception as e:
         print(f"FastAPI başlatma hatası: {e}")
 
@@ -288,7 +288,7 @@ def load_summaries_with_app_context(app):
         # FastAPI servisine istek gönder
         try:
             # Direkt FastAPI servisine bağlan
-            fastapi_url = "http://127.0.0.1:8000/api/notebook-summary"
+            fastapi_url = Config.FASTAPI_DOMAIN+":"+Config.FASTAPI_PORT+"/api/notebook-summary"
 
             for i, notebook_path in enumerate(notebook_files):
                 current_app.logger.info(f"[{i + 1}/{len(notebook_files)}] İşleniyor: {notebook_path}")
@@ -356,7 +356,7 @@ def generate_questions_on_startup(app):
                 current_app.logger.info(f"Zorluk seviyesi {difficulty} için soru üretiliyor...")
                 import json
                 # JSON request body olarak gönder, query parametreleri olarak değil
-                url = "http://127.0.0.1:8000/api/generate-question"
+                url = Config.FASTAPI_DOMAIN+":"+Config.FASTAPI_PORT+"/api/generate-question"
                 headers = {"Content-Type": "application/json"}
                 data = {
                     "difficulty_level": difficulty,

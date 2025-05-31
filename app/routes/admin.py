@@ -530,7 +530,7 @@ def test_programming_question(id):
             }
 
             response = requests.post(
-                "http://127.0.0.1:8000/api/evaluate",
+                Config.FASTAPI_DOMAIN+":"+Config.FASTAPI_PORT+"/api/evaluate",
                 json=evaluation_request,
                 timeout=5
             )

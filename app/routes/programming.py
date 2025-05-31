@@ -12,6 +12,7 @@ from app.forms.programming import SolutionSubmitForm, CodeEvaluationForm
 from app.models.base import db
 from app.models.programming_question import ProgrammingQuestion
 from app.models.submission import Submission
+from config import Config
 
 programming_bp = Blueprint('programming', __name__)
 
@@ -328,7 +329,7 @@ def evaluate_code(id):
             }
 
             response = requests.post(
-                "http://127.0.0.1:8000/api/evaluate",
+                Config.FASTAPI_DOMAIN+":"+Config.FASTAPI_PORT+"/api/evaluate",
                 json=evaluation_request,
                 timeout=30
             )
