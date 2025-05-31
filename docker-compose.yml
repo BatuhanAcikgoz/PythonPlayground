@@ -9,8 +9,8 @@ services:
       - "5000:5000"  # Flask uygulaması
       - "7923:7923"  # FastAPI
     volumes:
-      - ./:/app
-      - notebooks:/app/notebooks_repo
+      - ./:/
+      - notebooks:/notebooks_repo
     depends_on:
       - db
     environment:

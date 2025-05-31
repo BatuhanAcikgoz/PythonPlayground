@@ -35,21 +35,21 @@ def admin_required(f):
     @login_required
     def decorated_function(*args, **kwargs):
         """
-        This function is a decorator used to enforce that a user has the 'admin'
-        role to access a specific view or endpoint in a Flask application. It
-        ensures that only users with the 'admin' role can proceed to the decorated
-        view while others are redirected to the main index page.
+        Bu decorator, kullanıcıların belirli bir işlemi gerçekleştirebilmesi için 'admin'
+        rolüne sahip olmalarını gerektirir. Kullanıcının oturum açmasını zorunlu hale
+        getirir ve 'admin' rolü kontrolü yapar. Eğer kullanıcı gerekli role sahip değilse
+        uygun bir mesaj görüntüler ve ana sayfaya yönlendirir.
 
         Parameters:
-            f (Callable): The Flask route handler function to be decorated.
+            f (Callable): Dekorasyon yapılacak fonksiyon.
 
         Returns:
-            Callable: A decorated function that checks the user's privileges
-            before executing the original function.
+            Callable: İşlem için gerekli kontrolleri yaptıktan sonra orijinal
+            fonksiyonu döner.
 
         Raises:
-            Redirects the user to the main index page with an error flash message
-            if the user is not logged in or does not have the 'admin' role.
+            Hiçbir hata fırlatılmaz, ancak gerekli yetkilere sahip olmayan
+            kullanıcılar yönlendirilir ve erişim engellenir.
         """
         if not current_user.has_role('admin'):
             flash('Bu sayfaya erişim izniniz yok.', 'error')
