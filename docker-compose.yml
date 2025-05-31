@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.10'
 
 services:
   web:
@@ -17,6 +17,8 @@ services:
       - FLASK_APP=app.py
       - SQLALCHEMY_DATABASE_URI=mysql+pymysql://user:password@db/python_platform
       - PYTHONUNBUFFERED=1
+      - FASTAPI_DOMAIN=http://0.0.0.0
+    command: python app.py
     networks:
       - app-network
 
@@ -43,7 +45,7 @@ services:
     container_name: python-platform-adminer
     restart: unless-stopped
     ports:
-      - "8181:8181"  # Adminer arayüzü
+      - "8181:8080"
     depends_on:
       - db
     networks:
