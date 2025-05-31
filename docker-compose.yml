@@ -18,7 +18,8 @@ services:
       - SQLALCHEMY_DATABASE_URI=mysql+pymysql://user:password@db/python_platform
       - PYTHONUNBUFFERED=1
       - FASTAPI_DOMAIN=http://0.0.0.0
-    command: python app.py
+      - PYTHONPATH=/app
+  command: python /app/app.py
     networks:
       - app-network
 
