@@ -284,8 +284,465 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
-<section id="app-routes-admin-module">
-<h2>app.routes.admin module<a class="headerlink" href="#app-routes-admin-module" title="Link to this heading">¶</a></h2>
+<section id="module-app.routes.admin">
+<span id="app-routes-admin-module"></span><h2>app.routes.admin module<a class="headerlink" href="#module-app.routes.admin" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.admin_required">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">admin_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#admin_required"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.admin_required" title="Link to this definition">¶</a></dt>
+<dd><p>Bir kullanıcının admin rolüne sahip olup olmadığını kontrol eden ve buna göre erişim
+yetkisi sağlayan bir dekoratör fonksiyonu. Bu dekoratör, yalnızca admin yetkisine sahip
+kullanıcıların belirli bir işlevi çalıştırabilmesine olanak tanır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – Birincil işlev. Erişim sınırlaması uygulanacak ana fonksiyondur.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Yeni işlev, erişim kontrolleri uygulanmış şekilde döndürülür.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RedirectException</strong> – Eğer kullanıcı admin rolüne sahip değilse kullanıcı ana sayfaya</p></li>
+<li><p><strong>yönlendirilir ve bir hata mesajı gösterilir.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.badges">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">badges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#badges"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.badges" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.delete_badge">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">delete_badge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#delete_badge"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.delete_badge" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.delete_programming_question">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">delete_programming_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#delete_programming_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.delete_programming_question" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.edit_badge">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">edit_badge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#edit_badge"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.edit_badge" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.edit_programming_question">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">edit_programming_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#edit_programming_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.edit_programming_question" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.edit_user">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">edit_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#edit_user"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.edit_user" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.index">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#index"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.index" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.new_ai_programming_question">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">new_ai_programming_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#new_ai_programming_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.new_ai_programming_question" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.new_badge">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">new_badge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#new_badge"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.new_badge" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.new_programming_question">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">new_programming_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#new_programming_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.new_programming_question" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.programming_questions">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">programming_questions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#programming_questions"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.programming_questions" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.question_submissions">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">question_submissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#question_submissions"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.question_submissions" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.settings">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#settings"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.settings" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.test_programming_question">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">test_programming_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#test_programming_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.test_programming_question" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.users">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">users</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#users"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.users" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.admin.view_programming_question">
+<span class="sig-prename descclassname"><span class="pre">app.routes.admin.</span></span><span class="sig-name descname"><span class="pre">view_programming_question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/admin.html#view_programming_question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.admin.view_programming_question" title="Link to this definition">¶</a></dt>
+<dd><p>This function is a decorator used to enforce that a user has the ‘admin’
+role to access a specific view or endpoint in a Flask application. It
+ensures that only users with the ‘admin’ role can proceed to the decorated
+view while others are redirected to the main index page.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>f</strong> (<em>Callable</em>) – The Flask route handler function to be decorated.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorated function that checks the user’s privileges
+before executing the original function.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Redirects the user to the main index page with an error flash message</strong> – </p></li>
+<li><p><strong>if the user is not logged in</strong><strong> or </strong><strong>does not have the 'admin' role.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-app.routes.api">
 <span id="app-routes-api-module"></span><h2>app.routes.api module<a class="headerlink" href="#module-app.routes.api" title="Link to this heading">¶</a></h2>
@@ -343,8 +800,232 @@ içerik ve HTTP durum kodu). Eğer proxy başarısız olursa Flask uygulaması
 </dd></dl>
 
 </section>
-<section id="app-routes-auth-module">
-<h2>app.routes.auth module<a class="headerlink" href="#app-routes-auth-module" title="Link to this heading">¶</a></h2>
+<section id="module-app.routes.auth">
+<span id="app-routes-auth-module"></span><h2>app.routes.auth module<a class="headerlink" href="#module-app.routes.auth" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.login">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/auth.html#login"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.auth.login" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcının giriş yaptığı ya da giriş formunu görüntülediği işlemi yöneten bir rota.</p>
+<dl class="simple">
+<dt>Functions:</dt><dd><p>Bu fonksiyon, kullanıcının giriş yapabileceği ya da zaten giriş yapmışsa ana sayfaya
+yönlendireceği bir login işlevi sağlar.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Kullanıcı oturum açmışsa ana sayfaya yönlendirilir. Oturum açık değilse ve
+kullanıcı geçerli bir kimlik doğrulama sağladıysa, login bilgileri onaylanarak
+giriş yapılır. Geçersiz bilgilerde hata mesajıyla giriş sayfası tekrar yüklenir.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.logout">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/auth.html#logout"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.auth.logout" title="Link to this definition">¶</a></dt>
+<dd><p>Çıkış işlemi gerçekleştirir ve kullanıcıyı oturum açma sayfasına yönlendirir.</p>
+<p>Dosyalarda yer alan oturum bilgilerini sıfırlar ve kullanıcıyı oturum açma
+sayfasına yeniden yönlendirir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Kullanıcıyı oturum açma sayfasına yönlendiren bir
+yanıt nesnesi.</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p>Werkzeug Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.my_profile">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">my_profile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/auth.html#my_profile"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.auth.my_profile" title="Link to this definition">¶</a></dt>
+<dd><p>Flask blueprint route işlevi. Kullanıcı profil sayfasına yönlendirme işlemlerini
+barındırır. Kullanıcı giriş yapmamışsa, giriş yapmasını talep eder ve giriş
+sayfasına yönlendirir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bir HTML sayfasını döndüren bir yanıt nesnesi.
+Eğer kullanıcı giriş yapmamışsa, giriş sayfasını döndürür.
+Giriş yapmışsa, profil sayfasını döndürür.</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p>Werkzeug response object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.profile">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/auth.html#profile"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.auth.profile" title="Link to this definition">¶</a></dt>
+<dd><p>Bir kullanıcıya ait profil sayfasını görüntülemek için kullanılan bir route.</p>
+<p>Bu endpoint, verilen kullanıcı adını kullanarak bir kullanıcı arar. Belirtilen kullanıcı
+veritabanında bulunamazsa bir hata mesajı gösterir ve ana sayfaya yönlendirir. Kullanıcı
+bulunursa, profil sayfası ile ilgili bir şablon oluşturularak bu şablon döndürülür.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>str</em>) – Görüntülenmek istenen kullanıcının kullanıcı adı.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Kullanıcı profil şablonunun oluşturulmuş hali veya ana sayfaya yönlendirme.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.register">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/auth.html#register"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.auth.register" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı kayıt işlemlerini işleyen bir Flask route fonksiyonu. Bu rota, kullanıcılar
+için bir kayıt formu sunar ve giriş yapmamış kullanıcıların hesap oluşturmasına imkan
+tanır. Kayıt işlemi başarıyla tamamlandığında kullanıcı yönlendirilir ve bir flash
+mesaj görüntülenir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Kullanıcının durumuna bağlı olarak farklı bir HTML sayfası
+veya yönlendirme döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Werkzeug Response</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.settings">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/auth.html#settings"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.auth.settings" title="Link to this definition">¶</a></dt>
+<dd><p>Uygulamanın kullanıcı ayarları sayfasını döndüren bir görüntüleme fonksiyonudur.</p>
+<p>Bu fonksiyon, giriş yapmayı gerektirir ve kullanıcının hesap ayarlarını güncelleyebilmesi
+için bir form sağlar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Kullanıcının ayarları gösterebileceği “settings.html” şablonunu bir form
+ile birlikte döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.update_account">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">update_account</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/auth.html#update_account"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.auth.update_account" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcının hesap bilgilerini güncelleyen bir görünüm fonksiyonudur. Bu işlem sırasında kullanıcının
+giriş yapmış olması gerekir. Başarıyla güncelleme sonrası bir bilgi mesajı görüntülenir ve ayarlar
+sayfasına yönlendirme yapılır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>methods</strong> (<em>list</em>) – Fonksiyonun kabul ettiği HTTP metodları. Bu fonksiyon yalnızca ‘POST’ metodunu</p></li>
+<li><p><strong>eder.</strong> (<em>kabul</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Ayarlar sayfasına yönlendirme yapan bir Flask HTTP yanıt objesi döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Eğer kullanıcı giriş yapmadan erişim sağlamaya çalışırsa bir hata alınabilir.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Notlar:</dt><dd><p>Bu fonksiyonun çalışması için <cite>login_required</cite> decorator’üne ek olarak Flask uygulamasının
+gerekli ayarları ve ‘auth_bp’ blueprint’in yapılandırılmış olması gerekmektedir.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.update_notifications">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">update_notifications</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/auth.html#update_notifications"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.auth.update_notifications" title="Link to this definition">¶</a></dt>
+<dd><p>Bir kullanıcının bildirim tercihlerini güncellemesini sağlayan bir rota fonksiyonudur. Bu
+fonksiyon, form verilerini alarak kullanıcının tercihlerini günceller. Başarı durumunda
+kullanıcıya bir başarı mesajı görüntüler ve ayarlar sayfasına yönlendirir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Kullanıcıyı ‘auth.settings’ rotasına yönlendiren bir cevap döner.</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p>Werkzeug Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.update_privacy">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">update_privacy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/auth.html#update_privacy"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.auth.update_privacy" title="Link to this definition">¶</a></dt>
+<dd><p>Endpoint, kullanıcının gizlilik ayarlarını güncellemesini sağlar. Kullanıcı, bu endpointi kullanarak
+mevcut gizlilik tercihlerini değiştirebilir. Yalnızca giriş yapmış kullanıcılar bu fonksiyona erişebilir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Kullanıcıyı ayarları görüntüleme sayfasına yönlendiren bir cevap.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>werkzeug.wrappers.Response</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.auth.update_profile">
+<span class="sig-prename descclassname"><span class="pre">app.routes.auth.</span></span><span class="sig-name descname"><span class="pre">update_profile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/auth.html#update_profile"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.auth.update_profile" title="Link to this definition">¶</a></dt>
+<dd><p>Güncellenmiş profil bilgilerini işleyen ve kullanıcıya başarı mesajı ile yönlendirme
+yapan bir Flask rotası.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Kullanıcıyı ‘auth.settings’ rotasına yönlendiren bir HTTP
+yanıtı döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Werkzeug Response</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-app.routes.main">
 <span id="app-routes-main-module"></span><h2>app.routes.main module<a class="headerlink" href="#module-app.routes.main" title="Link to this heading">¶</a></h2>
@@ -607,8 +1288,177 @@ hata mesajı ile ana sayfaya yönlendirilir.</p>
 </dd></dl>
 
 </section>
-<section id="app-routes-programming-module">
-<h2>app.routes.programming module<a class="headerlink" href="#app-routes-programming-module" title="Link to this heading">¶</a></h2>
+<section id="module-app.routes.programming">
+<span id="app-routes-programming-module"></span><h2>app.routes.programming module<a class="headerlink" href="#module-app.routes.programming" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.programming.evaluate_code">
+<span class="sig-prename descclassname"><span class="pre">app.routes.programming.</span></span><span class="sig-name descname"><span class="pre">evaluate_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/programming.html#evaluate_code"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.programming.evaluate_code" title="Link to this definition">¶</a></dt>
+<dd><p>Bu işlev, belirli bir soru için kullanıcının gönderdiği kodu değerlendirmek amacıyla bir API’ye
+istekte bulunur. Kodun doğruluğunu kontrol eder, test girdilerine göre sonucu işler ve API’den
+alınan yanıtı kullanıcıya döner. API bağlantı hataları ve geçersiz form verileri gibi durumlar
+için hataları JSON formatında döner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>int</em>) – Değerlendirilecek sorunun benzersiz kimliği.</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>requests.RequestException</strong> – Eğer API bağlantısında bir sorun olursa hata fırlatır.</p>
+</dd>
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p>Kod doğruluğu ve ilişkili sonuçları içeren JSON formatındaki yanıt. Olası
+durum kodları şunlardır:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>200: Kod başarıyla değerlendirildi ve sonuç döndü.</p></li>
+<li><p>400: Geçersiz form verileri gönderildi.</p></li>
+<li><p>500: Kod değerlendirme servisi geçici olarak kullanılamıyor.</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p>flask.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.programming.generate_starter_code">
+<span class="sig-prename descclassname"><span class="pre">app.routes.programming.</span></span><span class="sig-name descname"><span class="pre">generate_starter_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">question</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/programming.html#generate_starter_code"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.programming.generate_starter_code" title="Link to this definition">¶</a></dt>
+<dd><p>generate_starter_code fonksiyonu, verilen bir soruya dayalı olarak Python başlatıcı kodu üreten bir yardımcı
+fonksiyondur. Fonksiyon, soru verilerini analiz ederek otomatik bir şablon oluşturur. Özellikle, test girdileri,
+çözüm kodu ve beklenen dönüş türleri gibi parametrelerden yararlanır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>question</strong> (<em>Any</em>) – Fonksiyona geçtiğiniz soru nesnesi. Bu nesne aşağıdaki özellikleri içermelidir:
+- function_name: String, oluşturulacak fonksiyonun adı.
+- test_inputs: JSON formatında, test giriş verileri.
+- solution_code: String, kabul edilen çözüm kodu.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Verilen kurallara göre Python başlangıç şablon kodunu içeren bir metin döndürür.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.programming.my_submissions">
+<span class="sig-prename descclassname"><span class="pre">app.routes.programming.</span></span><span class="sig-name descname"><span class="pre">my_submissions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/programming.html#my_submissions"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.programming.my_submissions" title="Link to this definition">¶</a></dt>
+<dd><p>Bir kullanıcının kendi gönderimlerini listeleyen bir rota işlevi.</p>
+<p>Kullanıcı oturumunu kontrol eder. Kullanıcının ID’sine göre veritabanındaki
+Submission modelinden ilgili gönderimleri alır ve gönderim tarihine göre sıralar.
+Listeyi HTML şablonuna göndererek sunar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>HTML şablonu yanıtı ile birlikte döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>flask.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.programming.question">
+<span class="sig-prename descclassname"><span class="pre">app.routes.programming.</span></span><span class="sig-name descname"><span class="pre">question</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/programming.html#question"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.programming.question" title="Link to this definition">¶</a></dt>
+<dd><p>Görselleştirme ve kullanıcı etkileşimleri için bir programlama sorusunun detaylarını içeren bir
+sayfanın görüntülenmesini sağlayan bir fonksiyon. Soruları çözme durumu ve önceki gönderimler
+kontrol edilerek kullanıcı deneyimi optimize edilir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>int</em>) – Görüntülenecek programlama sorusunun kimliği.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Şablon render edilerek oluşturulan HTTP cevabını döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>404 Not Found</strong> – Eğer verilen id ile eşleşen bir programlama sorusu bulunamazsa hata yükselir.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.programming.questions">
+<span class="sig-prename descclassname"><span class="pre">app.routes.programming.</span></span><span class="sig-name descname"><span class="pre">questions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/programming.html#questions"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.programming.questions" title="Link to this definition">¶</a></dt>
+<dd><p>Fonksiyon, “/questions” adlı bir route tanımlar ve oturum açmış kullanıcılar için
+mevcut programlama sorularını görüntüler. Sorular zorluk derecesine göre sıralanır ve
+her bir soru için kullanıcının önceki çözümlerine bakarak çözülüp çözülmediği bilgisi
+eklenir. Sonuç, bir HTML şablonuna gönderilir ve kullanıcıya soruların listesi
+görüntülenir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>Soruların listelendiği ‘questions.html’ şablonunun oluşturulmuş
+yanıtını döner.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>flask.Response</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.programming.submission">
+<span class="sig-prename descclassname"><span class="pre">app.routes.programming.</span></span><span class="sig-name descname"><span class="pre">submission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/programming.html#submission"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.programming.submission" title="Link to this definition">¶</a></dt>
+<dd><p>Bu fonksiyon belirtilen bir gönderimi yükler ve doğrular. Gönderim yalnızca, ilgili
+kullanıcıya aitse veya kullanıcının ‘teacher’ ya da ‘admin’ rolü varsa görüntülenebilir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> – int
+Görüntülenmek istenen gönderimin ID değeri.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>TemplateResponse</dt><dd><p>”Gönderim detayları” sayfası için bir şablon yanıt döndürür.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>NotFound</strong> – Verilen ID ile eşleşen bir gönderim bulunamazsa, bir HTTP 404 Hatası oluşturur.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="app.routes.programming.submit_solution">
+<span class="sig-prename descclassname"><span class="pre">app.routes.programming.</span></span><span class="sig-name descname"><span class="pre">submit_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/programming.html#submit_solution"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.programming.submit_solution" title="Link to this definition">¶</a></dt>
+<dd><p>submit_solution fonksiyonu bir programlama sorusuna yönelik kod çözümünün gönderilmesine olanak tanıyan bir HTTP POST route’udur.
+Kullanıcıdan gelen çözüm kodunu, ilgili sorunun işlev ismini ve test verilerini değerlendirerek,
+sonuçları veritabanına kaydeder ve başarı durumuna göre kullanıcıyı bilgilendirir ya da hata mesajları döner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>int</em>) – Değerlendirilecek sorunun kimlik numarası.</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None.</strong> – </p>
+</dd>
+<dt class="field-odd">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Gönderme işlemini tamamladıktan sonra kullanıcıyı uygun bir sayfaya yönlendiren cevap.</p>
+</dd>
+<dt class="field-even">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-even"><p>Werkzeug Response</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-app.routes">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-app.routes" title="Link to this heading">¶</a></h2>
@@ -684,13 +1534,44 @@ hata mesajı ile ana sayfaya yönlendirilir.</p>
             <ul>
 <li><a class="reference internal" href="#">app.routes package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#app-routes-admin-module">app.routes.admin module</a></li>
+<li><a class="reference internal" href="#module-app.routes.admin">app.routes.admin module</a><ul>
+<li><a class="reference internal" href="#app.routes.admin.admin_required"><code class="docutils literal notranslate"><span class="pre">admin_required()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.badges"><code class="docutils literal notranslate"><span class="pre">badges()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.delete_badge"><code class="docutils literal notranslate"><span class="pre">delete_badge()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.delete_programming_question"><code class="docutils literal notranslate"><span class="pre">delete_programming_question()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.edit_badge"><code class="docutils literal notranslate"><span class="pre">edit_badge()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.edit_programming_question"><code class="docutils literal notranslate"><span class="pre">edit_programming_question()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.edit_user"><code class="docutils literal notranslate"><span class="pre">edit_user()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.index"><code class="docutils literal notranslate"><span class="pre">index()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.new_ai_programming_question"><code class="docutils literal notranslate"><span class="pre">new_ai_programming_question()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.new_badge"><code class="docutils literal notranslate"><span class="pre">new_badge()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.new_programming_question"><code class="docutils literal notranslate"><span class="pre">new_programming_question()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.programming_questions"><code class="docutils literal notranslate"><span class="pre">programming_questions()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.question_submissions"><code class="docutils literal notranslate"><span class="pre">question_submissions()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.settings"><code class="docutils literal notranslate"><span class="pre">settings()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.test_programming_question"><code class="docutils literal notranslate"><span class="pre">test_programming_question()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.users"><code class="docutils literal notranslate"><span class="pre">users()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.admin.view_programming_question"><code class="docutils literal notranslate"><span class="pre">view_programming_question()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-app.routes.api">app.routes.api module</a><ul>
 <li><a class="reference internal" href="#app.routes.api.admin_required"><code class="docutils literal notranslate"><span class="pre">admin_required()</span></code></a></li>
 <li><a class="reference internal" href="#app.routes.api.proxy"><code class="docutils literal notranslate"><span class="pre">proxy()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#app-routes-auth-module">app.routes.auth module</a></li>
+<li><a class="reference internal" href="#module-app.routes.auth">app.routes.auth module</a><ul>
+<li><a class="reference internal" href="#app.routes.auth.login"><code class="docutils literal notranslate"><span class="pre">login()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.auth.logout"><code class="docutils literal notranslate"><span class="pre">logout()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.auth.my_profile"><code class="docutils literal notranslate"><span class="pre">my_profile()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.auth.profile"><code class="docutils literal notranslate"><span class="pre">profile()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.auth.register"><code class="docutils literal notranslate"><span class="pre">register()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.auth.settings"><code class="docutils literal notranslate"><span class="pre">settings()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.auth.update_account"><code class="docutils literal notranslate"><span class="pre">update_account()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.auth.update_notifications"><code class="docutils literal notranslate"><span class="pre">update_notifications()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.auth.update_privacy"><code class="docutils literal notranslate"><span class="pre">update_privacy()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.auth.update_profile"><code class="docutils literal notranslate"><span class="pre">update_profile()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-app.routes.main">app.routes.main module</a><ul>
 <li><a class="reference internal" href="#app.routes.main.about"><code class="docutils literal notranslate"><span class="pre">about()</span></code></a></li>
 <li><a class="reference internal" href="#app.routes.main.clone_repo"><code class="docutils literal notranslate"><span class="pre">clone_repo()</span></code></a></li>
@@ -709,7 +1590,16 @@ hata mesajı ile ana sayfaya yönlendirilir.</p>
 <li><a class="reference internal" href="#app.routes.notebook.view"><code class="docutils literal notranslate"><span class="pre">view()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#app-routes-programming-module">app.routes.programming module</a></li>
+<li><a class="reference internal" href="#module-app.routes.programming">app.routes.programming module</a><ul>
+<li><a class="reference internal" href="#app.routes.programming.evaluate_code"><code class="docutils literal notranslate"><span class="pre">evaluate_code()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.programming.generate_starter_code"><code class="docutils literal notranslate"><span class="pre">generate_starter_code()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.programming.my_submissions"><code class="docutils literal notranslate"><span class="pre">my_submissions()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.programming.question"><code class="docutils literal notranslate"><span class="pre">question()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.programming.questions"><code class="docutils literal notranslate"><span class="pre">questions()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.programming.submission"><code class="docutils literal notranslate"><span class="pre">submission()</span></code></a></li>
+<li><a class="reference internal" href="#app.routes.programming.submit_solution"><code class="docutils literal notranslate"><span class="pre">submit_solution()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-app.routes">Module contents</a><ul>
 <li><a class="reference internal" href="#app.routes.register_routes"><code class="docutils literal notranslate"><span class="pre">register_routes()</span></code></a></li>
 </ul>

@@ -1,0 +1,1118 @@
+<!doctype html>
+<html class="no-js" lang="tr" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Dizin" href="../../../genindex.html" /><link rel="search" title="Ara" href="../../../search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>app.routes.admin - PythonPlayground</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=eae6f96d" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  --color-brand-primary: #43b1b0;
+  --color-brand-content: #43b1b0;
+  --color-admonition-background: #f5fafa;
+  --font-stack: 'Nunito Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-stack--monospace: 'Inconsolata', monospace;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #59c1c0;
+  --color-brand-content: #59c1c0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-brand-primary: #59c1c0;
+  --color-brand-content: #59c1c0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">PythonPlayground</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  <span class="sidebar-brand-text">PythonPlayground</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Ara" name="q" aria-label="Ara">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">İçerik:</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">app</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of app</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../app.html">app package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of app package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../app.forms.html">app.forms package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../app.models.html">app.models package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../app.routes.html">app.routes package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../app.services.html">app.services package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../app.utils.html">app.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../app.html">app package</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of app package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../app.forms.html">app.forms package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../app.models.html">app.models package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../app.routes.html">app.routes package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../app.services.html">app.services package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../app.utils.html">app.utils package</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Referanslar:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Dizin</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>app.routes.admin öğesinin kaynak kodu</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask_login</span><span class="w"> </span><span class="kn">import</span> <span class="n">login_required</span><span class="p">,</span> <span class="n">current_user</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.forms.badges</span><span class="w"> </span><span class="kn">import</span> <span class="n">BadgeForm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.models.badge_criteria</span><span class="w"> </span><span class="kn">import</span> <span class="n">BadgeCriteria</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.models.badges</span><span class="w"> </span><span class="kn">import</span> <span class="n">Badges</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.models.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">Setting</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.forms.admin</span><span class="w"> </span><span class="kn">import</span> <span class="n">SettingForm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">db</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.models.user</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span><span class="p">,</span> <span class="n">Role</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.forms</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserForm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask_wtf</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlaskForm</span>
+
+<span class="n">admin_bp</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/admin&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># Admin erişim kontrolü için decorator</span>
+<div class="viewcode-block" id="admin_required">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.admin_required">[belgeler]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">admin_required</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bir kullanıcının admin rolüne sahip olup olmadığını kontrol eden ve buna göre erişim</span>
+<span class="sd">    yetkisi sağlayan bir dekoratör fonksiyonu. Bu dekoratör, yalnızca admin yetkisine sahip</span>
+<span class="sd">    kullanıcıların belirli bir işlevi çalıştırabilmesine olanak tanır.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        f (Callable): Birincil işlev. Erişim sınırlaması uygulanacak ana fonksiyondur.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Callable: Yeni işlev, erişim kontrolleri uygulanmış şekilde döndürülür.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RedirectException: Eğer kullanıcı admin rolüne sahip değilse kullanıcı ana sayfaya</span>
+<span class="sd">        yönlendirilir ve bir hata mesajı gösterilir.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@login_required</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorated_function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is a decorator used to enforce that a user has the &#39;admin&#39;</span>
+<span class="sd">        role to access a specific view or endpoint in a Flask application. It</span>
+<span class="sd">        ensures that only users with the &#39;admin&#39; role can proceed to the decorated</span>
+<span class="sd">        view while others are redirected to the main index page.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            f (Callable): The Flask route handler function to be decorated.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Callable: A decorated function that checks the user&#39;s privileges</span>
+<span class="sd">            before executing the original function.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Redirects the user to the main index page with an error flash message</span>
+<span class="sd">            if the user is not logged in or does not have the &#39;admin&#39; role.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">has_role</span><span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">):</span>
+            <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Bu sayfaya erişim izniniz yok.&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;main.index&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">decorated_function</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">return</span> <span class="n">decorated_function</span></div>
+
+
+
+<div class="viewcode-block" id="index">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.index">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bu view fonksiyonu, yönetici kontrol panelinin ana sayfasını oluşturur. Yönetici yetkisine sahip kullanıcılar</span>
+<span class="sd">    tarafından çağrılabilir. Kullanıcı listesini veritabanından alır, her kullanıcı için gerekli bilgileri</span>
+<span class="sd">    ve rollerini içerecek şekilde bir sözlük oluşturur ve ardından bu bilgileri şablon aracılığıyla</span>
+<span class="sd">    görüntüler.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Werkzeug Response: HTTP yanıtı. Admin paneli ana sayfasını içeren bir HTML yanıt döner.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">users_list</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">users_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># User nesnelerini serileştirilebilir sözlüklere dönüştür</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users_list</span><span class="p">:</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+            <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+            <span class="s1">&#39;roles&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">role</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="p">}</span> <span class="k">for</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">user</span><span class="o">.</span><span class="n">roles</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="n">users_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/index.html&#39;</span><span class="p">,</span> <span class="n">users</span><span class="o">=</span><span class="n">users_data</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="users">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.users">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users&#39;</span><span class="p">)</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">users</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    admin_bp modülü için /users rotasını işleten fonksiyondur.</span>
+
+<span class="sd">    Bu fonksiyon, tüm kullanıcıları sorgular ve admin tarafından erişilebilecek</span>
+<span class="sd">    şekilde kullanıcı verilerini serileştirir. Her kullanıcıya ilişkin bilgiler</span>
+<span class="sd">    id, username, email ve rollerini içerir. Serileştirilen kullanıcı</span>
+<span class="sd">    verilerini HTML şablonuna aktarır ve döndürür.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        werkzeug.wrappers.response.Response: Admin kullanıcılar için hazırlanmış</span>
+<span class="sd">        bir HTML sayfası döner. Bu sayfa, kullanıcıların serileştirilmiş verilerini içerir.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Flask düğümündeki potansiyel hatalar sırasında HTTP hataları yaratılabilir.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">users_list</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">users_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># User nesnelerini serileştirilebilir sözlüklere dönüştür</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users_list</span><span class="p">:</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+            <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+            <span class="s1">&#39;roles&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">role</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">role</span><span class="o">.</span><span class="n">name</span><span class="p">}</span> <span class="k">for</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">user</span><span class="o">.</span><span class="n">roles</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="n">users_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user_data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/users.html&#39;</span><span class="p">,</span> <span class="n">users</span><span class="o">=</span><span class="n">users_data</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="edit_user">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.edit_user">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/users/&lt;int:id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">edit_user</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bir kullanıcının bilgilerini düzenleme yeteneği sağlayan bir Flask rota işlevi.</span>
+
+<span class="sd">    Bu işlev, belirtilen kullanıcının bilgilerini güncellemek için kullanılan bir formu işler ve</span>
+<span class="sd">    gönderilen form verilerini kontrol ederek kullanıcı detaylarını günceller. Eğer ilgili kullanıcı</span>
+<span class="sd">    ana bir admin kullanıcı ise, admin rolünü kaldırmak gibi belirli eylemleri kısıtlar. Güncelleme</span>
+<span class="sd">    işlemi sırasında roller, şifre ve diğer bilgiler doğrulanarak veri tabanında güvenli bir şekilde</span>
+<span class="sd">    değişiklikler yapılır.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        id (int): Düzenlenecek kullanıcının benzersiz kimlik numarası.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        404: Eğer belirtilen kullanıcı ID ile bir kullanıcı bulunamazsa.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        flask.Response: İşlem sonucunda, güncellenmiş bir kullanıcı bilgisiyle ilgili bir HTML sayfası</span>
+<span class="sd">                        döndürülür veya güncelleme başarılı olursa kullanıcılar sayfasına yönlendirilir.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_or_404</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">UserForm</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+
+    <span class="c1"># Admin rolünü önceden belirle</span>
+    <span class="n">admin_role</span> <span class="o">=</span> <span class="n">Role</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;admin&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span> <span class="ow">and</span> <span class="n">form</span><span class="o">.</span><span class="n">validate</span><span class="p">():</span>
+        <span class="c1"># Rolleri geçici olarak sakla</span>
+        <span class="n">role_ids</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">roles</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="c1"># Form.roles alanını geçici olarak kaldır</span>
+        <span class="n">form_roles</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">roles</span>
+        <span class="k">del</span> <span class="n">form</span><span class="o">.</span><span class="n">roles</span>
+
+        <span class="c1"># Diğer alanları güncelle (roles hariç)</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">populate_obj</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+
+        <span class="c1"># Form.roles&#39;u geri koy</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">roles</span> <span class="o">=</span> <span class="n">form_roles</span>
+
+        <span class="c1"># Şifre güncellemesi</span>
+        <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">set_password</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">password</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># Rolleri güncelle</span>
+        <span class="n">roles</span> <span class="o">=</span> <span class="n">Role</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Role</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">role_ids</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">roles</span> <span class="o">=</span> <span class="n">roles</span>
+
+        <span class="c1"># Kullanıcı ID=1 ise ve admin rolü kaldırıldıysa, tekrar ekle</span>
+        <span class="k">if</span> <span class="nb">id</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">admin_role</span> <span class="ow">and</span> <span class="n">admin_role</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">role_ids</span><span class="p">:</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">roles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">admin_role</span><span class="p">)</span>
+            <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Ana admin kullanıcısından admin rolü kaldırılamaz.&#39;</span><span class="p">,</span> <span class="s1">&#39;warning&#39;</span><span class="p">)</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Kullanıcı başarıyla güncellendi.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;admin.users&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Mevcut rolleri seç</span>
+    <span class="n">form</span><span class="o">.</span><span class="n">roles</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">role</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">user</span><span class="o">.</span><span class="n">roles</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/edit_user.html&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="settings">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.settings">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/settings&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">settings</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bu fonksiyon, yönetici panelinde ayarlar sayfasını görüntülemek ve kullanıcıların</span>
+<span class="sd">    sistemin temel ayarlarını değiştirmesine olanak sağlamak için bir HTTP GET ve POST</span>
+<span class="sd">    işleyicisi olarak kullanılır. GET isteğiyle, mevcut ayarlar form alanlarında doldurulur.</span>
+<span class="sd">    POST isteğiyle, form doğrulandıktan sonra ayarlar güncellenir ve veri tabanına kaydedilir.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        form (SettingForm): Kullanıcı tarafından doldurulan ayar formu.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Response: Aynı sayfaya geçerli form objesiyle dönüş yapılır veya başarılı güncelleme durumunda</span>
+<span class="sd">        ayarlar sayfası yeniden yüklenir.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">     Hint- follow error ranges mappingute&quot;&quot;&quot;</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">SettingForm</span><span class="p">()</span>
+
+    <span class="c1"># Formu doldur (GET isteğinde)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">site_name</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;site_name&#39;</span><span class="p">,</span> <span class="s1">&#39;Site Adı&#39;</span><span class="p">)</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">site_description</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;site_description&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">default_language</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;default_language&#39;</span><span class="p">,</span> <span class="s1">&#39;tr&#39;</span><span class="p">)</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">allow_registration</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span> <span class="k">if</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;allow_registration&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;0&#39;</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">enable_user_activation</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span> <span class="k">if</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;enable_user_activation&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;0&#39;</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">mail_server</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mail_server&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">mail_port</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mail_port&#39;</span><span class="p">,</span> <span class="s1">&#39;587&#39;</span><span class="p">)</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">mail_username</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mail_username&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">mail_password</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mail_password&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">mail_use_tls</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span> <span class="k">if</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mail_use_tls&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;0&#39;</span>
+
+        <span class="c1"># AI ayarlarını da doldur</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">enable_ai_features</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span> <span class="k">if</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ai_enable_features&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;0&#39;</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">api_provider</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ai_api_provider&#39;</span><span class="p">,</span> <span class="s1">&#39;openai&#39;</span><span class="p">)</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">default_ai_model</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ai_default_model&#39;</span><span class="p">,</span> <span class="s1">&#39;gpt-3.5-turbo&#39;</span><span class="p">)</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">api_key</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">Setting</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ai_api_key&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Formu kaydet (POST isteğinde)</span>
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;site_name&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">site_name</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;site_description&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">site_description</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;default_language&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">default_language</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;allow_registration&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">allow_registration</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span><span class="p">)</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;enable_user_activation&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">enable_user_activation</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span><span class="p">)</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;mail_server&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">mail_server</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;mail_port&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">mail_port</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;mail_username&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">mail_username</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;mail_password&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">mail_password</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;mail_use_tls&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">mail_use_tls</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span><span class="p">)</span>
+
+        <span class="c1"># AI ayarlarını kaydet</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;ai_enable_features&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">enable_ai_features</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span><span class="p">)</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;ai_api_provider&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">api_provider</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;ai_default_model&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">default_ai_model</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">Setting</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;ai_api_key&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">api_key</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Ayarlar başarıyla kaydedildi.&#39;</span><span class="p">,</span> <span class="s1">&#39;success&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;admin.settings&#39;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/settings.html&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="question_submissions">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.question_submissions">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/programming-questions/&lt;int:id&gt;/submissions&#39;</span><span class="p">)</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">question_submissions</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fonksiyon, belirtilen bir programlama sorusuna ait tüm çözümleri (submission) alarak bir şablon dosyasına yönlendiren bir Flask rota işlemcisidir.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        id (int): Programlama sorusunun benzersiz kimlik numarası.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Yönetici görünümü için gerekli olan verileri içeren bir HTML şablonu.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        werkzeug.exceptions.NotFound: Eğer verilen `id` ile eşleşen bir programlama sorusu bulunamazsa.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.submission</span><span class="w"> </span><span class="kn">import</span> <span class="n">Submission</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.programming_question</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgrammingQuestion</span>
+
+    <span class="c1"># Soruyu kontrol et</span>
+    <span class="n">question</span> <span class="o">=</span> <span class="n">ProgrammingQuestion</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_or_404</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="c1"># Bu soru için tüm çözümleri al</span>
+    <span class="n">submissions</span> <span class="o">=</span> <span class="n">Submission</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">question_id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">Submission</span><span class="o">.</span><span class="n">created_at</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/question_submissions.html&#39;</span><span class="p">,</span>
+                           <span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">,</span>
+                           <span class="n">submissions</span><span class="o">=</span><span class="n">submissions</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="programming_questions">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.programming_questions">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/programming-questions&#39;</span><span class="p">)</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">programming_questions</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Yönetici panelinde programlama sorularını listeleyen bir Flask görünümdür.</span>
+
+<span class="sd">    Bu görünüm, programlama sorularını tarih sırasına göre azalan bir biçimde</span>
+<span class="sd">    sıralar ve admin/programming_questions.html şablonunda görüntüler.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        Yok</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Werkzeug Response: render_template tarafından döndürülen bir Flask</span>
+<span class="sd">        HTTP cevabı.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.programming_question</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgrammingQuestion</span>
+    <span class="n">questions</span> <span class="o">=</span> <span class="n">ProgrammingQuestion</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">ProgrammingQuestion</span><span class="o">.</span><span class="n">created_at</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/programming_questions.html&#39;</span><span class="p">,</span> <span class="n">questions</span><span class="o">=</span><span class="n">questions</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="new_programming_question">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.new_programming_question">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/programming-questions/new&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">new_programming_question</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hedef adres &#39;/programming-questions/new&#39; olan bir route&#39;un görevini gerçekleştiren</span>
+<span class="sd">    fonksiyon. Yeni bir programlama sorusu oluşturmak amacıyla kullanılır. Kullanıcıdan</span>
+<span class="sd">    gelen form verilerini alır, doğrular ve geçerli ise yeni bir programlama sorusunu</span>
+<span class="sd">    veritabanına ekler. Ayrıca işlem sonucuna göre kullanıcıya bildirimde bulunur.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Flask Response: Kullanıcıya, form doldurma ve gönderme işlemi durumuna göre</span>
+<span class="sd">        ilgili sayfa döndürülür.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.forms.programming</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgrammingQuestionForm</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.programming_question</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgrammingQuestion</span>
+
+    <span class="n">form</span> <span class="o">=</span> <span class="n">ProgrammingQuestionForm</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">question</span> <span class="o">=</span> <span class="n">ProgrammingQuestion</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">difficulty</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">difficulty</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">points</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">example_input</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">example_input</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">example_output</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">example_output</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">function_name</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">function_name</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">solution_code</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">solution_code</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">test_inputs</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">test_inputs</span><span class="o">.</span><span class="n">data</span>
+        <span class="p">)</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Programlama sorusu başarıyla oluşturuldu.&#39;</span><span class="p">,</span> <span class="s1">&#39;success&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;admin.programming_questions&#39;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/new_programming_question.html&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="new_ai_programming_question">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.new_ai_programming_question">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/programming-questions/new_ai&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">new_ai_programming_question</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bu fonksiyon, yapay zeka tabanlı yeni bir programlama sorusu oluşturmak için kullanılan bir</span>
+<span class="sd">    route tanımını içerir. Gelen GET ve POST isteklerini işleyerek, gerekli form doğrulamaları</span>
+<span class="sd">    yapılır ve doğrulama başarılı olduğunda kullanıcıdan alınan verilerle veritabanına bir</span>
+<span class="sd">    soru kaydedilir. Ayrıca, işlem sonucunda bir başarı mesajı görüntülenir.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Flask HTTP yanıtı: Eğer POST isteğinde form gönderimi ve doğrulama başarılıysa,</span>
+<span class="sd">        kullanıcıyı programlama sorularının listesini içeren sayfaya yönlendirir. Aksi</span>
+<span class="sd">        durumda, kullanıcıya formu tekrar sunar.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.forms.programming</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgrammingQuestionForm</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.programming_question</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgrammingQuestion</span>
+
+    <span class="n">form</span> <span class="o">=</span> <span class="n">ProgrammingQuestionForm</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">question</span> <span class="o">=</span> <span class="n">ProgrammingQuestion</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">difficulty</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">difficulty</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">points</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">example_input</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">example_input</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">example_output</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">example_output</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">function_name</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">function_name</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">solution_code</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">solution_code</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">test_inputs</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">test_inputs</span><span class="o">.</span><span class="n">data</span>
+        <span class="p">)</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;AI programlama sorusu başarıyla oluşturuldu.&#39;</span><span class="p">,</span> <span class="s1">&#39;success&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;admin.programming_questions&#39;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/generate_ai_question.html&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="edit_programming_question">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.edit_programming_question">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/programming-questions/&lt;int:id&gt;/edit&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">edit_programming_question</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bir programlama sorusunu düzenlemek için kullanılan Flask görünüm fonksiyonu.</span>
+
+<span class="sd">    Bu fonksiyon belirli bir `id`&#39;ye sahip programlama sorusunu veritabanından alır</span>
+<span class="sd">    ve kullanıcıdan gelen form bilgileriyle düzenlenmesini sağlar. Form,</span>
+<span class="sd">    ilk oluşturulurken mevcut sorunun bilgileri ile doldurulur.</span>
+<span class="sd">    Formun doğrulaması başarılı olduğunda, düzenlenen soru veritabanında güncellenir</span>
+<span class="sd">    ve kullanıcı bir onay mesajıyla başka bir sayfaya yönlendirilir.</span>
+<span class="sd">    Eğer form doğrulaması başarısızsa, aynı sayfada hata mesajları görüntülenir.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        id (int): Düzenlenecek programlama sorusunun benzersiz kimliği.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        werkzeug.exceptions.NotFound: Belirtilen `id`&#39;ye sahip bir programlama</span>
+<span class="sd">        sorusu bulunamazsa tetiklenir.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        flask.wrappers.Response: HTTP yanıtı olarak düzenleme formu içeren HTML sayfası</span>
+<span class="sd">        veya düzenleme başarılı ise yönlendirilen URL.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.forms.programming</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgrammingQuestionForm</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.programming_question</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgrammingQuestion</span>
+
+    <span class="n">question</span> <span class="o">=</span> <span class="n">ProgrammingQuestion</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_or_404</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">ProgrammingQuestionForm</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">question</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="n">form</span><span class="o">.</span><span class="n">populate_obj</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Programlama sorusu başarıyla güncellendi.&#39;</span><span class="p">,</span> <span class="s1">&#39;success&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;admin.programming_questions&#39;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/edit_programming_question.html&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">,</span> <span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="delete_programming_question">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.delete_programming_question">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/programming-questions/&lt;int:id&gt;/delete&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_programming_question</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Route bir programlama sorusunu silmek için kullanılır. Yönetici yetkisi gerektirir.</span>
+<span class="sd">    İlk olarak soruyla ilişkili tüm gönderiler temizlenir, ardından sorunun kendisi silinir.</span>
+<span class="sd">    İşlem başarıyla tamamlanırsa, kullanıcıya bir başarı mesajı gösterilir ve</span>
+<span class="sd">    programlama soruları görünümüne yönlendirilir.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        id (int): Silinecek olan programlama sorusunun benzersiz tanımlayıcısı.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Response: İşlem başarılıysa kullanıcıyı programlama soruları sayfasına yönlendiren bir HTTP yanıtı.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.programming_question</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgrammingQuestion</span>
+
+    <span class="n">question</span> <span class="o">=</span> <span class="n">ProgrammingQuestion</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_or_404</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="c1"># Önce soruyla ilişkili gönderileri temizle</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.submission</span><span class="w"> </span><span class="kn">import</span> <span class="n">Submission</span>
+    <span class="n">Submission</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">question_id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+
+    <span class="c1"># Sonra soruyu sil</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Programlama sorusu başarıyla silindi.&#39;</span><span class="p">,</span> <span class="s1">&#39;success&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;admin.programming_questions&#39;</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="view_programming_question">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.view_programming_question">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/programming-questions/&lt;int:id&gt;&#39;</span><span class="p">)</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">view_programming_question</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bu rota, belirli bir programlama sorusunu görüntüleme işlemini gerçekleştirir.</span>
+<span class="sd">    Yönetici erişimi gerektirir. Bir ID parametresi alır ve bu ID&#39;ye ait programlama</span>
+<span class="sd">    sorusunu veri tabanından sorgular. Sorgu sonuçsuz kalırsa 404 hata kodu döndürülür.</span>
+<span class="sd">    Başarılı bir sorgu halinde, ilgili programlama sorusuyla birlikte bu soruya ait</span>
+<span class="sd">    detaylar bir şablon ile kullanıcıya sunulur.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        id (int): Görüntülenmek istenen programlama sorusunun benzersiz kimlik</span>
+<span class="sd">        numarası.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotFound: Eğer belirtilen ID&#39;ye sahip bir programlama sorusu bulunamazsa</span>
+<span class="sd">        404 hatası döner.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Response: programlama sorusunun detaylarını barındıran HTML yanıtı.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.programming_question</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgrammingQuestion</span>
+
+    <span class="n">question</span> <span class="o">=</span> <span class="n">ProgrammingQuestion</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_or_404</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/view_programming_question.html&#39;</span><span class="p">,</span> <span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="test_programming_question">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.test_programming_question">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/programming-questions/&lt;int:id&gt;/test&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_programming_question</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    admin_bp altındaki bir route işlevidir. Bu işlev, programlama sorusu testi yapılmasına olanak sağlar.</span>
+<span class="sd">    Bir GET isteği alındığında, form sayfası döndürülür ve POST isteği ile test kodu FastAPI servisine</span>
+<span class="sd">    gönderilerek değerlendirilir.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        id (int): Testi yapılacak programlama sorusunun veritabanındaki ID&#39;si.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        requests.RequestException: FastAPI değerlendirme servisi ile yapılan istek sırasında hata oluşursa yükseltilir.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: HTTP Yanıtı ve şablon render edilerek döndürülen HTML çıktısı.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.programming_question</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgrammingQuestion</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+    <span class="n">question</span> <span class="o">=</span> <span class="n">ProgrammingQuestion</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_or_404</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">test_code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;test_code&#39;</span><span class="p">)</span>
+
+        <span class="c1"># FastAPI servisine istek gönder</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">evaluation_request</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="n">test_code</span><span class="p">,</span>
+                <span class="s2">&quot;function_name&quot;</span><span class="p">:</span> <span class="n">question</span><span class="o">.</span><span class="n">function_name</span><span class="p">,</span>
+                <span class="s2">&quot;test_inputs&quot;</span><span class="p">:</span> <span class="n">question</span><span class="o">.</span><span class="n">test_inputs</span><span class="p">,</span>
+                <span class="s2">&quot;solution_code&quot;</span><span class="p">:</span> <span class="n">question</span><span class="o">.</span><span class="n">solution_code</span>
+            <span class="p">}</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="s2">&quot;http://127.0.0.1:8000/api/evaluate&quot;</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">=</span><span class="n">evaluation_request</span><span class="p">,</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Kod değerlendirme servisi geçici olarak kullanılamıyor.&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/test_programming_question.html&#39;</span><span class="p">,</span>
+                                       <span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">,</span>
+                                       <span class="n">test_code</span><span class="o">=</span><span class="n">test_code</span><span class="p">,</span>
+                                       <span class="n">error</span><span class="o">=</span><span class="s2">&quot;API Hatası&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Kod değerlendirme servisi geçici olarak kullanılamıyor.&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/test_programming_question.html&#39;</span><span class="p">,</span>
+                                   <span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">,</span>
+                                   <span class="n">test_code</span><span class="o">=</span><span class="n">test_code</span><span class="p">,</span>
+                                   <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/test_programming_question.html&#39;</span><span class="p">,</span>
+                               <span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">,</span>
+                               <span class="n">test_code</span><span class="o">=</span><span class="n">test_code</span><span class="p">,</span>
+                               <span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/test_programming_question.html&#39;</span><span class="p">,</span>
+                           <span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">,</span>
+                           <span class="n">test_code</span><span class="o">=</span><span class="n">question</span><span class="o">.</span><span class="n">solution_code</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="badges">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.badges">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/badges&#39;</span><span class="p">)</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">badges</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Badges işlevi, sistemdeki mevcut tüm rozetleri sorgulayıp serileştirerek</span>
+<span class="sd">    ön uçta kullanıma hazır bir formatta döndürür. Bu işlev, rozetlerin</span>
+<span class="sd">    isim, açıklama, simge, renk ve oluşturulma/güncellenme zaman bilgilerini</span>
+<span class="sd">    içerir.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Response: Admin panelinin rozetlere ayrılmış HTML şablonuyla yapılan</span>
+<span class="sd">        HTTP yanıtı. Veriler, formatlanmış rozet bilgilerini içeren bir</span>
+<span class="sd">        liste olarak döndürülür.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.badges</span><span class="w"> </span><span class="kn">import</span> <span class="n">Badges</span>
+    <span class="n">badges_list</span> <span class="o">=</span> <span class="n">Badges</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="c1"># Badges nesnelerini serileştirilebilir sözlüklere dönüştür</span>
+    <span class="n">badges_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">badge</span> <span class="ow">in</span> <span class="n">badges_list</span><span class="p">:</span>
+        <span class="n">badges_data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">badge</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">badge</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">badge</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+            <span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">badge</span><span class="o">.</span><span class="n">icon</span><span class="p">,</span>
+            <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="n">badge</span><span class="o">.</span><span class="n">color</span><span class="p">,</span>
+            <span class="s1">&#39;created_at&#39;</span><span class="p">:</span> <span class="n">badge</span><span class="o">.</span><span class="n">created_at</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">badge</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">badge</span><span class="o">.</span><span class="n">created_at</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;updated_at&#39;</span><span class="p">:</span> <span class="n">badge</span><span class="o">.</span><span class="n">updated_at</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">badge</span><span class="p">,</span> <span class="s1">&#39;updated_at&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">badge</span><span class="o">.</span><span class="n">updated_at</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/badges.html&#39;</span><span class="p">,</span> <span class="n">badge</span><span class="o">=</span><span class="n">badges_data</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="new_badge">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.new_badge">[belgeler]</a>
+<span class="nd">@login_required</span>
+<span class="nd">@admin_required</span>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/badges/new&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">new_badge</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Yeni rozet oluşturma ve gerekli kriterleri kaydetme işlemlerini yöneten bir Flask rotasıdır. Bu rota, kullanıcıdan rozet</span>
+<span class="sd">    bilgilerini ve kriterlerini alır, doğrulama yapar ve veritabanına kayıt işlemini gerçekleştirir. Yalnızca giriş yapmış</span>
+<span class="sd">    ve yönetici izni olan kullanıcılar için erişime açıktır. GET ve POST HTTP metodlarını destekler.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Yeni rozet sayfasının HTML içeriği (GET isteği) veya işlem sonucuna göre yönlendirme veya mesaj (POST isteği).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Exception: Veritabanı işlemleri sırasında bir hata meydana gelirse fırlatılır ve işlem geri alınır.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">FlaskForm</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span> <span class="ow">and</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">icon</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;icon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">criteria_type</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;criteria_type&#39;</span><span class="p">]</span>
+            <span class="n">criteria_value</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;criteria_value&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Basit doğrulama</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">description</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">icon</span><span class="p">:</span>
+                <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Tüm alanları doldurun&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/new_badge.html&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span>
+
+            <span class="c1"># Rozet nesnesini oluştur</span>
+            <span class="n">badge</span> <span class="o">=</span> <span class="n">Badges</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+                <span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">color</span>
+            <span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">badge</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>  <span class="c1"># badge.id değerini almak için</span>
+
+            <span class="c1"># Rozet kriteri oluştur</span>
+            <span class="n">criteria</span> <span class="o">=</span> <span class="n">BadgeCriteria</span><span class="p">(</span>
+                <span class="n">badge_id</span><span class="o">=</span><span class="n">badge</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="n">criteria_type</span><span class="o">=</span><span class="n">criteria_type</span><span class="p">,</span>
+                <span class="n">criteria_value</span><span class="o">=</span><span class="n">criteria_value</span> <span class="k">if</span> <span class="n">criteria_value</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">criteria</span><span class="p">)</span>
+
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Rozet başarıyla eklendi&#39;</span><span class="p">,</span> <span class="s1">&#39;success&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;admin.badges&#39;</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="n">flash</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Rozet eklenirken hata oluştu: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/new_badge.html&#39;</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="edit_badge">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.edit_badge">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/badges/&lt;int:id&gt;/edit&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">edit_badge</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    edit_badge fonksiyonu, belirtilen ID&#39;ye sahip bir Rozet&#39;in (Badge) bilgilerini düzenlemek</span>
+<span class="sd">    için bir form sunan ve güncellenen bilgileri veritabanında işleyen bir Flask görünümdür.</span>
+<span class="sd">    Bu işlemi yalnızca yetkili ve giriş yapmış kullanıcılar gerçekleştirebilir.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        id (int): Düzenlenecek rozetin eşsiz kimlik numarası.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        abort: Belirtilen ID&#39;ye ait bir rozet bulunamadığında HTTP 404 hatası döndürülür.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Response: Eğer POST talebi geçerli bir form ile gönderilmişse, güncellenen rozet</span>
+<span class="sd">        ile yönetim rozet sayfasına yönlendirme yapılır. Aksi halde düzenleme formunu içeren</span>
+<span class="sd">        bir HTML şablonu döndürülür.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">badge</span> <span class="o">=</span> <span class="n">Badges</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_or_404</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="n">criteria</span> <span class="o">=</span> <span class="n">BadgeCriteria</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">form</span> <span class="o">=</span> <span class="n">BadgeForm</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">validate_on_submit</span><span class="p">():</span>
+        <span class="c1"># Rozet bilgilerini güncelle</span>
+        <span class="n">badge</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">badge</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">badge</span><span class="o">.</span><span class="n">icon</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">icon</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">badge</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">color</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="c1"># Kriter bilgilerini güncelle</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">criteria</span><span class="p">:</span>
+            <span class="n">criteria</span> <span class="o">=</span> <span class="n">BadgeCriteria</span><span class="p">(</span><span class="n">badge_id</span><span class="o">=</span><span class="n">badge</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">criteria</span><span class="p">)</span>
+
+        <span class="n">criteria</span><span class="o">.</span><span class="n">criteria_type</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;criteria_type&#39;</span><span class="p">,</span> <span class="s1">&#39;registration&#39;</span><span class="p">)</span>
+        <span class="n">criteria</span><span class="o">.</span><span class="n">criteria_value</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s1">&#39;criteria_value&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">criteria</span><span class="o">.</span><span class="n">criteria_type</span> <span class="o">!=</span> <span class="s1">&#39;registration&#39;</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Rozet başarıyla güncellendi!&#39;</span><span class="p">,</span> <span class="s1">&#39;success&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;admin.badges&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Şablona gönderilecek veriyi hazırla</span>
+    <span class="n">badge_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">badge</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">badge</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">badge</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+        <span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">badge</span><span class="o">.</span><span class="n">icon</span><span class="p">,</span>
+        <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="n">badge</span><span class="o">.</span><span class="n">color</span><span class="p">,</span>
+        <span class="s1">&#39;criteria_type&#39;</span><span class="p">:</span> <span class="n">criteria</span><span class="o">.</span><span class="n">criteria_type</span> <span class="k">if</span> <span class="n">criteria</span> <span class="k">else</span> <span class="s1">&#39;registration&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;criteria_value&#39;</span><span class="p">:</span> <span class="n">criteria</span><span class="o">.</span><span class="n">criteria_value</span> <span class="k">if</span> <span class="n">criteria</span> <span class="ow">and</span> <span class="n">criteria</span><span class="o">.</span><span class="n">criteria_value</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;admin/edit_badge.html&#39;</span><span class="p">,</span> <span class="n">badge</span><span class="o">=</span><span class="n">badge_data</span><span class="p">,</span> <span class="n">form</span><span class="o">=</span><span class="n">form</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="delete_badge">
+<a class="viewcode-back" href="../../../app.routes.html#app.routes.admin.delete_badge">[belgeler]</a>
+<span class="nd">@admin_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/badges/&lt;int:id&gt;/delete&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@admin_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_badge</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Belirtilen ID&#39;ye sahip bir rozet (badge) kaydını siler. Rozet ile ilişkili olan kullanıcıların</span>
+<span class="sd">    rozet bilgilerini de temizler ve ardından silme işlemine devam eder. İşlem sonucunda, başarıyla</span>
+<span class="sd">    silme geri bildirimi kullanıcıya gösterilir.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        id (int): Silinmesi gereken rozetin ID&#39;si.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Werkzeug Response: Silme işleminin ardından yönetici rozetler sayfasına yönlendiren</span>
+<span class="sd">        bir cevap döndürülür.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        404: Belirtilen ID&#39;ye sahip bir rozet bulunamadıysa bir hata yükseltilir.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.badges</span><span class="w"> </span><span class="kn">import</span> <span class="n">Badges</span>
+
+    <span class="n">badge</span> <span class="o">=</span> <span class="n">Badges</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">get_or_404</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="c1"># Badge ile ilişkili kullanıcıları güncelle</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.user</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">badge_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">badge_id</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Sonra badge&#39;i sil</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">badge</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="n">flash</span><span class="p">(</span><span class="s1">&#39;Badge başarıyla silindi.&#39;</span><span class="p">,</span> <span class="s1">&#39;success&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;admin.badges&#39;</span><span class="p">))</span></div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, BatuhanAcikgoz
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/batuhanacikgoz/PythonPlayground" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../../_static/documentation_options.js?v=b6527007"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="../../../_static/translations.js?v=b0f24d8d"></script>
+    <script src="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&family=Inconsolata&display=swap"></script>
+    </body>
+</html>

@@ -284,17 +284,1719 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
-<section id="app-forms-admin-module">
-<h2>app.forms.admin module<a class="headerlink" href="#app-forms-admin-module" title="Link to this heading">¶</a></h2>
+<section id="module-app.forms.admin">
+<span id="app-forms-admin-module"></span><h2>app.forms.admin module<a class="headerlink" href="#module-app.forms.admin" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.admin.RoleForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.admin.</span></span><span class="sig-name descname"><span class="pre">RoleForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/admin.html#RoleForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.admin.RoleForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Rol formunu temsil eden sınıf.</p>
+<p>Kullanıcı rollerini tanımlamak ve düzenlemek için kullanılacak bir form sağlar.
+FlaskForm sınıfından türemiştir ve kullanıcıların rol adı ve açıklama gibi
+ilgili bilgileri girmesine olanak tanır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formdata</strong> – Input data coming from the client, usually
+<code class="docutils literal notranslate"><span class="pre">request.form</span></code> or equivalent. Should provide a “multi
+dict” interface to get a list of values for a given key,
+such as what Werkzeug, Django, and WebOb provide.</p></li>
+<li><p><strong>obj</strong> – Take existing data from attributes on this object
+matching form field attributes. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is
+not passed.</p></li>
+<li><p><strong>prefix</strong> – If provided, all fields will have their name
+prefixed with the value. This is for distinguishing multiple
+forms on a single page. This only affects the HTML name for
+matching input data, not the Python name for matching
+existing data.</p></li>
+<li><p><strong>data</strong> – Take existing data from keys in this dict matching
+form field attributes. <code class="docutils literal notranslate"><span class="pre">obj</span></code> takes precedence if it also
+has a matching attribute. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not
+passed.</p></li>
+<li><p><strong>meta</strong> – A dict of attributes to override on this form’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">meta</span></code> instance.</p></li>
+<li><p><strong>extra_filters</strong> – A dict mapping field attribute names to
+lists of extra filter functions to run. Extra filters run
+after filters passed when creating the field. If the form
+has <code class="docutils literal notranslate"><span class="pre">filter_&lt;fieldname&gt;</span></code>, it is the last extra filter.</p></li>
+<li><p><strong>kwargs</strong> – Merged with <code class="docutils literal notranslate"><span class="pre">data</span></code> to allow passing existing
+data as parameters. Overwrites any duplicate keys in
+<code class="docutils literal notranslate"><span class="pre">data</span></code>. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not passed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.RoleForm.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Açıklama',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#app.forms.admin.RoleForm.description" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.RoleForm.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Rol</span> <span class="pre">Adı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#app.forms.admin.RoleForm.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.RoleForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Kaydet',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#app.forms.admin.RoleForm.submit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.admin.</span></span><span class="sig-name descname"><span class="pre">SettingForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/admin.html#SettingForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.admin.SettingForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Kullanıcı arayüzü üzerinden sistem ayarlarını yapılandırmak için kullanılan form sınıfıdır.</p>
+<p>Bu sınıf, Flask web uygulamalarında sistem ayarlarının kullanıcı tarafından
+düzenlenmesi için bir form sağlar. Form, sistem genelinde belirli sabit
+ayarları değiştirmek amacıyla kullanılabilir. Alanlar, sistemin çeşitli
+özelliklerini ve kullanıcı yönetimi ile ilgili ayarlarını yapılandırmayı
+amaçlamaktadır. Ayrıca, yapay zeka ile ilgili özelliklerin yönetimi için de
+seçenekler içerir.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.site_name">
+<span class="sig-name descname"><span class="pre">site_name</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.site_name" title="Link to this definition">¶</a></dt>
+<dd><p>Sitenin adı. Kullanıcı tarafından zorunlu olarak doldurulmalıdır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StringField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.site_description">
+<span class="sig-name descname"><span class="pre">site_description</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.site_description" title="Link to this definition">¶</a></dt>
+<dd><p>Sitenin açıklaması. Zorunlu değildir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TextAreaField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.default_language">
+<span class="sig-name descname"><span class="pre">default_language</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.default_language" title="Link to this definition">¶</a></dt>
+<dd><p>Sitenin varsayılan dili. Seçenekler arasında “Türkçe” ve “English” bulunur.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SelectField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.allow_registration">
+<span class="sig-name descname"><span class="pre">allow_registration</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.allow_registration" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı kaydına izin verme ayarı. Seçenekler: Açık (1) veya Kapalı (0).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SelectField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.enable_user_activation">
+<span class="sig-name descname"><span class="pre">enable_user_activation</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.enable_user_activation" title="Link to this definition">¶</a></dt>
+<dd><p>Hesap aktivasyon gerekliliği ayarı. Seçenekler: Gerekli (1) veya Gerekli Değil (0).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SelectField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.mail_server">
+<span class="sig-name descname"><span class="pre">mail_server</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.mail_server" title="Link to this definition">¶</a></dt>
+<dd><p>Mail sunucusunun adı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StringField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.mail_port">
+<span class="sig-name descname"><span class="pre">mail_port</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.mail_port" title="Link to this definition">¶</a></dt>
+<dd><p>Mail sunucusu bağlantı portu.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StringField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.mail_username">
+<span class="sig-name descname"><span class="pre">mail_username</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.mail_username" title="Link to this definition">¶</a></dt>
+<dd><p>Mail hesap adı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StringField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.mail_password">
+<span class="sig-name descname"><span class="pre">mail_password</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.mail_password" title="Link to this definition">¶</a></dt>
+<dd><p>Mail hesap şifresi.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PasswordField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.mail_use_tls">
+<span class="sig-name descname"><span class="pre">mail_use_tls</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.mail_use_tls" title="Link to this definition">¶</a></dt>
+<dd><p>Mail bağlantısı için TLS kullanım ayarı. Seçenekler: Evet (1) veya Hayır (0).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SelectField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.enable_ai_features">
+<span class="sig-name descname"><span class="pre">enable_ai_features</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.enable_ai_features" title="Link to this definition">¶</a></dt>
+<dd><p>Yapay zeka özelliklerini etkinleştirme ayarı. Seçenekler: Açık (1) veya Kapalı (0).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SelectField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.api_provider">
+<span class="sig-name descname"><span class="pre">api_provider</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.api_provider" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanılacak API sağlayıcı. Varsayılan değer: “Google Gemini”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SelectField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.default_ai_model">
+<span class="sig-name descname"><span class="pre">default_ai_model</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.default_ai_model" title="Link to this definition">¶</a></dt>
+<dd><p>Varsayılan yapay zeka modeli. Seçenekler arasında çeşitli “Gemini” modelleri bulunur.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SelectField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.api_key">
+<span class="sig-name descname"><span class="pre">api_key</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.api_key" title="Link to this definition">¶</a></dt>
+<dd><p>API erişim anahtarı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PasswordField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.SettingForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><a class="headerlink" href="#app.forms.admin.SettingForm.submit" title="Link to this definition">¶</a></dt>
+<dd><p>Formu gönderme düğmesi.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SubmitField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formdata</strong> – Input data coming from the client, usually
+<code class="docutils literal notranslate"><span class="pre">request.form</span></code> or equivalent. Should provide a “multi
+dict” interface to get a list of values for a given key,
+such as what Werkzeug, Django, and WebOb provide.</p></li>
+<li><p><strong>obj</strong> – Take existing data from attributes on this object
+matching form field attributes. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is
+not passed.</p></li>
+<li><p><strong>prefix</strong> – If provided, all fields will have their name
+prefixed with the value. This is for distinguishing multiple
+forms on a single page. This only affects the HTML name for
+matching input data, not the Python name for matching
+existing data.</p></li>
+<li><p><strong>data</strong> – Take existing data from keys in this dict matching
+form field attributes. <code class="docutils literal notranslate"><span class="pre">obj</span></code> takes precedence if it also
+has a matching attribute. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not
+passed.</p></li>
+<li><p><strong>meta</strong> – A dict of attributes to override on this form’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">meta</span></code> instance.</p></li>
+<li><p><strong>extra_filters</strong> – A dict mapping field attribute names to
+lists of extra filter functions to run. Extra filters run
+after filters passed when creating the field. If the form
+has <code class="docutils literal notranslate"><span class="pre">filter_&lt;fieldname&gt;</span></code>, it is the last extra filter.</p></li>
+<li><p><strong>kwargs</strong> – Merged with <code class="docutils literal notranslate"><span class="pre">data</span></code> to allow passing existing
+data as parameters. Overwrites any duplicate keys in
+<code class="docutils literal notranslate"><span class="pre">data</span></code>. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not passed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">allow_registration</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectField,</span> <span class="pre">('Kayıt</span> <span class="pre">İzni',),</span> <span class="pre">{'choices':</span> <span class="pre">[('1',</span> <span class="pre">'Açık'),</span> <span class="pre">('0',</span> <span class="pre">'Kapalı')]})&gt;</span></em><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">api_key</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('API</span> <span class="pre">Anahtarı',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">api_provider</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectField,</span> <span class="pre">('API</span> <span class="pre">Sağlayıcı',),</span> <span class="pre">{'choices':</span> <span class="pre">[('gemini',</span> <span class="pre">'Google</span> <span class="pre">Gemini')],</span> <span class="pre">'default':</span> <span class="pre">'gemini'})&gt;</span></em><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">default_ai_model</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectField,</span> <span class="pre">('Varsayılan</span> <span class="pre">AI</span> <span class="pre">Modeli',),</span> <span class="pre">{'choices':</span> <span class="pre">[('gemini-1.5-pro-latest',</span> <span class="pre">'Gemini</span> <span class="pre">1.5</span> <span class="pre">Pro'),</span> <span class="pre">('gemini-1.5-flash-latest',</span> <span class="pre">'Gemini</span> <span class="pre">1.5</span> <span class="pre">Flash'),</span> <span class="pre">('gemini-2.0-pro',</span> <span class="pre">'Gemini</span> <span class="pre">2.0</span> <span class="pre">Pro'),</span> <span class="pre">('gemini-2.0-flash',</span> <span class="pre">'Gemini</span> <span class="pre">2.0</span> <span class="pre">Flash'),</span> <span class="pre">('gemini-2.0-flash-lite',</span> <span class="pre">'Gemini</span> <span class="pre">2.0</span> <span class="pre">Flash</span> <span class="pre">Lite')],</span> <span class="pre">'default':</span> <span class="pre">'gemini-2.0-flash-lite'})&gt;</span></em><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">default_language</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectField,</span> <span class="pre">('Varsayılan</span> <span class="pre">Dil',),</span> <span class="pre">{'choices':</span> <span class="pre">[('tr',</span> <span class="pre">'Türkçe'),</span> <span class="pre">('en',</span> <span class="pre">'English')]})&gt;</span></em><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">enable_ai_features</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectField,</span> <span class="pre">('AI</span> <span class="pre">Özellikleri',),</span> <span class="pre">{'choices':</span> <span class="pre">[('1',</span> <span class="pre">'Açık'),</span> <span class="pre">('0',</span> <span class="pre">'Kapalı')]})&gt;</span></em><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">enable_user_activation</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectField,</span> <span class="pre">('Hesap</span> <span class="pre">Aktivasyonu',),</span> <span class="pre">{'choices':</span> <span class="pre">[('1',</span> <span class="pre">'Gerekli'),</span> <span class="pre">('0',</span> <span class="pre">'Gerekli</span> <span class="pre">Değil')]})&gt;</span></em><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">mail_password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('Mail</span> <span class="pre">Şifresi',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">mail_port</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Mail</span> <span class="pre">Port',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">mail_server</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Mail</span> <span class="pre">Sunucusu',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">mail_use_tls</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectField,</span> <span class="pre">('Mail</span> <span class="pre">TLS',),</span> <span class="pre">{'choices':</span> <span class="pre">[('1',</span> <span class="pre">'Evet'),</span> <span class="pre">('0',</span> <span class="pre">'Hayır')]})&gt;</span></em><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">mail_username</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Mail</span> <span class="pre">Kullanıcı</span> <span class="pre">Adı',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">site_description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Site</span> <span class="pre">Açıklaması',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">site_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Site</span> <span class="pre">Adı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id13" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Ayarları</span> <span class="pre">Kaydet',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id14" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.admin.UserForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.admin.</span></span><span class="sig-name descname"><span class="pre">UserForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/admin.html#UserForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.admin.UserForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Kullanıcı formunu temsil eden bir sınıf.</p>
+<p>Bu sınıf, FlaskForm sınıfından türetilmiştir ve bir kullanıcı formunun doğrulama ve
+form elemanlarını tanımlamak için kullanılır. Kullanıcı adı, e-posta adresi, parola
+ve roller gibi alanları içerir. Form alanlarına yönelik doğrulama kuralları
+belirtilmiştir ve roller için dinamik seçim seçenekleri yüklenmektedir.</p>
+<p>Initializes an instance of the UserForm class, setting up role choices for form usage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.UserForm.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('E-posta',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Email</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#app.forms.admin.UserForm.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.UserForm.password">
+<span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('Parola',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.Optional</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#app.forms.admin.UserForm.password" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.UserForm.roles">
+<span class="sig-name descname"><span class="pre">roles</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectMultipleField,</span> <span class="pre">('Roller',),</span> <span class="pre">{'coerce':</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;})&gt;</span></em><a class="headerlink" href="#app.forms.admin.UserForm.roles" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.UserForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Kaydet',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#app.forms.admin.UserForm.submit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.admin.UserForm.username">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Kullanıcı</span> <span class="pre">Adı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#app.forms.admin.UserForm.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="app-forms-auth-module">
-<h2>app.forms.auth module<a class="headerlink" href="#app-forms-auth-module" title="Link to this heading">¶</a></h2>
+<section id="module-app.forms.auth">
+<span id="app-forms-auth-module"></span><h2>app.forms.auth module<a class="headerlink" href="#module-app.forms.auth" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.auth.LoginForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.auth.</span></span><span class="sig-name descname"><span class="pre">LoginForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#LoginForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.auth.LoginForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Kullanıcı giriş formunu temsil eden bir sınıf.</p>
+<p>Giriş yaparken kullanıcı adı ve parola bilgilerini alır, ayrıca isteğe bağlı olarak
+kullanıcıdan “beni hatırla” seçeneğini işaretleyip işaretlemeyeceğini belirten bir
+değer alır. Bu form genellikle kimlik doğrulama işlemlerinde kullanılır.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.LoginForm.username">
+<span class="sig-name descname"><span class="pre">username</span></span><a class="headerlink" href="#app.forms.auth.LoginForm.username" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı adı bilgisini temsil eden StringField. Form üzerinde</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&quot;Kullanıcı</span> <span class="pre">Adı&quot;</span> <span class="pre">başlığı</span> <span class="pre">ile</span> <span class="pre">görüntülenir.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.LoginForm.password">
+<span class="sig-name descname"><span class="pre">password</span></span><a class="headerlink" href="#app.forms.auth.LoginForm.password" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı parolasını temsil eden PasswordField. Form üzerinde</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&quot;Parola&quot;</span> <span class="pre">başlığı</span> <span class="pre">ile</span> <span class="pre">gösterilir.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.LoginForm.remember_me">
+<span class="sig-name descname"><span class="pre">remember_me</span></span><a class="headerlink" href="#app.forms.auth.LoginForm.remember_me" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcının “beni hatırla” tercihini belirten BooleanField.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.LoginForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><a class="headerlink" href="#app.forms.auth.LoginForm.submit" title="Link to this definition">¶</a></dt>
+<dd><p>Formu gönderme işlemini gerçekleştiren SubmitField.</p>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formdata</strong> – Input data coming from the client, usually
+<code class="docutils literal notranslate"><span class="pre">request.form</span></code> or equivalent. Should provide a “multi
+dict” interface to get a list of values for a given key,
+such as what Werkzeug, Django, and WebOb provide.</p></li>
+<li><p><strong>obj</strong> – Take existing data from attributes on this object
+matching form field attributes. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is
+not passed.</p></li>
+<li><p><strong>prefix</strong> – If provided, all fields will have their name
+prefixed with the value. This is for distinguishing multiple
+forms on a single page. This only affects the HTML name for
+matching input data, not the Python name for matching
+existing data.</p></li>
+<li><p><strong>data</strong> – Take existing data from keys in this dict matching
+form field attributes. <code class="docutils literal notranslate"><span class="pre">obj</span></code> takes precedence if it also
+has a matching attribute. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not
+passed.</p></li>
+<li><p><strong>meta</strong> – A dict of attributes to override on this form’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">meta</span></code> instance.</p></li>
+<li><p><strong>extra_filters</strong> – A dict mapping field attribute names to
+lists of extra filter functions to run. Extra filters run
+after filters passed when creating the field. If the form
+has <code class="docutils literal notranslate"><span class="pre">filter_&lt;fieldname&gt;</span></code>, it is the last extra filter.</p></li>
+<li><p><strong>kwargs</strong> – Merged with <code class="docutils literal notranslate"><span class="pre">data</span></code> to allow passing existing
+data as parameters. Overwrites any duplicate keys in
+<code class="docutils literal notranslate"><span class="pre">data</span></code>. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not passed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('Parola',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id15" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id16">
+<span class="sig-name descname"><span class="pre">remember_me</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(BooleanField,</span> <span class="pre">('Beni</span> <span class="pre">Hatırla',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id16" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id17">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Giriş</span> <span class="pre">Yap',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id17" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id18">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Kullanıcı</span> <span class="pre">Adı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id18" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.auth.RegisterForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.auth.</span></span><span class="sig-name descname"><span class="pre">RegisterForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#RegisterForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.auth.RegisterForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Kullanıcı kayıt formunu temsil eder.</p>
+<p>Bu sınıf, bir kullanıcının kayıt işlemi sırasında doldurması gereken
+veri alanlarını içerir. Kullanıcı adını, e-posta adresini, şifreyi ve
+şifre doğrulamasını kontrol eder. Ayrıca belirli validasyon işlemleriyle
+girdi verisinin doğruluğunu sağlar.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.RegisterForm.username">
+<span class="sig-name descname"><span class="pre">username</span></span><a class="headerlink" href="#app.forms.auth.RegisterForm.username" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı adını temsil eden metin alanı.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.RegisterForm.email">
+<span class="sig-name descname"><span class="pre">email</span></span><a class="headerlink" href="#app.forms.auth.RegisterForm.email" title="Link to this definition">¶</a></dt>
+<dd><p>E-posta adresini temsil eden metin alanı.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.RegisterForm.password">
+<span class="sig-name descname"><span class="pre">password</span></span><a class="headerlink" href="#app.forms.auth.RegisterForm.password" title="Link to this definition">¶</a></dt>
+<dd><p>Şifreyi temsil eden parola alanı.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.RegisterForm.confirm_password">
+<span class="sig-name descname"><span class="pre">confirm_password</span></span><a class="headerlink" href="#app.forms.auth.RegisterForm.confirm_password" title="Link to this definition">¶</a></dt>
+<dd><p>Şifre doğrulaması için kullanılan parola alanı.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.RegisterForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><a class="headerlink" href="#app.forms.auth.RegisterForm.submit" title="Link to this definition">¶</a></dt>
+<dd><p>Kayıt işlemini gönderme butonunu temsil eder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.forms.auth.RegisterForm.validate_username">
+<span class="sig-name descname"><span class="pre">validate_username</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#RegisterForm.validate_username"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.auth.RegisterForm.validate_username" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı adının benzersiz olup olmadığını kontrol eder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.forms.auth.RegisterForm.validate_email">
+<span class="sig-name descname"><span class="pre">validate_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#RegisterForm.validate_email"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.auth.RegisterForm.validate_email" title="Link to this definition">¶</a></dt>
+<dd><p>E-posta adresinin benzersiz olup olmadığını kontrol eder.</p>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formdata</strong> – Input data coming from the client, usually
+<code class="docutils literal notranslate"><span class="pre">request.form</span></code> or equivalent. Should provide a “multi
+dict” interface to get a list of values for a given key,
+such as what Werkzeug, Django, and WebOb provide.</p></li>
+<li><p><strong>obj</strong> – Take existing data from attributes on this object
+matching form field attributes. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is
+not passed.</p></li>
+<li><p><strong>prefix</strong> – If provided, all fields will have their name
+prefixed with the value. This is for distinguishing multiple
+forms on a single page. This only affects the HTML name for
+matching input data, not the Python name for matching
+existing data.</p></li>
+<li><p><strong>data</strong> – Take existing data from keys in this dict matching
+form field attributes. <code class="docutils literal notranslate"><span class="pre">obj</span></code> takes precedence if it also
+has a matching attribute. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not
+passed.</p></li>
+<li><p><strong>meta</strong> – A dict of attributes to override on this form’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">meta</span></code> instance.</p></li>
+<li><p><strong>extra_filters</strong> – A dict mapping field attribute names to
+lists of extra filter functions to run. Extra filters run
+after filters passed when creating the field. If the form
+has <code class="docutils literal notranslate"><span class="pre">filter_&lt;fieldname&gt;</span></code>, it is the last extra filter.</p></li>
+<li><p><strong>kwargs</strong> – Merged with <code class="docutils literal notranslate"><span class="pre">data</span></code> to allow passing existing
+data as parameters. Overwrites any duplicate keys in
+<code class="docutils literal notranslate"><span class="pre">data</span></code>. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not passed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="id19">
+<span class="sig-name descname"><span class="pre">validate_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#RegisterForm.validate_email"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#id19" title="Link to this definition">¶</a></dt>
+<dd><p>Bu fonksiyon, verilen e-posta adresinin veri tabanında zaten kayıtlı olup olmadığını kontrol eder. Eğer e-posta adresi
+kayıtlıysa, bir doğrulama hatası (ValidationError) fırlatır. Bu sayede aynı e-posta adresine sahip birden fazla kullanıcı
+oluşturulması engellenir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> – Doğrulama işlemini gerçekleştiren sınıfın örneği.</p></li>
+<li><p><strong>email</strong> – Doğrulanacak e-posta adresini içeren veri.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValidationError</strong> – Eğer e-posta adresi veri tabanında zaten mevcutsa bu hata fırlatılır.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id20">
+<span class="sig-name descname"><span class="pre">validate_username</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#RegisterForm.validate_username"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#id20" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı adı doğrulama fonksiyonu.</p>
+<p>Bu fonksiyon, verilen kullanıcı adının veri tabanında mevcut olup olmadığını
+kontrol eder. Eğer kullanıcı adı zaten kullanılmışsa bir ValidationError
+fırlatır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> – Doğrulanmak istenen kullanıcı adı alanı (önceden sağlanan</p></li>
+<li><p><strong>gelir</strong><strong>)</strong><strong>.</strong> (<em>verilerle dolmuş bir form nesnesinin alanı olarak</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValidationError</strong> – Eğer kullanıcı adı veri tabanında zaten mevcutsa oluşur.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id21">
+<span class="sig-name descname"><span class="pre">confirm_password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('Parola</span> <span class="pre">Tekrar',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.EqualTo</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id21" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id22">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('E-posta',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Email</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id22" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id23">
+<span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('Parola',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id23" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id24">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Kayıt</span> <span class="pre">Ol',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id24" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id25">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Kullanıcı</span> <span class="pre">Adı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id25" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.auth.UpdateAccountForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.auth.</span></span><span class="sig-name descname"><span class="pre">UpdateAccountForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#UpdateAccountForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.auth.UpdateAccountForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Kullanıcı hesabını güncellemek için bir form sınıfı.</p>
+<p>Bu sınıf, mevcut bir kullanıcı hesabını güncellemek için tasarlanmıştır. Kullanıcıdan, kullanıcı adı,
+e-posta adresi ve isteğe bağlı olarak şifre gibi bilgiler istenir. Form alanlarının doğrulama kuralları
+eklenmiştir ve kullanıcı adı ile e-posta adresindeki benzersizlik kontrol edilir.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.UpdateAccountForm.username">
+<span class="sig-name descname"><span class="pre">username</span></span><a class="headerlink" href="#app.forms.auth.UpdateAccountForm.username" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcının yeni kullanıcı adını belirttiği alan, 3 ila 64 karakter uzunluğunda olmalı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>flask_wtf.form.StringField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.UpdateAccountForm.email">
+<span class="sig-name descname"><span class="pre">email</span></span><a class="headerlink" href="#app.forms.auth.UpdateAccountForm.email" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcının yeni e-posta adresi bilgilerinin girildiği alan, geçerli bir e-posta adresi olmalı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>flask_wtf.form.StringField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.UpdateAccountForm.current_password">
+<span class="sig-name descname"><span class="pre">current_password</span></span><a class="headerlink" href="#app.forms.auth.UpdateAccountForm.current_password" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcının mevcut şifresini girdiği alan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>flask_wtf.form.PasswordField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.UpdateAccountForm.new_password">
+<span class="sig-name descname"><span class="pre">new_password</span></span><a class="headerlink" href="#app.forms.auth.UpdateAccountForm.new_password" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcının yeni bir şifre belirttiği alan, en az 8 karakter uzunluğunda olabilir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>flask_wtf.form.PasswordField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.UpdateAccountForm.confirm_password">
+<span class="sig-name descname"><span class="pre">confirm_password</span></span><a class="headerlink" href="#app.forms.auth.UpdateAccountForm.confirm_password" title="Link to this definition">¶</a></dt>
+<dd><p>Yeni şifrenin doğruluğunu kontrol etmek için doğrulama alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>flask_wtf.form.PasswordField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.auth.UpdateAccountForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><a class="headerlink" href="#app.forms.auth.UpdateAccountForm.submit" title="Link to this definition">¶</a></dt>
+<dd><p>Formun gönderilmesini sağlayan göndermek düğmesi.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>flask_wtf.form.SubmitField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.forms.auth.UpdateAccountForm.validate_username">
+<span class="sig-name descname"><span class="pre">validate_username</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#UpdateAccountForm.validate_username"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.auth.UpdateAccountForm.validate_username" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı adının mevcut kullanıcı adıyla aynı olup olmadığını kontrol eder. Eğer farklı ve başka bir kullanıcı</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">tarafından</span> <span class="pre">kullanılıyorsa</span> <span class="pre">doğrulama</span> <span class="pre">hatası</span> <span class="pre">yükseltir.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.forms.auth.UpdateAccountForm.validate_email">
+<span class="sig-name descname"><span class="pre">validate_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#UpdateAccountForm.validate_email"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.auth.UpdateAccountForm.validate_email" title="Link to this definition">¶</a></dt>
+<dd><p>E-posta adresinin mevcut e-posta adresiyle aynı olup olmadığını kontrol eder. Eğer farklı ve başka bir kullanıcı</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">tarafından</span> <span class="pre">kullanılıyorsa</span> <span class="pre">doğrulama</span> <span class="pre">hatası</span> <span class="pre">yükseltir.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formdata</strong> – Input data coming from the client, usually
+<code class="docutils literal notranslate"><span class="pre">request.form</span></code> or equivalent. Should provide a “multi
+dict” interface to get a list of values for a given key,
+such as what Werkzeug, Django, and WebOb provide.</p></li>
+<li><p><strong>obj</strong> – Take existing data from attributes on this object
+matching form field attributes. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is
+not passed.</p></li>
+<li><p><strong>prefix</strong> – If provided, all fields will have their name
+prefixed with the value. This is for distinguishing multiple
+forms on a single page. This only affects the HTML name for
+matching input data, not the Python name for matching
+existing data.</p></li>
+<li><p><strong>data</strong> – Take existing data from keys in this dict matching
+form field attributes. <code class="docutils literal notranslate"><span class="pre">obj</span></code> takes precedence if it also
+has a matching attribute. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not
+passed.</p></li>
+<li><p><strong>meta</strong> – A dict of attributes to override on this form’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">meta</span></code> instance.</p></li>
+<li><p><strong>extra_filters</strong> – A dict mapping field attribute names to
+lists of extra filter functions to run. Extra filters run
+after filters passed when creating the field. If the form
+has <code class="docutils literal notranslate"><span class="pre">filter_&lt;fieldname&gt;</span></code>, it is the last extra filter.</p></li>
+<li><p><strong>kwargs</strong> – Merged with <code class="docutils literal notranslate"><span class="pre">data</span></code> to allow passing existing
+data as parameters. Overwrites any duplicate keys in
+<code class="docutils literal notranslate"><span class="pre">data</span></code>. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not passed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="id26">
+<span class="sig-name descname"><span class="pre">validate_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#UpdateAccountForm.validate_email"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#id26" title="Link to this definition">¶</a></dt>
+<dd><p>Validates email to ensure it is not already registered in the database.</p>
+<p>This method checks if the provided email is different from the current user’s email
+and verifies if the email has already been registered by another user. If the email
+is found in the database, a validation error is raised.</p>
+<p>Parameters:
+email: The email address to be validated. Must be a valid email string.</p>
+<p>Raises:
+ValidationError: Raised if the given email address is already registered by another user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id27">
+<span class="sig-name descname"><span class="pre">validate_username</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#UpdateAccountForm.validate_username"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#id27" title="Link to this definition">¶</a></dt>
+<dd><p>Kontrolcü tarafından sağlanan kullanıcı adını doğrular. Kullanıcı adı, mevcut kullanıcı adı ile
+aynı değilse veritabanında mevcut olup olmadığını kontrol eder. Eğer kullanıcı adı mevcutsa
+bir doğrulama hatası fırlatır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>username</strong> (<em>WTForms Field</em>) – Doğrulama işlemi için girilen kullanıcı adı.</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValidationError</strong> – Eğer kullanıcı adı zaten kullanımda ise doğrulama hatası fırlatılır.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id28">
+<span class="sig-name descname"><span class="pre">confirm_password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('Şifre</span> <span class="pre">Doğrulama',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.EqualTo</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id28" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id29">
+<span class="sig-name descname"><span class="pre">current_password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('Mevcut</span> <span class="pre">Şifre',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id29" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id30">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('E-posta',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Email</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id30" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id31">
+<span class="sig-name descname"><span class="pre">new_password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('Yeni</span> <span class="pre">Şifre',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.Optional</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id31" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id32">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Güncelle',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id32" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id33">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Kullanıcı</span> <span class="pre">Adı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id33" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="app-forms-programming-module">
-<h2>app.forms.programming module<a class="headerlink" href="#app-forms-programming-module" title="Link to this heading">¶</a></h2>
+<section id="module-app.forms.programming">
+<span id="app-forms-programming-module"></span><h2>app.forms.programming module<a class="headerlink" href="#module-app.forms.programming" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.programming.CodeEvaluationForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.programming.</span></span><span class="sig-name descname"><span class="pre">CodeEvaluationForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/programming.html#CodeEvaluationForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.programming.CodeEvaluationForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Kod değerlendirme formu oluşturur.</p>
+<p>Bu form, bir kodu değerlendirmek ve test etmek amacıyla bir metin alanı
+ve bir gönderme düğmesi sağlar. FlaskForm sınıfından türetilmiştir ve
+validation işlemleri içerir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formdata</strong> – Input data coming from the client, usually
+<code class="docutils literal notranslate"><span class="pre">request.form</span></code> or equivalent. Should provide a “multi
+dict” interface to get a list of values for a given key,
+such as what Werkzeug, Django, and WebOb provide.</p></li>
+<li><p><strong>obj</strong> – Take existing data from attributes on this object
+matching form field attributes. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is
+not passed.</p></li>
+<li><p><strong>prefix</strong> – If provided, all fields will have their name
+prefixed with the value. This is for distinguishing multiple
+forms on a single page. This only affects the HTML name for
+matching input data, not the Python name for matching
+existing data.</p></li>
+<li><p><strong>data</strong> – Take existing data from keys in this dict matching
+form field attributes. <code class="docutils literal notranslate"><span class="pre">obj</span></code> takes precedence if it also
+has a matching attribute. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not
+passed.</p></li>
+<li><p><strong>meta</strong> – A dict of attributes to override on this form’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">meta</span></code> instance.</p></li>
+<li><p><strong>extra_filters</strong> – A dict mapping field attribute names to
+lists of extra filter functions to run. Extra filters run
+after filters passed when creating the field. If the form
+has <code class="docutils literal notranslate"><span class="pre">filter_&lt;fieldname&gt;</span></code>, it is the last extra filter.</p></li>
+<li><p><strong>kwargs</strong> – Merged with <code class="docutils literal notranslate"><span class="pre">data</span></code> to allow passing existing
+data as parameters. Overwrites any duplicate keys in
+<code class="docutils literal notranslate"><span class="pre">data</span></code>. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not passed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.CodeEvaluationForm.code">
+<span class="sig-name descname"><span class="pre">code</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Kod',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#app.forms.programming.CodeEvaluationForm.code" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.CodeEvaluationForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Test</span> <span class="pre">Et',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#app.forms.programming.CodeEvaluationForm.submit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.programming.ProgrammingQuestionForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.programming.</span></span><span class="sig-name descname"><span class="pre">ProgrammingQuestionForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/programming.html#ProgrammingQuestionForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.programming.ProgrammingQuestionForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Bir form sınıfı olup, programlama soruları oluşturmak için kullanılır.</p>
+<p>Bu form sınıfı, bir programlama sorusuna ait temel bilgileri toplar ve doğrulama
+kontrolleri sağlar. FlaskForm’dan türetilmiştir ve Flask uygulamalarında form
+işlemlerini kolaylaştırır.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.ProgrammingQuestionForm.title">
+<span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#app.forms.programming.ProgrammingQuestionForm.title" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun başlığını belirten metin alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StringField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.ProgrammingQuestionForm.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#app.forms.programming.ProgrammingQuestionForm.description" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun açıklamasını içeren metin alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TextAreaField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.ProgrammingQuestionForm.difficulty">
+<span class="sig-name descname"><span class="pre">difficulty</span></span><a class="headerlink" href="#app.forms.programming.ProgrammingQuestionForm.difficulty" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun zorluk seviyesini belirtmek için seçim
+yapılabilir alan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SelectField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.ProgrammingQuestionForm.points">
+<span class="sig-name descname"><span class="pre">points</span></span><a class="headerlink" href="#app.forms.programming.ProgrammingQuestionForm.points" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun puan değerini içeren sayı alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>IntegerField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.ProgrammingQuestionForm.topic">
+<span class="sig-name descname"><span class="pre">topic</span></span><a class="headerlink" href="#app.forms.programming.ProgrammingQuestionForm.topic" title="Link to this definition">¶</a></dt>
+<dd><p>Soruyla ilişkili konuyu belirten seçim alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SelectField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.ProgrammingQuestionForm.example_input">
+<span class="sig-name descname"><span class="pre">example_input</span></span><a class="headerlink" href="#app.forms.programming.ProgrammingQuestionForm.example_input" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun örnek girdisini içeren metin alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TextAreaField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.ProgrammingQuestionForm.example_output">
+<span class="sig-name descname"><span class="pre">example_output</span></span><a class="headerlink" href="#app.forms.programming.ProgrammingQuestionForm.example_output" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun örnek çıktısını içeren metin alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TextAreaField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.ProgrammingQuestionForm.function_name">
+<span class="sig-name descname"><span class="pre">function_name</span></span><a class="headerlink" href="#app.forms.programming.ProgrammingQuestionForm.function_name" title="Link to this definition">¶</a></dt>
+<dd><p>Soruda ilgili fonksiyonun adını içeren metin
+alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StringField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.ProgrammingQuestionForm.solution_code">
+<span class="sig-name descname"><span class="pre">solution_code</span></span><a class="headerlink" href="#app.forms.programming.ProgrammingQuestionForm.solution_code" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun çözüm kodunu içeren metin alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TextAreaField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.ProgrammingQuestionForm.test_inputs">
+<span class="sig-name descname"><span class="pre">test_inputs</span></span><a class="headerlink" href="#app.forms.programming.ProgrammingQuestionForm.test_inputs" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun test girdilerini içeren metin alanı;
+belirtilen formatta veri girişi beklenir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TextAreaField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.ProgrammingQuestionForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><a class="headerlink" href="#app.forms.programming.ProgrammingQuestionForm.submit" title="Link to this definition">¶</a></dt>
+<dd><p>Formu kaydetmek için kullanılan düğme.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SubmitField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formdata</strong> – Input data coming from the client, usually
+<code class="docutils literal notranslate"><span class="pre">request.form</span></code> or equivalent. Should provide a “multi
+dict” interface to get a list of values for a given key,
+such as what Werkzeug, Django, and WebOb provide.</p></li>
+<li><p><strong>obj</strong> – Take existing data from attributes on this object
+matching form field attributes. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is
+not passed.</p></li>
+<li><p><strong>prefix</strong> – If provided, all fields will have their name
+prefixed with the value. This is for distinguishing multiple
+forms on a single page. This only affects the HTML name for
+matching input data, not the Python name for matching
+existing data.</p></li>
+<li><p><strong>data</strong> – Take existing data from keys in this dict matching
+form field attributes. <code class="docutils literal notranslate"><span class="pre">obj</span></code> takes precedence if it also
+has a matching attribute. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not
+passed.</p></li>
+<li><p><strong>meta</strong> – A dict of attributes to override on this form’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">meta</span></code> instance.</p></li>
+<li><p><strong>extra_filters</strong> – A dict mapping field attribute names to
+lists of extra filter functions to run. Extra filters run
+after filters passed when creating the field. If the form
+has <code class="docutils literal notranslate"><span class="pre">filter_&lt;fieldname&gt;</span></code>, it is the last extra filter.</p></li>
+<li><p><strong>kwargs</strong> – Merged with <code class="docutils literal notranslate"><span class="pre">data</span></code> to allow passing existing
+data as parameters. Overwrites any duplicate keys in
+<code class="docutils literal notranslate"><span class="pre">data</span></code>. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not passed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id34">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Soru</span> <span class="pre">Açıklaması',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id34" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id35">
+<span class="sig-name descname"><span class="pre">difficulty</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectField,</span> <span class="pre">('Zorluk</span> <span class="pre">Seviyesi',),</span> <span class="pre">{'choices':</span> <span class="pre">[(1,</span> <span class="pre">'Kolay'),</span> <span class="pre">(2,</span> <span class="pre">'Orta'),</span> <span class="pre">(3,</span> <span class="pre">'Zor'),</span> <span class="pre">(4,</span> <span class="pre">'Çok-Zor')],</span> <span class="pre">'coerce':</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;,</span> <span class="pre">'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id35" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id36">
+<span class="sig-name descname"><span class="pre">example_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Örnek</span> <span class="pre">Girdi',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id36" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id37">
+<span class="sig-name descname"><span class="pre">example_output</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Örnek</span> <span class="pre">Çıktı',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id37" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id38">
+<span class="sig-name descname"><span class="pre">function_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Fonksiyon</span> <span class="pre">Adı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id38" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id39">
+<span class="sig-name descname"><span class="pre">points</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(IntegerField,</span> <span class="pre">('Puan',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.NumberRange</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id39" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id40">
+<span class="sig-name descname"><span class="pre">solution_code</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Admin</span> <span class="pre">Çözüm</span> <span class="pre">Kodu',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id40" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id41">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Kaydet',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id41" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id42">
+<span class="sig-name descname"><span class="pre">test_inputs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Test</span> <span class="pre">Girdileri',),</span> <span class="pre">{'description':</span> <span class="pre">'[[arg1,</span> <span class="pre">arg2,...],</span> <span class="pre">[arg1,</span> <span class="pre">arg2,...],</span> <span class="pre">...]</span> <span class="pre">formatında</span> <span class="pre">10</span> <span class="pre">test</span> <span class="pre">girdisini</span> <span class="pre">girin',</span> <span class="pre">'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id42" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id43">
+<span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Soru</span> <span class="pre">Başlığı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id43" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id44">
+<span class="sig-name descname"><span class="pre">topic</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectField,</span> <span class="pre">('Konu',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;],</span> <span class="pre">'choices':</span> <span class="pre">[('veri</span> <span class="pre">yapıları',</span> <span class="pre">'Veri</span> <span class="pre">Yapıları'),</span> <span class="pre">('algoritmalar',</span> <span class="pre">'Algoritmalar'),</span> <span class="pre">('string</span> <span class="pre">işleme',</span> <span class="pre">'String</span> <span class="pre">İşleme'),</span> <span class="pre">('matematik',</span> <span class="pre">'Matematik'),</span> <span class="pre">('sayı</span> <span class="pre">teorisi',</span> <span class="pre">'Sayı</span> <span class="pre">Teorisi'),</span> <span class="pre">('arama',</span> <span class="pre">'Arama'),</span> <span class="pre">('sıralama',</span> <span class="pre">'Sıralama'),</span> <span class="pre">('dinamik</span> <span class="pre">programlama',</span> <span class="pre">'Dinamik</span> <span class="pre">Programlama'),</span> <span class="pre">('graf</span> <span class="pre">teorisi',</span> <span class="pre">'Graf</span> <span class="pre">Teorisi'),</span> <span class="pre">('olasılık',</span> <span class="pre">'Olasılık'),</span> <span class="pre">('istatistik',</span> <span class="pre">'İstatistik')]})&gt;</span></em><a class="headerlink" href="#id44" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.programming.SolutionSubmitForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.programming.</span></span><span class="sig-name descname"><span class="pre">SolutionSubmitForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/programming.html#SolutionSubmitForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.programming.SolutionSubmitForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>SolutionSubmitForm sınıfı, bir form nesnesidir.</p>
+<p>Bu sınıf, FlaskForm’dan türetilmiştir ve bir kod çözümü göndermek için kullanılan
+formun tanımını içerir. Form iki ana alan içerir: ‘code’ ve ‘submit’. Kullanıcı kod
+alanına çözümünü yazdıktan sonra ‘submit’ butonuna basarak gönderim sağlar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formdata</strong> – Input data coming from the client, usually
+<code class="docutils literal notranslate"><span class="pre">request.form</span></code> or equivalent. Should provide a “multi
+dict” interface to get a list of values for a given key,
+such as what Werkzeug, Django, and WebOb provide.</p></li>
+<li><p><strong>obj</strong> – Take existing data from attributes on this object
+matching form field attributes. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is
+not passed.</p></li>
+<li><p><strong>prefix</strong> – If provided, all fields will have their name
+prefixed with the value. This is for distinguishing multiple
+forms on a single page. This only affects the HTML name for
+matching input data, not the Python name for matching
+existing data.</p></li>
+<li><p><strong>data</strong> – Take existing data from keys in this dict matching
+form field attributes. <code class="docutils literal notranslate"><span class="pre">obj</span></code> takes precedence if it also
+has a matching attribute. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not
+passed.</p></li>
+<li><p><strong>meta</strong> – A dict of attributes to override on this form’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">meta</span></code> instance.</p></li>
+<li><p><strong>extra_filters</strong> – A dict mapping field attribute names to
+lists of extra filter functions to run. Extra filters run
+after filters passed when creating the field. If the form
+has <code class="docutils literal notranslate"><span class="pre">filter_&lt;fieldname&gt;</span></code>, it is the last extra filter.</p></li>
+<li><p><strong>kwargs</strong> – Merged with <code class="docutils literal notranslate"><span class="pre">data</span></code> to allow passing existing
+data as parameters. Overwrites any duplicate keys in
+<code class="docutils literal notranslate"><span class="pre">data</span></code>. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not passed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.SolutionSubmitForm.code">
+<span class="sig-name descname"><span class="pre">code</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Kod',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#app.forms.programming.SolutionSubmitForm.code" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.programming.SolutionSubmitForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Çözümü</span> <span class="pre">Gönder',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#app.forms.programming.SolutionSubmitForm.submit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<section id="module-app.forms">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-app.forms" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.LoginForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.</span></span><span class="sig-name descname"><span class="pre">LoginForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#LoginForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.LoginForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Kullanıcı giriş formunu temsil eden bir sınıf.</p>
+<p>Giriş yaparken kullanıcı adı ve parola bilgilerini alır, ayrıca isteğe bağlı olarak
+kullanıcıdan “beni hatırla” seçeneğini işaretleyip işaretlemeyeceğini belirten bir
+değer alır. Bu form genellikle kimlik doğrulama işlemlerinde kullanılır.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.LoginForm.username">
+<span class="sig-name descname"><span class="pre">username</span></span><a class="headerlink" href="#app.forms.LoginForm.username" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı adı bilgisini temsil eden StringField. Form üzerinde</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&quot;Kullanıcı</span> <span class="pre">Adı&quot;</span> <span class="pre">başlığı</span> <span class="pre">ile</span> <span class="pre">görüntülenir.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.LoginForm.password">
+<span class="sig-name descname"><span class="pre">password</span></span><a class="headerlink" href="#app.forms.LoginForm.password" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı parolasını temsil eden PasswordField. Form üzerinde</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&quot;Parola&quot;</span> <span class="pre">başlığı</span> <span class="pre">ile</span> <span class="pre">gösterilir.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.LoginForm.remember_me">
+<span class="sig-name descname"><span class="pre">remember_me</span></span><a class="headerlink" href="#app.forms.LoginForm.remember_me" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcının “beni hatırla” tercihini belirten BooleanField.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.LoginForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><a class="headerlink" href="#app.forms.LoginForm.submit" title="Link to this definition">¶</a></dt>
+<dd><p>Formu gönderme işlemini gerçekleştiren SubmitField.</p>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formdata</strong> – Input data coming from the client, usually
+<code class="docutils literal notranslate"><span class="pre">request.form</span></code> or equivalent. Should provide a “multi
+dict” interface to get a list of values for a given key,
+such as what Werkzeug, Django, and WebOb provide.</p></li>
+<li><p><strong>obj</strong> – Take existing data from attributes on this object
+matching form field attributes. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is
+not passed.</p></li>
+<li><p><strong>prefix</strong> – If provided, all fields will have their name
+prefixed with the value. This is for distinguishing multiple
+forms on a single page. This only affects the HTML name for
+matching input data, not the Python name for matching
+existing data.</p></li>
+<li><p><strong>data</strong> – Take existing data from keys in this dict matching
+form field attributes. <code class="docutils literal notranslate"><span class="pre">obj</span></code> takes precedence if it also
+has a matching attribute. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not
+passed.</p></li>
+<li><p><strong>meta</strong> – A dict of attributes to override on this form’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">meta</span></code> instance.</p></li>
+<li><p><strong>extra_filters</strong> – A dict mapping field attribute names to
+lists of extra filter functions to run. Extra filters run
+after filters passed when creating the field. If the form
+has <code class="docutils literal notranslate"><span class="pre">filter_&lt;fieldname&gt;</span></code>, it is the last extra filter.</p></li>
+<li><p><strong>kwargs</strong> – Merged with <code class="docutils literal notranslate"><span class="pre">data</span></code> to allow passing existing
+data as parameters. Overwrites any duplicate keys in
+<code class="docutils literal notranslate"><span class="pre">data</span></code>. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not passed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id45">
+<span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('Parola',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id45" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id46">
+<span class="sig-name descname"><span class="pre">remember_me</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(BooleanField,</span> <span class="pre">('Beni</span> <span class="pre">Hatırla',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id46" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id47">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Giriş</span> <span class="pre">Yap',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id47" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id48">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Kullanıcı</span> <span class="pre">Adı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id48" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.ProgrammingQuestionForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.</span></span><span class="sig-name descname"><span class="pre">ProgrammingQuestionForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/programming.html#ProgrammingQuestionForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.ProgrammingQuestionForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Bir form sınıfı olup, programlama soruları oluşturmak için kullanılır.</p>
+<p>Bu form sınıfı, bir programlama sorusuna ait temel bilgileri toplar ve doğrulama
+kontrolleri sağlar. FlaskForm’dan türetilmiştir ve Flask uygulamalarında form
+işlemlerini kolaylaştırır.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.ProgrammingQuestionForm.title">
+<span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#app.forms.ProgrammingQuestionForm.title" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun başlığını belirten metin alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StringField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.ProgrammingQuestionForm.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#app.forms.ProgrammingQuestionForm.description" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun açıklamasını içeren metin alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TextAreaField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.ProgrammingQuestionForm.difficulty">
+<span class="sig-name descname"><span class="pre">difficulty</span></span><a class="headerlink" href="#app.forms.ProgrammingQuestionForm.difficulty" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun zorluk seviyesini belirtmek için seçim
+yapılabilir alan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SelectField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.ProgrammingQuestionForm.points">
+<span class="sig-name descname"><span class="pre">points</span></span><a class="headerlink" href="#app.forms.ProgrammingQuestionForm.points" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun puan değerini içeren sayı alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>IntegerField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.ProgrammingQuestionForm.topic">
+<span class="sig-name descname"><span class="pre">topic</span></span><a class="headerlink" href="#app.forms.ProgrammingQuestionForm.topic" title="Link to this definition">¶</a></dt>
+<dd><p>Soruyla ilişkili konuyu belirten seçim alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SelectField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.ProgrammingQuestionForm.example_input">
+<span class="sig-name descname"><span class="pre">example_input</span></span><a class="headerlink" href="#app.forms.ProgrammingQuestionForm.example_input" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun örnek girdisini içeren metin alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TextAreaField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.ProgrammingQuestionForm.example_output">
+<span class="sig-name descname"><span class="pre">example_output</span></span><a class="headerlink" href="#app.forms.ProgrammingQuestionForm.example_output" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun örnek çıktısını içeren metin alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TextAreaField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.ProgrammingQuestionForm.function_name">
+<span class="sig-name descname"><span class="pre">function_name</span></span><a class="headerlink" href="#app.forms.ProgrammingQuestionForm.function_name" title="Link to this definition">¶</a></dt>
+<dd><p>Soruda ilgili fonksiyonun adını içeren metin
+alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StringField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.ProgrammingQuestionForm.solution_code">
+<span class="sig-name descname"><span class="pre">solution_code</span></span><a class="headerlink" href="#app.forms.ProgrammingQuestionForm.solution_code" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun çözüm kodunu içeren metin alanı.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TextAreaField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.ProgrammingQuestionForm.test_inputs">
+<span class="sig-name descname"><span class="pre">test_inputs</span></span><a class="headerlink" href="#app.forms.ProgrammingQuestionForm.test_inputs" title="Link to this definition">¶</a></dt>
+<dd><p>Sorunun test girdilerini içeren metin alanı;
+belirtilen formatta veri girişi beklenir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TextAreaField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.ProgrammingQuestionForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><a class="headerlink" href="#app.forms.ProgrammingQuestionForm.submit" title="Link to this definition">¶</a></dt>
+<dd><p>Formu kaydetmek için kullanılan düğme.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SubmitField</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formdata</strong> – Input data coming from the client, usually
+<code class="docutils literal notranslate"><span class="pre">request.form</span></code> or equivalent. Should provide a “multi
+dict” interface to get a list of values for a given key,
+such as what Werkzeug, Django, and WebOb provide.</p></li>
+<li><p><strong>obj</strong> – Take existing data from attributes on this object
+matching form field attributes. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is
+not passed.</p></li>
+<li><p><strong>prefix</strong> – If provided, all fields will have their name
+prefixed with the value. This is for distinguishing multiple
+forms on a single page. This only affects the HTML name for
+matching input data, not the Python name for matching
+existing data.</p></li>
+<li><p><strong>data</strong> – Take existing data from keys in this dict matching
+form field attributes. <code class="docutils literal notranslate"><span class="pre">obj</span></code> takes precedence if it also
+has a matching attribute. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not
+passed.</p></li>
+<li><p><strong>meta</strong> – A dict of attributes to override on this form’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">meta</span></code> instance.</p></li>
+<li><p><strong>extra_filters</strong> – A dict mapping field attribute names to
+lists of extra filter functions to run. Extra filters run
+after filters passed when creating the field. If the form
+has <code class="docutils literal notranslate"><span class="pre">filter_&lt;fieldname&gt;</span></code>, it is the last extra filter.</p></li>
+<li><p><strong>kwargs</strong> – Merged with <code class="docutils literal notranslate"><span class="pre">data</span></code> to allow passing existing
+data as parameters. Overwrites any duplicate keys in
+<code class="docutils literal notranslate"><span class="pre">data</span></code>. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not passed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id49">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Soru</span> <span class="pre">Açıklaması',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id49" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id50">
+<span class="sig-name descname"><span class="pre">difficulty</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectField,</span> <span class="pre">('Zorluk</span> <span class="pre">Seviyesi',),</span> <span class="pre">{'choices':</span> <span class="pre">[(1,</span> <span class="pre">'Kolay'),</span> <span class="pre">(2,</span> <span class="pre">'Orta'),</span> <span class="pre">(3,</span> <span class="pre">'Zor'),</span> <span class="pre">(4,</span> <span class="pre">'Çok-Zor')],</span> <span class="pre">'coerce':</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;,</span> <span class="pre">'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id50" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id51">
+<span class="sig-name descname"><span class="pre">example_input</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Örnek</span> <span class="pre">Girdi',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id51" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id52">
+<span class="sig-name descname"><span class="pre">example_output</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Örnek</span> <span class="pre">Çıktı',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id52" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id53">
+<span class="sig-name descname"><span class="pre">function_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Fonksiyon</span> <span class="pre">Adı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id53" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id54">
+<span class="sig-name descname"><span class="pre">points</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(IntegerField,</span> <span class="pre">('Puan',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.NumberRange</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id54" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id55">
+<span class="sig-name descname"><span class="pre">solution_code</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Admin</span> <span class="pre">Çözüm</span> <span class="pre">Kodu',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id55" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id56">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Kaydet',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id56" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id57">
+<span class="sig-name descname"><span class="pre">test_inputs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Test</span> <span class="pre">Girdileri',),</span> <span class="pre">{'description':</span> <span class="pre">'[[arg1,</span> <span class="pre">arg2,...],</span> <span class="pre">[arg1,</span> <span class="pre">arg2,...],</span> <span class="pre">...]</span> <span class="pre">formatında</span> <span class="pre">10</span> <span class="pre">test</span> <span class="pre">girdisini</span> <span class="pre">girin',</span> <span class="pre">'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id57" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id58">
+<span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Soru</span> <span class="pre">Başlığı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id58" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id59">
+<span class="sig-name descname"><span class="pre">topic</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectField,</span> <span class="pre">('Konu',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;],</span> <span class="pre">'choices':</span> <span class="pre">[('veri</span> <span class="pre">yapıları',</span> <span class="pre">'Veri</span> <span class="pre">Yapıları'),</span> <span class="pre">('algoritmalar',</span> <span class="pre">'Algoritmalar'),</span> <span class="pre">('string</span> <span class="pre">işleme',</span> <span class="pre">'String</span> <span class="pre">İşleme'),</span> <span class="pre">('matematik',</span> <span class="pre">'Matematik'),</span> <span class="pre">('sayı</span> <span class="pre">teorisi',</span> <span class="pre">'Sayı</span> <span class="pre">Teorisi'),</span> <span class="pre">('arama',</span> <span class="pre">'Arama'),</span> <span class="pre">('sıralama',</span> <span class="pre">'Sıralama'),</span> <span class="pre">('dinamik</span> <span class="pre">programlama',</span> <span class="pre">'Dinamik</span> <span class="pre">Programlama'),</span> <span class="pre">('graf</span> <span class="pre">teorisi',</span> <span class="pre">'Graf</span> <span class="pre">Teorisi'),</span> <span class="pre">('olasılık',</span> <span class="pre">'Olasılık'),</span> <span class="pre">('istatistik',</span> <span class="pre">'İstatistik')]})&gt;</span></em><a class="headerlink" href="#id59" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.RegisterForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.</span></span><span class="sig-name descname"><span class="pre">RegisterForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#RegisterForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.RegisterForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Kullanıcı kayıt formunu temsil eder.</p>
+<p>Bu sınıf, bir kullanıcının kayıt işlemi sırasında doldurması gereken
+veri alanlarını içerir. Kullanıcı adını, e-posta adresini, şifreyi ve
+şifre doğrulamasını kontrol eder. Ayrıca belirli validasyon işlemleriyle
+girdi verisinin doğruluğunu sağlar.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.RegisterForm.username">
+<span class="sig-name descname"><span class="pre">username</span></span><a class="headerlink" href="#app.forms.RegisterForm.username" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı adını temsil eden metin alanı.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.RegisterForm.email">
+<span class="sig-name descname"><span class="pre">email</span></span><a class="headerlink" href="#app.forms.RegisterForm.email" title="Link to this definition">¶</a></dt>
+<dd><p>E-posta adresini temsil eden metin alanı.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.RegisterForm.password">
+<span class="sig-name descname"><span class="pre">password</span></span><a class="headerlink" href="#app.forms.RegisterForm.password" title="Link to this definition">¶</a></dt>
+<dd><p>Şifreyi temsil eden parola alanı.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.RegisterForm.confirm_password">
+<span class="sig-name descname"><span class="pre">confirm_password</span></span><a class="headerlink" href="#app.forms.RegisterForm.confirm_password" title="Link to this definition">¶</a></dt>
+<dd><p>Şifre doğrulaması için kullanılan parola alanı.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.RegisterForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><a class="headerlink" href="#app.forms.RegisterForm.submit" title="Link to this definition">¶</a></dt>
+<dd><p>Kayıt işlemini gönderme butonunu temsil eder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.forms.RegisterForm.validate_username">
+<span class="sig-name descname"><span class="pre">validate_username</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#RegisterForm.validate_username"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.RegisterForm.validate_username" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı adının benzersiz olup olmadığını kontrol eder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.forms.RegisterForm.validate_email">
+<span class="sig-name descname"><span class="pre">validate_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#RegisterForm.validate_email"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.RegisterForm.validate_email" title="Link to this definition">¶</a></dt>
+<dd><p>E-posta adresinin benzersiz olup olmadığını kontrol eder.</p>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formdata</strong> – Input data coming from the client, usually
+<code class="docutils literal notranslate"><span class="pre">request.form</span></code> or equivalent. Should provide a “multi
+dict” interface to get a list of values for a given key,
+such as what Werkzeug, Django, and WebOb provide.</p></li>
+<li><p><strong>obj</strong> – Take existing data from attributes on this object
+matching form field attributes. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is
+not passed.</p></li>
+<li><p><strong>prefix</strong> – If provided, all fields will have their name
+prefixed with the value. This is for distinguishing multiple
+forms on a single page. This only affects the HTML name for
+matching input data, not the Python name for matching
+existing data.</p></li>
+<li><p><strong>data</strong> – Take existing data from keys in this dict matching
+form field attributes. <code class="docutils literal notranslate"><span class="pre">obj</span></code> takes precedence if it also
+has a matching attribute. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not
+passed.</p></li>
+<li><p><strong>meta</strong> – A dict of attributes to override on this form’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">meta</span></code> instance.</p></li>
+<li><p><strong>extra_filters</strong> – A dict mapping field attribute names to
+lists of extra filter functions to run. Extra filters run
+after filters passed when creating the field. If the form
+has <code class="docutils literal notranslate"><span class="pre">filter_&lt;fieldname&gt;</span></code>, it is the last extra filter.</p></li>
+<li><p><strong>kwargs</strong> – Merged with <code class="docutils literal notranslate"><span class="pre">data</span></code> to allow passing existing
+data as parameters. Overwrites any duplicate keys in
+<code class="docutils literal notranslate"><span class="pre">data</span></code>. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not passed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="id60">
+<span class="sig-name descname"><span class="pre">validate_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#RegisterForm.validate_email"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#id60" title="Link to this definition">¶</a></dt>
+<dd><p>Bu fonksiyon, verilen e-posta adresinin veri tabanında zaten kayıtlı olup olmadığını kontrol eder. Eğer e-posta adresi
+kayıtlıysa, bir doğrulama hatası (ValidationError) fırlatır. Bu sayede aynı e-posta adresine sahip birden fazla kullanıcı
+oluşturulması engellenir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> – Doğrulama işlemini gerçekleştiren sınıfın örneği.</p></li>
+<li><p><strong>email</strong> – Doğrulanacak e-posta adresini içeren veri.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValidationError</strong> – Eğer e-posta adresi veri tabanında zaten mevcutsa bu hata fırlatılır.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id61">
+<span class="sig-name descname"><span class="pre">validate_username</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#RegisterForm.validate_username"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#id61" title="Link to this definition">¶</a></dt>
+<dd><p>Kullanıcı adı doğrulama fonksiyonu.</p>
+<p>Bu fonksiyon, verilen kullanıcı adının veri tabanında mevcut olup olmadığını
+kontrol eder. Eğer kullanıcı adı zaten kullanılmışsa bir ValidationError
+fırlatır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> – Doğrulanmak istenen kullanıcı adı alanı (önceden sağlanan</p></li>
+<li><p><strong>gelir</strong><strong>)</strong><strong>.</strong> (<em>verilerle dolmuş bir form nesnesinin alanı olarak</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValidationError</strong> – Eğer kullanıcı adı veri tabanında zaten mevcutsa oluşur.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id62">
+<span class="sig-name descname"><span class="pre">confirm_password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('Parola</span> <span class="pre">Tekrar',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.EqualTo</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id62" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id63">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('E-posta',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Email</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id63" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id64">
+<span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('Parola',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id64" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id65">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Kayıt</span> <span class="pre">Ol',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#id65" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id66">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Kullanıcı</span> <span class="pre">Adı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#id66" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.RoleForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.</span></span><span class="sig-name descname"><span class="pre">RoleForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/admin.html#RoleForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.RoleForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Rol formunu temsil eden sınıf.</p>
+<p>Kullanıcı rollerini tanımlamak ve düzenlemek için kullanılacak bir form sağlar.
+FlaskForm sınıfından türemiştir ve kullanıcıların rol adı ve açıklama gibi
+ilgili bilgileri girmesine olanak tanır.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formdata</strong> – Input data coming from the client, usually
+<code class="docutils literal notranslate"><span class="pre">request.form</span></code> or equivalent. Should provide a “multi
+dict” interface to get a list of values for a given key,
+such as what Werkzeug, Django, and WebOb provide.</p></li>
+<li><p><strong>obj</strong> – Take existing data from attributes on this object
+matching form field attributes. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is
+not passed.</p></li>
+<li><p><strong>prefix</strong> – If provided, all fields will have their name
+prefixed with the value. This is for distinguishing multiple
+forms on a single page. This only affects the HTML name for
+matching input data, not the Python name for matching
+existing data.</p></li>
+<li><p><strong>data</strong> – Take existing data from keys in this dict matching
+form field attributes. <code class="docutils literal notranslate"><span class="pre">obj</span></code> takes precedence if it also
+has a matching attribute. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not
+passed.</p></li>
+<li><p><strong>meta</strong> – A dict of attributes to override on this form’s
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">meta</span></code> instance.</p></li>
+<li><p><strong>extra_filters</strong> – A dict mapping field attribute names to
+lists of extra filter functions to run. Extra filters run
+after filters passed when creating the field. If the form
+has <code class="docutils literal notranslate"><span class="pre">filter_&lt;fieldname&gt;</span></code>, it is the last extra filter.</p></li>
+<li><p><strong>kwargs</strong> – Merged with <code class="docutils literal notranslate"><span class="pre">data</span></code> to allow passing existing
+data as parameters. Overwrites any duplicate keys in
+<code class="docutils literal notranslate"><span class="pre">data</span></code>. Only used if <code class="docutils literal notranslate"><span class="pre">formdata</span></code> is not passed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.RoleForm.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(TextAreaField,</span> <span class="pre">('Açıklama',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#app.forms.RoleForm.description" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.RoleForm.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Rol</span> <span class="pre">Adı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#app.forms.RoleForm.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.RoleForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Kaydet',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#app.forms.RoleForm.submit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="app.forms.UserForm">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.forms.</span></span><span class="sig-name descname"><span class="pre">UserForm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/admin.html#UserForm"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.forms.UserForm" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FlaskForm</span></code></p>
+<p>Kullanıcı formunu temsil eden bir sınıf.</p>
+<p>Bu sınıf, FlaskForm sınıfından türetilmiştir ve bir kullanıcı formunun doğrulama ve
+form elemanlarını tanımlamak için kullanılır. Kullanıcı adı, e-posta adresi, parola
+ve roller gibi alanları içerir. Form alanlarına yönelik doğrulama kuralları
+belirtilmiştir ve roller için dinamik seçim seçenekleri yüklenmektedir.</p>
+<p>Initializes an instance of the UserForm class, setting up role choices for form usage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Variable length argument list.</p></li>
+<li><p><strong>**kwargs</strong> – Arbitrary keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.UserForm.email">
+<span class="sig-name descname"><span class="pre">email</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('E-posta',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Email</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#app.forms.UserForm.email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.UserForm.password">
+<span class="sig-name descname"><span class="pre">password</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(PasswordField,</span> <span class="pre">('Parola',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.Optional</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#app.forms.UserForm.password" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.UserForm.roles">
+<span class="sig-name descname"><span class="pre">roles</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SelectMultipleField,</span> <span class="pre">('Roller',),</span> <span class="pre">{'coerce':</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;})&gt;</span></em><a class="headerlink" href="#app.forms.UserForm.roles" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.UserForm.submit">
+<span class="sig-name descname"><span class="pre">submit</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(SubmitField,</span> <span class="pre">('Kaydet',),</span> <span class="pre">{})&gt;</span></em><a class="headerlink" href="#app.forms.UserForm.submit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="app.forms.UserForm.username">
+<span class="sig-name descname"><span class="pre">username</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;UnboundField(StringField,</span> <span class="pre">('Kullanıcı</span> <span class="pre">Adı',),</span> <span class="pre">{'validators':</span> <span class="pre">[&lt;wtforms.validators.DataRequired</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;wtforms.validators.Length</span> <span class="pre">object&gt;]})&gt;</span></em><a class="headerlink" href="#app.forms.UserForm.username" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -362,10 +2064,214 @@
             <ul>
 <li><a class="reference internal" href="#">app.forms package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#app-forms-admin-module">app.forms.admin module</a></li>
-<li><a class="reference internal" href="#app-forms-auth-module">app.forms.auth module</a></li>
-<li><a class="reference internal" href="#app-forms-programming-module">app.forms.programming module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-app.forms.admin">app.forms.admin module</a><ul>
+<li><a class="reference internal" href="#app.forms.admin.RoleForm"><code class="docutils literal notranslate"><span class="pre">RoleForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.admin.RoleForm.description"><code class="docutils literal notranslate"><span class="pre">RoleForm.description</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.RoleForm.name"><code class="docutils literal notranslate"><span class="pre">RoleForm.name</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.RoleForm.submit"><code class="docutils literal notranslate"><span class="pre">RoleForm.submit</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm"><code class="docutils literal notranslate"><span class="pre">SettingForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.site_name"><code class="docutils literal notranslate"><span class="pre">SettingForm.site_name</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.site_description"><code class="docutils literal notranslate"><span class="pre">SettingForm.site_description</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.default_language"><code class="docutils literal notranslate"><span class="pre">SettingForm.default_language</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.allow_registration"><code class="docutils literal notranslate"><span class="pre">SettingForm.allow_registration</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.enable_user_activation"><code class="docutils literal notranslate"><span class="pre">SettingForm.enable_user_activation</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.mail_server"><code class="docutils literal notranslate"><span class="pre">SettingForm.mail_server</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.mail_port"><code class="docutils literal notranslate"><span class="pre">SettingForm.mail_port</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.mail_username"><code class="docutils literal notranslate"><span class="pre">SettingForm.mail_username</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.mail_password"><code class="docutils literal notranslate"><span class="pre">SettingForm.mail_password</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.mail_use_tls"><code class="docutils literal notranslate"><span class="pre">SettingForm.mail_use_tls</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.enable_ai_features"><code class="docutils literal notranslate"><span class="pre">SettingForm.enable_ai_features</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.api_provider"><code class="docutils literal notranslate"><span class="pre">SettingForm.api_provider</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.default_ai_model"><code class="docutils literal notranslate"><span class="pre">SettingForm.default_ai_model</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.api_key"><code class="docutils literal notranslate"><span class="pre">SettingForm.api_key</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.SettingForm.submit"><code class="docutils literal notranslate"><span class="pre">SettingForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">SettingForm.allow_registration</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">SettingForm.api_key</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">SettingForm.api_provider</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">SettingForm.default_ai_model</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">SettingForm.default_language</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">SettingForm.enable_ai_features</span></code></a></li>
+<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">SettingForm.enable_user_activation</span></code></a></li>
+<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">SettingForm.mail_password</span></code></a></li>
+<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">SettingForm.mail_port</span></code></a></li>
+<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">SettingForm.mail_server</span></code></a></li>
+<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">SettingForm.mail_use_tls</span></code></a></li>
+<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">SettingForm.mail_username</span></code></a></li>
+<li><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">SettingForm.site_description</span></code></a></li>
+<li><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">SettingForm.site_name</span></code></a></li>
+<li><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">SettingForm.submit</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.forms.admin.UserForm"><code class="docutils literal notranslate"><span class="pre">UserForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.admin.UserForm.email"><code class="docutils literal notranslate"><span class="pre">UserForm.email</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.UserForm.password"><code class="docutils literal notranslate"><span class="pre">UserForm.password</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.UserForm.roles"><code class="docutils literal notranslate"><span class="pre">UserForm.roles</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.UserForm.submit"><code class="docutils literal notranslate"><span class="pre">UserForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.admin.UserForm.username"><code class="docutils literal notranslate"><span class="pre">UserForm.username</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.forms.auth">app.forms.auth module</a><ul>
+<li><a class="reference internal" href="#app.forms.auth.LoginForm"><code class="docutils literal notranslate"><span class="pre">LoginForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.auth.LoginForm.username"><code class="docutils literal notranslate"><span class="pre">LoginForm.username</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.LoginForm.password"><code class="docutils literal notranslate"><span class="pre">LoginForm.password</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.LoginForm.remember_me"><code class="docutils literal notranslate"><span class="pre">LoginForm.remember_me</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.LoginForm.submit"><code class="docutils literal notranslate"><span class="pre">LoginForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">LoginForm.password</span></code></a></li>
+<li><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">LoginForm.remember_me</span></code></a></li>
+<li><a class="reference internal" href="#id17"><code class="docutils literal notranslate"><span class="pre">LoginForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#id18"><code class="docutils literal notranslate"><span class="pre">LoginForm.username</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.forms.auth.RegisterForm"><code class="docutils literal notranslate"><span class="pre">RegisterForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.auth.RegisterForm.username"><code class="docutils literal notranslate"><span class="pre">RegisterForm.username</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.RegisterForm.email"><code class="docutils literal notranslate"><span class="pre">RegisterForm.email</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.RegisterForm.password"><code class="docutils literal notranslate"><span class="pre">RegisterForm.password</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.RegisterForm.confirm_password"><code class="docutils literal notranslate"><span class="pre">RegisterForm.confirm_password</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.RegisterForm.submit"><code class="docutils literal notranslate"><span class="pre">RegisterForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.RegisterForm.validate_username"><code class="docutils literal notranslate"><span class="pre">RegisterForm.validate_username()</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.RegisterForm.validate_email"><code class="docutils literal notranslate"><span class="pre">RegisterForm.validate_email()</span></code></a></li>
+<li><a class="reference internal" href="#id19"><code class="docutils literal notranslate"><span class="pre">RegisterForm.validate_email()</span></code></a></li>
+<li><a class="reference internal" href="#id20"><code class="docutils literal notranslate"><span class="pre">RegisterForm.validate_username()</span></code></a></li>
+<li><a class="reference internal" href="#id21"><code class="docutils literal notranslate"><span class="pre">RegisterForm.confirm_password</span></code></a></li>
+<li><a class="reference internal" href="#id22"><code class="docutils literal notranslate"><span class="pre">RegisterForm.email</span></code></a></li>
+<li><a class="reference internal" href="#id23"><code class="docutils literal notranslate"><span class="pre">RegisterForm.password</span></code></a></li>
+<li><a class="reference internal" href="#id24"><code class="docutils literal notranslate"><span class="pre">RegisterForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#id25"><code class="docutils literal notranslate"><span class="pre">RegisterForm.username</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.forms.auth.UpdateAccountForm"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.auth.UpdateAccountForm.username"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.username</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.UpdateAccountForm.email"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.email</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.UpdateAccountForm.current_password"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.current_password</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.UpdateAccountForm.new_password"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.new_password</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.UpdateAccountForm.confirm_password"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.confirm_password</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.UpdateAccountForm.submit"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.UpdateAccountForm.validate_username"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.validate_username()</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.auth.UpdateAccountForm.validate_email"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.validate_email()</span></code></a></li>
+<li><a class="reference internal" href="#id26"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.validate_email()</span></code></a></li>
+<li><a class="reference internal" href="#id27"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.validate_username()</span></code></a></li>
+<li><a class="reference internal" href="#id28"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.confirm_password</span></code></a></li>
+<li><a class="reference internal" href="#id29"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.current_password</span></code></a></li>
+<li><a class="reference internal" href="#id30"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.email</span></code></a></li>
+<li><a class="reference internal" href="#id31"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.new_password</span></code></a></li>
+<li><a class="reference internal" href="#id32"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#id33"><code class="docutils literal notranslate"><span class="pre">UpdateAccountForm.username</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.forms.programming">app.forms.programming module</a><ul>
+<li><a class="reference internal" href="#app.forms.programming.CodeEvaluationForm"><code class="docutils literal notranslate"><span class="pre">CodeEvaluationForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.programming.CodeEvaluationForm.code"><code class="docutils literal notranslate"><span class="pre">CodeEvaluationForm.code</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.programming.CodeEvaluationForm.submit"><code class="docutils literal notranslate"><span class="pre">CodeEvaluationForm.submit</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.forms.programming.ProgrammingQuestionForm"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.programming.ProgrammingQuestionForm.title"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.title</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.programming.ProgrammingQuestionForm.description"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.description</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.programming.ProgrammingQuestionForm.difficulty"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.difficulty</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.programming.ProgrammingQuestionForm.points"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.points</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.programming.ProgrammingQuestionForm.topic"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.topic</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.programming.ProgrammingQuestionForm.example_input"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.example_input</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.programming.ProgrammingQuestionForm.example_output"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.example_output</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.programming.ProgrammingQuestionForm.function_name"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.function_name</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.programming.ProgrammingQuestionForm.solution_code"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.solution_code</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.programming.ProgrammingQuestionForm.test_inputs"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.test_inputs</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.programming.ProgrammingQuestionForm.submit"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#id34"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.description</span></code></a></li>
+<li><a class="reference internal" href="#id35"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.difficulty</span></code></a></li>
+<li><a class="reference internal" href="#id36"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.example_input</span></code></a></li>
+<li><a class="reference internal" href="#id37"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.example_output</span></code></a></li>
+<li><a class="reference internal" href="#id38"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.function_name</span></code></a></li>
+<li><a class="reference internal" href="#id39"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.points</span></code></a></li>
+<li><a class="reference internal" href="#id40"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.solution_code</span></code></a></li>
+<li><a class="reference internal" href="#id41"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#id42"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.test_inputs</span></code></a></li>
+<li><a class="reference internal" href="#id43"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.title</span></code></a></li>
+<li><a class="reference internal" href="#id44"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.topic</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.forms.programming.SolutionSubmitForm"><code class="docutils literal notranslate"><span class="pre">SolutionSubmitForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.programming.SolutionSubmitForm.code"><code class="docutils literal notranslate"><span class="pre">SolutionSubmitForm.code</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.programming.SolutionSubmitForm.submit"><code class="docutils literal notranslate"><span class="pre">SolutionSubmitForm.submit</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-app.forms">Module contents</a><ul>
+<li><a class="reference internal" href="#app.forms.LoginForm"><code class="docutils literal notranslate"><span class="pre">LoginForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.LoginForm.username"><code class="docutils literal notranslate"><span class="pre">LoginForm.username</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.LoginForm.password"><code class="docutils literal notranslate"><span class="pre">LoginForm.password</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.LoginForm.remember_me"><code class="docutils literal notranslate"><span class="pre">LoginForm.remember_me</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.LoginForm.submit"><code class="docutils literal notranslate"><span class="pre">LoginForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#id45"><code class="docutils literal notranslate"><span class="pre">LoginForm.password</span></code></a></li>
+<li><a class="reference internal" href="#id46"><code class="docutils literal notranslate"><span class="pre">LoginForm.remember_me</span></code></a></li>
+<li><a class="reference internal" href="#id47"><code class="docutils literal notranslate"><span class="pre">LoginForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#id48"><code class="docutils literal notranslate"><span class="pre">LoginForm.username</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.forms.ProgrammingQuestionForm"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.ProgrammingQuestionForm.title"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.title</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.ProgrammingQuestionForm.description"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.description</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.ProgrammingQuestionForm.difficulty"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.difficulty</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.ProgrammingQuestionForm.points"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.points</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.ProgrammingQuestionForm.topic"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.topic</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.ProgrammingQuestionForm.example_input"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.example_input</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.ProgrammingQuestionForm.example_output"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.example_output</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.ProgrammingQuestionForm.function_name"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.function_name</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.ProgrammingQuestionForm.solution_code"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.solution_code</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.ProgrammingQuestionForm.test_inputs"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.test_inputs</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.ProgrammingQuestionForm.submit"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#id49"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.description</span></code></a></li>
+<li><a class="reference internal" href="#id50"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.difficulty</span></code></a></li>
+<li><a class="reference internal" href="#id51"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.example_input</span></code></a></li>
+<li><a class="reference internal" href="#id52"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.example_output</span></code></a></li>
+<li><a class="reference internal" href="#id53"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.function_name</span></code></a></li>
+<li><a class="reference internal" href="#id54"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.points</span></code></a></li>
+<li><a class="reference internal" href="#id55"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.solution_code</span></code></a></li>
+<li><a class="reference internal" href="#id56"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#id57"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.test_inputs</span></code></a></li>
+<li><a class="reference internal" href="#id58"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.title</span></code></a></li>
+<li><a class="reference internal" href="#id59"><code class="docutils literal notranslate"><span class="pre">ProgrammingQuestionForm.topic</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.forms.RegisterForm"><code class="docutils literal notranslate"><span class="pre">RegisterForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.RegisterForm.username"><code class="docutils literal notranslate"><span class="pre">RegisterForm.username</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.RegisterForm.email"><code class="docutils literal notranslate"><span class="pre">RegisterForm.email</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.RegisterForm.password"><code class="docutils literal notranslate"><span class="pre">RegisterForm.password</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.RegisterForm.confirm_password"><code class="docutils literal notranslate"><span class="pre">RegisterForm.confirm_password</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.RegisterForm.submit"><code class="docutils literal notranslate"><span class="pre">RegisterForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.RegisterForm.validate_username"><code class="docutils literal notranslate"><span class="pre">RegisterForm.validate_username()</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.RegisterForm.validate_email"><code class="docutils literal notranslate"><span class="pre">RegisterForm.validate_email()</span></code></a></li>
+<li><a class="reference internal" href="#id60"><code class="docutils literal notranslate"><span class="pre">RegisterForm.validate_email()</span></code></a></li>
+<li><a class="reference internal" href="#id61"><code class="docutils literal notranslate"><span class="pre">RegisterForm.validate_username()</span></code></a></li>
+<li><a class="reference internal" href="#id62"><code class="docutils literal notranslate"><span class="pre">RegisterForm.confirm_password</span></code></a></li>
+<li><a class="reference internal" href="#id63"><code class="docutils literal notranslate"><span class="pre">RegisterForm.email</span></code></a></li>
+<li><a class="reference internal" href="#id64"><code class="docutils literal notranslate"><span class="pre">RegisterForm.password</span></code></a></li>
+<li><a class="reference internal" href="#id65"><code class="docutils literal notranslate"><span class="pre">RegisterForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#id66"><code class="docutils literal notranslate"><span class="pre">RegisterForm.username</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.forms.RoleForm"><code class="docutils literal notranslate"><span class="pre">RoleForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.RoleForm.description"><code class="docutils literal notranslate"><span class="pre">RoleForm.description</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.RoleForm.name"><code class="docutils literal notranslate"><span class="pre">RoleForm.name</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.RoleForm.submit"><code class="docutils literal notranslate"><span class="pre">RoleForm.submit</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#app.forms.UserForm"><code class="docutils literal notranslate"><span class="pre">UserForm</span></code></a><ul>
+<li><a class="reference internal" href="#app.forms.UserForm.email"><code class="docutils literal notranslate"><span class="pre">UserForm.email</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.UserForm.password"><code class="docutils literal notranslate"><span class="pre">UserForm.password</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.UserForm.roles"><code class="docutils literal notranslate"><span class="pre">UserForm.roles</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.UserForm.submit"><code class="docutils literal notranslate"><span class="pre">UserForm.submit</span></code></a></li>
+<li><a class="reference internal" href="#app.forms.UserForm.username"><code class="docutils literal notranslate"><span class="pre">UserForm.username</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
