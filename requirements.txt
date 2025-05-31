@@ -9,6 +9,7 @@ Flask-Login==0.6.3
 Flask_Babel==4.0.0
 Flask-SQLAlchemy==3.1.0
 Flask-SocketIO==5.3.6
+Flask-WTF==1.2.2
 
 # Veritabanı
 SQLAlchemy>=2.0.0,<3.0.0
