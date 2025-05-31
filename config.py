@@ -22,10 +22,10 @@ class Config:
             cinsinden tanımlar.
         REPO_URL (str): GitHub depo URL'sini tanımlar.
     """
-    FASTAPI_DOMAIN = 'http://127.0.0.1'
-    FASTAPI_PORT = "7923"
-    SECRET_KEY = 'secret!'
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://radome:12345@localhost/python_platform'
+    FASTAPI_DOMAIN = os.environ.get('FASTAPI_DOMAIN') or 'http://127.0.0.1'
+    FASTAPI_PORT = os.environ.get('FASTAPI_PORT') or '7923'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'geliştirme-anahtarı'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or 'mysql+pymysql://user:password@db/python_platform'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BABEL_DEFAULT_LOCALE = 'tr'
     BABEL_SUPPORTED_LOCALES = ['tr', 'en']
