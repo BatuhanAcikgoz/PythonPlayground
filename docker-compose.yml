@@ -9,12 +9,12 @@ services:
       - "5000:5000"  # Flask uygulaması
       - "7923:7923"  # FastAPI
     volumes:
-      - ./:/
-      - notebooks:/notebooks_repo
+      - ./:/app
+      - notebooks:/app/notebooks_repo
     depends_on:
       - db
     environment:
-      - FLASK_APP=app.py
+      - FLASK_APP=/app/app.py
       - SQLALCHEMY_DATABASE_URI=mysql+pymysql://user:password@db/python_platform
       - PYTHONUNBUFFERED=1
       - FASTAPI_DOMAIN=http://0.0.0.0
