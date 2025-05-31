@@ -281,6 +281,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">db</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.programming_question</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgrammingQuestion</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">app.models.submission</span><span class="w"> </span><span class="kn">import</span> <span class="n">Submission</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
 
 <span class="n">programming_bp</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;programming&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
 
@@ -617,7 +618,7 @@
             <span class="p">}</span>
 
             <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-                <span class="s2">&quot;http://127.0.0.1:8000/api/evaluate&quot;</span><span class="p">,</span>
+                <span class="n">Config</span><span class="o">.</span><span class="n">FASTAPI_DOMAIN</span><span class="o">+</span><span class="s2">&quot;:&quot;</span><span class="o">+</span><span class="n">Config</span><span class="o">.</span><span class="n">FASTAPI_PORT</span><span class="o">+</span><span class="s2">&quot;/api/evaluate&quot;</span><span class="p">,</span>
                 <span class="n">json</span><span class="o">=</span><span class="n">evaluation_request</span><span class="p">,</span>
                 <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span>
             <span class="p">)</span>

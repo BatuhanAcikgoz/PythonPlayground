@@ -272,6 +272,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">flask_login</span><span class="w"> </span><span class="kn">import</span> <span class="n">current_user</span><span class="p">,</span> <span class="n">login_required</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+
 <span class="n">api_bp</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;api&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/api&#39;</span><span class="p">)</span>
 
 
@@ -345,7 +347,7 @@
 <span class="sd">        içerik ve HTTP durum kodu). Eğer proxy başarısız olursa Flask uygulaması</span>
 <span class="sd">        üzerinden bir hata mesajı ve durum kodu döner.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">fastapi_url</span> <span class="o">=</span> <span class="s2">&quot;http://127.0.0.1:8000/api/&quot;</span> <span class="o">+</span> <span class="n">endpoint</span>
+    <span class="n">fastapi_url</span> <span class="o">=</span> <span class="n">Config</span><span class="o">.</span><span class="n">FASTAPI_DOMAIN</span><span class="o">+</span><span class="s2">&quot;:&quot;</span><span class="o">+</span><span class="n">Config</span><span class="o">.</span><span class="n">FASTAPI_PORT</span><span class="o">+</span><span class="s2">&quot;/api/&quot;</span> <span class="o">+</span> <span class="n">endpoint</span>
 
     <span class="c1"># Request metoduna göre FastAPI&#39;ye istek yap</span>
     <span class="k">try</span><span class="p">:</span>
