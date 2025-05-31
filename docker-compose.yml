@@ -19,7 +19,7 @@ services:
       - PYTHONUNBUFFERED=1
       - FASTAPI_DOMAIN=http://0.0.0.0
       - PYTHONPATH=/app
-  command: python /app/app.py
+    command: python /app/app.py
     networks:
       - app-network
 
