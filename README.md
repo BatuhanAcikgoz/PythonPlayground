@@ -182,7 +182,189 @@ FastAPI, özellikle aşağıdaki görevler için kullanılır:
 - Mobil uygulamalar için backend API
 - Performans kritik işlemler
 
-### FastAPI ve Flask Entegrasyonu
+### # 🚀 PythonPlayground: İnteraktif Python Eğitim Platformu
+
+<div align="center">
+  <p>
+    <img src="https://img.shields.io/badge/Python-3.8+-blue.svg" alt="Python 3.8+"/>
+    <img src="https://img.shields.io/badge/Flask-3.1.0-green.svg" alt="Flask 3.1.0"/>
+    <img src="https://img.shields.io/badge/FastAPI-0.110.0-teal.svg" alt="FastAPI 0.110.0"/>
+    <img src="https://img.shields.io/badge/Docker-Ready-blue.svg" alt="Docker Ready"/>
+    <img src="https://img.shields.io/badge/Status-Production-success.svg" alt="Status: Production"/>
+  </p>
+</div>
+
+**PythonPlayground**, modern Python öğretimi için tasarlanmış kapsamlı bir eğitim platformudur. Jupyter notebook entegrasyonu, interaktif kod çalıştırma, AI destekli soru üretimi ve gamification özellikleriyle öğrenme deneyimini maksimize eder.
+
+![PythonPlayground Demo](https://via.placeholder.com/800x450.png?text=PythonPlayground+Demo)
+
+## 📑 İçindekiler
+- [🌟 Temel Özellikler](#-temel-özellikler)
+- [🎯 Detaylı Özellikler](#-detaylı-özellikler)
+- [🔧 Kurulum](#-kurulum)
+- [🐳 Docker ile Deployment](#-docker-ile-deployment)
+- [🚦 Kullanım](#-kullanım)
+- [📁 Proje Yapısı](#-proje-yapısı)
+- [⚡ API Entegrasyonu](#-api-entegrasyonu)
+- [🛠️ Teknik Gereksinimler](#️-teknik-gereksinimler)
+- [🔧 Konfigürasyon](#-konfigürasyon)
+- [👥 Katkıda Bulunma](#-katkıda-bulunma)
+
+## 🌟 Temel Özellikler
+
+### 🎓 **Eğitim Yönetimi**
+- **Jupyter Notebook Entegrasyonu**: GitHub'dan otomatik çekme ve senkronizasyon
+- **İnteraktif Kod Editörü**: Gerçek zamanlı Python kodu çalıştırma
+- **AI Destekli Soru Üretimi**: Otomatik programlama soruları ve çözümleri
+- **Notebook Özetleme**: AI ile otomatik ders özetleri
+
+### 👥 **Kullanıcı Yönetimi**
+- **Rol Tabanlı Erişim**: Öğrenci, Öğretmen, Admin rolleri
+- **Kapsamlı Profil Sistemi**: İlerleme takibi ve istatistikler
+- **Güvenli Kimlik Doğrulama**: Flask-Login entegrasyonu
+- **Çoklu Dil Desteği**: Türkçe ve İngilizce arayüz
+
+### 🏆 **Gamification & Motivasyon**
+- **Rozet Sistemi**: Başarılar için özel rozetler
+- **Puan Sistemi**: Aktivite bazlı puan kazanımı
+- **Liderlik Tablosu**: Kullanıcı sıralamaları
+- **İlerleme Takibi**: Detaylı analitik dashboard
+
+### 💻 **Teknik Özellikler**
+- **WebSocket Desteği**: Gerçek zamanlı etkileşim
+- **Responsive Tasarım**: Mobil uyumlu arayüz
+- **API İntegrasyonu**: RESTful API ve FastAPI backend
+- **Güvenlik**: CSRF koruması ve güvenli kod çalıştırma
+
+## 🎯 Detaylı Özellikler
+
+### 📚 **Notebook ve İçerik Yönetimi**
+
+#### Otomatik İçerik Senkronizasyonu
+- GitHub repository'lerinden otomatik notebook çekme
+- Değişiklik algılama ve güncelleme
+- Sürüm kontrolü ve geri alma özellikleri
+- Batch işleme ile performans optimizasyonu
+
+#### AI Destekli İçerik Üretimi
+- **Otomatik Soru Üretimi**: Zorluk seviyelerine göre programlama soruları
+- **Notebook Özetleme**: AI ile ders içeriği özetleri
+- **Kod Analizi**: Otomatik kod kalitesi değerlendirmesi
+- **Öneri Sistemi**: Kişiselleştirilmiş öğrenme önerileri
+
+### 🎮 **İnteraktif Kod Çalıştırma**
+
+#### Güvenli Kod Ortamı
+- Sandbox ortamda Python kodu çalıştırma
+- Zaman aşımı ve kaynak limitasyonları
+- Hata yakalama ve detaylı debugging
+- Çıktı formatlaması ve görselleştirme
+
+#### Gerçek Zamanlı Etkileşim
+- WebSocket ile anında sonuç alma
+- Çoklu kullanıcı desteği
+- Collaborative coding özelliği
+- Live code sharing
+
+### 🏅 **Gelişmiş Gamification**
+
+#### Rozet Sistemi
+- **Başlangıç Rozetleri**: İlk adımlar için
+- **Öğrenme Rozetleri**: Ders tamamlama
+- **Beceri Rozetleri**: Özel yetenekler
+- **Sosyal Rozetler**: Topluluk katkısı
+
+#### Puan ve Seviye Sistemi
+- Aktivite bazlı puan kazanımı
+- Günlük/haftalık hedefler
+- Seviye atlama ödülleri
+- Bonus puan etkinlikleri
+
+#### Liderlik ve Rekabet
+- Genel liderlik tablosu
+- Kategori bazlı sıralamalar
+- Haftalık/aylık turnuvalar
+- Takım bazlı yarışmalar
+
+### 📊 **Analitik ve Raporlama**
+
+#### Öğrenci Analitiği
+- Detaylı ilerleme raporu
+- Zaman bazlı aktivite analizi
+- Güçlü/zayıf yönler analizi
+- Kişiselleştirilmiş öneriler
+
+#### Öğretmen Dashboard'u
+- Sınıf performans analizi
+- Öğrenci ilerleme takibi
+- Eksik konular tespiti
+- Otomatik raporlama
+
+## 🔧 Kurulum
+
+### Ön Gereksinimler
+- **Python**: 3.8+
+- **MySQL/MariaDB**: 5.7+
+- **Git**: Repository yönetimi için
+- **Node.js**: Frontend bağımlılıkları (opsiyonel)
+
+### Hızlı Kurulum
+
+1. **Repository'yi klonlayın:**
+   ```bash
+   git clone https://github.com/BatuhanAcikgoz/PythonPlayground.git
+   cd PythonPlayground
+   ```
+
+2. **Python sanal ortamı oluşturun:**
+   ```bash
+   python -m venv venv
+   
+   # Windows
+   venv\Scripts\activate
+   
+   # Linux/Mac
+   source venv/bin/activate
+   ```
+
+3. **Bağımlılıkları yükleyin:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Veritabanını kurun:**
+   ```bash
+   # MySQL'e bağlanın
+   mysql -u root -p
+   
+   # Veritabanı oluşturun
+   CREATE DATABASE python_platform CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   CREATE USER 'pythonapp'@'localhost' IDENTIFIED BY 'secure_password';
+   GRANT ALL PRIVILEGES ON python_platform.* TO 'pythonapp'@'localhost';
+   FLUSH PRIVILEGES;
+   ```
+
+5. **Konfigürasyon dosyasını ayarlayın:**
+   ```bash
+   cp config.example.py config.py
+   # config.py dosyasını editörünüzle açın ve ayarları yapın
+   ```
+
+6. **Uygulamayı başlatın:**
+   ```bash
+   python app.py
+   ```
+
+### Gelişmiş Kurulum
+
+#### Environment Variables
+```bash
+# .env dosyası oluşturun
+export FLASK_ENV=development
+export DATABASE_URL=mysql://user:password@localhost/python_platform
+export SECRET_KEY=your-secret-key-here
+export FASTAPI_PORT=8000
+```
 
 ```python
 # api.py örneği

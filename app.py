@@ -558,7 +558,7 @@ if __name__ == '__main__':
 
     # 3. Docker initialization bekleme
     logger.info("Docker container initialization bekleniyor...")
-    time.sleep(5)  # Docker için daha uzun bekleme
+    time.sleep(5)
 
     # 4. Web sunucusu ve background görevleri başlat
     logger.info("Web sunucusu ve background görevler başlatılıyor...")
