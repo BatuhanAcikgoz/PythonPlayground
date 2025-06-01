@@ -40,7 +40,7 @@ services:
       - notebooks:/code/notebooks_repo
     environment:
       - FLASK_APP=app.py
-      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://user:password@db/python_platform
+      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://user:password@reeignn.verira.internal:3306/python_platform
       - PYTHONUNBUFFERED=1
       - FASTAPI_DOMAIN=http://0.0.0.0
       - PYTHONPATH=/code
