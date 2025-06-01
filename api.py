@@ -1989,3 +1989,7 @@ def trigger_event(request: EventRequest):
         return {"success": False, "message": f"Geçersiz olay türü: {request.event_type}"}
     except Exception as e:
         return {"success": False, "message": f"Olay tetiklenirken hata oluştu: {str(e)}"}
+
+@api.get("/health")
+def health_check():
+    return {"status": "ok"}

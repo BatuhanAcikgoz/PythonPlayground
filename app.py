@@ -466,6 +466,8 @@ if __name__ == '__main__':
     fastapi_thread.daemon = True
     fastapi_thread.start()
 
+    wait_for_fastapi()
+
     # Özetleri ayrı bir thread'de yükle
     summaries_thread = threading.Thread(target=load_summaries_with_app_context, args=(app,))
     summaries_thread.daemon = True
