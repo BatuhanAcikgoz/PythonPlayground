@@ -428,4 +428,4 @@ if __name__ == '__main__':
     ai_questions_thread.start()
 
     # Flask sunucusunu başlat
-    socketio.run(app, debug=False, port=5000, allow_unsafe_werkzeug=True, log_output=True)
+    socketio.run(app, host='0.0.0.0', debug=False, port=5000, allow_unsafe_werkzeug=True, log_output=True)
