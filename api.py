@@ -1,5 +1,6 @@
 from pydoc_data.topics import topics
-
+from fastapi import status
+from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import HTTPException
@@ -1992,4 +1993,7 @@ def trigger_event(request: EventRequest):
 
 @api.get("/health")
 def health_check():
-    raise HTTPException(status_code=200, "FastAPI çalışıyor")
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={"status": "ok"}
+    )

@@ -11,6 +11,7 @@ from app.routes import register_routes
 from config import Config
 from colorlog import StreamHandler, ColoredFormatter
 import logging
+import time
 
 
 def setup_logger():
@@ -58,7 +59,7 @@ def create_app():
     login_manager.login_view = 'auth.login'
 
     # SocketIO başlat
-    socketio = SocketIO(app, async_mode='threading')
+    socketio = SocketIO(app, async_mode='eventlet')
 
     @app.context_processor
     def inject_globals():
@@ -455,16 +456,24 @@ def wait_for_fastapi():
     return False
 
 
-if __name__ == '__main__':
-    app, socketio = create_app()
+def run_web_server_and_background_tasks(app, socketio):
+    """
+    Bir Flask-SocketIO uygulaması için bir web sunucusu başlatır ve çeşitli arka plan görevlerini çalıştırır.
 
-    # DB başlat
-    init_db(app)
+    Arguments:
+        app: Flask uygulaması örneği.
+        socketio: Flask-SocketIO örneği.
 
-    # FastAPI'yi ayrı bir thread'de başlat
-    fastapi_thread = threading.Thread(target=run_fastapi)
-    fastapi_thread.daemon = True
-    fastapi_thread.start()
+    Raises:
+        Hiçbir hata doğrudan raise edilmez, ancak web sunucusunun veya arka plan
+        görevlerinin başlatılamaması durumunda indirekt hatalar meydana gelebilir.
+
+    """
+    web_thread = threading.Thread(target=lambda: socketio.run(app, host="0.0.0.0", debug=False, port=5000, allow_unsafe_werkzeug=True,log_output=True))
+    web_thread.daemon = True
+    web_thread.start()
+
+    time.sleep(2)
 
     is_fastapi_ready = wait_for_fastapi()
 
@@ -480,5 +489,16 @@ if __name__ == '__main__':
         logging.getLogger('app').warning(
             "FastAPI servisi hazır olmadığı için özet ve soru üretme işlemleri başlatılmadı.")
 
-    # Flask sunucusunu başlat
-    socketio.run(app, host="0.0.0.0", debug=False, port=5000, allow_unsafe_werkzeug=True, log_output=True)
+    web_thread.join()
+
+if __name__ == '__main__':
+    app, socketio = create_app()
+
+    # DB başlat
+    init_db(app)
+
+    fastapi_thread = threading.Thread(target=run_fastapi)
+    fastapi_thread.daemon = True
+    fastapi_thread.start()
+
+    run_web_server_and_background_tasks(app, socketio)
