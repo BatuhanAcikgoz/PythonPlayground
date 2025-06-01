@@ -1,37 +1,10 @@
 version: '3.10'
 
 services:
-  db:
-    image: mysql:8.0
-    container_name: python-platform-db
-    restart: unless-stopped
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-      - ./mysql/init:/docker-entrypoint-initdb.d
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: python_platform
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-    command: --default-authentication-plugin=mysql_native_password
-    networks:
-      - app-network
-    healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "user", "-ppassword" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
   web:
     build: .
     container_name: python-platform-web
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
     ports:
       - "5000:5000"  # Flask uygulaması
       - "7923:7923"  # FastAPI
@@ -40,23 +13,12 @@ services:
       - notebooks:/code/notebooks_repo
     environment:
       - FLASK_APP=app.py
-      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://user:password@reeignn.verira.internal:3306/python_platform
+      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://pythonplayground:pythonplayground@mariadb.verira.internal/python_platform
       - PYTHONUNBUFFERED=1
       - FASTAPI_DOMAIN=http://0.0.0.0
       - PYTHONPATH=/code
     working_dir: /code
     command: python app.py
-    networks:
-      - app-network
-
-  adminer:
-    image: adminer
-    container_name: python-platform-adminer
-    restart: unless-stopped
-    ports:
-      - "8181:8080"
-    depends_on:
-      - db
     networks:
       - app-network
 
