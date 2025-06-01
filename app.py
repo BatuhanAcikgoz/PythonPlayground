@@ -221,26 +221,6 @@ def init_db(app):
 
         db.session.commit()
 
-
-# FastAPI uygulaması başlatma (thread olarak)
-def run_fastapi():
-    """
-    FastAPI uygulamasını uvicorn ile başlatan bir fonksiyon.
-
-    Fonksiyon, belirtilen host ve port üzerinde FastAPI uygulamasını çalıştırır.
-    Eğer çalıştırma sırasında bir hata oluşursa, hatanın detayları konsola yazdırılır.
-
-    Raises:
-        Exception: FastAPI'nin başlatılması sırasında oluşabilecek herhangi bir hata.
-
-    """
-    try:
-        # FastAPI'yi uvicorn ile başlat (reload devre dışı bırakıldı)
-        uvicorn.run("api:api", host="0.0.0.0", port=int(Config.FASTAPI_PORT), reload=False)
-    except Exception as e:
-        print(f"FastAPI başlatma hatası: {e}")
-
-
 # Fonksiyon çalışma kontrolü için global değişken
 _summaries_loaded = False
 
@@ -407,98 +387,179 @@ def generate_questions_on_startup(app):
 
         current_app.logger.info("Başlangıç soruları üretme işlemi tamamlandı.")
 
+
 def wait_for_fastapi():
     """
-    FastAPI servisinin hazır olmasını bekleyen bir fonksiyon.
-
-    Bu fonksiyon, belirtilen URL'ye yapılan isteklerin başarılı olup olmadığını kontrol eder.
-    FastAPI servisi belirtilen süre içerisinde çalışır duruma geçerse True döner, aksi
-    takdirde False döner. Servisin durumu loglama yoluyla bildirilir.
-
-    Arguments:
-        None
-
-    Returns:
-        bool: Eğer FastAPI servisi belirtilen süre içerisinde hazır olursa True, aksi
-        takdirde False döner.
-
-    Raises:
-        requests.exceptions.ConnectionError: Eğer servise yapılan bağlantı denemeleri sırasında
-        bir bağlantı hatası oluşursa bu durum işlem sırasında sessizce geçilir.
-
-    Note:
-        Fonksiyon, belirli bir süre boyunca (default: 30 saniye) servisi hazırlık
-        durumunda izler ve bu süre sonunda servisin hazır olup olmadığını loglar.
+    FastAPI servisinin hazır olmasını bekleyen bir fonksiyon - Docker optimized.
     """
     import requests
     import time
     import logging
 
-    url = f"{Config.FASTAPI_DOMAIN}:{Config.FASTAPI_PORT}/health"
-    max_wait = 30  # saniye
+    # Farklı endpoint'leri dene
+    endpoints_to_try = [
+        f"{Config.FASTAPI_DOMAIN}:{Config.FASTAPI_PORT}/health",
+        f"{Config.FASTAPI_DOMAIN}:{Config.FASTAPI_PORT}/",
+        f"{Config.FASTAPI_DOMAIN}:{Config.FASTAPI_PORT}/docs",
+        "http://127.0.0.1:8000/",
+        "http://localhost:8000/"
+    ]
+
+    max_wait = 45  # Docker için daha uzun bekleme
     start_time = time.time()
     logger = logging.getLogger('app')
 
     logger.info("FastAPI servisinin hazır olması bekleniyor...")
+    logger.info(f"Test edilecek endpoint'ler: {endpoints_to_try}")
 
     while time.time() - start_time < max_wait:
-        try:
-            response = requests.get(url)
-            if response.status_code == 200:
-                logger.info("FastAPI servisi hazır!")
-                return True
-        except requests.exceptions.ConnectionError:
-            pass
+        for url in endpoints_to_try:
+            try:
+                logger.info(f"Test ediliyor: {url}")
+                response = requests.get(url, timeout=5)
+                if response.status_code in [200, 404]:  # 404 da kabul edilebilir
+                    logger.info(f"FastAPI servisi hazır! URL: {url}")
+                    return True
+                else:
+                    logger.info(f"Beklenmeyen yanıt kodu: {response.status_code}")
 
-        time.sleep(1)
+            except requests.exceptions.ConnectionError:
+                logger.debug(f"Bağlantı kurulamadı: {url}")
+            except requests.exceptions.Timeout:
+                logger.debug(f"Zaman aşımı: {url}")
+            except Exception as e:
+                logger.debug(f"Genel hata: {url} - {e}")
+
+        time.sleep(3)  # Docker için daha uzun aralık
 
     logger.error(f"FastAPI servisi {max_wait} saniye içinde hazır olmadı.")
+    logger.warning("FastAPI olmadan devam ediliyor...")
     return False
+
+
+def run_fastapi():
+    """
+    FastAPI uygulamasını uvicorn ile başlatan bir fonksiyon
+    """
+    import logging
+    logger = logging.getLogger('app')
+
+    try:
+        logger.info(f"FastAPI başlatılıyor: {Config.FASTAPI_PORT} portunda")
+
+        host = "0.0.0.0"
+        port = int(Config.FASTAPI_PORT)
+
+        logger.info(f"FastAPI {host}:{port} adresinde başlatılıyor...")
+
+        # FastAPI'yi uvicorn ile başlat
+        uvicorn.run(
+            "api:api",
+            host=host,
+            port=port,
+            reload=False,
+            log_level="info",
+            access_log=True
+        )
+    except Exception as e:
+        logger.error(f"FastAPI başlatma hatası: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
 
 
 def run_web_server_and_background_tasks(app, socketio):
     """
-    Bir Flask-SocketIO uygulaması için bir web sunucusu başlatır ve çeşitli arka plan görevlerini çalıştırır.
+    Docker-optimized web sunucusu ve arka plan görevleri başlatıcı.
 
-    Arguments:
-        app: Flask uygulaması örneği.
-        socketio: Flask-SocketIO örneği.
-
-    Raises:
-        Hiçbir hata doğrudan raise edilmez, ancak web sunucusunun veya arka plan
-        görevlerinin başlatılamaması durumunda indirekt hatalar meydana gelebilir.
-
+    Bu fonksiyon:
+    1. FastAPI'yi thread olarak başlatır
+    2. FastAPI'nin hazır olmasını bekler
+    3. Web sunucusunu thread olarak başlatır
+    4. FastAPI hazırsa background görevleri başlatır
+    5. Ana thread'de beklemeye geçer
     """
-    web_thread = threading.Thread(target=lambda: socketio.run(app, host="0.0.0.0", debug=False, port=5000, allow_unsafe_werkzeug=True,log_output=True))
-    web_thread.daemon = True
-    web_thread.start()
+    import logging
+    logger = logging.getLogger('app')
 
-    time.sleep(2)
-
-    is_fastapi_ready = wait_for_fastapi()
-
-    if is_fastapi_ready:
-        summaries_thread = threading.Thread(target=load_summaries_with_app_context, args=(app,))
-        summaries_thread.daemon = True
-        summaries_thread.start()
-
-        ai_questions_thread = threading.Thread(target=generate_questions_on_startup, args=(app,))
-        ai_questions_thread.daemon = True
-        ai_questions_thread.start()
-    else:
-        logging.getLogger('app').warning(
-            "FastAPI servisi hazır olmadığı için özet ve soru üretme işlemleri başlatılmadı.")
-
-    web_thread.join()
-
-if __name__ == '__main__':
-    app, socketio = create_app()
-
-    # DB başlat
-    init_db(app)
-
+    # 1. FastAPI'yi thread olarak başlat
+    logger.info("FastAPI thread'i başlatılıyor...")
     fastapi_thread = threading.Thread(target=run_fastapi)
     fastapi_thread.daemon = True
     fastapi_thread.start()
 
+    # 2. FastAPI'nin başlaması için ekstra bekleme (Docker için)
+    logger.info("FastAPI başlatma bekleniyor...")
+    time.sleep(8)  # Docker'da daha uzun bekleme
+
+    # 3. Web sunucusunu thread olarak başlat
+    logger.info("Web sunucusu thread'i başlatılıyor...")
+    web_thread = threading.Thread(
+        target=lambda: socketio.run(
+            app,
+            host="0.0.0.0",
+            debug=False,
+            port=5000,
+            allow_unsafe_werkzeug=True,
+            log_output=True
+        )
+    )
+    web_thread.daemon = True
+    web_thread.start()
+
+    # 4. Web sunucusunun başlaması için kısa bekleme
+    time.sleep(3)
+
+    # 5. FastAPI kontrolü yap
+    logger.info("FastAPI hazırlık kontrolü yapılıyor...")
+    is_fastapi_ready = wait_for_fastapi()
+
+    # 6. FastAPI hazırsa background görevleri başlat
+    if is_fastapi_ready:
+        logger.info("FastAPI hazır, background görevler başlatılıyor...")
+
+        # Özetleri yükle
+        summaries_thread = threading.Thread(
+            target=load_summaries_with_app_context,
+            args=(app,)
+        )
+        summaries_thread.daemon = True
+        summaries_thread.start()
+
+        # AI sorularını üret
+        ai_questions_thread = threading.Thread(
+            target=generate_questions_on_startup,
+            args=(app,)
+        )
+        ai_questions_thread.daemon = True
+        ai_questions_thread.start()
+
+        logger.info("Tüm background görevler başlatıldı")
+    else:
+        logger.warning("FastAPI servisi hazır olmadığı için özet ve soru üretme işlemleri başlatılmadı.")
+
+    # 7. Ana thread'de web sunucusunun bitmesini bekle
+    logger.info("Ana uygulama çalışıyor, web thread bekleniyor...")
+    web_thread.join()
+
+
+if __name__ == '__main__':
+    import time
+    import logging
+
+    logger = logging.getLogger('app')
+
+    # 1. App'i oluştur
+    logger.info("Flask uygulaması oluşturuluyor...")
+    app, socketio = create_app()
+
+    # 2. DB'yi başlat
+    logger.info("Veritabanı başlatılıyor...")
+    init_db(app)
+
+    # 3. Docker initialization bekleme
+    logger.info("Docker container initialization bekleniyor...")
+    time.sleep(5)  # Docker için daha uzun bekleme
+
+    # 4. Web sunucusu ve background görevleri başlat
+    logger.info("Web sunucusu ve background görevler başlatılıyor...")
     run_web_server_and_background_tasks(app, socketio)
