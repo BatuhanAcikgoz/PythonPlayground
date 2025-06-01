@@ -466,16 +466,19 @@ if __name__ == '__main__':
     fastapi_thread.daemon = True
     fastapi_thread.start()
 
-    wait_for_fastapi()
+    is_fastapi_ready = wait_for_fastapi()
 
-    # Özetleri ayrı bir thread'de yükle
-    summaries_thread = threading.Thread(target=load_summaries_with_app_context, args=(app,))
-    summaries_thread.daemon = True
-    summaries_thread.start()
+    if is_fastapi_ready:
+        summaries_thread = threading.Thread(target=load_summaries_with_app_context, args=(app,))
+        summaries_thread.daemon = True
+        summaries_thread.start()
 
-    ai_questions_thread = threading.Thread(target=generate_questions_on_startup, args=(app,))
-    ai_questions_thread.daemon = True
-    ai_questions_thread.start()
+        ai_questions_thread = threading.Thread(target=generate_questions_on_startup, args=(app,))
+        ai_questions_thread.daemon = True
+        ai_questions_thread.start()
+    else:
+        logging.getLogger('app').warning(
+            "FastAPI servisi hazır olmadığı için özet ve soru üretme işlemleri başlatılmadı.")
 
     # Flask sunucusunu başlat
     socketio.run(app, host="0.0.0.0", debug=False, port=5000, allow_unsafe_werkzeug=True, log_output=True)

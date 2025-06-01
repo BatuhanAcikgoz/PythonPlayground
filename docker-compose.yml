@@ -13,6 +13,7 @@ services:
       - notebooks:/code/notebooks_repo
     environment:
       - FLASK_APP=app.py
+      - SECRET_KEY=dev-key
       # IP adresini MySQL sunucunuzun gerçek IP adresiyle değiştirin
       - SQLALCHEMY_DATABASE_URI=mysql+pymysql://pythonplayground:pythonplayground@10.0.50.20/python_platform
       - PYTHONUNBUFFERED=1
