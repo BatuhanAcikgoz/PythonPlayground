@@ -47,6 +47,9 @@ services:
     command: python app.py
     networks:
       - app-network
+    depends_on:
+      db:
+        condition: service_healthy
 
   adminer:
     image: adminer
