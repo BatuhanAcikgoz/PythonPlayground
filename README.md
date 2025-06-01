@@ -116,48 +116,50 @@ Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görünt
 4. Kod yazın ve gerçek zamanlı çıktıyı görün
 
 ## 📁 Proje Yapısı
-
 ```
-project_root/
-  ├── app/                  # Ana uygulama paketi
-  │   ├── __init__.py       # Flask uygulamasını başlatma
-  │   ├── models/           # Veritabanı modelleri
-  │   │   ├── __init__.py
-  │   │   ├── user.py       # Kullanıcı ve rol modelleri
-  │   │   └── course.py     # Kurs ve soru modelleri
-  │   ├── forms/            # Form tanımlamaları
-  │   │   ├── __init__.py
-  │   │   ├── auth.py       # Kimlik doğrulama formları
-  │   │   └── admin.py      # Yönetici formları
-  │   ├── routes/           # Flask görünümleri/rotaları
-  │   │   ├── __init__.py
-  │   │   ├── auth.py       # Kimlik doğrulama rotaları
-  │   │   ├── admin.py      # Yönetici rotaları
-  │   │   ├── main.py       # Ana sayfa rotaları
-  │   │   └── api.py        # API rotaları
-  │   ├── services/         # İş mantığı servisleri
-  │   │   ├── __init__.py
-  │   │   ├── user_service.py
-  │   │   └── notebook_service.py
-  │   ├── static/           # CSS, JS, resimler
-  │   │   ├── css/
-  │   │   ├── js/
-  │   │   └── img/
-  │   ├── templates/        # Jinja2 şablonları
-  │   │   ├── auth/
-  │   │   ├── admin/
-  │   │   └── main/
-  │   └── utils/            # Yardımcı fonksiyonlar
-  │       ├── __init__.py
-  │       ├── decorators.py
-  │       └── helpers.py
-  ├── app.py                # Ana Flask uygulaması
-  ├── api.py                # FastAPI uygulaması
-  ├── config.py             # Yapılandırma ayarları
-  ├── manage.py             # Komut satırı yönetimi
-  ├── requirements.txt      # Bağımlılıklar
-  ├── README.md             # Bu belge
-  └── LICENSE               # Lisans bilgisi
+
+PythonPlayground/
+├── app/                          # Ana uygulama paketi
+│   ├── models/                   # Veritabanı modelleri
+│   │   ├── user.py              # Kullanıcı ve rol modelleri
+│   │   ├── user_badges.py       # Kullanıcı rozet modeli
+│   │   ├── notebook_summary.py  # Notebook özet modeli
+│   │   ├── base.py              # Ana fonksiyonların bulunduğu model
+│   │   ├── badge_criteria.py    # Rozet kriterleri modeli
+│   │   ├── programming_question.py # Soru modeli
+│   │   ├── submission.py        # Çözüm gönderimi modeli
+│   │   ├── badges.py           # Rozet sistemi
+│   │   └── settings.py         # Sistem ayarları
+│   ├── routes/                  # Flask rotaları
+│   │   ├── auth.py             # Kimlik doğrulama
+│   │   ├── admin.py            # Yönetici paneli
+│   │   ├── main.py             # Ana sayfalar
+│   │   ├── programming.py      # Programlama ile ilgili sayfalar
+│   │   ├── notebooks.py        # Notebook işlemleri
+│   │   └── api.py              # API endpointleri
+│   ├── services/               # İş mantığı servisleri
+│   │   └── notebook_service.py # Notebook işlemleri
+│   ├── static/                 # Statik dosyalar
+│   │   ├── css/               # Stil dosyaları
+│   │   ├── js/                # JavaScript dosyaları
+│   │   └── img/               # Resim dosyaları
+│   ├── templates/             # HTML şablonları
+│   │   ├── admin/             # Yönetici sayfaları
+│   │   └── components/        # Tekrar kullanılabilir bileşenler
+│   └── utils/                 # Yardımcı fonksiyonlar
+│       ├── decorators.py      # Custom decorator'lar
+│       └── misc.py            # Çeşitli fonksiyonlar
+├── notebooks_repo/            # Jupyter notebook'lar
+├── logs/                      # Log dosyaları
+├── tests/                     # Test dosyaları
+├── migrations/                # Veritabanı migration'ları
+├── app.py                     # Ana Flask uygulaması
+├── api.py                     # FastAPI backend
+├── config.py                  # Konfigürasyon
+├── requirements.txt           # Python bağımlılıkları
+├── docker-compose.yml         # Docker Compose konfigürasyonu
+├── Dockerfile                 # Docker build dosyası
+└── README.md                  # Proje dokümantasyonu
 ```
 
 ## ⚡ FastAPI Entegrasyonu
