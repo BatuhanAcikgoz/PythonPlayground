@@ -406,6 +406,54 @@ def generate_questions_on_startup(app):
 
         current_app.logger.info("Başlangıç soruları üretme işlemi tamamlandı.")
 
+def wait_for_fastapi():
+    """
+    FastAPI servisinin hazır olmasını bekleyen bir fonksiyon.
+
+    Bu fonksiyon, belirtilen URL'ye yapılan isteklerin başarılı olup olmadığını kontrol eder.
+    FastAPI servisi belirtilen süre içerisinde çalışır duruma geçerse True döner, aksi
+    takdirde False döner. Servisin durumu loglama yoluyla bildirilir.
+
+    Arguments:
+        None
+
+    Returns:
+        bool: Eğer FastAPI servisi belirtilen süre içerisinde hazır olursa True, aksi
+        takdirde False döner.
+
+    Raises:
+        requests.exceptions.ConnectionError: Eğer servise yapılan bağlantı denemeleri sırasında
+        bir bağlantı hatası oluşursa bu durum işlem sırasında sessizce geçilir.
+
+    Note:
+        Fonksiyon, belirli bir süre boyunca (default: 30 saniye) servisi hazırlık
+        durumunda izler ve bu süre sonunda servisin hazır olup olmadığını loglar.
+    """
+    import requests
+    import time
+    import logging
+
+    url = f"{Config.FASTAPI_DOMAIN}:{Config.FASTAPI_PORT}/health"
+    max_wait = 30  # saniye
+    start_time = time.time()
+    logger = logging.getLogger('app')
+
+    logger.info("FastAPI servisinin hazır olması bekleniyor...")
+
+    while time.time() - start_time < max_wait:
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                logger.info("FastAPI servisi hazır!")
+                return True
+        except requests.exceptions.ConnectionError:
+            pass
+
+        time.sleep(1)
+
+    logger.error(f"FastAPI servisi {max_wait} saniye içinde hazır olmadı.")
+    return False
+
 
 if __name__ == '__main__':
     app, socketio = create_app()
