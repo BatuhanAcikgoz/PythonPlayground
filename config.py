@@ -21,7 +21,7 @@ class Config:
             cinsinden tanımlar.
         REPO_URL (str): GitHub depo URL'sini tanımlar.
     """
-    FASTAPI_DOMAIN = os.environ.get('FASTAPI_DOMAIN') or 'http://127.0.0.1'
+    FASTAPI_DOMAIN = os.environ.get('FASTAPI_DOMAIN') or 'http://localhost'
     FASTAPI_PORT = os.environ.get('FASTAPI_PORT') or '7923'
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'geliştirme-anahtarı'
     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or 'mysql+pymysql://pythonplayground:pythonplayground@mariadb.verira.internal/python_platform'

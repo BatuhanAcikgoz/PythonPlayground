@@ -36,7 +36,6 @@ api = FastAPI(title="Python Playground API", version="1.0.0")
 # CORS ekle - domain sınırlaması
 api.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5000"],  # Sadece Flask uygulamasının adresine izin ver
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
