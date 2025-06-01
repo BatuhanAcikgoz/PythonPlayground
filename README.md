@@ -257,7 +257,7 @@ services:
       context: .
       dockerfile: Dockerfile.fastapi
     ports:
-      - "8000:8000"
+      - "7923:7923"
     restart: always
 
 volumes:
@@ -278,7 +278,7 @@ PythonPlayground Docker container'ları, üretim ortamı için optimize edilmiş
 
 ### Hızlı Başlangıç
 - Tarayıcıda Flask uygulaması için `http://localhost:5000` adresine gidin
-- FastAPI Swagger belgeleri için `http://localhost:8000/docs` adresini ziyaret edin
+- FastAPI Swagger belgeleri için `http://localhost:7923/docs` adresini ziyaret edin
 - Admin hesabıyla giriş yapın: `admin@example.com / admin123`
 
 ### Kullanıcı Türleri ve Yetkiler
@@ -586,7 +586,7 @@ services:
       context: .
       dockerfile: Dockerfile.fastapi
     ports:
-      - "8000:8000"
+      - "7923:7923"
     restart: always
 
 volumes:
@@ -607,7 +607,7 @@ PythonPlayground Docker container'ları, üretim ortamı için optimize edilmiş
 
 ### Hızlı Başlangıç
 - Tarayıcıda Flask uygulaması için `http://localhost:5000` adresine gidin
-- FastAPI Swagger belgeleri için `http://localhost:8000/docs` adresini ziyaret edin
+- FastAPI Swagger belgeleri için `http://localhost:7923/docs` adresini ziyaret edin
 - Admin hesabıyla giriş yapın: `admin@example.com / admin123`
 
 ### Kullanıcı Türleri ve Yetkiler

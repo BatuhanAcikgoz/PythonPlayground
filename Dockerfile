@@ -18,11 +18,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
 EXPOSE 7923
-EXPOSE 8000
 
 ENV FLASK_APP=app.py
 ENV PYTHONUNBUFFERED=1
 ENV FASTAPI_DOMAIN=http://127.0.0.1
-ENV FASTAPI_PORT=8000
+ENV FASTAPI_PORT=7923
 
 CMD ["python", "app.py"]

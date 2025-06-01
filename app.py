@@ -401,8 +401,8 @@ def wait_for_fastapi():
         f"{Config.FASTAPI_DOMAIN}:{Config.FASTAPI_PORT}/health",
         f"{Config.FASTAPI_DOMAIN}:{Config.FASTAPI_PORT}/",
         f"{Config.FASTAPI_DOMAIN}:{Config.FASTAPI_PORT}/docs",
-        "http://127.0.0.1:8000/",
-        "http://localhost:8000/"
+        "http://127.0.0.1:7923/",
+        "http://localhost:7923/"
     ]
 
     max_wait = 45  # Docker için daha uzun bekleme
