@@ -20,6 +20,7 @@ COPY . .
 RUN git clone https://github.com/msy-bilecik/ist204_2025 ./notebooks_repo || echo "Repository will be cloned at runtime"
 
 EXPOSE 5000
+EXPOSE 7923
 
 # Use environment variables for configuration
 ENV FLASK_APP=app.py
