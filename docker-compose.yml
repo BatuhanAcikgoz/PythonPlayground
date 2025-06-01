@@ -16,7 +16,7 @@ services:
       # IP adresini MySQL sunucunuzun gerçek IP adresiyle değiştirin
       - SQLALCHEMY_DATABASE_URI=mysql+pymysql://pythonplayground:pythonplayground@10.0.50.20/python_platform
       - PYTHONUNBUFFERED=1
-      - FASTAPI_DOMAIN=http://localhost
+      - FASTAPI_DOMAIN=http://reeignn.verira.internal
       - PYTHONPATH=/code
     working_dir: /code
     command: python app.py
