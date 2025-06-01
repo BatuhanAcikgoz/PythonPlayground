@@ -23,7 +23,7 @@ class Config:
     """
     FASTAPI_DOMAIN = os.environ.get('FASTAPI_DOMAIN') or 'http://0.0.0.0'
     FASTAPI_PORT = os.environ.get('FASTAPI_PORT') or '7923'
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'geliştirme-anahtarı'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-key'
     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or 'mysql+pymysql://pythonplayground:pythonplayground@mariadb.verira.internal/python_platform'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BABEL_DEFAULT_LOCALE = 'tr'
