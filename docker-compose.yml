@@ -29,14 +29,15 @@ services:
     build: .
     container_name: python-platform-web
     restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - "5000:5000"  # Flask uygulaması
       - "7923:7923"  # FastAPI
     volumes:
       - .:/code
       - notebooks:/code/notebooks_repo
-    depends_on:
-      - db
     environment:
       - FLASK_APP=app.py
       - SQLALCHEMY_DATABASE_URI=mysql+pymysql://user:password@db/python_platform
@@ -47,9 +48,6 @@ services:
     command: python app.py
     networks:
       - app-network
-    depends_on:
-      db:
-        condition: service_healthy
 
   adminer:
     image: adminer
