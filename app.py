@@ -235,7 +235,7 @@ def run_fastapi():
     """
     try:
         # FastAPI'yi uvicorn ile başlat (reload devre dışı bırakıldı)
-        uvicorn.run("api:api", host="127.0.0.1", port=int(Config.FASTAPI_PORT), reload=False)
+        uvicorn.run("api:api", host="0.0.0.0", port=int(Config.FASTAPI_PORT), reload=False)
     except Exception as e:
         print(f"FastAPI başlatma hatası: {e}")
 
