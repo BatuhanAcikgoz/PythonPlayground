@@ -1992,4 +1992,4 @@ def trigger_event(request: EventRequest):
 
 @api.get("/health")
 def health_check():
-    return {"status": "ok"}
+    raise HTTPException(status_code=200, "FastAPI çalışıyor")
