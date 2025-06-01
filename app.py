@@ -165,7 +165,6 @@ def init_db(app):
         içermediği için çalışma sırasında oluşabilecek hataları dışarıya aktarır.
     """
     with app.app_context():
-        # NotebookSummary modelini açıkça import et
         from app.models.notebook_summary import NotebookSummary
         from app.models.programming_question import ProgrammingQuestion
         from app.models.submission import Submission
