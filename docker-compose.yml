@@ -2,27 +2,27 @@ version: '3.10'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        GIT_COMMIT: ${GIT_COMMIT:-unknown}
     container_name: python-platform-web
     restart: unless-stopped
     ports:
       - "5000:5000"
       - "7923:7923"
     volumes:
-      - .:/code
-      - notebooks:/code/notebooks_repo
+      - notebooks_repo:/code/notebooks_repo
     environment:
       - FLASK_APP=app.py
       - SECRET_KEY=dev-key
-      # IP adresini MySQL sunucunuzun gerçek IP adresiyle değiştirin
       - SQLALCHEMY_DATABASE_URI=mysql+pymysql://pythonplayground:pythonplayground@10.0.50.20/python_platform
       - PYTHONUNBUFFERED=1
       - FASTAPI_DOMAIN=http://127.0.0.1
       - PYTHONPATH=/code
     working_dir: /code
     command: python app.py
-    network_mode: "host"  # Host ağını kullanarak dış veritabanına erişim
+    network_mode: "host"
 
 volumes:
-  notebooks:
-    driver: local
+  notebooks_repo:

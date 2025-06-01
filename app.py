@@ -481,6 +481,15 @@ def run_web_server_and_background_tasks(app, socketio):
     import logging
     logger = logging.getLogger('app')
 
+    # Git commit numarasını oku ve göster
+    commit_file = os.path.join(os.path.dirname(__file__), '.git_commit')
+    if os.path.exists(commit_file):
+        with open(commit_file, 'r') as f:
+            commit_hash = f.read().strip()
+        logger.info(f"Uygulama başlatılıyor - Commit: {commit_hash}")
+    else:
+        logger.info("Uygulama başlatılıyor - Commit bilgisi bulunamadı")
+
     # 1. FastAPI'yi thread olarak başlat
     logger.info("FastAPI thread'i başlatılıyor...")
     fastapi_thread = threading.Thread(target=run_fastapi)
@@ -541,10 +550,10 @@ def run_web_server_and_background_tasks(app, socketio):
     logger.info("Ana uygulama çalışıyor, web thread bekleniyor...")
     web_thread.join()
 
-
 if __name__ == '__main__':
     import time
     import logging
+    import os
 
     logger = logging.getLogger('app')
 

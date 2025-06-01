@@ -1,0 +1,4 @@
+notebooks_repo
+.env
+__pycache__/
+*.pyc
