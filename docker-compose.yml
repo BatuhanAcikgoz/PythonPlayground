@@ -6,8 +6,8 @@ services:
     container_name: python-platform-web
     restart: unless-stopped
     ports:
-      - "5000:5000"  # Flask uygulaması
-      - "7923:7923"  # FastAPI
+      - "5000:5000"
+      - "7923:7923"
     volumes:
       - .:/code
       - notebooks:/code/notebooks_repo
@@ -19,15 +19,9 @@ services:
       - PYTHONPATH=/code
     working_dir: /code
     command: python app.py
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+    extra_hosts:
+      - "mariadb.verira.internal:host-gateway"
 
 volumes:
-  db_data:
-    driver: local
   notebooks:
     driver: local
