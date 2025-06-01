@@ -11,6 +11,8 @@ from app.models.user import User, Role
 from app.forms import UserForm
 from flask_wtf import FlaskForm
 
+from config import Config
+
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 
