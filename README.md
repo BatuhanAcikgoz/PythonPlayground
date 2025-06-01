@@ -200,7 +200,6 @@ app = FastAPI(
 # CORS yapılandırması - Flask uygulamasından gelen isteklere izin ver
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
