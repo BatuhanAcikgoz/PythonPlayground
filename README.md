@@ -415,6 +415,6 @@ Bu proje GPL-3.0 lisansı altında lisanslanmıştır. Daha fazla detay için `L
 
 📫 **İletişim:** [iletisim@radome.web.tr](mailto:iletisim@radome.web.tr)
 
-🌐 **Web sitesi:** [https://pythonplayground.radome.web.tr](https://pythonplayground.radome.web.tr)
+🌐 **Web sitesi:** [https://python.batuhanacikgoz.com.tr](https://python.batuhanacikgoz.com.tr)
 
 Bu proje, eğitim ortamları için etkileşimli bir Python çalışma alanı sunar ve gelişmiş kullanıcı yönetimi özellikleriyle birlikte Jupyter notebook entegrasyonu sağlar.
