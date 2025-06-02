@@ -20,16 +20,11 @@ services:
       - PYTHONUNBUFFERED=1
       - FASTAPI_DOMAIN=http://127.0.0.1
       - PYTHONPATH=/code
+      - GIT_COMMIT=${GIT_COMMIT:-unknown}
     working_dir: /code
     command: >
       bash -c '
-      if [ -d .git ]; then 
-        git rev-parse HEAD > .git_commit 
-      elif [ -d /code/.git ]; then 
-        git -C /code rev-parse HEAD > .git_commit 
-      else 
-        echo "$(date): Git repo bulunamadı" > .git_commit
-      fi && 
+      echo "${GIT_COMMIT:-unknown}" > .git_commit &&
       python app.py'
     network_mode: "host"
 
