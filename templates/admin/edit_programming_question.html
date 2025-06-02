@@ -84,6 +84,16 @@
                 profile: "Profil",
                 settings: "Ayarlar"
             },
+            flashMessages: [
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        {
+                            "category": "{{ category }}",
+                            "message": {{ message|tojson|safe }}
+                        }{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                {% endwith %}
+            ],
             formData: {
                 csrf_token: "{{ form.csrf_token._value() }}",
                 title: {{ question.title|tojson|safe }},
