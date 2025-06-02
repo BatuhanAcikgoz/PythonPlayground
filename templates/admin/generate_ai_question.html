@@ -758,5 +758,23 @@
 
         ReactDOM.render(<App />, document.getElementById('root'));
     </script>
+        <!-- Flash mesajları için script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    const container = document.querySelector('.container');
+                    const formElement = document.querySelector('form');
+
+                    {% for category, message in messages %}
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+                        messageDiv.textContent = '{{ message }}';
+                        container.insertBefore(messageDiv, formElement);
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        });
+    </script>
 </body>
 </html>
