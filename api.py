@@ -359,6 +359,25 @@ class QuestionGenerationRequest(BaseModel):
 class EventRequest(BaseModel):
     event_type: str
     data: Dict[str, Any]
+    
+class ProgrammingQuestionCreate(BaseModel):
+    """
+    Programlama sorusu oluşturma isteğini temsil eden bir sınıf.
+
+    Bu sınıf, programlama sorularının oluşturulması için gerekli olan
+    başlık, açıklama, zorluk seviyesi, puan, konu, örnek giriş/çıktı ve
+    çözüm kodu gibi bilgileri içerir.
+    """
+    title: str
+    description: str
+    difficulty: int = 1
+    points: int = 10
+    topic: str = "genel"
+    example_input: str = ""
+    example_output: str = ""
+    function_name: str = ""
+    solution_code: str = ""
+    test_inputs: str = "[]"
 
 # AI model ile iletişim için yardımcı sınıf
 class AIClient:
