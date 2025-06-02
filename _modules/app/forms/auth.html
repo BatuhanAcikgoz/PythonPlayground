@@ -360,17 +360,18 @@
 <a class="viewcode-back" href="../../../app.forms.html#app.forms.auth.UpdateAccountForm.validate_email">[belgeler]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_email</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Validates email to ensure it is not already registered in the database.</span>
+<span class="sd">        Bir kullanıcının e-posta adresinin geçerliliğini kontrol eden bir fonksiyon.</span>
 
-<span class="sd">        This method checks if the provided email is different from the current user&#39;s email</span>
-<span class="sd">        and verifies if the email has already been registered by another user. If the email</span>
-<span class="sd">        is found in the database, a validation error is raised.</span>
+<span class="sd">        Fonksiyon, kullanıcının girdiği e-posta adresinin mevcut kullanıcıya ait olup olmadığını</span>
+<span class="sd">        kontrol eder. Eğer girdi mevcut kullanıcıya ait değilse, aynı e-posta adresiyle bir başka</span>
+<span class="sd">        kullanıcının kayıtlı olup olmadığını doğrular. Eğer başka bir kullanıcı bulunuyorsa, bir</span>
+<span class="sd">        ValidationError hatası yükseltilir.</span>
 
-<span class="sd">        Parameters:</span>
-<span class="sd">        email: The email address to be validated. Must be a valid email string.</span>
+<span class="sd">        Arguments:</span>
+<span class="sd">            email: Hedef E-posta adresini kontrol etmek için kullanılan parametre.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">        ValidationError: Raised if the given email address is already registered by another user.</span>
+<span class="sd">            ValidationError: E-posta adresi zaten bir başka kullanıcıya aitse yükseltilen hata.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">email</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="n">current_user</span><span class="o">.</span><span class="n">email</span><span class="p">:</span>
             <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>

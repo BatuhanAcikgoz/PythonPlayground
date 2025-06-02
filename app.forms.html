@@ -635,12 +635,15 @@ data as parameters. Overwrites any duplicate keys in
 form elemanlarını tanımlamak için kullanılır. Kullanıcı adı, e-posta adresi, parola
 ve roller gibi alanları içerir. Form alanlarına yönelik doğrulama kuralları
 belirtilmiştir ve roller için dinamik seçim seçenekleri yüklenmektedir.</p>
-<p>Initializes an instance of the UserForm class, setting up role choices for form usage.</p>
+<p>Kullanıcı formu oluşturmak ve kullanıcı rolleri listesini yapılandırmak için
+kullanılan sınıf başlatıcı metodu. <cite>roles</cite> alanına, mevcut rollerin ID ve isim
+çiftlerinden oluşan seçim listesi atanır. Bu işlem, dinamik roller arası
+bağımsızlık sağlar.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>*args</strong> – Variable length argument list.</p></li>
-<li><p><strong>**kwargs</strong> – Arbitrary keyword arguments.</p></li>
+<li><p><strong>*args</strong> – Kapsayıcı argümanlar.</p></li>
+<li><p><strong>**kwargs</strong> – Anahtar kelime argümanları.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1047,14 +1050,19 @@ data as parameters. Overwrites any duplicate keys in
 <dl class="py method">
 <dt class="sig sig-object py" id="id26">
 <span class="sig-name descname"><span class="pre">validate_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/forms/auth.html#UpdateAccountForm.validate_email"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#id26" title="Link to this definition">¶</a></dt>
-<dd><p>Validates email to ensure it is not already registered in the database.</p>
-<p>This method checks if the provided email is different from the current user’s email
-and verifies if the email has already been registered by another user. If the email
-is found in the database, a validation error is raised.</p>
-<p>Parameters:
-email: The email address to be validated. Must be a valid email string.</p>
-<p>Raises:
-ValidationError: Raised if the given email address is already registered by another user.</p>
+<dd><p>Bir kullanıcının e-posta adresinin geçerliliğini kontrol eden bir fonksiyon.</p>
+<p>Fonksiyon, kullanıcının girdiği e-posta adresinin mevcut kullanıcıya ait olup olmadığını
+kontrol eder. Eğer girdi mevcut kullanıcıya ait değilse, aynı e-posta adresiyle bir başka
+kullanıcının kayıtlı olup olmadığını doğrular. Eğer başka bir kullanıcı bulunuyorsa, bir
+ValidationError hatası yükseltilir.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>email</strong> – Hedef E-posta adresini kontrol etmek için kullanılan parametre.</p>
+</dd>
+<dt class="field-even">Harekete geçirir<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValidationError</strong> – E-posta adresi zaten bir başka kullanıcıya aitse yükseltilen hata.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1961,12 +1969,15 @@ data as parameters. Overwrites any duplicate keys in
 form elemanlarını tanımlamak için kullanılır. Kullanıcı adı, e-posta adresi, parola
 ve roller gibi alanları içerir. Form alanlarına yönelik doğrulama kuralları
 belirtilmiştir ve roller için dinamik seçim seçenekleri yüklenmektedir.</p>
-<p>Initializes an instance of the UserForm class, setting up role choices for form usage.</p>
+<p>Kullanıcı formu oluşturmak ve kullanıcı rolleri listesini yapılandırmak için
+kullanılan sınıf başlatıcı metodu. <cite>roles</cite> alanına, mevcut rollerin ID ve isim
+çiftlerinden oluşan seçim listesi atanır. Bu işlem, dinamik roller arası
+bağımsızlık sağlar.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parametreler<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>*args</strong> – Variable length argument list.</p></li>
-<li><p><strong>**kwargs</strong> – Arbitrary keyword arguments.</p></li>
+<li><p><strong>*args</strong> – Kapsayıcı argümanlar.</p></li>
+<li><p><strong>**kwargs</strong> – Anahtar kelime argümanları.</p></li>
 </ul>
 </dd>
 </dl>
