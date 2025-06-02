@@ -10,8 +10,7 @@ from app.models.user import User
 from app.routes import register_routes
 from config import Config
 from colorlog import StreamHandler, ColoredFormatter
-import logging
-import time
+from app.utils.misc import get_git_info, wait_for_fastapi
 
 
 def setup_logger():
@@ -387,56 +386,6 @@ def generate_questions_on_startup(app):
 
         current_app.logger.info("Başlangıç soruları üretme işlemi tamamlandı.")
 
-
-def wait_for_fastapi():
-    """
-    FastAPI servisinin hazır olmasını bekleyen bir fonksiyon - Docker optimized.
-    """
-    import requests
-    import time
-    import logging
-
-    # Farklı endpoint'leri dene
-    endpoints_to_try = [
-        f"{Config.FASTAPI_DOMAIN}:{Config.FASTAPI_PORT}/health",
-        f"{Config.FASTAPI_DOMAIN}:{Config.FASTAPI_PORT}/",
-        f"{Config.FASTAPI_DOMAIN}:{Config.FASTAPI_PORT}/docs",
-        "http://127.0.0.1:7923/",
-        "http://localhost:7923/"
-    ]
-
-    max_wait = 45  # Docker için daha uzun bekleme
-    start_time = time.time()
-    logger = logging.getLogger('app')
-
-    logger.info("FastAPI servisinin hazır olması bekleniyor...")
-    logger.info(f"Test edilecek endpoint'ler: {endpoints_to_try}")
-
-    while time.time() - start_time < max_wait:
-        for url in endpoints_to_try:
-            try:
-                logger.info(f"Test ediliyor: {url}")
-                response = requests.get(url, timeout=5)
-                if response.status_code in [200, 404]:  # 404 da kabul edilebilir
-                    logger.info(f"FastAPI servisi hazır! URL: {url}")
-                    return True
-                else:
-                    logger.info(f"Beklenmeyen yanıt kodu: {response.status_code}")
-
-            except requests.exceptions.ConnectionError:
-                logger.debug(f"Bağlantı kurulamadı: {url}")
-            except requests.exceptions.Timeout:
-                logger.debug(f"Zaman aşımı: {url}")
-            except Exception as e:
-                logger.debug(f"Genel hata: {url} - {e}")
-
-        time.sleep(3)  # Docker için daha uzun aralık
-
-    logger.error(f"FastAPI servisi {max_wait} saniye içinde hazır olmadı.")
-    logger.warning("FastAPI olmadan devam ediliyor...")
-    return False
-
-
 def run_fastapi():
     """
     FastAPI uygulamasını uvicorn ile başlatan bir fonksiyon
@@ -481,14 +430,9 @@ def run_web_server_and_background_tasks(app, socketio):
     import logging
     logger = logging.getLogger('app')
 
-    # Git commit numarasını oku ve göster
-    commit_file = os.path.join(os.path.dirname(__file__), '.git_commit')
-    if os.path.exists(commit_file):
-        with open(commit_file, 'r') as f:
-            commit_hash = f.read().strip()
-        logger.info(f"Uygulama başlatılıyor - Commit: {commit_hash}")
-    else:
-        logger.info("Uygulama başlatılıyor - Commit bilgisi bulunamadı")
+    # Git commit numarasını ve tarihini oku ve göster
+    commit_hash, commit_date = get_git_info()
+    logger.info(f"Uygulama başlatılıyor - Commit: {commit_hash} ({commit_date})")
 
     # 1. FastAPI'yi thread olarak başlat
     logger.info("FastAPI thread'i başlatılıyor...")

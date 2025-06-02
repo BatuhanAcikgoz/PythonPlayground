@@ -4,8 +4,6 @@ services:
   web:
     build:
       context: .
-      args:
-        GIT_COMMIT: ${GIT_COMMIT:-unknown}
     container_name: python-platform-web
     restart: unless-stopped
     ports:
@@ -20,12 +18,8 @@ services:
       - PYTHONUNBUFFERED=1
       - FASTAPI_DOMAIN=http://127.0.0.1
       - PYTHONPATH=/code
-      - GIT_COMMIT=${GIT_COMMIT:-unknown}
     working_dir: /code
-    command: >
-      bash -c '
-      echo "${GIT_COMMIT:-unknown}" > .git_commit &&
-      python app.py'
+    command: python app.py
     network_mode: "host"
 
 volumes:
