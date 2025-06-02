@@ -23,43 +23,16 @@ def get_profile_image(user):
 
 
 def get_git_info():
-    """
-    Belirtilen bir GIT_COMMIT çevre değişkeninin veya mevcut bir .git klasörünün varlığına dayanarak,
-    Git deposundan commit hash'ini ve ilgili tarih bilgilerini almak için kullanılan bir yardımcı fonksiyondur.
-    Eğer gerekli bilgiler sağlanamazsa, "unknown" ve geçerli tarih döndürülür.
-
-    Returns:
-        tuple[str, str]: En kısa commit hash'i (7 karakter) ve commit tarihi. Bilgi alınamazsa "unknown" ve
-        geçerli tarih döndürülür.
-
-    Raises:
-        subprocess.SubprocessError: Git komutları çalıştırılırken bir alt işlemin başarısız olması durumunda ortaya çıkar.
-        FileNotFoundError: Git ile ilgili dosyaların veya klasörlerin bulunamaması durumunda fırlatılır.
-    """
+    """Git commit hash bilgisini ve tarihini döndürür."""
     import subprocess
     import os
     from datetime import datetime
 
-    # 1. Eğer GIT_COMMIT çevre değişkeni varsa onu kullan
-    if os.environ.get('GIT_COMMIT'):
-        git_hash = os.environ.get('GIT_COMMIT')
-        short_hash = git_hash[:7] if git_hash else "unknown"
-
-        try:
-            # Git hash'e göre tarihi al
-            if git_hash and git_hash != "unknown":
-                if os.path.exists('.git') or os.path.exists('/code/.git'):
-                    git_dir = '.git' if os.path.exists('.git') else '/code/.git'
-                    date_result = subprocess.run(
-                        ['git', f'--git-dir={git_dir}', 'show', '-s', '--format=%ci', git_hash],
-                        capture_output=True, text=True, check=True
-                    )
-                    commit_date = date_result.stdout.strip()
-                    return short_hash, commit_date
-
-            # Tarih bulunamazsa şu anki tarihi kullan
-            return short_hash, datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        except:
+    # 1. Önce bilinen CI/CD ortam değişkenlerini kontrol et
+    for env_var in ['GIT_COMMIT', 'SOURCE_COMMIT', 'COOLIFY_COMMIT_HASH', 'COOLIFY_GIT_COMMIT_HASH', 'CI_COMMIT_SHA']:
+        if os.environ.get(env_var):
+            git_hash = os.environ.get(env_var)
+            short_hash = git_hash[:7] if git_hash else "unknown"
             return short_hash, datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # 2. Eğer .git klasörü varsa git komutunu çalıştır
@@ -87,7 +60,6 @@ def get_git_info():
 
     # 3. Hiçbiri çalışmazsa "unknown" döndür
     return "unknown", datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
 
 def wait_for_fastapi():
     """
