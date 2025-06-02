@@ -1,4 +1,3 @@
-from pydoc_data.topics import topics
 from fastapi import status
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Depends
@@ -14,7 +13,6 @@ import time
 import hashlib
 import re
 import json
-import random
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 import traceback

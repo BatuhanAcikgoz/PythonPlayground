@@ -38,6 +38,7 @@ colorlog~=6.9.0
 # API
 pydantic~=2.11.3
 google==3.0.0
+google.generativeai==0.8.5
 
 # Test
 pytest~=8.3.5
