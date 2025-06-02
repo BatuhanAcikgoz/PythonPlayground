@@ -232,8 +232,8 @@ def settings():
 
         # AI ayarlarını da doldur
         form.enable_ai_features.data = '1' if Setting.get('ai_enable_features', True) else '0'
-        form.api_provider.data = Setting.get('ai_api_provider', 'openai')
-        form.default_ai_model.data = Setting.get('ai_default_model', 'gpt-3.5-turbo')
+        form.api_provider.data = Setting.get('ai_api_provider', 'gemini')
+        form.default_ai_model.data = Setting.get('ai_default_model', 'gemini-2.0-flash-lite')
         form.api_key.data = Setting.get('ai_api_key', '')
 
     # Formu kaydet (POST isteğinde)

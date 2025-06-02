@@ -407,7 +407,7 @@ def run_fastapi():
             host=host,
             port=port,
             reload=False,
-            log_level="info",
+            log_level="debug",
             access_log=True
         )
     except Exception as e:
@@ -450,9 +450,10 @@ def run_web_server_and_background_tasks(app, socketio):
         target=lambda: socketio.run(
             app,
             host="0.0.0.0",
-            debug=False,
+            debug=True,
             port=5000,
             allow_unsafe_werkzeug=True,
+            use_reloader=False,
             log_output=True
         )
     )

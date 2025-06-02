@@ -826,7 +826,7 @@ def get_notebook_summary(request: NotebookSummaryRequest, force_update: bool = F
 
         api_provider = settings.get('ai_api_provider', 'gemini')
         api_key = settings.get('ai_api_key', '')
-        model_name = settings.get('ai_default_model', 'gemini-1.5-flash')
+        model_name = settings.get('ai_default_model', 'gemini-2.0-flash-lite')
         max_tokens = int(settings.get('ai_max_token_limit', 10000000))
         enabled = settings.get('ai_enable_features', 'true').lower() == 'true'
 
@@ -1700,7 +1700,7 @@ def generate_programming_question(request: QuestionGenerationRequest, db=Depends
 
         api_provider = settings.get('ai_api_provider', 'gemini')
         api_key = settings.get('ai_api_key', '')
-        model_name = settings.get('ai_default_model', 'gemini-1.5-flash')
+        model_name = settings.get('ai_default_model', 'gemini-2.0-flash-lite')
         enabled = settings.get('ai_enable_features', 'true').lower() == 'true'
 
         if not enabled:
