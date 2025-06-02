@@ -383,8 +383,6 @@
           <li><a href="app.models.html#module-app.models.base">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     app.models.notebook_summary
 
@@ -392,6 +390,8 @@
           <li><a href="app.models.html#module-app.models.notebook_summary">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     app.models.programming_question
 
@@ -460,6 +460,13 @@
 
         <ul>
           <li><a href="app.routes.html#module-app.routes.notebook">module</a>
+</li>
+        </ul></li>
+        <li>
+    app.routes.programming
+
+        <ul>
+          <li><a href="app.routes.html#module-app.routes.programming">module</a>
 </li>
         </ul></li>
         <li>
@@ -634,13 +641,15 @@
 </li>
         <li><a href="app.forms.html#app.forms.admin.SettingForm.enable_user_activation">enable_user_activation (app.forms.admin.SettingForm özniteliği)</a>, <a href="app.forms.html#id6">[1]</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="app.services.html#app.services.notebook_service.NotebookService.ensure_repo_exists">ensure_repo_exists() (app.services.notebook_service.NotebookService yöntemi)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="app.models.html#app.models.notebook_summary.NotebookSummary.error">error (app.models.notebook_summary.NotebookSummary özniteliği)</a>, <a href="app.models.html#id1">[1]</a>
 </li>
         <li><a href="app.models.html#app.models.submission.Submission.error_message">error_message (app.models.submission.Submission özniteliği)</a>, <a href="app.models.html#id23">[1]</a>
+</li>
+        <li><a href="app.routes.html#app.routes.programming.evaluate_code">evaluate_code() (app.routes.programming modülü içinde)</a>
 </li>
         <li><a href="app.events.html#app.events.event_manager.EventManager">EventManager (app.events.event_manager içindeki sınıf)</a>
 </li>
@@ -688,10 +697,12 @@
   <h2>G</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="app.models.html#app.models.settings.Setting.get">get() (app.models.settings.Setting sınıf yöntemi)</a>
+        <li><a href="app.routes.html#app.routes.programming.generate_starter_code">generate_starter_code() (app.routes.programming modülü içinde)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="app.models.html#app.models.settings.Setting.get">get() (app.models.settings.Setting sınıf yöntemi)</a>
+</li>
         <li><a href="app.services.html#app.services.notebook_service.NotebookService.get_notebook">get_notebook() (app.services.notebook_service.NotebookService yöntemi)</a>
 </li>
     </ul></td>
@@ -850,6 +861,8 @@
 </li>
           <li><a href="app.routes.html#module-app.routes.notebook">app.routes.notebook</a>
 </li>
+          <li><a href="app.routes.html#module-app.routes.programming">app.routes.programming</a>
+</li>
           <li><a href="app.services.html#module-app.services">app.services</a>
 </li>
           <li><a href="app.services.html#module-app.services.notebook_service">app.services.notebook_service</a>
@@ -862,6 +875,8 @@
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="app.routes.html#app.routes.auth.my_profile">my_profile() (app.routes.auth modülü içinde)</a>
+</li>
+        <li><a href="app.routes.html#app.routes.programming.my_submissions">my_submissions() (app.routes.programming modülü içinde)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -981,6 +996,8 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="app.routes.html#app.routes.programming.question">question() (app.routes.programming modülü içinde)</a>
+</li>
         <li><a href="app.models.html#app.models.submission.Submission.question_id">question_id (app.models.submission.Submission özniteliği)</a>, <a href="app.models.html#id27">[1]</a>
 </li>
         <li><a href="app.events.html#app.events.event_definitions.EventType.QUESTION_SOLVED">QUESTION_SOLVED (app.events.event_definitions.EventType özniteliği)</a>
@@ -988,6 +1005,8 @@
         <li><a href="app.events.html#app.events.handlers.question_solved_handler">question_solved_handler() (app.events.handlers modülü içinde)</a>
 </li>
         <li><a href="app.routes.html#app.routes.admin.question_submissions">question_submissions() (app.routes.admin modülü içinde)</a>
+</li>
+        <li><a href="app.routes.html#app.routes.programming.questions">questions() (app.routes.programming modülü içinde)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -1101,9 +1120,11 @@
         </ul></li>
         <li><a href="app.forms.html#app.forms.programming.SolutionSubmitForm">SolutionSubmitForm (app.forms.programming içindeki sınıf)</a>
 </li>
+        <li><a href="app.models.html#app.models.submission.Submission">Submission (app.models.submission içindeki sınıf)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="app.models.html#app.models.submission.Submission">Submission (app.models.submission içindeki sınıf)</a>
+        <li><a href="app.routes.html#app.routes.programming.submission">submission() (app.routes.programming modülü içinde)</a>
 </li>
         <li><a href="app.models.html#app.models.programming_question.ProgrammingQuestion.submissions">submissions (app.models.programming_question.ProgrammingQuestion özniteliği)</a>
 </li>
@@ -1137,6 +1158,8 @@
           <li><a href="app.forms.html#app.forms.UserForm.submit">(app.forms.UserForm özniteliği)</a>
 </li>
         </ul></li>
+        <li><a href="app.routes.html#app.routes.programming.submit_solution">submit_solution() (app.routes.programming modülü içinde)</a>
+</li>
         <li><a href="app.models.html#app.models.notebook_summary.NotebookSummary.summary">summary (app.models.notebook_summary.NotebookSummary özniteliği)</a>, <a href="app.models.html#id5">[1]</a>
 </li>
         <li><a href="app.routes.html#app.routes.notebook.summary">summary() (app.routes.notebook modülü içinde)</a>
