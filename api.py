@@ -1995,3 +1995,77 @@ def health_check():
         status_code=status.HTTP_200_OK,
         content={"status": "ok"}
     )
+
+@api.post("/api/save-question")
+def save_question(question: ProgrammingQuestionCreate, db=Depends(get_db)):
+    """
+    Oluşturulan veya düzenlenen programlama sorusunu veritabanına kaydeder.
+    """
+    try:
+        # Eğer soru ID'si varsa güncelleme, yoksa yeni ekleme
+        if question.id:
+            # Mevcut soruyu güncelle
+            update_query = text("""
+                                UPDATE programming_question
+                                SET title          = :title,
+                                    description    = :description,
+                                    function_name  = :function_name,
+                                    difficulty     = :difficulty,
+                                    points         = :points,
+                                    topic          = :topic,
+                                    example_input  = :example_input,
+                                    example_output = :example_output,
+                                    test_inputs    = :test_inputs,
+                                    solution_code  = :solution_code,
+                                    updated_at     = NOW()
+                                WHERE id = :id
+                                """)
+
+            db.execute(update_query, {
+                "id": question.id,
+                "title": question.title,
+                "description": question.description,
+                "function_name": question.function_name,
+                "difficulty": question.difficulty,
+                "points": question.points,
+                "topic": question.topic,
+                "example_input": question.example_input,
+                "example_output": question.example_output,
+                "test_inputs": question.test_inputs,
+                "solution_code": question.solution_code
+            })
+
+            message = "Soru başarıyla güncellendi"
+        else:
+            # Yeni soru ekle
+            insert_query = text("""
+                                INSERT INTO programming_question (title, description, function_name, difficulty, points,
+                                                                  topic,
+                                                                  example_input, example_output, test_inputs,
+                                                                  solution_code, created_at, updated_at)
+                                VALUES (:title, :description, :function_name, :difficulty, :points, :topic,
+                                        :example_input, :example_output, :test_inputs, :solution_code, NOW(), NOW())
+                                """)
+
+            result = db.execute(insert_query, {
+                "title": question.title,
+                "description": question.description,
+                "function_name": question.function_name,
+                "difficulty": question.difficulty,
+                "points": question.points,
+                "topic": question.topic,
+                "example_input": question.example_input,
+                "example_output": question.example_output,
+                "test_inputs": question.test_inputs,
+                "solution_code": question.solution_code
+            })
+
+            question_id = result.lastrowid
+            message = "Yeni soru başarıyla eklendi"
+
+        db.commit()
+        return {"success": True, "message": message, "id": question_id if 'question_id' in locals() else question.id}
+
+    except Exception as e:
+        db.rollback()
+        return {"success": False, "message": f"Soru kaydedilirken hata oluştu: {str(e)}"}
