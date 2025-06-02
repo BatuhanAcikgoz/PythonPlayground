@@ -359,7 +359,7 @@ class QuestionGenerationRequest(BaseModel):
 class EventRequest(BaseModel):
     event_type: str
     data: Dict[str, Any]
-    
+
 class ProgrammingQuestionCreate(BaseModel):
     """
     Programlama sorusu oluşturma isteğini temsil eden bir sınıf.
@@ -368,6 +368,7 @@ class ProgrammingQuestionCreate(BaseModel):
     başlık, açıklama, zorluk seviyesi, puan, konu, örnek giriş/çıktı ve
     çözüm kodu gibi bilgileri içerir.
     """
+    id: Optional[int] = None
     title: str
     description: str
     difficulty: int = 1
