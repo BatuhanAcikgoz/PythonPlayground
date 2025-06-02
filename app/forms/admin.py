@@ -22,15 +22,14 @@ class UserForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         """
-        Initializes an instance of the UserForm class, setting up role choices for form usage.
+        Kullanıcı formu oluşturmak ve kullanıcı rolleri listesini yapılandırmak için
+        kullanılan sınıf başlatıcı metodu. `roles` alanına, mevcut rollerin ID ve isim
+        çiftlerinden oluşan seçim listesi atanır. Bu işlem, dinamik roller arası
+        bağımsızlık sağlar.
 
-        Parameters
-        ----------
-        *args :
-            Variable length argument list.
-        **kwargs :
-            Arbitrary keyword arguments.
-
+        Args:
+            *args: Kapsayıcı argümanlar.
+            **kwargs: Anahtar kelime argümanları.
         """
         super(UserForm, self).__init__(*args, **kwargs)
         self.roles.choices = [(role.id, role.name) for role in Role.query.all()]

@@ -81,17 +81,18 @@ class UpdateAccountForm(FlaskForm):
 
     def validate_email(self, email):
         """
-        Validates email to ensure it is not already registered in the database.
+        Bir kullanıcının e-posta adresinin geçerliliğini kontrol eden bir fonksiyon.
 
-        This method checks if the provided email is different from the current user's email
-        and verifies if the email has already been registered by another user. If the email
-        is found in the database, a validation error is raised.
+        Fonksiyon, kullanıcının girdiği e-posta adresinin mevcut kullanıcıya ait olup olmadığını
+        kontrol eder. Eğer girdi mevcut kullanıcıya ait değilse, aynı e-posta adresiyle bir başka
+        kullanıcının kayıtlı olup olmadığını doğrular. Eğer başka bir kullanıcı bulunuyorsa, bir
+        ValidationError hatası yükseltilir.
 
-        Parameters:
-        email: The email address to be validated. Must be a valid email string.
+        Arguments:
+            email: Hedef E-posta adresini kontrol etmek için kullanılan parametre.
 
         Raises:
-        ValidationError: Raised if the given email address is already registered by another user.
+            ValidationError: E-posta adresi zaten bir başka kullanıcıya aitse yükseltilen hata.
         """
         if email.data != current_user.email:
             user = User.query.filter_by(email=email.data).first()
