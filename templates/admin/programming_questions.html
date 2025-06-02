@@ -32,7 +32,6 @@
                 username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
                 email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
             },
-        f
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
