@@ -21,7 +21,7 @@ services:
       - FASTAPI_DOMAIN=http://127.0.0.1
       - PYTHONPATH=/code
     working_dir: /code
-    command: python app.py
+    command: bash -c 'echo "${GIT_COMMIT:-unknown}" > .git_commit && python app.py'
     network_mode: "host"
 
 volumes:
