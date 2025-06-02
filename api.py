@@ -368,7 +368,7 @@ class ProgrammingQuestionCreate(BaseModel):
     başlık, açıklama, zorluk seviyesi, puan, konu, örnek giriş/çıktı ve
     çözüm kodu gibi bilgileri içerir.
     """
-    id: Optional[int] = None
+    id: int
     title: str
     description: str
     difficulty: int = 1
@@ -2055,19 +2055,27 @@ def save_question(question: ProgrammingQuestionCreate, db=Depends(get_db)):
                 "solution_code": question.solution_code
             })
 
+            question_id = question.id
             message = "Soru başarıyla güncellendi"
         else:
+            # Son eklenen ID'yi al
+            last_id_query = text("SELECT MAX(id) as last_id FROM programming_question")
+            result = db.execute(last_id_query).first()
+            last_id = result.last_id if result and result.last_id else 0
+            new_id = last_id + 1
+
             # Yeni soru ekle
             insert_query = text("""
-                                INSERT INTO programming_question (title, description, function_name, difficulty, points,
-                                                                  topic,
+                                INSERT INTO programming_question (id, title, description, function_name, difficulty,
+                                                                  points, topic,
                                                                   example_input, example_output, test_inputs,
                                                                   solution_code, created_at, updated_at)
-                                VALUES (:title, :description, :function_name, :difficulty, :points, :topic,
+                                VALUES (:id, :title, :description, :function_name, :difficulty, :points, :topic,
                                         :example_input, :example_output, :test_inputs, :solution_code, NOW(), NOW())
                                 """)
 
-            result = db.execute(insert_query, {
+            db.execute(insert_query, {
+                "id": new_id,
                 "title": question.title,
                 "description": question.description,
                 "function_name": question.function_name,
@@ -2080,11 +2088,11 @@ def save_question(question: ProgrammingQuestionCreate, db=Depends(get_db)):
                 "solution_code": question.solution_code
             })
 
-            question_id = result.lastrowid
+            question_id = new_id
             message = "Yeni soru başarıyla eklendi"
 
         db.commit()
-        return {"success": True, "message": message, "id": question_id if 'question_id' in locals() else question.id}
+        return {"success": True, "message": message, "id": question_id}
 
     except Exception as e:
         db.rollback()
