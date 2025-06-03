@@ -151,6 +151,7 @@
             });
 
             const [questionData, setQuestionData] = React.useState({
+                id: null,
                 title: "",
                 description: "",
                 function_name: "",
@@ -431,6 +432,12 @@
                     if (data.error) {
                         setError(data.error);
                     } else {
+                        if (data.id) {
+                            setQuestionData(prevData => ({
+                                ...prevData,
+                                id: data.id
+                            }));
+                        }
                         setSavedSuccess(true);
                         // 3 saniye sonra başarı mesajını kaldır
                         setTimeout(() => {
