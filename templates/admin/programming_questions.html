@@ -177,6 +177,31 @@
                 }
             };
 
+            // Flash bileşenini ekleyin (App bileşeninin üstüne)
+            const FlashMessages = () => {
+                const [messages, setMessages] = React.useState([]);
+
+                React.useEffect(() => {
+                    // Sayfa yüklendiğinde DOM'dan flask mesajlarını alın
+                    const flashData = window.FLASH_MESSAGES || [];
+                    if (flashData.length > 0) {
+                        setMessages(flashData);
+                    }
+                }, []);
+
+                if (messages.length === 0) return null;
+
+                return (
+                    <div className="container mx-auto my-4">
+                        {messages.map((msg, index) => (
+                            <div key={index} className={`p-4 mb-4 rounded-lg ${msg.category === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                {msg.message}
+                            </div>
+                        ))}
+                    </div>
+                );
+            };
+
             return (
                 <div className="bg-white shadow-md rounded-lg overflow-hidden">
                     <div className="p-4 border-b">
@@ -338,21 +363,18 @@
 
     <!-- Flash mesajları için script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        window.FLASH_MESSAGES = [
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    const container = document.querySelector('.container');
-                    const formElement = document.querySelector('form');
-
                     {% for category, message in messages %}
-                        const messageDiv = document.createElement('div');
-                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
-                        messageDiv.textContent = '{{ message }}';
-                        container.insertBefore(messageDiv, formElement);
+                        {
+                            category: "{{ category }}",
+                            message: "{{ message }}"
+                        },
                     {% endfor %}
                 {% endif %}
             {% endwith %}
-        });
+        ];
     </script>
 </body>
 </html>
