@@ -3,6 +3,8 @@ from fastapi.responses import JSONResponse
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import HTTPException
+import instaloader
+from datetime import datetime
 import platform
 import psutil
 import flask
@@ -379,6 +381,31 @@ class ProgrammingQuestionCreate(BaseModel):
     function_name: str = ""
     solution_code: str = ""
     test_inputs: str = "[]"
+
+# Instagram post yanıt modelini tanımlayalım
+class InstagramPostResponse(BaseModel):
+    """Bir Instagram gönderisini temsil eden yanıt model sınıfı.
+
+    Bu sınıf, bir Instagram gönderisinin bilgilerini depolamak ve
+    işlemek için kullanılır. İçerdiği nitelikler, bir gönderinin
+    temel bilgilerini kapsar ve bu model, genellikle bir API'den
+    alınan verilere karşılık gelir.
+
+    Attributes:
+        id (int): Gönderinin benzersiz kimliği.
+        image_url (str): Gönderiye ait görselin URL adresi.
+        caption (str): Gönderi açıklaması.
+        likes (int): Gönderiye verilen beğeni sayısı.
+        post_date (str): Gönderinin paylaşıldığı tarih.
+        post_url (str): Gönderinin URL adresi.
+    """
+    id: int
+    image_url: str
+    caption: str
+    likes: int
+    post_date: str
+    post_url: str
+
 
 # AI model ile iletişim için yardımcı sınıf
 class AIClient:
@@ -2097,3 +2124,63 @@ def save_question(question: ProgrammingQuestionCreate, db=Depends(get_db)):
     except Exception as e:
         db.rollback()
         return {"success": False, "message": f"Soru kaydedilirken hata oluştu: {str(e)}"}
+
+@api.get("/api/instagram-posts", response_model=List[InstagramPostResponse])
+def get_instagram_posts(
+        instagram_username: str,
+        limit: Optional[int] = 10,
+        offset: Optional[int] = 0
+):
+    """
+    Belirtilen Instagram kullanıcısının postlarını doğrudan Instagram'dan çeker.
+
+    Parameters:
+        instagram_username (str): Instagram kullanıcı adı (örn: 'bseu_istatistikvebilgisayar').
+        limit (Optional[int]): Döndürülecek post sayısı. Varsayılan 10.
+        offset (Optional[int]): Atlanacak post sayısı. Varsayılan 0.
+
+    Returns:
+        List[InstagramPostResponse]: Instagram postlarının listesi.
+    """
+    try:
+        # Instaloader başlat
+        L = instaloader.Instaloader()
+
+        # Kullanıcı profilini al
+        profile = instaloader.Profile.from_username(L.context, instagram_username)
+
+        # Postları çek
+        posts = []
+        count = 0
+
+        for post in profile.get_posts():
+            # Offset kadar postu atla
+            if count < offset:
+                count += 1
+                continue
+
+            # Post bilgilerini hazırla
+            post_date = post.date_local.strftime("%Y-%m-%d %H:%M:%S")
+            post_url = f"https://www.instagram.com/p/{post.shortcode}/"
+
+            posts.append(InstagramPostResponse(
+                id=count,
+                image_url=post.url,
+                caption=post.caption if post.caption else "",
+                likes=post.likes,
+                post_date=post_date,
+                post_url=post_url
+            ))
+
+            count += 1
+
+            # Limit kadar post ekledikten sonra döngüyü sonlandır
+            if len(posts) >= limit:
+                break
+
+        return posts
+
+    except instaloader.exceptions.ProfileNotExistsException:
+        raise HTTPException(status_code=404, detail=f"'{instagram_username}' adlı Instagram kullanıcısı bulunamadı.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Instagram postları alınırken hata oluştu: {str(e)}")
