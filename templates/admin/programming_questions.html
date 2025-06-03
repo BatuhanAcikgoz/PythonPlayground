@@ -99,6 +99,31 @@
             );
         };
 
+        // Flash bileşenini ekleyin (App bileşeninin üstüne)
+        const FlashMessages = () => {
+            const [messages, setMessages] = React.useState([]);
+
+            React.useEffect(() => {
+                    // Sayfa yüklendiğinde DOM'dan flask mesajlarını alın
+                    const flashData = window.FLASH_MESSAGES || [];
+                    if (flashData.length > 0) {
+                        setMessages(flashData);
+                    }
+                }, []);
+
+                if (messages.length === 0) return null;
+
+                return (
+                    <div className="container mx-auto my-4">
+                        {messages.map((msg, index) => (
+                            <div key={index} className={`p-4 mb-4 rounded-lg ${msg.category === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                {msg.message}
+                            </div>
+                        ))}
+                    </div>
+                );
+        };
+
         const Topics = ({topic}) => {
             // topic diziye çevrilir (eğer dizi değilse)
             const topics = Array.isArray(topic) ? topic : [topic];
@@ -175,31 +200,6 @@
                     document.body.appendChild(form);
                     form.submit();
                 }
-            };
-
-            // Flash bileşenini ekleyin (App bileşeninin üstüne)
-            const FlashMessages = () => {
-                const [messages, setMessages] = React.useState([]);
-
-                React.useEffect(() => {
-                    // Sayfa yüklendiğinde DOM'dan flask mesajlarını alın
-                    const flashData = window.FLASH_MESSAGES || [];
-                    if (flashData.length > 0) {
-                        setMessages(flashData);
-                    }
-                }, []);
-
-                if (messages.length === 0) return null;
-
-                return (
-                    <div className="container mx-auto my-4">
-                        {messages.map((msg, index) => (
-                            <div key={index} className={`p-4 mb-4 rounded-lg ${msg.category === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                {msg.message}
-                            </div>
-                        ))}
-                    </div>
-                );
             };
 
             return (
