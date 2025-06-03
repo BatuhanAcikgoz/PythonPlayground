@@ -368,7 +368,7 @@ class ProgrammingQuestionCreate(BaseModel):
     başlık, açıklama, zorluk seviyesi, puan, konu, örnek giriş/çıktı ve
     çözüm kodu gibi bilgileri içerir.
     """
-    id: int
+    id: Optional[int] = None
     title: str
     description: str
     difficulty: int = 1
