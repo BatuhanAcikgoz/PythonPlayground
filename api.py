@@ -2140,155 +2140,100 @@ def get_instagram_posts(
         import json
         import time
         import random
-        from datetime import datetime, timedelta
         import re
+        import traceback
+        from datetime import datetime
+        from bs4 import BeautifulSoup
 
-        # Önbellek için dosya adı oluştur
-        cache_dir = os.path.join(os.path.dirname(__file__), "cache")
-        os.makedirs(cache_dir, exist_ok=True)
-        cache_file = os.path.join(cache_dir, f"{instagram_username}_posts.json")
-
-        # Önbellek kontrolü (4 saat)
-        if os.path.exists(cache_file):
-            file_age = time.time() - os.path.getmtime(cache_file)
-            if file_age < 14400:  # 4 saat
-                with open(cache_file, 'r', encoding='utf-8') as f:
-                    posts = json.load(f)
-                    if posts:
-                        return posts[offset:min(offset + limit, len(posts))]
+        # Boş posts listesi oluştur
+        posts = []
 
         # Kullanıcı ajanları listesi
         user_agents = [
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
-            'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1',
-            'Mozilla/5.0 (iPad; CPU OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 Edg/91.0.864.59'
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0",
+            "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0"
         ]
 
         # İsteği hazırla
         headers = {
             'User-Agent': random.choice(user_agents),
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
-            'Referer': 'https://www.instagram.com/',
-            'DNT': '1',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate, br',
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
             'Sec-Fetch-Dest': 'document',
             'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'same-origin',
-            'Pragma': 'no-cache',
-            'Cache-Control': 'no-cache',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Cache-Control': 'max-age=0'
         }
+
+        print(f"Instagram verisi çekiliyor: {instagram_username}")
 
         # Instagram kullanıcı profil sayfasına istek yap
         profile_url = f'https://www.instagram.com/{instagram_username}/'
-        response = requests.get(profile_url, headers=headers, timeout=15)
 
-        posts = []
+        try:
+            response = requests.get(profile_url, headers=headers, timeout=15)
+            print(f"Instagram yanıt kodu: {response.status_code}")
 
-        if response.status_code == 200:
-            html_content = response.text
+            if response.status_code == 200:
+                # Hiç veri bulunamadıysa API deneme
+                if not posts:
+                    api_url = f"https://www.instagram.com/api/v1/users/web_profile_info/?username={instagram_username}"
+                    api_headers = headers.copy()
+                    api_headers['X-IG-App-ID'] = '936619743392459'  # Instagram web uygulaması ID'si
 
-            # JSON veri içeren script tagını bul
-            script_pattern = r'<script type="text/javascript">window\._sharedData\s*=\s*({.*?});</script>'
-            json_match = re.search(script_pattern, html_content, re.DOTALL)
+                    try:
+                        api_response = requests.get(api_url, headers=api_headers, timeout=15)
+                        if api_response.status_code == 200:
+                            api_data = api_response.json()
+                            user_data = api_data.get('data', {}).get('user', {})
+                            media_items = user_data.get('edge_owner_to_timeline_media', {}).get('edges', [])
 
-            if json_match:
-                try:
-                    json_data = json.loads(json_match.group(1))
-                    user_data = None
+                            for i, edge in enumerate(media_items):
+                                node = edge.get('node', {})
+                                if node:
+                                    post_id = node.get('id', i)
+                                    image_url = node.get('display_url', '')
+                                    caption_edges = node.get('edge_media_to_caption', {}).get('edges', [])
+                                    caption = caption_edges[0].get('node', {}).get('text', '') if caption_edges else ''
+                                    likes = node.get('edge_liked_by', {}).get('count', 0) or node.get(
+                                        'edge_media_preview_like', {}).get('count', 0)
+                                    timestamp = node.get('taken_at_timestamp', 0)
+                                    post_date = datetime.fromtimestamp(timestamp).strftime(
+                                        '%Y-%m-%d') if timestamp else 'Bilinmiyor'
+                                    shortcode = node.get('shortcode', '')
+                                    post_url = f'https://www.instagram.com/p/{shortcode}/'
 
-                    # Instagram API yapısında gezin
-                    if 'entry_data' in json_data and 'ProfilePage' in json_data['entry_data']:
-                        user_data = json_data['entry_data']['ProfilePage'][0]['graphql']['user']
+                                    posts.append({
+                                        'id': post_id,
+                                        'image_url': image_url,
+                                        'caption': caption,
+                                        'likes': likes,
+                                        'post_date': post_date,
+                                        'post_url': post_url
+                                    })
+                    except Exception as api_err:
+                        print(f"API hatası: {str(api_err)}")
 
-                    if user_data and 'edge_owner_to_timeline_media' in user_data:
-                        edges = user_data['edge_owner_to_timeline_media']['edges']
+            else:
+                print(f"Instagram yanıtı başarısız: {response.status_code}")
 
-                        for i, edge in enumerate(edges):
-                            node = edge['node']
+        except requests.RequestException as req_err:
+            print(f"İstek hatası: {str(req_err)}")
 
-                            # Resim URL'sini garantilemek için birden fazla boyutu kontrol et
-                            image_url = (node.get('display_url') or
-                                         node.get('thumbnail_src') or
-                                         next((t['src'] for t in sorted(
-                                             node.get('thumbnail_resources', []),
-                                             key=lambda x: x.get('config_width', 0),
-                                             reverse=True
-                                         )), None))
-
-                            # Görsel bulunamadıysa devam et
-                            if not image_url:
-                                continue
-
-                            # Tarih dönüşümü
-                            timestamp = node.get('taken_at_timestamp', 0)
-                            post_date = datetime.fromtimestamp(timestamp).strftime(
-                                '%Y-%m-%d %H:%M:%S') if timestamp else ''
-
-                            # Caption alma
-                            caption = ""
-                            caption_edges = node.get('edge_media_to_caption', {}).get('edges', [])
-                            if caption_edges:
-                                caption = caption_edges[0]['node']['text']
-
-                            post = {
-                                "id": node.get('id', str(i + 1)),
-                                "image_url": image_url,
-                                "caption": caption,
-                                "likes": node.get('edge_liked_by', {}).get('count', 0),
-                                "post_date": post_date,
-                                "post_url": f"https://www.instagram.com/p/{node.get('shortcode', '')}"
-                            }
-                            posts.append(post)
-                except Exception as json_error:
-                    print(f"JSON işleme hatası: {str(json_error)}")
-
-            # Eğer yukarıdaki yöntemle gönderiler alınamadıysa, alternatif regex ile dene
-            if not posts:
-                image_pattern = r'<img[^>]*?\s+src="([^"]+)"[^>]*?\s+alt="([^"]+)"'
-                images = re.findall(image_pattern, html_content)
-
-                for i, (img_url, alt_text) in enumerate(images[:20]):  # İlk 20 görsel
-                    if 'instagram.com' in img_url and 'profile_pic' not in img_url:
-                        post = {
-                            "id": str(i + 1),
-                            "image_url": img_url,
-                            "caption": alt_text[:100],  # İlk 100 karakter
-                            "likes": random.randint(10, 1000),  # Rastgele beğeni
-                            "post_date": (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d'),
-                            "post_url": f"https://www.instagram.com/{instagram_username}/p/{hashlib.md5(img_url.encode()).hexdigest()[:11]}"
-                        }
-                        posts.append(post)
-
-        # Hala gönderiler yoksa ve önbellek varsa
-        if not posts and os.path.exists(cache_file):
-            with open(cache_file, 'r', encoding='utf-8') as f:
-                posts = json.load(f)
-
-        # Önbelleğe kaydet
-        if posts:
-            with open(cache_file, 'w', encoding='utf-8') as f:
-                json.dump(posts, f, ensure_ascii=False)
-
-        return posts[offset:min(offset + limit, len(posts))]
+        # Veri varsa limit ve offset ile döndür
+        return posts[offset:offset + limit]
 
     except Exception as e:
         print(f"Instagram postları alınırken hata: {str(e)}")
         traceback.print_exc()
-
-        # Hata durumunda önbelleği kontrol et
-        try:
-            if os.path.exists(cache_file):
-                with open(cache_file, 'r', encoding='utf-8') as f:
-                    posts = json.load(f)
-                return posts[offset:min(offset + limit, len(posts))]
-        except:
-            pass
-
-        return posts
+        return []
 
 @api.get('/api/proxy-image')
 async def proxy_image(request: Request):
