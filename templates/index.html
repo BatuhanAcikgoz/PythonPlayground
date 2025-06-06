@@ -185,21 +185,6 @@
                         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
                             <p>{error}</p>
                         </div>
-                        <form onSubmit={handleUsernameSubmit} className="mt-4 flex">
-                            <input
-                                type="text"
-                                name="username"
-                                placeholder="Instagram kullanıcı adı"
-                                className="px-4 py-2 border rounded-l focus:outline-none focus:ring-2 focus:ring-pink-500"
-                                defaultValue={username}
-                            />
-                            <button
-                                type="submit"
-                                className="bg-pink-500 text-white px-4 py-2 rounded-r hover:bg-pink-600"
-                            >
-                                Getir
-                            </button>
-                        </form>
                     </div>
                 );
             }
@@ -246,21 +231,6 @@
                                 @{username}
                             </a>
                         </h2>
-                        <form onSubmit={handleUsernameSubmit} className="flex">
-                            <input
-                                type="text"
-                                name="username"
-                                placeholder="Kullanıcı adı"
-                                className="px-3 py-1 border rounded-l focus:outline-none focus:ring-1 focus:ring-pink-500 text-sm"
-                                defaultValue={username}
-                            />
-                            <button
-                                type="submit"
-                                className="bg-pink-500 text-white px-3 py-1 rounded-r hover:bg-pink-600 text-sm"
-                            >
-                                Getir
-                            </button>
-                        </form>
                     </div>
 
                     <div className="relative">
@@ -289,12 +259,12 @@
                                 >
                                     <div className="relative h-72 bg-gray-200">
                                         <img
-                                            src={post.image_url}
-                                            alt={post.caption}
+                                            src={`/api/proxy-image?url=${encodeURIComponent(post.image_url)}`}
+                                            alt={post.caption || "Instagram gönderisi"}
                                             className="w-full h-full object-cover"
                                             onError={(e) => {
                                                 e.target.onerror = null;
-                                                e.target.src = "https://via.placeholder.com/300x300?text=Resim+Yüklenemedi";
+                                                e.target.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png?20200912122019";
                                             }}
                                         />
                                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
@@ -307,7 +277,7 @@
                                         </div>
                                     </div>
                                     <div className="p-4 bg-white">
-                                        <p className="text-gray-600 text-sm line-clamp-3">{post.caption}</p>
+                                        <p className="text-gray-600 text-sm line-clamp-3">{post.caption || "Instagram gönderisi"}</p>
                                         <p className="text-gray-400 text-xs mt-2">{post.post_date}</p>
                                     </div>
                                 </a>

@@ -13,3 +13,5 @@ notebooks_repo/
 /docs/build
 /app/events
 /app/events
+venv/Include/site/python3.12/greenlet/greenlet.h
+/venv

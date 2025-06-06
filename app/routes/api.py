@@ -2,6 +2,7 @@ import requests
 from flask import Blueprint, jsonify, request, current_app
 from flask_login import current_user, login_required
 from functools import wraps
+from flask import Blueprint, jsonify, request, current_app, Response
 
 from config import Config
 
@@ -52,30 +53,18 @@ def admin_required(f):
 @api_bp.route('/<path:endpoint>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def proxy(endpoint):
     """
-    Bir Flask route fonksiyonu olan `proxy`, çeşitli HTTP yöntemleriyle yapılan istekleri,
-    FastAPI'ye bir proxy görevi görerek yönlendirir. Gelen istek metodu ve içeriklerine
-    göre FastAPI'ye uygun bir HTTP isteği yapılır. Alınan yanıt, istemciye aktarılır.
+    Belirtilen bir FastAPI URL'sine HTTP isteklerini proxy aracılığıyla yönlendiren bir Flask view fonksiyonu.
+    Modifiye edilmiş HTTP başlıklarını ve orijinal istekte bulunan bilgileri koruyarak hedef sunucuya istek gönderir
+    ve yanıtları istemciye döndürür.
 
-    @parameters:
-    endpoint: str
-        FastAPI içerisinde yönlendirilmek istenen endpoint. Gelen istekten
-        alınan yol, FastAPI'nin kök URL'sine eklenerek kullanılır.
+    Parameters:
+        endpoint (str): Yönlendirilecek API endpoint adı. Bu, isteğin hedef sağlayıcıya yönlendirilmesinde kullanılır.
 
-    @raises:
-    requests.RequestException
-        FastAPI'ye erişim sırasında meydana gelebilecek bir HTTP hata durumunda
-        tetiklenir. Flask uygulaması içinde bu durum ele alınır, hata kaydedilir
-        ve istemciye uygun bir hata yanıtı döndürülür.
-
-    @returns:
-    tuple
-        FastAPI'ye yapılan istek sonucunda alınan yanıt (JSON olarak biçimlendirilmiş
-        içerik ve HTTP durum kodu). Eğer proxy başarısız olursa Flask uygulaması
-        üzerinden bir hata mesajı ve durum kodu döner.
+    Returns:
+        Response: HTTP isteğinin hedef FastAPI sunucusundan gelen yanıtı.
     """
     fastapi_url = Config.FASTAPI_DOMAIN+":"+Config.FASTAPI_PORT+"/api/" + endpoint
 
-    # Request metoduna göre FastAPI'ye istek yap
     try:
         headers = {k: v for k, v in request.headers.items() if k.lower() not in ['host', 'content-length']}
 
@@ -89,10 +78,17 @@ def proxy(endpoint):
         elif request.method == 'DELETE':
             resp = requests.delete(fastapi_url, headers=headers, timeout=60)
 
+        # Eğer proxy-image endpoint'i ise, binary içeriği doğrudan döndür
+        if endpoint == 'proxy-image':
+            return Response(
+                resp.content,
+                status=resp.status_code,
+                content_type=resp.headers.get('Content-Type', 'image/jpeg')
+            )
+
+        # Diğer API istekleri için JSON yanıtı döndür
         return jsonify(resp.json()), resp.status_code
 
     except requests.RequestException as e:
-        # FastAPI'ye erişim hatalarında, alternatif olarak doğrudan Flask yanıtları
         current_app.logger.error(f"API proxy hatası: {str(e)}")
-
         return jsonify({"error": "API request failed", "message": str(e)}), 500
