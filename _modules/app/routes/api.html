@@ -271,6 +271,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">current_app</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">flask_login</span><span class="w"> </span><span class="kn">import</span> <span class="n">current_user</span><span class="p">,</span> <span class="n">login_required</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">Response</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
 
@@ -326,30 +327,18 @@
 <span class="nd">@api_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;path:endpoint&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span> <span class="s1">&#39;PUT&#39;</span><span class="p">,</span> <span class="s1">&#39;DELETE&#39;</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">proxy</span><span class="p">(</span><span class="n">endpoint</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Bir Flask route fonksiyonu olan `proxy`, çeşitli HTTP yöntemleriyle yapılan istekleri,</span>
-<span class="sd">    FastAPI&#39;ye bir proxy görevi görerek yönlendirir. Gelen istek metodu ve içeriklerine</span>
-<span class="sd">    göre FastAPI&#39;ye uygun bir HTTP isteği yapılır. Alınan yanıt, istemciye aktarılır.</span>
+<span class="sd">    Belirtilen bir FastAPI URL&#39;sine HTTP isteklerini proxy aracılığıyla yönlendiren bir Flask view fonksiyonu.</span>
+<span class="sd">    Modifiye edilmiş HTTP başlıklarını ve orijinal istekte bulunan bilgileri koruyarak hedef sunucuya istek gönderir</span>
+<span class="sd">    ve yanıtları istemciye döndürür.</span>
 
-<span class="sd">    @parameters:</span>
-<span class="sd">    endpoint: str</span>
-<span class="sd">        FastAPI içerisinde yönlendirilmek istenen endpoint. Gelen istekten</span>
-<span class="sd">        alınan yol, FastAPI&#39;nin kök URL&#39;sine eklenerek kullanılır.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">        endpoint (str): Yönlendirilecek API endpoint adı. Bu, isteğin hedef sağlayıcıya yönlendirilmesinde kullanılır.</span>
 
-<span class="sd">    @raises:</span>
-<span class="sd">    requests.RequestException</span>
-<span class="sd">        FastAPI&#39;ye erişim sırasında meydana gelebilecek bir HTTP hata durumunda</span>
-<span class="sd">        tetiklenir. Flask uygulaması içinde bu durum ele alınır, hata kaydedilir</span>
-<span class="sd">        ve istemciye uygun bir hata yanıtı döndürülür.</span>
-
-<span class="sd">    @returns:</span>
-<span class="sd">    tuple</span>
-<span class="sd">        FastAPI&#39;ye yapılan istek sonucunda alınan yanıt (JSON olarak biçimlendirilmiş</span>
-<span class="sd">        içerik ve HTTP durum kodu). Eğer proxy başarısız olursa Flask uygulaması</span>
-<span class="sd">        üzerinden bir hata mesajı ve durum kodu döner.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Response: HTTP isteğinin hedef FastAPI sunucusundan gelen yanıtı.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fastapi_url</span> <span class="o">=</span> <span class="n">Config</span><span class="o">.</span><span class="n">FASTAPI_DOMAIN</span><span class="o">+</span><span class="s2">&quot;:&quot;</span><span class="o">+</span><span class="n">Config</span><span class="o">.</span><span class="n">FASTAPI_PORT</span><span class="o">+</span><span class="s2">&quot;/api/&quot;</span> <span class="o">+</span> <span class="n">endpoint</span>
 
-    <span class="c1"># Request metoduna göre FastAPI&#39;ye istek yap</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;host&#39;</span><span class="p">,</span> <span class="s1">&#39;content-length&#39;</span><span class="p">]}</span>
 
@@ -363,12 +352,19 @@
         <span class="k">elif</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;DELETE&#39;</span><span class="p">:</span>
             <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">fastapi_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
 
+        <span class="c1"># Eğer proxy-image endpoint&#39;i ise, binary içeriği doğrudan döndür</span>
+        <span class="k">if</span> <span class="n">endpoint</span> <span class="o">==</span> <span class="s1">&#39;proxy-image&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span>
+                <span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+                <span class="n">content_type</span><span class="o">=</span><span class="n">resp</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="s1">&#39;image/jpeg&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Diğer API istekleri için JSON yanıtı döndür</span>
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()),</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span>
 
     <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="c1"># FastAPI&#39;ye erişim hatalarında, alternatif olarak doğrudan Flask yanıtları</span>
         <span class="n">current_app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;API proxy hatası: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;API request failed&quot;</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}),</span> <span class="mi">500</span></div>
 
 </pre></div>

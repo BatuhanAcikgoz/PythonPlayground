@@ -774,29 +774,20 @@ sağlar. Kullanıcı admin değilse, bir hata mesajı ve 403 durum kodu döner.<
 <dl class="py function">
 <dt class="sig sig-object py" id="app.routes.api.proxy">
 <span class="sig-prename descclassname"><span class="pre">app.routes.api.</span></span><span class="sig-name descname"><span class="pre">proxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/app/routes/api.html#proxy"><span class="viewcode-link"><span class="pre">[kaynak]</span></span></a><a class="headerlink" href="#app.routes.api.proxy" title="Link to this definition">¶</a></dt>
-<dd><p>Bir Flask route fonksiyonu olan <cite>proxy</cite>, çeşitli HTTP yöntemleriyle yapılan istekleri,
-FastAPI’ye bir proxy görevi görerek yönlendirir. Gelen istek metodu ve içeriklerine
-göre FastAPI’ye uygun bir HTTP isteği yapılır. Alınan yanıt, istemciye aktarılır.</p>
-<p>&#64;parameters:
-endpoint: str</p>
-<blockquote>
-<div><p>FastAPI içerisinde yönlendirilmek istenen endpoint. Gelen istekten
-alınan yol, FastAPI’nin kök URL’sine eklenerek kullanılır.</p>
-</div></blockquote>
-<p>&#64;raises:
-requests.RequestException</p>
-<blockquote>
-<div><p>FastAPI’ye erişim sırasında meydana gelebilecek bir HTTP hata durumunda
-tetiklenir. Flask uygulaması içinde bu durum ele alınır, hata kaydedilir
-ve istemciye uygun bir hata yanıtı döndürülür.</p>
-</div></blockquote>
-<p>&#64;returns:
-tuple</p>
-<blockquote>
-<div><p>FastAPI’ye yapılan istek sonucunda alınan yanıt (JSON olarak biçimlendirilmiş
-içerik ve HTTP durum kodu). Eğer proxy başarısız olursa Flask uygulaması
-üzerinden bir hata mesajı ve durum kodu döner.</p>
-</div></blockquote>
+<dd><p>Belirtilen bir FastAPI URL’sine HTTP isteklerini proxy aracılığıyla yönlendiren bir Flask view fonksiyonu.
+Modifiye edilmiş HTTP başlıklarını ve orijinal istekte bulunan bilgileri koruyarak hedef sunucuya istek gönderir
+ve yanıtları istemciye döndürür.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametreler<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>endpoint</strong> (<em>str</em>) – Yönlendirilecek API endpoint adı. Bu, isteğin hedef sağlayıcıya yönlendirilmesinde kullanılır.</p>
+</dd>
+<dt class="field-even">Dönüşler<span class="colon">:</span></dt>
+<dd class="field-even"><p>HTTP isteğinin hedef FastAPI sunucusundan gelen yanıtı.</p>
+</dd>
+<dt class="field-odd">Dönüş türü<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
