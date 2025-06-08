@@ -49,8 +49,8 @@ const Header = () => {
         return () => document.removeEventListener('click', handleOutsideClick);
     }, [dropdownOpen]);
 
-    return (
-        <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-md">
+  return (
+    <header className="bg-gradient-to-r from-gray-800 to-gray-700 text-white shadow-md">
             <div className="container mx-auto px-4 py-6">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center">
                     <div className="flex items-center mb-4 md:mb-0">

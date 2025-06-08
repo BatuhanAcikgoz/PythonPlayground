@@ -24,7 +24,7 @@ class Config:
     FASTAPI_DOMAIN = os.environ.get('FASTAPI_DOMAIN') or 'http://127.0.0.1'
     FASTAPI_PORT = os.environ.get('FASTAPI_PORT') or '7923'
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-key'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or 'mysql+pymysql://radome:12345@127.0.0.1/python_platform'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or 'mysql+pymysql://pythonplayground:pythonplayground@127.0.0.1/python_platform'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BABEL_DEFAULT_LOCALE = 'tr'
     BABEL_SUPPORTED_LOCALES = ['tr', 'en']
