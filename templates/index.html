@@ -4,8 +4,14 @@
     <title>{{ _('app_name') }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -41,7 +47,7 @@
         }
 </style>
 </head>
-<body class="relative bg-gray-200 overflow-hidden">
+<body class="relative overflow-hidden bg-gray-200 dark:bg-black">
   <!-- Arka plan daireleri -->
   <div class="absolute top-[-50px] left-[-50px] w-[150px] h-[150px] bg-gradient-to-br from-black to-gray-700 rounded-full opacity-30"></div>
   <div class="absolute top-[150px] right-[-75px] w-[200px] h-[200px] bg-gradient-to-tl from-gray-800 to-gray-500 rounded-full opacity-20"></div>
@@ -114,7 +120,7 @@
             }
         };
     </script>
-
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
@@ -248,7 +254,6 @@
                             </a>
                         </h2>
                     </div>
-
                     <div className="relative">
                         <button
                             onClick={handleScrollLeft}
@@ -327,133 +332,132 @@
             );
         };
 
-        const App = () => {
-            const notebooks = {{ notebooks|tojson|safe }};
-            const errorMessage = {{ error_message|tojson|safe }};
-            const isAdmin = {{ 'true' if current_user.is_authenticated and current_user.is_admin() else 'false' }};
-            const isTeacher = {{ 'true' if current_user.is_authenticated and current_user.is_teacher() else 'false' }};
-            const urls = window.APP_DATA.urls;
-            const translations = {
-                notebookLib: {{ _('notebook_lib')|tojson|safe }},
-                adminPanel: {{ _('admin_panel')|tojson|safe }},
-                adminAccess: {{ _('admin_access')|tojson|safe }},
-                goToAdmin: {{ _('go_to_admin')|tojson|safe }},
-                noNotebooks: {{ _('no_notebooks')|tojson|safe }},
-                refreshRepo: {{ _('refresh_repo')|tojson|safe }},
-                aiSummary: "AI Özeti",
-                newQuestions: "Yeni Eklenen Sorular",
-                viewAllQuestions: "Tüm Soruları Gör",
-                allNotebooks: "Tüm Notebooklar"
-            };
+       const App = () => {
+    const { darkMode } = window.useTheme(); // Tema durumunu al
 
-            const NewQuestionsSection = () => {
-                const [questions, setQuestions] = React.useState([]);
-                const [isLoading, setIsLoading] = React.useState(true);
-                const [error, setError] = React.useState(null);
+    const notebooks = {{ notebooks|tojson|safe }};
+    const errorMessage = {{ error_message|tojson|safe }};
+    const isAdmin = {{ 'true' if current_user.is_authenticated and current_user.is_admin() else 'false' }};
+    const isTeacher = {{ 'true' if current_user.is_authenticated and current_user.is_teacher() else 'false' }};
+    const urls = window.APP_DATA.urls;
+    const translations = {
+        notebookLib: {{ _('notebook_lib')|tojson|safe }},
+        adminPanel: {{ _('admin_panel')|tojson|safe }},
+        adminAccess: {{ _('admin_access')|tojson|safe }},
+        goToAdmin: {{ _('go_to_admin')|tojson|safe }},
+        noNotebooks: {{ _('no_notebooks')|tojson|safe }},
+        refreshRepo: {{ _('refresh_repo')|tojson|safe }},
+        aiSummary: "AI Özeti",
+        newQuestions: "Yeni Eklenen Sorular",
+        viewAllQuestions: "Tüm Soruları Gör",
+        allNotebooks: "Tüm Notebooklar"
+    };
 
-                React.useEffect(() => {
-                    // API'den son soruları çek (şimdi urls nesnesinden alıyoruz)
-                    fetch("/api/last-questions-detail")
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Sorular yüklenirken hata oluştu');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            // Son 3 günde eklenen soruları "yeni" olarak işaretle
-                            const threeDay = 3 * 24 * 60 * 60 * 1000; // 3 gün (ms)
-                            const processed = data.map(q => ({
-                                id: q.id,
-                                title: q.title,
-                                createdAt: q.created_at,
-                                description: q.description,
-                                isNew: new Date() - new Date(q.created_at) < threeDay,
-                                difficulty: q.difficulty,
-                                points: q.points
-                            }));
-                            setQuestions(processed);
-                            setIsLoading(false);
-                        })
-                        .catch(err => {
-                            setError(err.message);
-                            setIsLoading(false);
-                        });
-                }, []);
+    const NewQuestionsSection = () => {
+        const [questions, setQuestions] = React.useState([]);
+        const [isLoading, setIsLoading] = React.useState(true);
+        const [error, setError] = React.useState(null);
 
-                if (isLoading) return <div className="text-center py-4">Yükleniyor...</div>;
-                if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
+        React.useEffect(() => {
+            fetch("/api/last-questions-detail")
+                .then(response => {
+                    if (!response.ok) throw new Error('Sorular yüklenirken hata oluştu');
+                    return response.json();
+                })
+                .then(data => {
+                    const threeDay = 3 * 24 * 60 * 60 * 1000;
+                    const processed = data.map(q => ({
+                        id: q.id,
+                        title: q.title,
+                        createdAt: q.created_at,
+                        description: q.description,
+                        isNew: new Date() - new Date(q.created_at) < threeDay,
+                        difficulty: q.difficulty,
+                        points: q.points
+                    }));
+                    setQuestions(processed);
+                    setIsLoading(false);
+                })
+                .catch(err => {
+                    setError(err.message);
+                    setIsLoading(false);
+                });
+        }, []);
 
-                return (
-                    <div className="bg-white shadow rounded-lg p-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-2xl font-bold text-gray-800 flex items-center">
-                                <svg className="w-6 h-6 mr-2 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                                {translations.newQuestions}
-                            </h2>
-                            <a href={urls.allQuestions} className="text-sky-600 hover:text-sky-800 text-sm font-medium">
-                                {translations.viewAllQuestions}
-                            </a>
-                        </div>
+        if (isLoading) return <div className="text-center py-4">Yükleniyor...</div>;
+        if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
 
-                        <div className="space-y-4">
-                            {questions.length === 0 ? (
-                                <p className="text-gray-500 text-center py-4">Henüz soru eklenmemiş.</p>
-                            ) : (
-                                questions.map((question) => (
-                                    <div key={question.id} className="border-l-4 border-sky-600 bg-gray-50 p-4 rounded-r-lg hover:bg-sky-50 transition-all notebook-item">
-                                        <div className="flex justify-between">
-                                            <h3 className="font-bold text-lg text-sky-600 flex items-center">
-                                                <a href={`${urls.viewQuestion}`.replace("0", question.id)} className="hover:text-sky-700">{question.title}</a>
-                                                {question.isNew && (
-                                                    <span className="ml-2 px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full badge-new">
-                                                        YENİ
-                                                    </span>
-                                                )}
-                                            </h3>
-                                            <span className="text-sm text-gray-500">{question.createdAt}</span>
-                                        </div>
-                                        <p className="text-gray-600 mt-1">{question.description}</p>
-                                        <div className="flex mt-2">
-                                            <a href={`${urls.viewQuestion}`.replace("NOTEBOOK_PATH", question.id)} className="text-blue-600 hover:text-blue-800 text-sm mr-4 flex items-center">
-                                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                </svg>
-                                                İncele
-                                            </a>
-                                            <div className="text-gray-500 text-sm flex items-center">
-                                                <span className="flex items-center mr-3">
-                                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                                    </svg>
-                                                    {question.difficulty}/5
-                                                </span>
-                                                <span className="flex items-center">
-                                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
-                                                    {question.points} Puan
-                                                </span>
-                                            </div>
-                                        </div>
+        return (
+            <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
+                        <svg className="w-6 h-6 mr-2 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        {translations.newQuestions}
+                    </h2>
+                    <a href={urls.allQuestions} className="text-sky-600 hover:text-sky-800 text-sm font-medium">
+                        {translations.viewAllQuestions}
+                    </a>
+                </div>
+
+                <div className="space-y-4">
+                    {questions.length === 0 ? (
+                        <p className="text-gray-500 text-center py-4">Henüz soru eklenmemiş.</p>
+                    ) : (
+                        questions.map((question) => (
+                            <div key={question.id} className="border-l-4 border-sky-600 bg-gray-50 dark:bg-gray-700 p-4 rounded-r-lg hover:bg-sky-50 dark:hover:bg-gray-600 transition-all notebook-item">
+                                <div className="flex justify-between">
+                                    <h3 className="font-bold text-lg text-sky-600 flex items-center">
+                                        <a href={`${urls.viewQuestion}`.replace("0", question.id)} className="hover:text-sky-700">{question.title}</a>
+                                        {question.isNew && (
+                                            <span className="ml-2 px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded-full badge-new">
+                                                YENİ
+                                            </span>
+                                        )}
+                                    </h3>
+                                    <span className="text-sm text-gray-500">{question.createdAt}</span>
+                                </div>
+                                <p className="text-gray-600 dark:text-gray-200 mt-1">{question.description}</p>
+                                <div className="flex mt-2">
+                                    <a href={`${urls.viewQuestion}`.replace("NOTEBOOK_PATH", question.id)} className="text-blue-600 hover:text-blue-800 text-sm mr-4 flex items-center">
+                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                        İncele
+                                    </a>
+                                    <div className="text-gray-500 text-sm flex items-center">
+                                        <span className="flex items-center mr-3">
+                                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                            </svg>
+                                            {question.difficulty}/5
+                                        </span>
+                                        <span className="flex items-center">
+                                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            {question.points} Puan
+                                        </span>
                                     </div>
-                                ))
-                            )}
-                        </div>
-                    </div>
-                );
-            };
-            return (
-                <React.Fragment>
-                    <Header />
-                    <main className="flex-grow container mx-auto px-4 py-8">
-                        <div className="max-w-6xl mx-auto">
-                            <h1 className="text-3xl font-bold text-gray-800 mb-6">{translations.notebookLib}</h1>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
+        );
+    };
 
-                            {isAdmin && (
+    return (
+        <div className={darkMode ? "text-white min-h-screen" : "text-black min-h-screen"}>
+
+            <Header />
+            <main className="flex-grow container mx-auto px-4 py-8">
+                <div className="max-w-6xl mx-auto">
+                    <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">{translations.notebookLib}</h1>
+                    {isAdmin && (
                                 <div className="bg-slate-100 border-l-4 border-slate-500 text-slate-700 p-4 mb-6">
                                     <p className="font-bold">{translations.adminPanel}</p>
                                     <p>{translations.adminAccess}</p>
@@ -535,14 +539,17 @@
                                     </a>
                                 </div>
                             )}
-                        </div>
-                    </main>
-                    <Footer />
-                </React.Fragment>
-            );
-        };
+                </div>
+            </main>
+            <Footer />
+        </div>
+    );
+};
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+    <window.ThemeProvider>
+        <App />
+    </window.ThemeProvider>,
+    document.getElementById('root')
+);
     </script>
-</body>
-</html>
