@@ -254,7 +254,7 @@
             summaryData: {{ summary_data|tojson|safe }}
         };
     </script>
-
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
@@ -361,7 +361,12 @@
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+      ReactDOM.render(
+    <window.ThemeProvider>
+        <App />
+    </window.ThemeProvider>,
+    document.getElementById('root')
+);
         {% endraw %}
     </script>
 </body>

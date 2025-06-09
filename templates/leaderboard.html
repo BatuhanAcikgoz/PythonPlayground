@@ -44,8 +44,8 @@
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                questions: {{ _('questions')|tojson|safe }},
-                leaderboard: {{ _('leaderboard')|tojson|safe }},
+                questions: {{ _('Questions')|tojson|safe }},
+                leaderboard: {{ _('Leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
                 login: {{ _('login')|tojson|safe }},
@@ -76,6 +76,7 @@
     </script>
 
     <!-- Bileşenleri yükle -->
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
@@ -177,7 +178,12 @@
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(
+    <window.ThemeProvider>
+        <App />
+    </window.ThemeProvider>,
+    document.getElementById('root')
+);
     </script>
 </body>
 </html>

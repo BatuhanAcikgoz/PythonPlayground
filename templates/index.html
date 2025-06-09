@@ -17,6 +17,9 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <!-- Babel for JSX -->
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    </script>
+
+
     <style>
 
          html, body, #root {
@@ -24,7 +27,6 @@
              margin:0;
              padding:0;
              overflow-x: hidden;
-             ,
         }
         #root {
             display: flex;
@@ -119,10 +121,11 @@
                 }
             }
         };
-    </script>
+     </script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='App.jsx') }}"></script>
 
     <script type="text/babel">
         const InstagramCarousel = () => {
@@ -492,7 +495,7 @@
                                         </h2>
                                         <ul className="divide-y divide-gray-200">
                                             {notebooks.map((notebook, index) => (
-                                                <li key={index} className="hover:bg-gray-50 ark:hover:bg-gray-800 notebook-item">
+                                                <li key={index} className="hover:bg-gray-50 dark:hover:bg-gray-800 notebook-item">
                                                     <div className="flex justify-between px-6 py-4 items-center">
                                                         <a
                                                             href={`${urls.viewNotebook}`.replace("NOTEBOOK_PATH", notebook)}

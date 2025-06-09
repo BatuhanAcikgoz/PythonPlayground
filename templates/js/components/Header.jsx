@@ -78,7 +78,7 @@ const Header = () => {
                                             }}
                                             className="flex items-center text-blue-200 hover:text-white font-medium focus:outline-none"
                                         >
-                                            <img src={getGravatarURL(userEmail)} alt="Profile" className="w-8 h-8 rounded-full mr-2" />
+                                            <img src={getGravatarURL(userEmail)} alt={headerTrans.profile} className="w-8 h-8 rounded-full mr-2" />
                                             <span>{username}</span>
                                             <svg className={`ml-1 h-4 w-4 transition-transform ${dropdownOpen ? 'transform rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>

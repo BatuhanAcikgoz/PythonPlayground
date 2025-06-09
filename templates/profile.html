@@ -46,8 +46,8 @@
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                questions: {{ _('questions')|tojson|safe }},
-                leaderboard: {{ _('leaderboard')|tojson|safe }},
+                questions: {{ _('Questions')|tojson|safe }},
+                leaderboard: {{ _('Leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
                 login: {{ _('login')|tojson|safe }},
@@ -62,25 +62,31 @@
             currentLang: {{ session.get('language', 'tr')|tojson }},
             translations: {
                 profile: {{ _('profile')|tojson|safe }} || "Profil",
-                edit_profile: {{ _('edit_profile')|tojson|safe }} || "Profili Düzenle",
-                badges: {{ _('badges')|tojson|safe }} || "Rozetler",
-                statistics: {{ _('statistics')|tojson|safe }} || "İstatistikler",
-                activity_chart: {{ _('activity_chart')|tojson|safe }} || "Aktivite Grafiği",
-                accuracy_rate: {{ _('accuracy_rate')|tojson|safe }} || "Doğruluk Oranı",
-                soluted_problems_percentage: {{ _('soluted_problems_percentage')|tojson|safe }} || "Çözülen Soru Yüzdesi",
-                solved_problems: {{ _('solved_problems')|tojson|safe }} || "Çözülen Problemler",
-                coding_days: {{ _('coding_days')|tojson|safe }} || "Kodlama Günleri",
-                active_streak: {{ _('active_streak')|tojson|safe }} || "Aktif Gün Serisi",
-                recent_activities: {{ _('recent_activities')|tojson|safe }} || "Son Aktiviteler",
-                member_since: {{ _('member_since')|tojson|safe }} || "Üyelik Tarihi",
-                send_message: {{ _('send_message')|tojson|safe }} || "Mesaj Gönder",
-                loading: "Yükleniyor...",
-                error_loading: "Veri yüklenirken bir hata oluştu",
-                no_activities: "Henüz çözülmüş problem bulunmuyor",
-                see_all: {{ _('see_all')|tojson|safe }} || "Tümünü Gör"
-            }
+            edit_profile: {{ _('edit_profile')|tojson|safe }} || "Profili Düzenle",
+            badges: {{ _('badges')|tojson|safe }} ||"Rozetler",
+            statistics: {{ _('statistics')|tojson|safe }} ||"İstatistikler",
+            activity_chart: {{ _('activity_chart')|tojson|safe }} ||"Aktivite Grafiği",
+            accuracy_rate: {{ _('accuracy_rate')|tojson|safe }} ||"Doğruluk Oranı",
+            soluted_problems_percentage: {{ _('soluted_problems_percentage')|tojson|safe }} ||"Çözülen Soru Yüzdesi",
+            solved_problems: {{ _('solved_problems')|tojson|safe }} ||"Çözülen Problemler",
+            coding_days: {{ _('coding_days')|tojson|safe }} ||"Kodlama Günleri",
+            active_streak: {{ _('active_streak')|tojson|safe }} ||"Aktif Gün Serisi",
+            recent_activities: {{ _('recent_activities')|tojson|safe }} ||"Son Aktiviteler",
+            member_since: {{ _('member_since')|tojson|safe }} ||"Üyelik Tarihi",
+            send_message: {{ _('send_message')|tojson|safe }} ||"Mesaj Gönder",
+            loading: {{ _('loading')|tojson|safe }} || "Yükleniyor...",
+            error_loading: {{ _('error_loading')|tojson|safe }} || "Veri yüklenirken bir hata oluştu",
+            no_activities: {{ _('no_activities')|tojson|safe }} || "Henüz çözülmüş problem bulunmuyor",
+            see_all: {{ _('see_all')|tojson|safe }} ||"Tümünü Gör",
+            activity_label: {{ _('activity_label')|tojson|safe }} ||"Günlük Aktivite",
+            solved_problem_action: {{ _('solved_problem_action')|tojson|safe }} ||"problemini çözdü",
+            no_badges: {{ _('no_badges')|tojson|safe }} ||"Henüz rozet kazanılmamış.",
+            chart_failed: {{ _('chart_failed')|tojson|safe }} ||"Grafik yüklenemedi"
+        }
         };
+
     </script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
@@ -159,7 +165,7 @@
                         data: {
                             labels: labels,
                             datasets: [{
-                                label: 'Günlük Aktivite',
+                                label: translations.activity_label,
                                 data: data,
                                 fill: true,
                                 backgroundColor: 'rgba(59, 130, 246, 0.2)',
@@ -306,7 +312,7 @@
                                         <h2 className="text-lg font-semibold mb-4">{translations.activity_chart}</h2>
                                         <canvas ref={chartRef}></canvas>
                                         <div id="chartFallback" className="hidden absolute inset-0 flex items-center justify-center text-gray-500">
-                                            Grafik yüklenemedi
+                                            <div id="chartFallback" className="...">{translations.chart_failed}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -328,7 +334,7 @@
                                                     </div>
                                                 ))
                                             ) : (
-                                                <p className="text-gray-500">Henüz rozet kazanılmamış.</p>
+                                                <p className="text-gray-500">{translations.no_badges}</p>
                                             )}
                                         </div>
                                     </div>
@@ -348,7 +354,7 @@
                                                 <div key={activity.id} className="flex p-3 border rounded-lg hover:bg-gray-50">
                                                     <div className="text-2xl mr-4">✅</div>
                                                     <div className="flex-grow">
-                                                        <p>"{activity.content.problem}" problemini çözdü</p>
+                                                        <p>{`"${activity.content.problem}" ${translations.solved_problem_action}`}</p>
                                                         <p className="text-sm text-gray-500">{formatDate(activity.date)}</p>
                                                     </div>
                                                 </div>
@@ -374,7 +380,12 @@
             );
         };
 
-        ReactDOM.render(<ProfilePage />, document.getElementById('root'));
+     ReactDOM.render(
+    <window.ThemeProvider>
+        <ProfilePage />
+    </window.ThemeProvider>,
+    document.getElementById('root')
+);
     </script>
 </body>
 </html>

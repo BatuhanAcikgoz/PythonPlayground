@@ -25,66 +25,67 @@
 <body class="bg-gray-50">
     <div id="root"></div>
 
-    <script>
-        window.APP_DATA = {
-            isLoggedIn: {{ current_user.is_authenticated|tojson }},
-            userData: {
-                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
-                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }},
-                created_at: {{ current_user.created_at|string|tojson if current_user.created_at else '""'|safe }}
-            },
-            headerTrans: {
-                appName: {{ _('app_name')|tojson|safe }},
-                tagline: {{ _('app_tagline')|tojson|safe }},
-                home: {{ _('home')|tojson|safe }},
-                questions: {{ _('questions')|tojson|safe }},
-                leaderboard: {{ _('leaderboard')|tojson|safe }},
-                about: {{ _('about')|tojson|safe }},
-                logout: {{ _('logout')|tojson|safe }},
-                login: {{ _('login')|tojson|safe }},
-                register: {{ _('register')|tojson|safe }},
-                profile: "Profile",
-                settings: "Settings"
-            },
-            footerTrans: {
-                allRights: {{ _('all_rights')|tojson|safe }},
-                platformDesc: {{ _('platform_desc')|tojson|safe }}
-            },
-            currentLang: {{ session.get('language', 'tr')|tojson }},
-            translations: {
-                settings: {{ _('settings')|tojson|safe }} || "Ayarlar",
-                account_settings: {{ _('account_settings')|tojson|safe }} || "Hesap Ayarları",
-                profile_settings: {{ _('profile_settings')|tojson|safe }} || "Profil Ayarları",
-                notifications: {{ _('notifications')|tojson|safe }} || "Bildirimler",
-                privacy: {{ _('privacy')|tojson|safe }} || "Gizlilik",
-                change_username: {{ _('change_username')|tojson|safe }} || "Kullanıcı Adı Değiştir",
-                change_email: {{ _('change_email')|tojson|safe }} || "E-posta Değiştir",
-                change_password: {{ _('change_password')|tojson|safe }} || "Şifre Değiştir",
-                current_password: {{ _('current_password')|tojson|safe }} || "Mevcut Şifre",
-                new_password: {{ _('new_password')|tojson|safe }} || "Yeni Şifre",
-                confirm_password: {{ _('confirm_password')|tojson|safe }} || "Şifreyi Doğrula",
-                save_changes: {{ _('save_changes')|tojson|safe }} || "Değişiklikleri Kaydet",
-                profile_picture: {{ _('profile_picture')|tojson|safe }} || "Profil Resmi",
-                upload_picture: {{ _('upload_picture')|tojson|safe }} || "Resim Yükle",
-                bio: {{ _('bio')|tojson|safe }} || "Hakkımda",
-                language_preference: {{ _('language_preference')|tojson|safe }} || "Dil Tercihi",
-                email_notifications: {{ _('email_notifications')|tojson|safe }} || "E-posta Bildirimleri",
-                course_updates: {{ _('course_updates')|tojson|safe }} || "Kurs Güncellemeleri",
-                new_messages: {{ _('new_messages')|tojson|safe }} || "Yeni Mesajlar",
-                weekly_summary: {{ _('weekly_summary')|tojson|safe }} || "Haftalık Özet"
-            },
-            flashMessages: [
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% for category, message in messages %}
-                        {
-                            "category": "{{ category }}",
-                            "message": {{ message|tojson|safe }}
-                        }{% if not loop.last %},{% endif %}
-                    {% endfor %}
-                {% endwith %}
-            ]
-        };
-    </script>
+   <script>
+window.APP_DATA = {
+        isLoggedIn: {{ current_user.is_authenticated|tojson }},
+        userData: {
+            username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
+            email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }},
+            created_at: {{ current_user.created_at|string|tojson if current_user.created_at else '""'|safe }}
+        },
+        headerTrans: {
+            appName: {{ _('app_name')|tojson|safe }},
+            tagline: {{ _('app_tagline')|tojson|safe }},
+            home: {{ _('home')|tojson|safe }},
+            questions: {{ _('questions')|tojson|safe }},
+            leaderboard: {{ _('leaderboard')|tojson|safe }},
+            about: {{ _('about')|tojson|safe }},
+            logout: {{ _('logout')|tojson|safe }},
+            login: {{ _('login')|tojson|safe }},
+            register: {{ _('register')|tojson|safe }},
+            profile: "Profile",
+            settings: "Settings"
+        },
+        footerTrans: {
+            allRights: {{ _('all_rights')|tojson|safe }},
+            platformDesc: {{ _('platform_desc')|tojson|safe }}
+        },
+        currentLang: {{ session.get('language', 'tr')|tojson }},
+        translations: {
+            settings: {{ _('settings')|tojson|safe }} || "Ayarlar",
+            account_settings: {{ _('account_settings')|tojson|safe }} || "Hesap Ayarları",
+            profile_settings: {{ _('profile_settings')|tojson|safe }} || "Profil Ayarları",
+            notifications: {{ _('notifications')|tojson|safe }} || "Bildirimler",
+            privacy: {{ _('privacy')|tojson|safe }} || "Gizlilik",
+            change_username: {{ _('change_username')|tojson|safe }} || "Kullanıcı Adı Değiştir",
+            change_email: {{ _('change_email')|tojson|safe }} || "E-posta Değiştir",
+            change_password: {{ _('change_password')|tojson|safe }} || "Şifre Değiştir",
+            current_password: {{ _('current_password')|tojson|safe }} || "Mevcut Şifre",
+            new_password: {{ _('new_password')|tojson|safe }} || "Yeni Şifre",
+            confirm_password: {{ _('confirm_password')|tojson|safe }} || "Şifreyi Doğrula",
+            save_changes: {{ _('save_changes')|tojson|safe }} || "Değişiklikleri Kaydet",
+            profile_picture: {{ _('profile_picture')|tojson|safe }} || "Profil Resmi",
+            upload_picture: {{ _('upload_picture')|tojson|safe }} || "Resim Yükle",
+            bio: {{ _('bio')|tojson|safe }} || "Hakkımda",
+            language_preference: {{ _('language_preference')|tojson|safe }} || "Dil Tercihi",
+            email_notifications: {{ _('email_notifications')|tojson|safe }} || "E-posta Bildirimleri",
+            course_updates: {{ _('course_updates')|tojson|safe }} || "Kurs Güncellemeleri",
+            new_messages: {{ _('new_messages')|tojson|safe }} || "Yeni Mesajlar",
+            weekly_summary: {{ _('weekly_summary')|tojson|safe }} || "Haftalık Özet"
+        },
+        flashMessages: [
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    {
+                        category: "{{ category }}",
+                        message: {{ message|tojson|safe }}
+                    }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            {% endwith %}
+        ]
+    };
+</script>
+   <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
@@ -467,7 +468,13 @@
             );
         };
 
-        ReactDOM.render(<SettingsPage />, document.getElementById('root'));
+       ReactDOM.render(
+  <window.ThemeProvider>
+    <SettingsPage />
+  </window.ThemeProvider>,
+  document.getElementById('root')
+
+);
     </script>
 </body>
 </html>
