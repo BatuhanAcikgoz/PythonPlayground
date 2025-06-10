@@ -1,11 +1,15 @@
 // static/js/components/Header.jsx
 const Header = () => {
     // Access global variables from window.APP_DATA
-    const isLoggedIn = window.APP_DATA.isLoggedIn;
-    const username = window.APP_DATA.userData.username;
-    const userEmail = window.APP_DATA.userData.email;
+    // **GÜNCELLEME BAŞLANGICI**
+    const appData = window.APP_DATA || {}; // window.APP_DATA yoksa boş bir obje kullan
+    const isLoggedIn = appData.isLoggedIn;
+    const username = (appData.userData && appData.userData.username) || null; // userData yoksa null
+    const userEmail = (appData.userData && appData.userData.email) || null; // userData yoksa null
+    // **GÜNCELLEME SONU**
+
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
-    const headerTrans = window.APP_DATA.headerTrans || {
+    const headerTrans = appData.headerTrans || { // appData'dan çek
         home: "Ana Sayfa",
         questions: "Sorular",
         about: "Hakkında",
@@ -68,7 +72,7 @@ const Header = () => {
                             <li><a href="/questions" className="text-white hover:text-blue-200 font-medium">{headerTrans.questions}</a></li>
                             <li><a href="/leaderboard" className="text-white hover:text-blue-200 font-medium">{headerTrans.leaderboard}</a></li>
                             <li><a href="/about" className="text-white hover:text-blue-200 font-medium">{headerTrans.about}</a></li>
-                            {isLoggedIn ? (
+                            {isLoggedIn ? ( // isLoggedIn zaten kontrol edildi
                                 <React.Fragment>
                                     <li className="relative user-dropdown-container">
                                         <button

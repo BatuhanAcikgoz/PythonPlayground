@@ -4,14 +4,15 @@
     <title>{{ user.username }} - {{ _('app_name') }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel for JSX -->
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         html, body, #root {
@@ -28,9 +29,62 @@
         .badge:hover {
             transform: scale(1.1);
         }
+        /* Tooltip stili, badges kısmında title olarak kullanılıyor */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip::before,
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .tooltip::before {
+            content: attr(title); /* Use the title attribute as content */
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 12px;
+            z-index: 1000;
+            bottom: 125%; /* Position above the element */
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap; /* Prevent text wrapping */
+            font-size: 0.875rem; /* text-sm */
+        }
+
+        .dark .tooltip::before {
+            background-color: #555; /* Darker background for dark mode tooltip */
+            color: #fff;
+        }
+
+        .tooltip::after {
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: -5px; /* Adjust to touch the tooltip box */
+        }
+
+        .dark .tooltip::after {
+            border-color: #555 transparent transparent transparent; /* Darker border for dark mode tooltip */
+        }
+
+        .tooltip:hover::before,
+        .tooltip:hover::after {
+            opacity: 1;
+        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
     <script>
@@ -92,6 +146,7 @@
 
     <script type="text/babel">
         const ProfilePage = () => {
+            const { darkMode, toggleTheme } = useTheme(); // useTheme hook'unu kullanarak dark mode durumunu al
             const { username, translations } = window.APP_DATA;
             const chartRef = React.useRef(null);
             const [profileData, setProfileData] = React.useState(null);
@@ -126,21 +181,14 @@
 
             // Aktivite grafiği
             React.useEffect(() => {
-                setTimeout(() => {
-                    console.log("DOM hazır, grafik oluşturma başlıyor");
+                // profileData yüklendikten sonra ve darkMode durumu değiştiğinde grafiği yeniden çiz
+                if (profileData && profileData.dailyActivity) {
+                    // setTimeout'u kaldırarak daha doğrudan bir yaklaşım deneyelim
+                    // Eğer hala sorun yaşarsanız, setTimeout'u geri ekleyebilirsiniz.
+                    // console.log("DOM hazır, grafik oluşturma başlıyor");
 
                     if (!chartRef.current) {
                         console.error("chartRef mevcut değil!");
-                        return;
-                    }
-
-                    if (!profileData) {
-                        console.error("profileData mevcut değil!");
-                        return;
-                    }
-
-                    if (!profileData.dailyActivity) {
-                        console.error("dailyActivity mevcut değil!");
                         return;
                     }
 
@@ -150,7 +198,7 @@
                         return;
                     }
 
-                    console.log("Tüm veriler tamam, grafik oluşturuluyor");
+                    // console.log("Tüm veriler tamam, grafik oluşturuluyor");
 
                     // Önceki grafiği temizle
                     if (window.activityChart) {
@@ -160,6 +208,12 @@
                     const labels = profileData.dailyActivity.map(day => day.label);
                     const data = profileData.dailyActivity.map(day => day.count);
 
+                    // Chart.js renklerini dark mode'a göre ayarla
+                    const textColor = darkMode ? '#E5E7EB' : '#4B5563'; // gray-200 / gray-700
+                    const gridColor = darkMode ? 'rgba(107, 114, 128, 0.3)' : 'rgba(209, 213, 219, 0.5)'; // gray-500 / gray-200 for grid lines
+                    const chartBgColor = darkMode ? 'rgba(59, 130, 246, 0.4)' : 'rgba(59, 130, 246, 0.2)'; // Light blue for light, slightly darker blue for dark
+                    const chartBorderColor = darkMode ? 'rgba(99, 102, 241, 1)' : 'rgba(59, 130, 246, 1)'; // Indigo for dark, brighter blue for light
+
                     window.activityChart = new Chart(ctx, {
                         type: 'line',
                         data: {
@@ -168,22 +222,48 @@
                                 label: translations.activity_label,
                                 data: data,
                                 fill: true,
-                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                                borderColor: 'rgba(59, 130, 246, 1)',
+                                backgroundColor: chartBgColor,
+                                borderColor: chartBorderColor,
                                 borderWidth: 2,
                                 pointRadius: 4,
                                 tension: 0.4
                             }]
                         },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        color: textColor, // Legend (etiket) rengi
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    ticks: {
+                                        color: textColor, // X ekseni etiket rengi
+                                    },
+                                    grid: {
+                                        color: gridColor, // X ekseni ızgara rengi
+                                        drawBorder: false,
+                                    }
+                                },
+                                y: {
+                                    ticks: {
+                                        color: textColor, // Y ekseni etiket rengi
+                                        beginAtZero: true,
+                                    },
+                                    grid: {
+                                        color: gridColor, // Y ekseni ızgara rengi
+                                        drawBorder: false,
+                                    }
+                                }
+                            }
+                        }
                     });
-                }, 500); // 500ms bekle
-
-                return () => {
-                    if (window.activityChart) {
-                        window.activityChart.destroy();
-                    }
-                };
-            }, [profileData]);
+                }
+            }, [profileData, darkMode, translations.activity_label]); // profileData veya darkMode değiştiğinde yeniden çiz
 
             const formatDate = (dateString) => {
                 const date = new Date(dateString);
@@ -195,7 +275,7 @@
                 return (
                     <div className="flex flex-col flex-grow">
                         <Header />
-                        <main className="flex-grow flex items-center justify-center">
+                        <main className="flex-grow flex items-center justify-center bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
                             <div className="text-center">
                                 <div className="text-3xl mb-4">⌛</div>
                                 <p>{translations.loading}</p>
@@ -211,8 +291,8 @@
                 return (
                     <div className="flex flex-col flex-grow">
                         <Header />
-                        <main className="flex-grow flex items-center justify-center">
-                            <div className="text-center text-red-600">
+                        <main className="flex-grow flex items-center justify-center bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+                            <div className="text-center text-red-600 dark:text-red-400">
                                 <div className="text-3xl mb-4">❌</div>
                                 <p>{error}</p>
                             </div>
@@ -229,14 +309,14 @@
                 <div className="flex flex-col flex-grow">
                     <Header />
 
-                    <main className="flex-grow bg-gray-50">
+                    <main className="flex-grow bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
                         <div className="container mx-auto py-6 px-4">
                             {/* Profil Üst Kısmı */}
-                            <div className="bg-white shadow-md rounded-lg overflow-hidden mb-6">
-                                <div className="bg-gradient-to-r from-slate-500 to-slate-600 h-32 md:h-48"></div>
+                            <div className="bg-white shadow-md rounded-lg overflow-hidden mb-6 dark:bg-gray-800 dark:shadow-xl">
+                                <div className="bg-gradient-to-r from-slate-500 to-slate-600 h-32 md:h-48 dark:from-gray-700 dark:to-gray-900"></div> {/* Darker gradient for dark mode */}
                                 <div className="px-6 py-4 md:flex md:items-center md:justify-between">
                                     <div className="flex items-center">
-                                        <div className="bg-white p-1 rounded-full shadow-lg -mt-16 md:-mt-24">
+                                        <div className="bg-white p-1 rounded-full shadow-lg -mt-16 md:-mt-24 dark:bg-gray-900 dark:shadow-2xl">
                                             <img
                                                 src={`https://ui-avatars.com/api/?name=${profileData.username}&size=128&background=random`}
                                                 alt={profileData.username}
@@ -244,9 +324,9 @@
                                             />
                                         </div>
                                         <div className="ml-4 md:ml-6">
-                                            <h1 className="text-2xl md:text-3xl font-bold">{profileData.username}</h1>
-                                            <p className="text-gray-600">{profileData.email}</p>
-                                            <p className="text-gray-500 text-sm">
+                                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">{profileData.username}</h1>
+                                            <p className="text-gray-600 dark:text-gray-300">{profileData.email}</p>
+                                            <p className="text-gray-500 text-sm dark:text-gray-400">
                                                 {translations.member_since}: {formatDate(profileData.joinDate)}
                                             </p>
                                         </div>
@@ -255,13 +335,13 @@
                                         {profileData.isCurrentUser ? (
                                             <a
                                                 href="/settings"
-                                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition dark:bg-blue-700 dark:hover:bg-blue-600"
                                             >
                                                 {translations.edit_profile}
                                             </a>
                                         ) : (
                                             <button
-                                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition dark:bg-blue-700 dark:hover:bg-blue-600"
                                                 onClick={() => alert(translations.send_message)}
                                             >
                                                 {translations.send_message}
@@ -274,53 +354,58 @@
                             {/* İstatistikler */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                                 {/* İstatistik Kartları */}
-                                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                                <div className="bg-white shadow-md rounded-lg overflow-hidden dark:bg-gray-800 dark:shadow-xl">
                                     <div className="p-6">
-                                        <h2 className="text-lg font-semibold mb-4">{translations.statistics}</h2>
+                                        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">{translations.statistics}</h2>
                                         <div className="grid grid-cols-2 gap-4">
-                                            <div className="bg-blue-50 p-4 rounded-lg text-center">
-                                                <div className="text-2xl font-bold text-blue-600">
+                                            <div className="bg-blue-50 p-4 rounded-lg text-center dark:bg-blue-900">
+                                                <div className="text-2xl font-bold text-blue-600 dark:text-blue-200">
                                                     {profileData.stats.solutedProblemsPercentage || '0'}%
                                                 </div>
-                                                <div className="text-sm text-gray-600">{translations.soluted_problems_percentage}</div>
+                                                <div className="text-sm text-gray-600 dark:text-gray-300">{translations.soluted_problems_percentage}</div>
                                             </div>
-                                            <div className="bg-green-50 p-4 rounded-lg text-center">
-                                                <div className="text-2xl font-bold text-green-600">
+                                            <div className="bg-green-50 p-4 rounded-lg text-center dark:bg-green-900">
+                                                <div className="text-2xl font-bold text-green-600 dark:text-green-200">
                                                     {profileData.stats.solvedProblems}
                                                 </div>
-                                                <div className="text-sm text-gray-600">{translations.solved_problems}</div>
+                                                <div className="text-sm text-gray-600 dark:text-gray-300">{translations.solved_problems}</div>
                                             </div>
-                                            <div className="bg-purple-50 p-4 rounded-lg text-center">
-                                                <div className="text-2xl font-bold text-purple-600">
+                                            <div className="bg-purple-50 p-4 rounded-lg text-center dark:bg-purple-900">
+                                                <div className="text-2xl font-bold text-purple-600 dark:text-purple-200">
                                                     {profileData.stats.codingDays}
                                                 </div>
-                                                <div className="text-sm text-gray-600">{translations.coding_days}</div>
+                                                <div className="text-sm text-gray-600 dark:text-gray-300">{translations.coding_days}</div>
                                             </div>
-                                            <div className="bg-orange-50 p-4 rounded-lg text-center">
-                                                <div className="text-2xl font-bold text-orange-600">
+                                            <div className="bg-orange-50 p-4 rounded-lg text-center dark:bg-orange-900">
+                                                <div className="text-2xl font-bold text-orange-600 dark:text-orange-200">
                                                     {profileData.stats.activeDaysStreak}
                                                 </div>
-                                                <div className="text-sm text-gray-600">{translations.active_streak}</div>
+                                                <div className="text-sm text-gray-600 dark:text-gray-300">{translations.active_streak}</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Aktivite Grafiği */}
-                                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                                <div className="bg-white shadow-md rounded-lg overflow-hidden dark:bg-gray-800 dark:shadow-xl">
                                     <div className="p-6">
-                                        <h2 className="text-lg font-semibold mb-4">{translations.activity_chart}</h2>
+                                        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">{translations.activity_chart}</h2>
                                         <canvas ref={chartRef}></canvas>
-                                        <div id="chartFallback" className="hidden absolute inset-0 flex items-center justify-center text-gray-500">
-                                            <div id="chartFallback" className="...">{translations.chart_failed}</div>
+                                        {/* chartFallback'ı, grafik yüklenemediğinde veya veri yoksa gösterebiliriz.
+                                            Şu anki useEffect mantığıyla, profileData.dailyActivity varsa grafik çiziliyor.
+                                            Eğer profileData.dailyActivity boş veya null ise chartFallback'ı görünür yapabilirsiniz.
+                                            Bu, şimdilik hidden kalabilir.
+                                        */}
+                                        <div id="chartFallback" className="hidden absolute inset-0 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                            {translations.chart_failed}
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Rozetler */}
-                                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                                <div className="bg-white shadow-md rounded-lg overflow-hidden dark:bg-gray-800 dark:shadow-xl">
                                     <div className="p-6">
-                                        <h2 className="text-lg font-semibold mb-4">{translations.badges}</h2>
+                                        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">{translations.badges}</h2>
                                         <div className="flex flex-wrap gap-4">
                                             {profileData.badges.length > 0 ? (
                                                 profileData.badges.map(badge => (
@@ -330,11 +415,11 @@
                                                         title={badge.description}
                                                     >
                                                         <div className="text-4xl mb-2">{badge.icon}</div>
-                                                        <div className="text-sm font-medium text-center">{badge.name}</div>
+                                                        <div className="text-sm font-medium text-center text-gray-800 dark:text-gray-200">{badge.name}</div>
                                                     </div>
                                                 ))
                                             ) : (
-                                                <p className="text-gray-500">{translations.no_badges}</p>
+                                                <p className="text-gray-500 dark:text-gray-400">{translations.no_badges}</p>
                                             )}
                                         </div>
                                     </div>
@@ -342,30 +427,30 @@
                             </div>
 
                             {/* Çözülen Problemler Bölümü */}
-                            <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                                <div className="px-6 py-4 border-b">
-                                    <h2 className="text-lg font-semibold">{translations.solved_problems}</h2>
+                            <div className="bg-white shadow-md rounded-lg overflow-hidden dark:bg-gray-800 dark:shadow-xl">
+                                <div className="px-6 py-4 border-b dark:border-gray-700">
+                                    <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{translations.solved_problems}</h2>
                                 </div>
 
                                 <div className="p-6">
                                     <div className="space-y-4">
                                         {profileData.activities.length > 0 ? (
                                             profileData.activities.map(activity => (
-                                                <div key={activity.id} className="flex p-3 border rounded-lg hover:bg-gray-50">
+                                                <div key={activity.id} className="flex p-3 border rounded-lg hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700">
                                                     <div className="text-2xl mr-4">✅</div>
                                                     <div className="flex-grow">
-                                                        <p>{`"${activity.content.problem}" ${translations.solved_problem_action}`}</p>
-                                                        <p className="text-sm text-gray-500">{formatDate(activity.date)}</p>
+                                                        <p className="text-gray-800 dark:text-gray-100">{`"${activity.content.problem}" ${translations.solved_problem_action}`}</p>
+                                                        <p className="text-sm text-gray-500 dark:text-gray-400">{formatDate(activity.date)}</p>
                                                     </div>
                                                 </div>
                                             ))
                                         ) : (
-                                            <p className="text-center text-gray-500">{translations.no_activities}</p>
+                                            <p className="text-center text-gray-500 dark:text-gray-400">{translations.no_activities}</p>
                                         )}
                                     </div>
                                     {profileData.activities.length > 0 && (
                                         <div className="mt-4 text-center">
-                                            <a href="/my-submissions" className="text-blue-600 hover:underline">
+                                            <a href="/my-submissions" className="text-blue-600 hover:underline dark:text-blue-400 dark:hover:text-blue-300">
                                                 {translations.see_all}
                                             </a>
                                         </div>

@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -29,9 +34,19 @@
         .rank-3 {
             background-color: rgba(234, 179, 8, 0.2);
         }
+html.dark .rank-1 {
+    background-color: rgba(253, 224, 71, 0.1);
+}
+html.dark .rank-2 {
+    background-color: rgba(209, 213, 219, 0.1);
+}
+html.dark .rank-3 {
+    background-color: rgba(234, 179, 8, 0.1);
+}
+
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-950">
     <div id="root"></div>
     <script>
         window.APP_DATA = {
@@ -82,6 +97,7 @@
 
     <script type="text/babel">
         const App = () => {
+            const { darkMode, toggleTheme } = useTheme();
             // Flask şablonundan veri al
             const urls = window.APP_DATA.urls;
 
@@ -113,16 +129,16 @@
 
                 return (
                     <div>
-                        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                        <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
                             <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
+                                <thead className="bg-gray-50 dark:bg-gray-700">
                                     <tr>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sıra</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kullanıcı</th>
                                         <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Puan</th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
+                                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                     {data.users.map((user, index) => {
                                         let rankClass = "";
                                         let rankBadge = null;
@@ -167,7 +183,7 @@
                     <Header />
                     <main className="flex-grow container mx-auto px-4 py-8">
                         <div className="max-w-4xl mx-auto">
-                            <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Lider Tablosu</h1>
+                            <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">Lider Tablosu</h1>
 
                             <LeaderboardTable />
 

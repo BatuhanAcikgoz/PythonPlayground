@@ -4,12 +4,9 @@
     <title>{{ _('settings') }} - {{ _('app_name') }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel for JSX -->
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <style>
         html, body, #root {
@@ -22,76 +19,81 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
-   <script>
-window.APP_DATA = {
-        isLoggedIn: {{ current_user.is_authenticated|tojson }},
-        userData: {
-            username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
-            email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }},
-            created_at: {{ current_user.created_at|string|tojson if current_user.created_at else '""'|safe }}
-        },
-        headerTrans: {
-            appName: {{ _('app_name')|tojson|safe }},
-            tagline: {{ _('app_tagline')|tojson|safe }},
-            home: {{ _('home')|tojson|safe }},
-            questions: {{ _('Questions')|tojson|safe }},
-            leaderboard: {{ _('Leaderboard')|tojson|safe }},
-            about: {{ _('about')|tojson|safe }},
-            logout: {{ _('logout')|tojson|safe }},
-            login: {{ _('login')|tojson|safe }},
-            register: {{ _('register')|tojson|safe }},
-            profile: "Profile",
-            settings: "Settings"
-        },
-        footerTrans: {
-            allRights: {{ _('all_rights')|tojson|safe }},
-            platformDesc: {{ _('platform_desc')|tojson|safe }}
-        },
-        currentLang: {{ session.get('language', 'tr')|tojson }},
-        translations: {
-            settings: {{ _('settings')|tojson|safe }} || "Ayarlar",
-            account_settings: {{ _('account_settings')|tojson|safe }} || "Hesap Ayarları",
-            profile_settings: {{ _('profile_settings')|tojson|safe }} || "Profil Ayarları",
-            notifications: {{ _('notifications')|tojson|safe }} || "Bildirimler",
-            privacy: {{ _('privacy')|tojson|safe }} || "Gizlilik",
-            change_username: {{ _('change_username')|tojson|safe }} || "Kullanıcı Adı Değiştir",
-            change_email: {{ _('change_email')|tojson|safe }} || "E-posta Değiştir",
-            change_password: {{ _('change_password')|tojson|safe }} || "Şifre Değiştir",
-            current_password: {{ _('current_password')|tojson|safe }} || "Mevcut Şifre",
-            new_password: {{ _('new_password')|tojson|safe }} || "Yeni Şifre",
-            confirm_password: {{ _('confirm_password')|tojson|safe }} || "Şifreyi Doğrula",
-            save_changes: {{ _('save_changes')|tojson|safe }} || "Değişiklikleri Kaydet",
-            profile_picture: {{ _('profile_picture')|tojson|safe }} || "Profil Resmi",
-            upload_picture: {{ _('upload_picture')|tojson|safe }} || "Resim Yükle",
-            bio: {{ _('bio')|tojson|safe }} || "Hakkımda",
-            language_preference: {{ _('language_preference')|tojson|safe }} || "Dil Tercihi",
-            email_notifications: {{ _('email_notifications')|tojson|safe }} || "E-posta Bildirimleri",
-            course_updates: {{ _('course_updates')|tojson|safe }} || "Kurs Güncellemeleri",
-            new_messages: {{ _('new_messages')|tojson|safe }} || "Yeni Mesajlar",
-            weekly_summary: {{ _('weekly_summary')|tojson|safe }} || "Haftalık Özet"
-        },
-        flashMessages: [
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% for category, message in messages %}
-                    {
-                        category: "{{ category }}",
-                        message: {{ message|tojson|safe }}
-                    }{% if not loop.last %},{% endif %}
-                {% endfor %}
-            {% endwith %}
-        ]
-    };
-</script>
-   <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
+    <script>
+        // Tailwind config buraya taşındı!
+        tailwind.config = {
+            darkMode: 'class',
+        }
+
+        window.APP_DATA = {
+            isLoggedIn: {{ current_user.is_authenticated|tojson }},
+            userData: {
+                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
+                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }},
+                created_at: {{ current_user.created_at|string|tojson if current_user.created_at else '""'|safe }}
+            },
+            headerTrans: {
+                appName: {{ _('app_name')|tojson|safe }},
+                tagline: {{ _('app_tagline')|tojson|safe }},
+                home: {{ _('home')|tojson|safe }},
+                questions: {{ _('Questions')|tojson|safe }},
+                leaderboard: {{ _('Leaderboard')|tojson|safe }},
+                about: {{ _('about')|tojson|safe }},
+                logout: {{ _('logout')|tojson|safe }},
+                login: {{ _('login')|tojson|safe }},
+                register: {{ _('register')|tojson|safe }},
+                profile: "Profile",
+                settings: "Settings"
+            },
+            footerTrans: {
+                allRights: {{ _('all_rights')|tojson|safe }},
+                platformDesc: {{ _('platform_desc')|tojson|safe }}
+            },
+            currentLang: {{ session.get('language', 'tr')|tojson }},
+            translations: {
+                settings: {{ _('settings')|tojson|safe }} || "Ayarlar",
+                account_settings: {{ _('account_settings')|tojson|safe }} || "Hesap Ayarları",
+                profile_settings: {{ _('profile_settings')|tojson|safe }} || "Profil Ayarları",
+                notifications: {{ _('notifications')|tojson|safe }} || "Bildirimler",
+                privacy: {{ _('privacy')|tojson|safe }} || "Gizlilik",
+                change_username: {{ _('change_username')|tojson|safe }} || "Kullanıcı Adı Değiştir",
+                change_email: {{ _('change_email')|tojson|safe }} || "E-posta Değiştir",
+                change_password: {{ _('change_password')|tojson|safe }} || "Şifre Değiştir",
+                current_password: {{ _('current_password')|tojson|safe }} || "Mevcut Şifre",
+                new_password: {{ _('new_password')|tojson|safe }} || "Yeni Şifre",
+                confirm_password: {{ _('confirm_password')|tojson|safe }} || "Şifreyi Doğrula",
+                save_changes: {{ _('save_changes')|tojson|safe }} || "Değişiklikleri Kaydet",
+                profile_picture: {{ _('profile_picture')|tojson|safe }} || "Profil Resmi",
+                upload_picture: {{ _('upload_picture')|tojson|safe }} || "Resim Yükle",
+                bio: {{ _('bio')|tojson|safe }} || "Hakkımda",
+                language_preference: {{ _('language_preference')|tojson|safe }} || "Dil Tercihi",
+                email_notifications: {{ _('email_notifications')|tojson|safe }} || "E-posta Bildirimleri",
+                course_updates: {{ _('course_updates')|tojson|safe }} || "Kurs Güncellemeleri",
+                new_messages: {{ _('new_messages')|tojson|safe }} || "Yeni Mesajlar",
+                weekly_summary: {{ _('weekly_summary')|tojson|safe }} || "Haftalık Özet"
+            },
+            flashMessages: [
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        {
+                            category: "{{ category }}",
+                            message: {{ message|tojson|safe }}
+                        }{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                {% endwith %}
+            ]
+        };
+    </script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
     <script type="text/babel">
         const SettingsPage = () => {
-
+            const { darkMode, toggleTheme } = useTheme();
             const { userData, translations, flashMessages } = window.APP_DATA;
             const [activeTab, setActiveTab] = React.useState('account');
 
@@ -99,17 +101,17 @@ window.APP_DATA = {
                 <div className="flex flex-col flex-grow">
                     <Header />
 
-                    <main className="flex-grow bg-gray-50">
+                    <main className="flex-grow bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
                         <div className="container mx-auto py-6 px-4">
                             {/* Flash Mesajları */}
                             {flashMessages && flashMessages.length > 0 && (
                                 <div className="mb-6">
                                     {flashMessages.map((flash, index) => (
                                         <div key={index} className={`mb-4 p-4 rounded-lg shadow ${
-                                            flash.category === 'success' ? 'bg-green-100 text-green-800' :
-                                            flash.category === 'warning' ? 'bg-yellow-100 text-yellow-800' :
-                                            flash.category === 'error' ? 'bg-red-100 text-red-800' :
-                                            'bg-blue-100 text-blue-800'
+                                            flash.category === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
+                                            flash.category === 'warning' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
+                                            flash.category === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' :
+                                            'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100'
                                         }`}>
                                             {flash.message}
                                         </div>
@@ -117,19 +119,19 @@ window.APP_DATA = {
                                 </div>
                             )}
 
-                            <h1 className="text-3xl font-bold mb-6">{translations.settings}</h1>
+                            <h1 className="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-100">{translations.settings}</h1>
 
                             <div className="flex flex-col md:flex-row gap-6">
                                 {/* Soldaki Menü */}
                                 <div className="md:w-1/4">
-                                    <div className="bg-white shadow-md rounded-lg p-4">
+                                    <div className="bg-white shadow-md rounded-lg p-4 dark:bg-gray-800 dark:shadow-xl">
                                         <ul>
                                             <li>
                                                 <button
                                                     onClick={() => setActiveTab('account')}
                                                     className={`w-full text-left px-4 py-2 rounded-md ${activeTab === 'account' ?
-                                                        'bg-blue-100 text-blue-700 font-medium' :
-                                                        'hover:bg-gray-100'}`}
+                                                        'bg-blue-100 text-blue-700 font-medium dark:bg-blue-700 dark:text-blue-100' :
+                                                        'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                                                 >
                                                     {translations.account_settings}
                                                 </button>
@@ -138,8 +140,8 @@ window.APP_DATA = {
                                                 <button
                                                     onClick={() => setActiveTab('profile')}
                                                     className={`w-full text-left px-4 py-2 rounded-md ${activeTab === 'profile' ?
-                                                        'bg-blue-100 text-blue-700 font-medium' :
-                                                        'hover:bg-gray-100'}`}
+                                                        'bg-blue-100 text-blue-700 font-medium dark:bg-blue-700 dark:text-blue-100' :
+                                                        'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                                                 >
                                                     {translations.profile_settings}
                                                 </button>
@@ -148,8 +150,8 @@ window.APP_DATA = {
                                                 <button
                                                     onClick={() => setActiveTab('notifications')}
                                                     className={`w-full text-left px-4 py-2 rounded-md ${activeTab === 'notifications' ?
-                                                        'bg-blue-100 text-blue-700 font-medium' :
-                                                        'hover:bg-gray-100'}`}
+                                                        'bg-blue-100 text-blue-700 font-medium dark:bg-blue-700 dark:text-blue-100' :
+                                                        'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                                                 >
                                                     {translations.notifications}
                                                 </button>
@@ -158,8 +160,8 @@ window.APP_DATA = {
                                                 <button
                                                     onClick={() => setActiveTab('privacy')}
                                                     className={`w-full text-left px-4 py-2 rounded-md ${activeTab === 'privacy' ?
-                                                        'bg-blue-100 text-blue-700 font-medium' :
-                                                        'hover:bg-gray-100'}`}
+                                                        'bg-blue-100 text-blue-700 font-medium dark:bg-blue-700 dark:text-blue-100' :
+                                                        'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                                                 >
                                                     {translations.privacy}
                                                 </button>
@@ -170,17 +172,17 @@ window.APP_DATA = {
 
                                 {/* Sağdaki İçerik */}
                                 <div className="md:w-3/4">
-                                    <div className="bg-white shadow-md rounded-lg p-6">
+                                    <div className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-800 dark:shadow-xl">
                                         {/* Hesap Ayarları */}
                                         {activeTab === 'account' && (
                                             <div>
-                                                <h2 className="text-xl font-semibold mb-6">{translations.account_settings}</h2>
+                                                <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-gray-100">{translations.account_settings}</h2>
 
                                                 <form method="post" action="{{ url_for('auth.update_account') }}">
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
                                                     <div className="mb-6">
-                                                        <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                             {translations.change_username}
                                                         </label>
                                                         <input
@@ -188,12 +190,12 @@ window.APP_DATA = {
                                                             id="username"
                                                             name="username"
                                                             defaultValue={userData.username}
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
                                                         />
                                                     </div>
 
                                                     <div className="mb-6">
-                                                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                             {translations.change_email}
                                                         </label>
                                                         <input
@@ -201,46 +203,46 @@ window.APP_DATA = {
                                                             id="email"
                                                             name="email"
                                                             defaultValue={userData.email}
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
                                                         />
                                                     </div>
 
-                                                    <div className="border-t pt-4 mt-6">
-                                                        <h3 className="text-lg font-medium mb-4">{translations.change_password}</h3>
+                                                    <div className="border-t pt-4 mt-6 dark:border-gray-700">
+                                                        <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">{translations.change_password}</h3>
 
                                                         <div className="mb-4">
-                                                            <label htmlFor="current_password" className="block text-sm font-medium text-gray-700 mb-1">
+                                                            <label htmlFor="current_password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                                 {translations.current_password}
                                                             </label>
                                                             <input
                                                                 type="password"
                                                                 id="current_password"
                                                                 name="current_password"
-                                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
                                                             />
                                                         </div>
 
                                                         <div className="mb-4">
-                                                            <label htmlFor="new_password" className="block text-sm font-medium text-gray-700 mb-1">
+                                                            <label htmlFor="new_password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                                 {translations.new_password}
                                                             </label>
                                                             <input
                                                                 type="password"
                                                                 id="new_password"
                                                                 name="new_password"
-                                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
                                                             />
                                                         </div>
 
                                                         <div className="mb-6">
-                                                            <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-700 mb-1">
+                                                            <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                                 {translations.confirm_password}
                                                             </label>
                                                             <input
                                                                 type="password"
                                                                 id="confirm_password"
                                                                 name="confirm_password"
-                                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
                                                             />
                                                         </div>
                                                     </div>
@@ -248,7 +250,7 @@ window.APP_DATA = {
                                                     <div className="flex justify-end">
                                                         <button
                                                             type="submit"
-                                                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                                                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition dark:bg-blue-700 dark:hover:bg-blue-600"
                                                         >
                                                             {translations.save_changes}
                                                         </button>
@@ -260,13 +262,13 @@ window.APP_DATA = {
                                         {/* Profil Ayarları */}
                                         {activeTab === 'profile' && (
                                             <div>
-                                                <h2 className="text-xl font-semibold mb-6">{translations.profile_settings}</h2>
+                                                <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-gray-100">{translations.profile_settings}</h2>
 
                                                 <form method="post" action="{{ url_for('auth.update_profile') }}" encType="multipart/form-data">
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
                                                     <div className="mb-6">
-                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                                             {translations.profile_picture}
                                                         </label>
                                                         <div className="flex items-center">
@@ -281,35 +283,35 @@ window.APP_DATA = {
                                                                     id="profile_picture"
                                                                     name="profile_picture"
                                                                     accept="image/*"
-                                                                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                                                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-800 dark:file:text-blue-100 dark:hover:file:bg-blue-700 dark:text-gray-400"
                                                                 />
-                                                                <p className="mt-1 text-xs text-gray-500">PNG, JPG veya GIF. Maksimum 2MB.</p>
+                                                                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">PNG, JPG veya GIF. Maksimum 2MB.</p>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     <div className="mb-6">
-                                                        <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                             {translations.bio}
                                                         </label>
                                                         <textarea
                                                             id="bio"
                                                             name="bio"
                                                             rows="4"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
                                                             defaultValue=""
                                                         ></textarea>
-                                                        <p className="mt-1 text-xs text-gray-500">Kendinizi kısaca tanıtın (max 200 karakter).</p>
+                                                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Kendinizi kısaca tanıtın (max 200 karakter).</p>
                                                     </div>
 
                                                     <div className="mb-6">
-                                                        <label htmlFor="language" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                             {translations.language_preference}
                                                         </label>
                                                         <select
                                                             id="language"
                                                             name="language"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
                                                             defaultValue={window.APP_DATA.currentLang}
                                                         >
                                                             <option value="tr">Türkçe</option>
@@ -320,7 +322,7 @@ window.APP_DATA = {
                                                     <div className="flex justify-end">
                                                         <button
                                                             type="submit"
-                                                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                                                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition dark:bg-blue-700 dark:hover:bg-blue-600"
                                                         >
                                                             {translations.save_changes}
                                                         </button>
@@ -332,12 +334,12 @@ window.APP_DATA = {
                                         {/* Bildirim Ayarları */}
                                         {activeTab === 'notifications' && (
                                             <div>
-                                                <h2 className="text-xl font-semibold mb-6">{translations.notifications}</h2>
+                                                <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-gray-100">{translations.notifications}</h2>
 
                                                 <form method="post" action="{{ url_for('auth.update_notifications') }}">
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-                                                    <h3 className="font-medium mb-4">{translations.email_notifications}</h3>
+                                                    <h3 className="font-medium mb-4 text-gray-900 dark:text-gray-100">{translations.email_notifications}</h3>
 
                                                     <div className="space-y-3 mb-6">
                                                         <div className="flex items-center">
@@ -347,9 +349,9 @@ window.APP_DATA = {
                                                                 name="notifications[]"
                                                                 value="course_updates"
                                                                 defaultChecked={true}
-                                                                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:checked:bg-blue-500 dark:focus:ring-blue-400"
                                                             />
-                                                            <label htmlFor="course_updates" className="ml-2 block text-sm text-gray-700">
+                                                            <label htmlFor="course_updates" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                                                                 {translations.course_updates}
                                                             </label>
                                                         </div>
@@ -361,9 +363,9 @@ window.APP_DATA = {
                                                                 name="notifications[]"
                                                                 value="new_messages"
                                                                 defaultChecked={true}
-                                                                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:checked:bg-blue-500 dark:focus:ring-blue-400"
                                                             />
-                                                            <label htmlFor="new_messages" className="ml-2 block text-sm text-gray-700">
+                                                            <label htmlFor="new_messages" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                                                                 {translations.new_messages}
                                                             </label>
                                                         </div>
@@ -375,9 +377,9 @@ window.APP_DATA = {
                                                                 name="notifications[]"
                                                                 value="weekly_summary"
                                                                 defaultChecked={false}
-                                                                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:checked:bg-blue-500 dark:focus:ring-blue-400"
                                                             />
-                                                            <label htmlFor="weekly_summary" className="ml-2 block text-sm text-gray-700">
+                                                            <label htmlFor="weekly_summary" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                                                                 {translations.weekly_summary}
                                                             </label>
                                                         </div>
@@ -386,7 +388,7 @@ window.APP_DATA = {
                                                     <div className="flex justify-end">
                                                         <button
                                                             type="submit"
-                                                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                                                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition dark:bg-blue-700 dark:hover:bg-blue-600"
                                                         >
                                                             {translations.save_changes}
                                                         </button>
@@ -398,7 +400,7 @@ window.APP_DATA = {
                                         {/* Gizlilik Ayarları */}
                                         {activeTab === 'privacy' && (
                                             <div>
-                                                <h2 className="text-xl font-semibold mb-6">{translations.privacy}</h2>
+                                                <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-gray-100">{translations.privacy}</h2>
 
                                                 <form method="post" action="{{ url_for('auth.update_privacy') }}">
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -411,9 +413,9 @@ window.APP_DATA = {
                                                                 name="privacy[]"
                                                                 value="public_profile"
                                                                 defaultChecked={true}
-                                                                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:checked:bg-blue-500 dark:focus:ring-blue-400"
                                                             />
-                                                            <label htmlFor="public_profile" className="ml-2 block text-sm text-gray-700">
+                                                            <label htmlFor="public_profile" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                                                                 Profilimi herkese açık yap
                                                             </label>
                                                         </div>
@@ -425,9 +427,9 @@ window.APP_DATA = {
                                                                 name="privacy[]"
                                                                 value="show_online_status"
                                                                 defaultChecked={true}
-                                                                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:checked:bg-blue-500 dark:focus:ring-blue-400"
                                                             />
-                                                            <label htmlFor="show_online_status" className="ml-2 block text-sm text-gray-700">
+                                                            <label htmlFor="show_online_status" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                                                                 Çevrimiçi durumumu göster
                                                             </label>
                                                         </div>
@@ -439,9 +441,9 @@ window.APP_DATA = {
                                                                 name="privacy[]"
                                                                 value="show_learning_progress"
                                                                 defaultChecked={false}
-                                                                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                                className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:checked:bg-blue-500 dark:focus:ring-blue-400"
                                                             />
-                                                            <label htmlFor="show_learning_progress" className="ml-2 block text-sm text-gray-700">
+                                                            <label htmlFor="show_learning_progress" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                                                                 Öğrenme ilerlememi diğer kullanıcılara göster
                                                             </label>
                                                         </div>
@@ -450,7 +452,7 @@ window.APP_DATA = {
                                                     <div className="flex justify-end">
                                                         <button
                                                             type="submit"
-                                                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                                                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition dark:bg-blue-700 dark:hover:bg-blue-600"
                                                         >
                                                             {translations.save_changes}
                                                         </button>
@@ -469,13 +471,12 @@ window.APP_DATA = {
             );
         };
 
-       ReactDOM.render(
-  <window.ThemeProvider>
-    <SettingsPage />
-  </window.ThemeProvider>,
-  document.getElementById('root')
-
-);
+        ReactDOM.render(
+            <window.ThemeProvider>
+                <SettingsPage />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
     </script>
 </body>
 </html>
