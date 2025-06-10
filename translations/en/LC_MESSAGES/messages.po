@@ -339,3 +339,74 @@ msgstr "Go to Admin Panel"
 msgid "system_admin"
 msgstr "System Administrator"
 
+msgid "settings"
+msgstr "Settings"
+
+msgid "account_settings"
+msgstr "Account Settings"
+
+msgid "profile_settings"
+msgstr "Profile Settings"
+
+msgid "notifications"
+msgstr "Notifications"
+
+msgid "privacy"
+msgstr "Privacy"
+
+msgid "profile_picture"
+msgstr "Profile Picture"
+
+msgid "bio"
+msgstr "Bio"
+
+msgid "bio_placeholder"
+msgstr "Briefly introduce yourself (max 200 characters)."
+
+msgid "language_preference"
+msgstr "Language Preference"
+
+msgid "save_changes"
+msgstr "Save Changes"
+
+msgid "dashboard"
+msgstr "Dashboard"
+
+msgid "recent_users"
+msgstr "Recent Users"
+
+msgid "recent_questions"
+msgstr "Recent Questions"
+
+msgid "recent_submissions"
+msgstr "Recent Submissions"
+
+msgid "server_status"
+msgstr "Server Status"
+
+msgid "back_to_admin"
+msgstr "Back to Admin"
+
+msgid "general_settings"
+msgstr "General Settings"
+
+msgid "user_settings"
+msgstr "User Settings"
+
+msgid "mail_settings"
+msgstr "Mail Settings"
+
+msgid "enable_ai_features"
+msgstr "Enable AI Features"
+
+msgid "api_provider"
+msgstr "API Provider"
+
+msgid "default_ai_model"
+msgstr "Default AI Model"
+
+msgid "save_settings"
+msgstr "Save Settings"
+
+msgid "ai_settings"
+msgstr "AI Settings"

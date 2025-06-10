@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,6 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
+    <script>
+    tailwind.config = {
+        darkMode: 'class',
+    };
+</script>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -26,102 +32,95 @@
     <div id="root"></div>
 
     <script>
-
-<script>
-    window.APP_DATA = {
-        isLoggedIn: {{ current_user.is_authenticated|tojson }},
-        userData: {
-            username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
-            email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
-        },
-        currentLang: {{ session.get('language', 'tr')|tojson }},
-        headerTrans: {
-            appName: {{ _('app_name')|tojson|safe }},
-            tagline: {{ _('app_tagline')|tojson|safe }},
-            home: {{ _('home')|tojson|safe }},
-            questions: {{ _('questions')|tojson|safe }},
-            leaderboard: {{ _('leaderboard')|tojson|safe }},
-            about: {{ _('about')|tojson|safe }},
-            logout: {{ _('logout')|tojson|safe }},
-            login: {{ _('login')|tojson|safe }},
-            register: {{ _('register')|tojson|safe }},
-            profile: "Profile",
-            settings: "Settings"
-        },
-        footerTrans: {
-            allRights: {{ _('all_rights')|tojson|safe }},
-            platformDesc: {{ _('platform_desc')|tojson|safe }}
-        },
-        flashMessages: [
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% for category, message in messages %}
-                    {
-                        "category": "{{ category }}",
-                        "message": {{ message|tojson|safe }}
-                    }{% if not loop.last %},{% endif %}
-                {% endfor %}
-            {% endwith %}
-        ],
-        translations: {
-            settings: {{ _('settings')|tojson|safe }} || "Ayarlar",
-            back_to_admin: {{ _('back_to_admin')|tojson|safe }} || "Yönetim Paneline Dön",
-            general_settings: {{ _('general_settings')|tojson|safe }} || "Genel Ayarlar",
-            user_settings: {{ _('user_settings')|tojson|safe }} || "Kullanıcı Ayarları",
-            mail_settings: {{ _('mail_settings')|tojson|safe }} || "E-Posta Ayarları",
-            save_settings: {{ _('save_settings')|tojson|safe }} || "Ayarları Kaydet",
-            ai_settings: {{ _('ai_settings')|tojson|safe }} || "AI Ayarları",
-            default_ai_model: {{ _('default_ai_model')|tojson|safe }} || "Varsayılan AI Modeli",
-            jupyter_ai_integration: {{ _('jupyter_ai_integration')|tojson|safe }} || "Jupyter AI Entegrasyonu",
-            enable_ai_features: {{ _('enable_ai_features')|tojson|safe }} || "AI Özelliklerini Etkinleştir",
-            api_provider: {{ _('api_provider')|tojson|safe }} || "API Sağlayıcı",
-            viewAllQuestions: {{ _('view_all_questions')|tojson|safe }} || "Tüm Soruları Gör",
-            newQuestions: {{ _('new_questions')|tojson|safe }} || "Yeni Sorular",
-            allNotebooks: {{ _('all_notebooks')|tojson|safe }} || "Tüm Notebooklar",
-            notebookLib: {{ _('notebook_lib')|tojson|safe }} || "Notebook Kütüphanesi",
-            adminAccess: {{ _('admin_access')|tojson|safe }} || "Yönetici Erişimi",
-            goToAdmin: {{ _('go_to_admin')|tojson|safe }} || "Yönetime Git"
-        },
-        formData: {
-            {% if form %}
-            csrf_token: "{{ form.csrf_token._value() }}",
-            site_name: "{{ form.site_name.data }}",
-            site_description: "{{ form.site_description.data }}",
-            default_language: "{{ form.default_language.data }}",
-            allow_registration: "{{ form.allow_registration.data }}",
-            enable_user_activation: "{{ form.enable_user_activation.data }}",
-            mail_server: "{{ form.mail_server.data }}",
-            mail_port: "{{ form.mail_port.data }}",
-            mail_username: "{{ form.mail_username.data }}",
-            mail_password: "{{ form.mail_password.data }}",
-            mail_use_tls: "{{ form.mail_use_tls.data }}",
-            enable_ai_features: "{{ form.enable_ai_features.data }}",
-            api_provider: "{{ form.api_provider.data }}",
-            default_ai_model: "{{ form.default_ai_model.data }}",
-            api_key: "{{ form.api_key.data }}"
-            {% endif %}
-        },
-        urls: {
-            adminIndex: "{{ url_for('admin.index') }}",
-            programmingQuestions: "{{ url_for('admin.programming_questions') }}",
-            newProgrammingQuestion: "{{ url_for('admin.new_programming_question') }}",
-            users: "{{ url_for('admin.users') }}",
-            badges: "{{ url_for('admin.badges') }}",
-            newBadge: "{{ url_for('admin.new_badge') }}",
-            settings: "{{ url_for('admin.settings') }}",
-            leaderboard: "{{ url_for('main.leaderboard') }}"
-        }
-    };
-</script>
-
+        window.APP_DATA = {
+            isLoggedIn: {{ current_user.is_authenticated|tojson }},
+            userData: {
+                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
+                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
+            },
+            currentLang: {{ session.get('language', 'tr')|tojson }},
+            headerTrans: {
+                appName: {{ _('app_name')|tojson|safe }},
+                tagline: {{ _('app_tagline')|tojson|safe }},
+                home: {{ _('home')|tojson|safe }},
+                questions: {{ _('Questions')|tojson|safe }},
+                leaderboard: {{ _('Leaderboard')|tojson|safe }},
+                about: {{ _('about')|tojson|safe }},
+                logout: {{ _('logout')|tojson|safe }},
+                login: {{ _('login')|tojson|safe }},
+                register: {{ _('register')|tojson|safe }},
+                profile: "Profile",
+                settings: "Settings"
+            },
+            footerTrans: {
+                allRights: {{ _('all_rights')|tojson|safe }},
+                platformDesc: {{ _('platform_desc')|tojson|safe }}
+            },
+            flashMessages: [
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        {
+                            "category": "{{ category }}",
+                            "message": {{ message|tojson|safe }}
+                        }{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                {% endwith %}
+            ],
+            translations: {
+                "settings": {{ _('settings')|tojson|safe }} || "Ayarlar",
+                "back_to_admin": {{ _('back_to_admin')|tojson|safe }} || "Yönetim Paneline Dön",
+                "general_settings": {{ _('general_settings')|tojson|safe }} || "Genel Ayarlar",
+                "user_settings": {{ _('user_settings')|tojson|safe }} || "Kullanıcı Ayarları",
+                "mail_settings": {{ _('mail_settings')|tojson|safe }} || "E-Posta Ayarları",
+                "save_settings": {{ _('save_settings')|tojson|safe }} || "Ayarları Kaydet",
+                "ai_settings": {{ _('ai_settings')|tojson|safe }} || "AI Ayarları",
+                "default_ai_model": {{ _('default_ai_model')|tojson|safe }} || "Varsayılan AI Modeli",
+                "jupyter_ai_integration": {{ _('jupyter_ai_integration')|tojson|safe }} || "Jupyter AI Entegrasyonu",
+                "enable_ai_features": {{ _('enable_ai_features')|tojson|safe }} || "AI Özelliklerini Etkinleştir",
+                "api_provider": {{ _('api_provider')|tojson|safe }} || "API Sağlayıcı"
+            },
+            formData: {
+                {% if form %}
+                csrf_token: "{{ form.csrf_token._value() }}",
+                site_name: "{{ form.site_name.data }}",
+                site_description: "{{ form.site_description.data }}",
+                default_language: "{{ form.default_language.data }}",
+                allow_registration: "{{ form.allow_registration.data }}",
+                enable_user_activation: "{{ form.enable_user_activation.data }}",
+                mail_server: "{{ form.mail_server.data }}",
+                mail_port: "{{ form.mail_port.data }}",
+                mail_username: "{{ form.mail_username.data }}",
+                mail_password: "{{ form.mail_password.data }}",
+                mail_use_tls: "{{ form.mail_use_tls.data }}",
+                enable_ai_features: "{{ form.enable_ai_features.data }}",
+                api_provider: "{{ form.api_provider.data }}",
+                default_ai_model: "{{ form.default_ai_model.data }}",
+                api_key: "{{ form.api_key.data }}",
+                {% endif %}
+            },
+            urls: {
+                adminIndex: "{{ url_for('admin.index') }}",
+                programmingQuestions: "{{ url_for('admin.programming_questions') }}",
+                newProgrammingQuestion: "{{ url_for('admin.new_programming_question') }}",
+                users: "{{ url_for('admin.users') }}",
+                badges: "{{ url_for('admin.badges') }}",
+                newBadge: "{{ url_for('admin.new_badge') }}",
+                settings: "{{ url_for('admin.settings') }}",
+                leaderboard: "{{ url_for('main.leaderboard') }}"
+            }
         };
     </script>
-     <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
+<script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
 
     <script type="text/babel">
         const App = () => {
+           const { darkMode } = useTheme(); // hook artık çalışır
+    return (
+        <div className={darkMode ? 'dark bg-gray-900 text-white' : 'bg-white text-black'}>
+            <Header />
             const translations = window.APP_DATA.translations;
             const flashMessages = window.APP_DATA.flashMessages || [];
             const formData = window.APP_DATA.formData || {};
@@ -400,12 +399,11 @@
             );
         };
 
-             ReactDOM.render(
+const root = document.getElementById('root');
+ReactDOM.createRoot(root).render(
     <window.ThemeProvider>
         <App />
-    </window.ThemeProvider>,
-    document.getElementById('root')
-);
+    </window.ThemeProvider>
     </script>
 </body>
 </html>

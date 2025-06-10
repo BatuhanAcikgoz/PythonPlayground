@@ -106,7 +106,7 @@
                                 {/* İstatistik Kartları */}
                                 <div className="grid grid-cols-1 gap-6 mb-6">
                                        <AdminChart
-                                            title=translations.stats_last_7_days
+                                            title={translations.stats_last_7_days}
                                             chartType="stats"
                                             endpoint="/api/chart/activity-stats"
                                             days={7}
@@ -116,7 +116,7 @@
                                 {/* Grafikler - Tek Chart'ta Birleştirilmiş */}
                                 <div className="mb-6">
                                     <AdminChart
-                                        title=translations.platform_activity
+                                        title={translations.platform_activity}
                                         chartType="combined"
                                         endpoints={[
                                             {

@@ -370,3 +370,75 @@ msgstr "Yönetim Paneline Git"
 
 msgid "system_admin"
 msgstr "Sistem Yöneticisi"
+
+msgid "settings"
+msgstr "Ayarlar"
+
+msgid "account_settings"
+msgstr "Hesap Ayarları"
+
+msgid "profile_settings"
+msgstr "Profil Ayarları"
+
+msgid "notifications"
+msgstr "Bildirimler"
+
+msgid "privacy"
+msgstr "Gizlilik"
+
+msgid "profile_picture"
+msgstr "Profil Resmi"
+
+msgid "bio"
+msgstr "Hakkımda"
+
+msgid "bio_placeholder"
+msgstr "Kendinizi kısaca tanıtın (max 200 karakter)."
+
+msgid "language_preference"
+msgstr "Dil Tercihi"
+
+msgid "save_changes"
+msgstr "Değişiklikleri Kaydet"
+
+msgid "dashboard"
+msgstr "Gösterge Paneli"
+
+msgid "recent_users"
+msgstr "Son Kullanıcılar"
+
+msgid "recent_questions"
+msgstr "Son Sorular"
+
+msgid "recent_submissions"
+msgstr "Son Gönderimler"
+
+msgid "server_status"
+msgstr "Sunucu Durumu"
+
+msgid "back_to_admin"
+msgstr "Yönetim Paneline Geri Dön"
+
+msgid "general_settings"
+msgstr "Genel Ayarlar"
+
+msgid "user_settings"
+msgstr "Kullanıcı Ayarları"
+
+msgid "mail_settings"
+msgstr "Mail Ayarları"
+
+msgid "enable_ai_features"
+msgstr "Yapay Zeka Özelliklerini Etkinleştir"
+
+msgid "api_provider"
+msgstr "API Sağlayıcısı"
+
+msgid "default_ai_model"
+msgstr "Varsayılan Yapay Zeka Modeli"
+
+msgid "save_settings"
+msgstr "Ayarları Kaydet"
+
+msgid "ai_settings"
+msgstr "Yapay Zeka Ayarları"
