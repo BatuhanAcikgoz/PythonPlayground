@@ -9,6 +9,7 @@ import json
 import time
 import re
 import shutil
+import flask
 import hashlib
 import traceback
 import platform
