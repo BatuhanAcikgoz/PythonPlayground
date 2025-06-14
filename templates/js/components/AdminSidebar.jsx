@@ -21,7 +21,7 @@ const AdminSidebar = () => {
     viewSubmissions: "/admin/programming-questions"
   };
 
-  const translations = (window.APP_DATA && window.APP_DATA.translations) || {
+  const sidebar_translations = (window.APP_DATA && window.APP_DATA.sidebar_translations) || {
     dashboard: "Dashboard",
     users: "Kullanıcılar",
     manage_users: "Kullanıcıları Yönet",
@@ -65,7 +65,7 @@ const AdminSidebar = () => {
               <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10l9-7 9 7v10a2 2 0 01-2 2H5a2 2 0 01-2-2V10z" />
               </svg>
-              {translations.dashboard}
+              {sidebar_translations.dashboard}
             </a>
           </li>
 
@@ -76,23 +76,23 @@ const AdminSidebar = () => {
               <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
-              {translations.users}
+              {sidebar_translations.users}
             </div>
             <ul className="pl-10">
               <li>
                 <a className="block py-2 px-4 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                  {translations.manage_users}
+                  {sidebar_translations.manage_users}
                 </a>
               </li>
               {/* Add User ve Edit User için URL'ler ve linkler eklenebilir. */}
               {/* <li>
                 <a href={urls.addUser} className="block py-2 px-4 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                  {translations.add_user}
+                  {sidebar_translations.add_user}
                 </a>
               </li>
               <li>
                 <a href={urls.editUser} className="block py-2 px-4 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                  {translations.edit_user}
+                  {sidebar_translations.edit_user}
                 </a>
               </li> */}
             </ul>
@@ -105,27 +105,27 @@ const AdminSidebar = () => {
               <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              {translations.programming_questions}
+              {sidebar_translations.programming_questions}
             </div>
             <ul className="pl-10">
               <li>
                 <a href={urls.programmingQuestions} className="block py-2 px-4 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                  {translations.manage_questions}
+                  {sidebar_translations.manage_questions}
                 </a>
               </li>
               <li>
                 <a href={urls.newProgrammingQuestion} className="block py-2 px-4 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                  {translations.add_question}
+                  {sidebar_translations.add_question}
                 </a>
               </li>
               <li>
                 <a href={urls.viewSubmissions} className="block py-2 px-4 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                  {translations.view_submissions}
+                  {sidebar_translations.view_submissions}
                 </a>
               </li>
               <li>
                 <a href={urls.testQuestion} className="block py-2 px-4 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                  {translations.test_questions}
+                  {sidebar_translations.test_questions}
                 </a>
               </li>
             </ul>
@@ -137,17 +137,17 @@ const AdminSidebar = () => {
               <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
               </svg>
-              {translations.badges}
+              {sidebar_translations.badges}
             </div>
             <ul className="pl-10">
               <li>
                 <a href={urls.badges} className="block py-2 px-4 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                  {translations.manage_badges}
+                  {sidebar_translations.manage_badges}
                 </a>
               </li>
               <li>
                 <a href={urls.newBadge} className="block py-2 px-4 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
-                  {translations.add_badge}
+                  {sidebar_translations.add_badge}
                 </a>
               </li>
             </ul>
@@ -160,7 +160,7 @@ const AdminSidebar = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              {translations.settings}
+              {sidebar_translations.settings}
             </a>
           </li>
 
