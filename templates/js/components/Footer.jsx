@@ -32,7 +32,7 @@ const Footer = () => {
     }, [langDropdownOpen]);
 
     return (
-        <footer className="bg-gray-800 text-white py-4 mt-auto
+        <footer className="bg-gradient-to-r from-gray-800 to-gray-700 text-white py-4 mt-auto
                            dark:bg-gray-900 dark:text-gray-200"> {/* Dark mode stilleri eklendi */}
             <div className="container mx-auto px-4">
                 <div className="flex flex-col md:flex-row justify-between items-center">
