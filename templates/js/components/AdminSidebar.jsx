@@ -14,6 +14,7 @@ const AdminSidebar = () => {
     users: "/admin/users",
     programmingQuestions: "/admin/programming-questions",
     newProgrammingQuestion: "/admin/programming-questions/new",
+    newProgrammingQuestionAi: "/admin/programming-questions/new_ai",
     testQuestion: "/admin/programming-questions",
     badges: "/admin/badges",
     newBadge: "/admin/badges/new",
@@ -30,6 +31,7 @@ const AdminSidebar = () => {
     programming_questions: "Programlama Soruları",
     manage_questions: "Soruları Yönet",
     add_question: "Yeni Soru Ekle",
+    add_question_ai: "Yeni Soru Ekle (AI)",
     view_submissions: "Çözümleri Görüntüle",
     test_questions: "Soruları Test Et",
     settings: "Ayarlar",
@@ -116,6 +118,11 @@ const AdminSidebar = () => {
               <li>
                 <a href={urls.newProgrammingQuestion} className="block py-2 px-4 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
                   {sidebar_translations.add_question}
+                </a>
+              </li>
+              <li>
+                <a href={urls.newProgrammingQuestionAi} className="block py-2 px-4 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white">
+                  {sidebar_translations.add_question_ai}
                 </a>
               </li>
               <li>
