@@ -159,3 +159,254 @@ msgstr "Return to Notebook List"
 
 msgid "run"
 msgstr "Run"
+
+# New Additions
+
+msgid "view_all_questions"
+msgstr "View All Questions"
+
+msgid "new_questions"
+msgstr "New Questions"
+
+msgid "ai_summary"
+msgstr "AI Summary"
+
+msgid "all_notebooks"
+msgstr "All Notebooks"
+
+msgid "notebook_lib"
+msgstr "Notebook Library"
+
+msgid "settings"
+msgstr "Settings"
+
+msgid "account_settings"
+msgstr "Account Settings"
+
+msgid "profile_settings"
+msgstr "Profile Settings"
+
+msgid "notifications"
+msgstr "Notifications"
+
+msgid "privacy"
+msgstr "Privacy"
+
+msgid "change_username"
+msgstr "Change Username"
+
+msgid "change_email"
+msgstr "Change Email"
+
+msgid "change_password"
+msgstr "Change Password"
+
+msgid "current_password"
+msgstr "Current Password"
+
+msgid "new_password"
+msgstr "New Password"
+
+msgid "confirm_password"
+msgstr "Confirm Password"
+
+msgid "save_changes"
+msgstr "Save Changes"
+
+msgid "profile_picture"
+msgstr "Profile Picture"
+
+msgid "upload_picture"
+msgstr "Upload Picture"
+
+msgid "bio"
+msgstr "Bio"
+
+msgid "language_preference"
+msgstr "Language Preference"
+
+msgid "email_notifications"
+msgstr "Email Notifications"
+
+msgid "course_updates"
+msgstr "Course Updates"
+
+msgid "new_messages"
+msgstr "New Messages"
+
+msgid "weekly_summary"
+msgstr "Weekly Summary"
+
+msgid "stats_last_7_days"
+msgstr "Statistics from Last 7 Days"
+
+msgid "platform_activity"
+msgstr "Platform Activity Analysis"
+
+msgid "new_users"
+msgstr "New Users"
+
+msgid "solved_questions"
+msgstr "Solved Questions"
+
+msgid "mission_title"
+msgstr "Our Mission"
+
+msgid "mission_desc"
+msgstr "To provide an accessible Python learning environment for everyone."
+
+msgid "team_title"
+msgstr "Our Team"
+
+msgid "remember_me"
+msgstr "Remember me"
+
+msgid "about_title"
+msgstr "About"
+
+msgid "console_output"
+msgstr "Console Output"
+
+msgid "waiting_for_input"
+msgstr "Waiting for Input..."
+
+msgid "enter_command"
+msgstr "Enter Command"
+
+msgid "send"
+msgstr "Send"
+
+msgid "solved_problem_action"
+msgstr "solved the problem"
+
+msgid "no_badges"
+msgstr "No badges earned yet."
+
+msgid "chart_failed"
+msgstr "Chart could not be loaded"
+
+msgid "activity_label"
+msgstr "Daily Activity"
+
+msgid "statistics"
+msgstr "Statistics"
+
+msgid "activity_chart"
+msgstr "Activity Chart"
+
+msgid "badges"
+msgstr "Badges"
+
+msgid "soluted_problems_percentage"
+msgstr "Solved Problem Percentage"
+
+msgid "solved_problems"
+msgstr "Solved Problems"
+
+msgid "coding_days"
+msgstr "Coding Days"
+
+msgid "active_streak"
+msgstr "Active Streak"
+
+msgid "member_since"
+msgstr "Member Since"
+
+msgid "edit_profile"
+msgstr "Edit Profile"
+
+msgid "loading"
+msgstr "Loading..."
+
+msgid "error_loading"
+msgstr "An error occurred while loading data"
+
+msgid "no_activities"
+msgstr "No solved problems found yet"
+
+msgid "admin"
+msgstr "admin"
+
+msgid "admin_panel"
+msgstr "Admin Panel"
+
+msgid "admin_access"
+msgstr "You have admin access."
+
+msgid "go_to_admin"
+msgstr "Go to Admin Panel"
+
+msgid "system_admin"
+msgstr "System Administrator"
+
+msgid "settings"
+msgstr "Settings"
+
+msgid "account_settings"
+msgstr "Account Settings"
+
+msgid "profile_settings"
+msgstr "Profile Settings"
+
+msgid "notifications"
+msgstr "Notifications"
+
+msgid "privacy"
+msgstr "Privacy"
+
+msgid "profile_picture"
+msgstr "Profile Picture"
+
+msgid "bio"
+msgstr "Bio"
+
+msgid "bio_placeholder"
+msgstr "Briefly introduce yourself (max 200 characters)."
+
+msgid "language_preference"
+msgstr "Language Preference"
+
+msgid "save_changes"
+msgstr "Save Changes"
+
+msgid "dashboard"
+msgstr "Dashboard"
+
+msgid "recent_users"
+msgstr "Recent Users"
+
+msgid "recent_questions"
+msgstr "Recent Questions"
+
+msgid "recent_submissions"
+msgstr "Recent Submissions"
+
+msgid "server_status"
+msgstr "Server Status"
+
+msgid "back_to_admin"
+msgstr "Back to Admin"
+
+msgid "general_settings"
+msgstr "General Settings"
+
+msgid "user_settings"
+msgstr "User Settings"
+
+msgid "mail_settings"
+msgstr "Mail Settings"
+
+msgid "enable_ai_features"
+msgstr "Enable AI Features"
+
+msgid "api_provider"
+msgstr "API Provider"
+
+msgid "default_ai_model"
+msgstr "Default AI Model"
+
+msgid "save_settings"
+msgstr "Save Settings"
+
+msgid "ai_settings"
+msgstr "AI Settings"

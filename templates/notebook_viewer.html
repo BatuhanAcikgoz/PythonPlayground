@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ notebook.metadata.title if notebook.metadata and 'title' in notebook.metadata else notebook.path }} - {{ _('app_name') }}</title>    <meta charset="UTF-8">
+    <title>{{ notebook.metadata.title if notebook.metadata and 'title' in notebook.metadata else notebook.path }} - {{ _('app_name') }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -34,9 +39,33 @@
         .code-bg {
             background-color: #282a36;
         }
+        /* Dark mode için prose sınıfı için ek stiller */
+        .dark .prose {
+            color: #d1d5db;
+        }
+        .dark .prose h1, .dark .prose h2, .dark .prose h3, .dark .prose h4 {
+            color: #e5e7eb;
+        }
+        .dark .prose a {
+            color: #60a5fa;
+        }
+        .dark .prose strong {
+            color: #f3f4f6;
+        }
+        .dark .prose code {
+            color: #e5e7eb;
+            background-color: rgba(55, 65, 81, 0.5);
+        }
+        .dark .prose blockquote {
+            color: #9ca3af;
+            border-left-color: rgba(75, 85, 99, 0.5);
+        }
+        .hljs-meta .hljs-string, .hljs-regexp, .hljs-string {
+            color: #9eaebd;
+        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
     <script>
@@ -80,6 +109,7 @@
         };
     </script>
 
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
@@ -87,12 +117,13 @@
         const CodeMirrorEditor = ({ value, onChange, disabled, readOnly }) => {
             const editorRef = React.useRef(null);
             const cmRef = React.useRef(null);
+            const { darkMode } = window.useTheme();
 
             React.useEffect(() => {
                 if (editorRef.current && !cmRef.current) {
                     cmRef.current = CodeMirror.fromTextArea(editorRef.current, {
                         mode: "python",
-                        theme: "dracula",
+                        theme: "dracula", // Hem light hem dark mode için koyu tema kullanıyoruz
                         lineNumbers: true,
                         indentUnit: 4,
                         tabSize: 4,
@@ -137,13 +168,14 @@
                 run: {{ _('run')|tojson|safe }}
             };
             const urls = window.APP_DATA.urls;
+            const { darkMode } = window.useTheme();
 
             return (
-                <React.Fragment>
+                <div className={`${darkMode ? "text-white" : "text-black"} flex flex-col min-h-screen`}>
                     <Header />
                     <NotebookViewer notebook={notebook} translations={translations} urls={urls} />
                     <Footer />
-                </React.Fragment>
+                </div>
             );
         };
 
@@ -155,6 +187,7 @@
             const [commandHistory, setCommandHistory] = React.useState([]);
             const [, setHistoryIndex] = React.useState(-1);
             const [isExecuting, setIsExecuting] = React.useState(false);
+            const { darkMode } = window.useTheme();
 
             const consoleOutputRef = React.useRef(null);
 
@@ -217,14 +250,14 @@
             };
 
             return (
-                <div className="flex flex-col md:flex-row h-[calc(100vh-220px)] bg-white rounded-lg shadow-md overflow-hidden p-5">
+                <div className="flex flex-col md:flex-row h-[calc(100vh-220px)] bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden p-5">
                     {/* Notebook İçeriği */}
-                    <div className="w-full md:w-1/2 overflow-y-auto p-6 border-r border-gray-200">
+                    <div className="w-full md:w-1/2 overflow-y-auto p-6 border-r border-gray-200 dark:border-gray-700">
                         {notebook.cells.map((cell, index) => (
                             <div key={index} className={`mb-6 pl-4 ${cell.cell_type === 'code' ? 'border-l-4 border-blue-500' : 'border-l-4 border-green-500'}`}>
                                 {cell.cell_type === 'code' ? (
                                     <React.Fragment>
-                                        <pre className="bg-gray-50 p-4 rounded-md overflow-x-auto">
+                                        <pre className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md overflow-x-auto">
                                             <code>{cell.source}</code>
                                         </pre>
                                         <button
@@ -234,9 +267,9 @@
                                             {translations.run}
                                         </button>
                                         {cell.outputs && cell.outputs.length > 0 && (
-                                            <div className="mt-2 bg-gray-50 p-4 rounded-md border-l-4 border-yellow-500">
+                                            <div className="mt-2 bg-gray-50 dark:bg-gray-700 p-4 rounded-md border-l-4 border-yellow-500">
                                                 {cell.outputs.map((output, i) => (
-                                                    <pre key={i}>
+                                                    <pre key={i} className="text-gray-800 dark:text-gray-200">
                                                         {output.output_type === 'stream' && output.text}
                                                         {output.output_type === 'execute_result' && output.data['text/plain']}
                                                     </pre>
@@ -246,7 +279,7 @@
                                     </React.Fragment>
                                 ) : (
                                     <div
-                                        className="markdown-content prose"
+                                        className="markdown-content prose dark:prose-invert"
                                         dangerouslySetInnerHTML={renderMarkdown(cell.source)}
                                     ></div>
                                 )}
@@ -307,7 +340,12 @@
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(
+            <window.ThemeProvider>
+                <App />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
     </script>
 </body>
 </html>

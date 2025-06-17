@@ -1,11 +1,15 @@
 // static/js/components/Header.jsx
 const Header = () => {
     // Access global variables from window.APP_DATA
-    const isLoggedIn = window.APP_DATA.isLoggedIn;
-    const username = window.APP_DATA.userData.username;
-    const userEmail = window.APP_DATA.userData.email;
+    // **GÜNCELLEME BAŞLANGICI**
+    const appData = window.APP_DATA || {}; // window.APP_DATA yoksa boş bir obje kullan
+    const isLoggedIn = appData.isLoggedIn;
+    const username = (appData.userData && appData.userData.username) || null; // userData yoksa null
+    const userEmail = (appData.userData && appData.userData.email) || null; // userData yoksa null
+    // **GÜNCELLEME SONU**
+
     const [dropdownOpen, setDropdownOpen] = React.useState(false);
-    const headerTrans = window.APP_DATA.headerTrans || {
+    const headerTrans = appData.headerTrans || { // appData'dan çek
         home: "Ana Sayfa",
         questions: "Sorular",
         about: "Hakkında",
@@ -68,7 +72,7 @@ const Header = () => {
                             <li><a href="/questions" className="text-white hover:text-blue-200 font-medium">{headerTrans.questions}</a></li>
                             <li><a href="/leaderboard" className="text-white hover:text-blue-200 font-medium">{headerTrans.leaderboard}</a></li>
                             <li><a href="/about" className="text-white hover:text-blue-200 font-medium">{headerTrans.about}</a></li>
-                            {isLoggedIn ? (
+                            {isLoggedIn ? ( // isLoggedIn zaten kontrol edildi
                                 <React.Fragment>
                                     <li className="relative user-dropdown-container">
                                         <button
@@ -78,7 +82,7 @@ const Header = () => {
                                             }}
                                             className="flex items-center text-blue-200 hover:text-white font-medium focus:outline-none"
                                         >
-                                            <img src={getGravatarURL(userEmail)} alt="Profile" className="w-8 h-8 rounded-full mr-2" />
+                                            <img src={getGravatarURL(userEmail)} alt={headerTrans.profile} className="w-8 h-8 rounded-full mr-2" />
                                             <span>{username}</span>
                                             <svg className={`ml-1 h-4 w-4 transition-transform ${dropdownOpen ? 'transform rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>

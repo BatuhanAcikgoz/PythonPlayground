@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -15,6 +20,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <!-- Markdown Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         html, body, #root {
             height: 100%;
@@ -30,9 +38,33 @@
             border: 1px solid #e5e7eb;
             border-radius: 0.375rem;
         }
+
+        /* Dark mode için CodeMirror stilleri */
+        .dark .CodeMirror {
+            border-color: #4b5563;
+        }
+
+        /* Dark mode için markdown önizleme stilleri */
+        .dark .prose {
+            color: #e5e7eb;
+        }
+        .dark .prose h1, .dark .prose h2, .dark .prose h3,
+        .dark .prose h4, .dark .prose h5, .dark .prose h6 {
+            color: #f3f4f6;
+        }
+        .dark .prose p, .dark .prose li {
+            color: #d1d5db;
+        }
+        .dark .prose code {
+            background-color: #374151;
+            color: #e5e7eb;
+        }
+        .dark .prose pre {
+            background-color: #1f2937;
+        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
     <script>
@@ -52,237 +84,359 @@
                 logout: {{ _('logout')|tojson|safe }},
                 login: {{ _('login')|tojson|safe }},
                 register: {{ _('register')|tojson|safe }},
-                profile: {{ _('profile')|tojson|safe }},
-                settings: {{ _('settings')|tojson|safe }}
-            },
-            formData: {
-                csrf_token: "{{ form.csrf_token._value() }}"
-            },
-            formErrors: {
-                {% for field, errors in form.errors.items() %}
-                    {{ field|tojson|safe }}: {{ errors|tojson|safe }}{{ "," if not loop.last }}
-                {% endfor %}
+                profile: "Profile",
+                settings: "Settings"
             },
             footerTrans: {
                 allRights: {{ _('all_rights')|tojson|safe }},
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
-            currentLang: {{ session.get('language', 'tr')|tojson }}
+            currentLang: {{ session.get('language', 'tr')|tojson }},
+            formCsrfToken: "{{ form.csrf_token._value() }}",
+            urls: {
+                adminIndex: "{{ url_for('admin.index') }}",
+                adminProgrammingQuestions: "{{ url_for('admin.programming_questions') }}"
+            }
         };
     </script>
 
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
 
     <script type="text/babel">
-        const FormField = ({ label, id, error, children }) => {
+        {% raw %}
+        const FormField = ({ label, id, error, children, hint }) => {
             return (
-                <div className="mb-5">
-                    <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                <div className="mb-4">
+                    <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
                     {children}
-                    {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+                    {hint && <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{hint}</p>}
+                    {error && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>}
                 </div>
             );
         };
 
-        const CodeEditor = ({ id, name, defaultValue, onChange }) => {
-            const textareaRef = React.useRef(null);
+        const CodeEditor = ({ id, name, value, onChange, mode = "python" }) => {
             const editorRef = React.useRef(null);
+            const { darkMode } = window.useTheme();
 
             React.useEffect(() => {
-                if (textareaRef.current && !editorRef.current) {
-                    editorRef.current = CodeMirror.fromTextArea(textareaRef.current, {
-                        mode: "python",
+                if (!editorRef.current) {
+                    const editor = CodeMirror.fromTextArea(document.getElementById(id), {
                         lineNumbers: true,
                         indentUnit: 4,
+                        mode: mode,
+                        theme: darkMode ? "dracula" : "default",
                         lineWrapping: true
                     });
 
-                    editorRef.current.on('change', (instance) => {
-                        const value = instance.getValue();
-                        if (onChange) onChange(value);
-                        textareaRef.current.value = value;
+                    editor.on("change", (cm) => {
+                        onChange({
+                            target: {
+                                name: name,
+                                value: cm.getValue()
+                            }
+                        });
                     });
+
+                    editorRef.current = editor;
                 }
 
-                return () => {
-                    if (editorRef.current) {
-                        editorRef.current.toTextArea();
-                        editorRef.current = null;
-                    }
-                };
-            }, []);
+                // Dark mode değiştiğinde temayı güncelle
+                if (editorRef.current) {
+                    editorRef.current.setOption("theme", darkMode ? "dracula" : "default");
+                }
+            }, [darkMode]);
 
             return (
                 <textarea
-                    ref={textareaRef}
                     id={id}
                     name={name}
-                    defaultValue={defaultValue || ''}
+                    defaultValue={value}
                     className="hidden"
                 />
             );
         };
 
-        const ProgrammingQuestionForm = () => {
-            const formErrors = APP_DATA.formErrors;
+        const MarkdownPreview = ({ content }) => {
+            const [html, setHtml] = React.useState("");
+
+            React.useEffect(() => {
+                if (content) {
+                    setHtml(marked.parse(content));
+                }
+            }, [content]);
 
             return (
-                <form method="post" className="bg-white shadow-md rounded-lg p-6">
-                    <input type="hidden" name="csrf_token" value={APP_DATA.formData.csrf_token} />
+                <div
+                    className="prose prose-sm max-w-none dark:prose-invert p-4 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 overflow-auto"
+                    style={{ minHeight: "200px" }}
+                    dangerouslySetInnerHTML={{ __html: html }}
+                />
+            );
+        };
 
-                    <FormField label="Soru Başlığı" id="title" error={formErrors.title && formErrors.title[0]}>
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </FormField>
+        const NewProgrammingQuestion = () => {
+            const [formData, setFormData] = React.useState({
+                title: "",
+                description: "",
+                difficulty: "3",
+                points: "10",
+                test_code: "",
+                solution_code: "# Örnek çözüm\ndef solution(nums):\n    pass\n",
+                initial_code: "# Kodunuzu buraya yazın\ndef solution(nums):\n    pass\n",
+                test_inputs: "[\n    [1, 2, 3],\n    [4, 5, 6],\n    [7, 8, 9]\n]",
+                test_outputs: "[\n    6,\n    15,\n    24\n]"
+            });
 
-                    <FormField label="Soru Açıklaması (Markdown destekler)" id="description" error={formErrors.description && formErrors.description[0]}>
-                        <textarea
-                            id="description"
-                            name="description"
-                            rows="5"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        ></textarea>
-                    </FormField>
+            const [isPreviewMode, setIsPreviewMode] = React.useState(false);
+            const [titleError] = React.useState("");
+            const [descriptionError] = React.useState("");
+            const [testCodeError] = React.useState("");
+            const [solutionCodeError] = React.useState("");
+            const [initialCodeError] = React.useState("");
+            const [testInputsError] = React.useState("");
+            const [testOutputsError] = React.useState("");
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-                        <FormField label="Zorluk Seviyesi" id="difficulty" error={formErrors.difficulty && formErrors.difficulty[0]}>
-                            <select
-                                id="difficulty"
-                                name="difficulty"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
+            const handleInputChange = (e) => {
+                const { name, value } = e.target;
+                setFormData({
+                    ...formData,
+                    [name]: value
+                });
+            };
+
+            return (
+                <form method="post" className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+                    <input type="hidden" name="csrf_token" value={window.APP_DATA.formCsrfToken} />
+
+                    <div className="flex justify-between mb-6">
+                        <h2 className="text-xl font-bold text-gray-800 dark:text-white">Yeni Programlama Sorusu</h2>
+                        <div className="flex space-x-4">
+                            <button
+                                type="button"
+                                onClick={() => setIsPreviewMode(false)}
+                                className={`px-3 py-1 text-sm rounded ${!isPreviewMode ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white'}`}
                             >
-                                <option value="">Seçiniz...</option>
-                                <option value="1">Kolay</option>
-                                <option value="2">Orta</option>
-                                <option value="3">Zor</option>
-                                <option value="4">Çok Zor</option>
-                            </select>
-                        </FormField>
-
-                        <FormField label="Konu" id="topic" error={formErrors.topic && formErrors.topic[0]}>
-                            <select
-                                id="topic"
-                                name="topic"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
+                                Düzenle
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setIsPreviewMode(true)}
+                                className={`px-3 py-1 text-sm rounded ${isPreviewMode ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white'}`}
                             >
-                                <option value="">Seçiniz...</option>
-                                <option value="veri yapıları">Veri Yapıları</option>
-                                <option value="algoritmalar">Algoritmalar</option>
-                                <option value="string işleme">String İşleme</option>
-                                <option value="matematik">Matematik</option>
-                                <option value="sayı teorisi">Sayı Teorisi</option>
-                                <option value="arama">Arama</option>
-                                <option value="sıralama">Sıralama</option>
-                                <option value="dinamik programlama">Dinamik Programlama</option>
-                                <option value="graf teorisi">Graf Teorisi</option>
-                                <option value="olasılık">Olasılık</option>
-                                <option value="istatistik">İstatistik</option>
-                            </select>
-                        </FormField>
-
-                        <FormField label="Puan Değeri" id="points" error={formErrors.points && formErrors.points[0]}>
-                            <input
-                                type="number"
-                                id="points"
-                                name="points"
-                                min="1"
-                                max="100"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                        </FormField>
-
-                        <FormField label="Fonksiyon Adı" id="function_name" error={formErrors.function_name && formErrors.function_name[0]}>
-                            <input
-                                type="text"
-                                id="function_name"
-                                name="function_name"
-                                placeholder="örn: topla"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                        </FormField>
+                                Önizleme
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-                        <FormField label="Örnek Girdi" id="example_input" error={formErrors.example_input && formErrors.example_input[0]}>
-                            <textarea
-                                id="example_input"
-                                name="example_input"
-                                rows="3"
-                                placeholder="örn: 5, 3"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            ></textarea>
-                        </FormField>
+                    {isPreviewMode ? (
+                        <div className="space-y-6">
+                            <div className="border-b border-gray-300 dark:border-gray-600 pb-4">
+                                <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{formData.title || "Soru Başlığı"}</h1>
+                                <div className="flex space-x-3 mt-2 text-sm">
+                                    <span className="text-gray-600 dark:text-gray-300">Zorluk: {formData.difficulty}/5</span>
+                                    <span className="text-gray-600 dark:text-gray-300">Puan: {formData.points}</span>
+                                </div>
+                            </div>
 
-                        <FormField label="Örnek Çıktı" id="example_output" error={formErrors.example_output && formErrors.example_output[0]}>
-                            <textarea
-                                id="example_output"
-                                name="example_output"
-                                rows="3"
-                                placeholder="örn: 8"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            ></textarea>
-                        </FormField>
-                    </div>
+                            <div>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Açıklama</h3>
+                                <MarkdownPreview content={formData.description} />
+                            </div>
 
-                    <FormField label="Çözüm Kodu (Python)" id="solution_code" error={formErrors.solution_code && formErrors.solution_code[0]}>
-                        <div className="mb-1 text-xs text-gray-600">
-                            Fonksiyon adıyla aynı isimde bir Python fonksiyonu yazın. Bu kod, kullanıcı çözümlerini doğrulamak için kullanılacak.
+                            <div>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Başlangıç Kodu</h3>
+                                <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md font-mono text-sm overflow-auto">
+                                    <pre>{formData.initial_code}</pre>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Test Girdileri</h3>
+                                <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md font-mono text-sm overflow-auto">
+                                    <pre>{formData.test_inputs}</pre>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Beklenen Çıktılar</h3>
+                                <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-md font-mono text-sm overflow-auto">
+                                    <pre>{formData.test_outputs}</pre>
+                                </div>
+                            </div>
                         </div>
-                        <CodeEditor id="solution_code" name="solution_code" defaultValue="def fonksiyon_adi(parametre1, parametre2):\n    # Çözüm kodunu buraya yazın\n    return sonuc" />
-                    </FormField>
+                    ) : (
+                        <div>
+                            <FormField label="Başlık" id="title" error={titleError}>
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    value={formData.title}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                    required
+                                />
+                            </FormField>
 
-                    <FormField label="Test Girdileri (JSON)" id="test_inputs" error={formErrors.test_inputs && formErrors.test_inputs[0]}>
-                        <div className="mb-1 text-xs text-gray-600">
-                            Test girdilerinizi JSON array formatında yazın. Her bir test bir array olmalı ve fonksiyon parametrelerine karşılık gelmelidir.
+                            <FormField
+                                label="Açıklama (Markdown)"
+                                id="description"
+                                error={descriptionError}
+                                hint="Markdown formatında açıklama yazabilirsiniz. # Başlık, **kalın**, *italik*, ```code``` gibi."
+                            >
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    rows="5"
+                                    value={formData.description}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white font-mono"
+                                    required
+                                ></textarea>
+                            </FormField>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <FormField label="Zorluk (1-5)" id="difficulty">
+                                    <select
+                                        id="difficulty"
+                                        name="difficulty"
+                                        value={formData.difficulty}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                    >
+                                        <option value="1">1 - Çok Kolay</option>
+                                        <option value="2">2 - Kolay</option>
+                                        <option value="3">3 - Orta</option>
+                                        <option value="4">4 - Zor</option>
+                                        <option value="5">5 - Çok Zor</option>
+                                    </select>
+                                </FormField>
+
+                                <FormField label="Puan" id="points">
+                                    <input
+                                        type="number"
+                                        id="points"
+                                        name="points"
+                                        value={formData.points}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        min="1"
+                                        max="100"
+                                    />
+                                </FormField>
+                            </div>
+
+                            <FormField
+                                label="Test Kodu"
+                                id="test_code"
+                                error={testCodeError}
+                                hint="assert kullanarak çözümü test eden kod. Örnek: assert solution([1, 2, 3]) == 6"
+                            >
+                                <CodeEditor
+                                    id="test_code"
+                                    name="test_code"
+                                    value={formData.test_code}
+                                    onChange={handleInputChange}
+                                />
+                            </FormField>
+
+                            <FormField
+                                label="Çözüm Kodu"
+                                id="solution_code"
+                                error={solutionCodeError}
+                                hint="Sorunun doğru çözümü."
+                            >
+                                <CodeEditor
+                                    id="solution_code"
+                                    name="solution_code"
+                                    value={formData.solution_code}
+                                    onChange={handleInputChange}
+                                />
+                            </FormField>
+
+                            <FormField
+                                label="Başlangıç Kodu"
+                                id="initial_code"
+                                error={initialCodeError}
+                                hint="Kullanıcıya gösterilecek başlangıç kodu."
+                            >
+                                <CodeEditor
+                                    id="initial_code"
+                                    name="initial_code"
+                                    value={formData.initial_code}
+                                    onChange={handleInputChange}
+                                />
+                            </FormField>
+
+                            <FormField
+                                label="Test Girdileri (JSON dizisi)"
+                                id="test_inputs"
+                                error={testInputsError}
+                                hint="Her bir test durumu için girdiler. JSON dizisi formatında olmalıdır."
+                            >
+                                <textarea
+                                    id="test_inputs"
+                                    name="test_inputs"
+                                    rows="5"
+                                    value={formData.test_inputs}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                    required
+                                ></textarea>
+                            </FormField>
+
+                            <FormField
+                                label="Beklenen Çıktılar (JSON dizisi)"
+                                id="test_outputs"
+                                error={testOutputsError}
+                                hint="Her bir test durumu için beklenen çıktılar. JSON dizisi formatında olmalıdır."
+                            >
+                                <textarea
+                                    id="test_outputs"
+                                    name="test_outputs"
+                                    rows="5"
+                                    value={formData.test_outputs}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                    required
+                                ></textarea>
+                            </FormField>
                         </div>
-                        <textarea
-                            id="test_inputs"
-                            name="test_inputs"
-                            rows="5"
-                            placeholder='[
-    [5, 3],
-    [10, 20],
-    [0, 0]
-]'
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        ></textarea>
-                    </FormField>
+                    )}
 
                     <div className="flex justify-between mt-8">
-                        <a href="{{ url_for('admin.programming_questions') }}" className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md">İptal</a>
-                        <button type="submit" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">Soruyu Kaydet</button>
+                        <a href={window.APP_DATA.urls.adminProgrammingQuestions} className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md">İptal</a>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
+                        >
+                            Kaydet
+                        </button>
                     </div>
                 </form>
             );
         };
 
         const App = () => {
+            const { darkMode } = window.useTheme();
+
             return (
                 <React.Fragment>
                     <Header />
                     <div className="flex flex-grow">
                         <AdminSidebar />
+                        <main className="flex-grow p-6 bg-gray-50 dark:bg-gray-900">
+                            <div className="max-w-4xl mx-auto">
+                                <div className="mb-6">
+                                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Yeni Programlama Sorusu</h1>
+                                    <p className="text-gray-600 dark:text-gray-400">Öğrencilerin çözeceği yeni bir programlama sorusu ekleyin.</p>
+                                </div>
 
-                        <main className="flex-grow p-6">
-                            <div className="container mx-auto max-w-6xl">
-                                <h1 className="text-2xl font-bold mb-6">Yeni Programlama Sorusu</h1>
-
-                                <ProgrammingQuestionForm />
+                                <NewProgrammingQuestion />
                             </div>
                         </main>
                     </div>
@@ -291,7 +445,32 @@
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(
+            <window.ThemeProvider>
+                <App />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
+        {% endraw %}
+    </script>
+
+    <!-- Flash mesajları için script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    const container = document.querySelector('main > div');
+                    const titleElement = container.querySelector('h1').parentNode;
+
+                    {% for category, message in messages %}
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `p-4 mb-6 rounded-lg ${category === 'success' ? 'bg-green-100 dark:bg-green-800/30 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-700' : 'bg-red-100 dark:bg-red-800/30 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-700'}`;
+                        messageDiv.textContent = '{{ message }}';
+                        container.insertBefore(messageDiv, titleElement.nextSibling);
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        });
     </script>
 </body>
 </html>

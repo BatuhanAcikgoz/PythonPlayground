@@ -159,3 +159,286 @@ msgstr "Notebook Listesine Dön"
 
 msgid "run"
 msgstr "Çalıştır"
+
+# Yeni eklenen çeviriler
+msgid "view_all_questions"
+msgstr "Tüm Soruları Gör"
+
+msgid "new_questions"
+msgstr "Yeni Sorular"
+
+msgid "ai_summary"
+msgstr "AI Özeti"
+
+msgid "all_notebooks"
+msgstr "Tüm Notebooklar"
+
+msgid "notebook_lib"
+msgstr "Notebook Kütüphanesi"
+
+msgid "account_settings"
+msgstr "Hesap Ayarları"
+
+msgid "profile_settings"
+msgstr "Profil Ayarları"
+
+msgid "language_settings"
+msgstr "Dil Ayarları"
+
+msgid "security"
+msgstr "Güvenlik"
+
+msgid "change_username"
+msgstr "Kullanıcı Adını Değiştir"
+
+msgid "change_email"
+msgstr "E-posta Adresini Değiştir"
+
+msgid "change_password"
+msgstr "Şifreyi Değiştir"
+
+msgid "current_password"
+msgstr "Mevcut Şifre"
+
+msgid "new_password"
+msgstr "Yeni Şifre"
+
+msgid "confirm_password"
+msgstr "Şifreyi Onayla"
+
+msgid "save_changes"
+msgstr "Değişiklikleri Kaydet"
+
+msgid "notifications"
+msgstr "Bildirimler"
+
+msgid "email_notifications"
+msgstr "E-posta Bildirimleri"
+
+msgid "course_updates"
+msgstr "Kurs Güncellemeleri"
+
+msgid "new_messages"
+msgstr "Yeni Mesajlar"
+
+msgid "weekly_summary"
+msgstr "Haftalık Özet"
+
+msgid "mark_all_as_read"
+msgstr "Tümünü Okundu Olarak İşaretle"
+
+msgid "no_notifications"
+msgstr "Herhangi bir bildiriminiz yok"
+
+msgid "privacy"
+msgstr "Gizlilik"
+
+msgid "delete_account"
+msgstr "Hesabı Sil"
+
+msgid "confirm_delete_account"
+msgstr "Hesabınızı silmek istediğinizden emin misiniz?"
+
+msgid "account_deleted"
+msgstr "Hesabınız başarıyla silindi."
+
+msgid "loading"
+msgstr "Yükleniyor..."
+
+msgid "error_occurred"
+msgstr "Bir hata oluştu"
+
+msgid "try_again"
+msgstr "Lütfen tekrar deneyin"
+
+msgid "no_data"
+msgstr "Gösterilecek veri bulunamadı"
+
+msgid "success"
+msgstr "İşlem başarılı"
+
+msgid "cancelled"
+msgstr "İptal edildi"
+
+msgid "stats_last_7_days"
+msgstr "Son 7 Gün İstatistikleri"
+
+msgid "platform_activity"
+msgstr "Platform Aktivite Analizi"
+
+msgid "new_users"
+msgstr "Yeni Kullanıcılar"
+
+msgid "solved_questions"
+msgstr "Çözülen Sorular"
+
+msgid "about_platform"
+msgstr "Platform Hakkında"
+
+msgid "about_platform_desc"
+msgstr "PythonPlayground öğrenmenizi kolaylaştırır."
+
+msgid "about_platform_features"
+msgstr "İnteraktif defterler, anında çalıştırma, Türkçe içerik"
+
+msgid "mission_title"
+msgstr "Misyonumuz"
+
+msgid "mission_desc"
+msgstr "Herkese erişilebilir bir Python öğrenme ortamı sağlamak."
+
+msgid "team_title"
+msgstr "Ekibimiz"
+
+msgid "remember_me"
+msgstr "Beni hatırla"
+
+msgid "about_title"
+msgstr "Hakkında"
+
+msgid "console_output"
+msgstr "Çıktı Konsolu"
+
+msgid "waiting_for_input"
+msgstr "Girdi Bekleniyor..."
+
+msgid "enter_command"
+msgstr "Komut Gir"
+
+msgid "send"
+msgstr "Gönder"
+
+msgid "solved_problem_action"
+msgstr "problemini çözdü"
+
+msgid "no_badges"
+msgstr "Henüz rozet kazanılmamış."
+
+msgid "chart_failed"
+msgstr "Grafik yüklenemedi"
+
+msgid "activity_label"
+msgstr "Günlük Aktivite"
+
+msgid "statistics"
+msgstr "İstatistikler"
+
+msgid "activity_chart"
+msgstr "Aktivite Grafiği"
+
+msgid "badges"
+msgstr "Rozetler"
+
+msgid "soluted_problems_percentage"
+msgstr "Çözülen Soru Yüzdesi"
+
+msgid "solved_problems"
+msgstr "Çözülen Problemler"
+
+msgid "coding_days"
+msgstr "Kodlama Günleri"
+
+msgid "active_streak"
+msgstr "Aktif Gün Serisi"
+
+msgid "member_since"
+msgstr "Üyelik Tarihi"
+
+msgid "edit_profile"
+msgstr "Profili Düzenle"
+
+msgid "loading"
+msgstr "Yükleniyor..."
+
+msgid "error_loading"
+msgstr "Veri yüklenirken bir hata oluştu"
+
+msgid "no_activities"
+msgstr "Henüz çözülmüş problem bulunmuyor"
+
+msgid "admin"
+msgstr "yönetici"
+
+msgid "admin_panel"
+msgstr "Yönetim Paneli"
+
+msgid "admin_access"
+msgstr "Yönetici erişimine sahipsiniz."
+
+msgid "go_to_admin"
+msgstr "Yönetim Paneline Git"
+
+msgid "system_admin"
+msgstr "Sistem Yöneticisi"
+
+msgid "settings"
+msgstr "Ayarlar"
+
+msgid "account_settings"
+msgstr "Hesap Ayarları"
+
+msgid "profile_settings"
+msgstr "Profil Ayarları"
+
+msgid "notifications"
+msgstr "Bildirimler"
+
+msgid "privacy"
+msgstr "Gizlilik"
+
+msgid "profile_picture"
+msgstr "Profil Resmi"
+
+msgid "bio"
+msgstr "Hakkımda"
+
+msgid "bio_placeholder"
+msgstr "Kendinizi kısaca tanıtın (max 200 karakter)."
+
+msgid "language_preference"
+msgstr "Dil Tercihi"
+
+msgid "save_changes"
+msgstr "Değişiklikleri Kaydet"
+
+msgid "dashboard"
+msgstr "Gösterge Paneli"
+
+msgid "recent_users"
+msgstr "Son Kullanıcılar"
+
+msgid "recent_questions"
+msgstr "Son Sorular"
+
+msgid "recent_submissions"
+msgstr "Son Gönderimler"
+
+msgid "server_status"
+msgstr "Sunucu Durumu"
+
+msgid "back_to_admin"
+msgstr "Yönetim Paneline Geri Dön"
+
+msgid "general_settings"
+msgstr "Genel Ayarlar"
+
+msgid "user_settings"
+msgstr "Kullanıcı Ayarları"
+
+msgid "mail_settings"
+msgstr "Mail Ayarları"
+
+msgid "enable_ai_features"
+msgstr "Yapay Zeka Özelliklerini Etkinleştir"
+
+msgid "api_provider"
+msgstr "API Sağlayıcısı"
+
+msgid "default_ai_model"
+msgstr "Varsayılan Yapay Zeka Modeli"
+
+msgid "save_settings"
+msgstr "Ayarları Kaydet"
+
+msgid "ai_settings"
+msgstr "Yapay Zeka Ayarları"

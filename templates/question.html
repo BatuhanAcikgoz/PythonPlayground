@@ -8,6 +8,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -15,6 +20,7 @@
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <!-- CodeMirror for code editing -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
     <!-- Markdown -->
@@ -22,7 +28,7 @@
     <!-- DOMPurify for HTML sanitization -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.1/purify.min.js"></script>
     <style>
-        html, body, #root {
+html, body, #root {
             height: 100%;
         }
         #root {
@@ -36,11 +42,18 @@
             border-radius: 4px;
             font-size: 14px;
         }
+        .dark .CodeMirror {
+            border-color: #4b5563;
+        }
         .markdown-content pre {
             background-color: #f4f4f8;
             padding: 1em;
             border-radius: 4px;
             overflow-x: auto;
+        }
+        .dark .markdown-content pre {
+            background-color: #374151;
+            color: #e5e7eb;
         }
         .markdown-content h1, .markdown-content h2, .markdown-content h3 {
             margin-top: 1em;
@@ -54,13 +67,47 @@
             margin-bottom: 1em;
             padding-left: 2em;
         }
+
+        /* PyCharm Darcula benzeri syntax highlighting renkleri */
+        .dark .cm-s-dracula .cm-keyword { color: #CC7832; } /* if, def, import gibi anahtar kelimeler */
+        .dark .cm-s-dracula .cm-operator { color: #A9B7C6; } /* operatörler: +, -, *, / */
+        .dark .cm-s-dracula .cm-variable { color: #A9B7C6; } /* değişkenler */
+        .dark .cm-s-dracula .cm-variable-2 { color: #A9B7C6; } /* ikincil değişkenler */
+        .dark .cm-s-dracula .cm-variable-3 { color: #9876AA; } /* üçüncül değişkenler */
+        .dark .cm-s-dracula .cm-builtin { color: #8888C6; } /* built-in fonksiyonlar: len(), print() */
+        .dark .cm-s-dracula .cm-atom { color: #9876AA; } /* atomlar: True, False, None */
+        .dark .cm-s-dracula .cm-number { color: #6897BB; } /* sayılar */
+        .dark .cm-s-dracula .cm-def { color: #FFC66D; } /* fonksiyon tanımlamaları */
+        .dark .cm-s-dracula .cm-string { color: #6A8759; } /* string'ler */
+        .dark .cm-s-dracula .cm-string-2 { color: #6A8759; } /* diğer string'ler */
+        .dark .cm-s-dracula .cm-comment { color: #808080; } /* yorumlar */
+        .dark .cm-s-dracula .cm-tag { color: #BBB529; } /* tag'ler (decorator'lar) */
+        .dark .cm-s-dracula .cm-meta { color: #BBB529; } /* meta bilgiler */
+        .dark .cm-s-dracula .cm-attribute { color: #BABABA; } /* öznitelikler */
+        .dark .cm-s-dracula .cm-property { color: #FFC66D; } /* property'ler */
+        .dark .cm-s-dracula .cm-qualifier { color: #A9B7C6; } /* niteleyiciler */
+        .dark .cm-s-dracula .cm-error { color: #FF0000; } /* hatalar */
+        .dark .CodeMirror-cursor { border-left: 1px solid #A9B7C6; }
+        .dark .CodeMirror-selected { background: rgba(33, 66, 131, 0.5); } /* seçili metin */
+        .dark .CodeMirror-matchingbracket { background: rgba(70, 90, 120, 0.3); color: #FFEF28 !important; font-weight: bold; }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 dark:text-white">
     <div id="root"></div>
 
     <script>
         window.APP_DATA = {
+            // Flash mesajlarını ekle
+            flashMessages: [
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        {
+                            category: "{{ category }}",
+                            message: "{{ message }}"
+                        },
+                    {% endfor %}
+                {% endwith %}
+            ],
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
             userData: {
                 username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
@@ -104,7 +151,7 @@
             }
         };
     </script>
-
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
@@ -162,42 +209,48 @@
 };
 
         const CodeEditor = ({ id, name, defaultValue, onChange }) => {
-            const editorRef = React.useRef(null);
-            const textareaRef = React.useRef(null);
+    const editorRef = React.useRef(null);
+    const textareaRef = React.useRef(null);
+    const { darkMode } = window.useTheme();
 
-            React.useEffect(() => {
-                if (textareaRef.current && !editorRef.current) {
-                    const editor = CodeMirror.fromTextArea(textareaRef.current, {
-                        mode: "python",
-                        lineNumbers: true,
-                        indentUnit: 4,
-                        lineWrapping: true,
-                        tabSize: 4,
-                        autofocus: true,
-                        theme: "default"
-                    });
+    React.useEffect(() => {
+        if (textareaRef.current && !editorRef.current) {
+            const editor = CodeMirror.fromTextArea(textareaRef.current, {
+                mode: "python",
+                lineNumbers: true,
+                indentUnit: 4,
+                lineWrapping: true,
+                tabSize: 4,
+                autofocus: true,
+                theme: darkMode ? "dracula" : "default"  // midnight yerine dracula kullan
+            });
 
-                    editor.on("change", () => {
-                        const value = editor.getValue();
-                        onChange(value);
-                    });
+            editor.on("change", () => {
+                const value = editor.getValue();
+                onChange(value);
+            });
 
-                    editorRef.current = editor;
-                }
-            }, []);
+            editorRef.current = editor;
+        }
 
-            return (
-                <div className="w-full">
-                    <textarea
-                        id={id}
-                        name={name}
-                        ref={textareaRef}
-                        defaultValue={defaultValue}
-                        className="hidden"
-                    />
-                </div>
-            );
-        };
+        // Dark mode değiştiğinde editör temasını güncelle
+        if (editorRef.current) {
+            editorRef.current.setOption("theme", darkMode ? "dracula" : "default");
+        }
+    }, [darkMode]);
+
+    return (
+        <div className="w-full">
+            <textarea
+                id={id}
+                name={name}
+                ref={textareaRef}
+                defaultValue={defaultValue}
+                className="hidden"
+            />
+        </div>
+    );
+};
 
         const TestResultDisplay = ({ result }) => {
             if (!result) return null;
@@ -216,10 +269,12 @@
                 !syntaxErrors.includes(e) && !runtimeErrors.includes(e) && !logicErrors.includes(e)) : [];
 
             return (
-                <div className={`mt-4 p-4 rounded-md ${result.is_correct ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                <div className={`mt-4 p-4 rounded-md ${result.is_correct
+                    ? 'bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800'
+                    : 'bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800'}`}>
                     <div className="flex items-center mb-4">
                         <span className={`mr-2 flex-shrink-0 h-5 w-5 rounded-full ${result.is_correct ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                        <span className="font-medium">{result.is_correct ? 'Tüm testler başarılı.' : 'Bazı testlerden geçilemedi.'}</span>
+                        <span className="font-medium dark:text-white">{result.is_correct ? 'Tüm testler başarılı.' : 'Bazı testlerden geçilemedi.'}</span>
                     </div>
 
                     {/* Test istatistikleri (dairesel gösterge) */}
@@ -229,7 +284,7 @@
                                 <path
                                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                                     fill="none"
-                                    stroke="#eee"
+                                    stroke={darkMode ? "#444" : "#eee"}
                                     strokeWidth="3"
                                     strokeDasharray="100, 100"
                                 />
@@ -240,16 +295,16 @@
                                     strokeWidth="3"
                                     strokeDasharray={`${passRate}, 100`}
                                 />
-                                <text x="18" y="20.5" textAnchor="middle" fontSize="10" fill="#444">
+                                <text x="18" y="20.5" textAnchor="middle" fontSize="10" fill={darkMode ? "#e5e7eb" : "#444"}>
                                     {passRate}%
                                 </text>
                             </svg>
                         </div>
                         <div className="flex-1 ml-4">
-                            <div className="text-sm">
+                            <div className="text-sm dark:text-gray-300">
                                 <p>Toplam test: <span className="font-medium">{totalTests}</span></p>
-                                <p>Başarılı test: <span className="font-medium text-green-600">{passedTests}</span></p>
-                                <p>Başarısız test: <span className="font-medium text-red-600">{failedTests}</span></p>
+                                <p>Başarılı test: <span className="font-medium text-green-600 dark:text-green-400">{passedTests}</span></p>
+                                <p>Başarısız test: <span className="font-medium text-red-600 dark:text-red-400">{failedTests}</span></p>
                                 {result.execution_time !== undefined && (
                                     <p>Çalışma süresi: <span className="font-medium">
                                         {(result.execution_time === 0 ? "0.00" : result.execution_time.toFixed(2))} ms
@@ -261,13 +316,13 @@
 
                     {/* Hata kategorileri */}
                     {!result.is_correct && (
-                        <div className="mt-3 pt-3 border-t border-red-200">
-                            <h4 className="font-medium mb-2">Hatalar</h4>
+                        <div className="mt-3 pt-3 border-t border-red-200 dark:border-red-800">
+                            <h4 className="font-medium mb-2 dark:text-white">Hatalar</h4>
 
                             {syntaxErrors.length > 0 && (
                                 <div className="mb-3">
-                                    <h5 className="text-sm font-medium text-orange-600">Sözdizimi Hataları:</h5>
-                                    <ul className="list-disc pl-5 text-sm text-orange-700">
+                                    <h5 className="text-sm font-medium text-orange-600 dark:text-orange-400">Sözdizimi Hataları:</h5>
+                                    <ul className="list-disc pl-5 text-sm text-orange-700 dark:text-orange-300">
                                         {syntaxErrors.map((error, index) => (
                                             <li key={`syntax-${index}`}>{error}</li>
                                         ))}
@@ -277,8 +332,8 @@
 
                             {runtimeErrors.length > 0 && (
                                 <div className="mb-3">
-                                    <h5 className="text-sm font-medium text-red-600">Çalışma Zamanı Hataları:</h5>
-                                    <ul className="list-disc pl-5 text-sm text-red-700">
+                                    <h5 className="text-sm font-medium text-red-600 dark:text-red-400">Çalışma Zamanı Hataları:</h5>
+                                    <ul className="list-disc pl-5 text-sm text-red-700 dark:text-red-300">
                                         {runtimeErrors.map((error, index) => (
                                             <li key={`runtime-${index}`}>{error}</li>
                                         ))}
@@ -288,8 +343,8 @@
 
                             {logicErrors.length > 0 && (
                                 <div className="mb-3">
-                                    <h5 className="text-sm font-medium text-blue-600">Mantık Hataları:</h5>
-                                    <ul className="list-disc pl-5 text-sm text-blue-700">
+                                    <h5 className="text-sm font-medium text-blue-600 dark:text-blue-400">Mantık Hataları:</h5>
+                                    <ul className="list-disc pl-5 text-sm text-blue-700 dark:text-blue-300">
                                         {logicErrors.map((error, index) => (
                                             <li key={`logic-${index}`}>{error}</li>
                                         ))}
@@ -299,8 +354,8 @@
 
                             {otherErrors.length > 0 && (
                                 <div>
-                                    <h5 className="text-sm font-medium text-gray-600">Diğer Hatalar:</h5>
-                                    <ul className="list-disc pl-5 text-sm text-gray-700">
+                                    <h5 className="text-sm font-medium text-gray-600 dark:text-gray-400">Diğer Hatalar:</h5>
+                                    <ul className="list-disc pl-5 text-sm text-gray-700 dark:text-gray-300">
                                         {otherErrors.map((error, index) => (
                                             <li key={`other-${index}`}>{error}</li>
                                         ))}
@@ -318,6 +373,7 @@
             const [code, setCode] = React.useState(defaultCode);
             const [testResult, setTestResult] = React.useState(null);
             const [loading, setLoading] = React.useState(false);
+            const { darkMode } = window.useTheme();
 
             const handleCodeChange = (value) => {
                 setCode(value);
@@ -355,18 +411,18 @@
                 <div className="container mx-auto p-4 max-w-8xl">
                     <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
                         <div>
-                            <h1 className="text-2xl font-bold">{question.title}</h1>
+                            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{question.title}</h1>
                             <div className="flex items-center mt-2 space-x-4">
                                 <DifficultyBadge level={question.difficulty} />
                                 <Topics topic={question.topic} />
-                                <span className="text-sm text-gray-600">{question.points} puan</span>
+                                <span className="text-sm text-gray-600 dark:text-gray-300">{question.points} puan</span>
                             </div>
                         </div>
                         <div className="mt-3 md:mt-0 space-x-2">
-                            <a href={urls.questionsList} className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm">
+                            <a href={urls.questionsList} className="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600 text-sm">
                                 Soru Listesi
                             </a>
-                            <a href={urls.mySubmissions} className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 text-sm">
+                            <a href={urls.mySubmissions} className="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600 text-sm">
                                 Çözümlerim
                             </a>
                         </div>
@@ -374,31 +430,31 @@
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Sol taraf: Soru açıklaması */}
-                        <div className="bg-white shadow-md rounded-lg p-6">
-                            <h2 className="text-lg font-semibold mb-4">Problem Tanımı</h2>
+                        <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+                            <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Problem Tanımı</h2>
                             <div
-                                className="prose markdown-content"
+                                className="prose dark:prose-invert markdown-content dark:text-gray-200"
                                 dangerouslySetInnerHTML={% raw %}{{ __html: DOMPurify.sanitize(marked.parse(question.description)) }}{% endraw %}                            />
 
                             <div className="mt-6">
-                                <h3 className="text-md font-semibold mb-2">Örnek Girdi</h3>
-                                <pre className="bg-gray-50 p-3 rounded border text-sm whitespace-pre-wrap">{question.example_input}</pre>
+                                <h3 className="text-md font-semibold mb-2 text-gray-800 dark:text-white">Örnek Girdi</h3>
+                                <pre className="bg-gray-50 dark:bg-gray-700 p-3 rounded border border-gray-200 dark:border-gray-600 text-sm whitespace-pre-wrap dark:text-gray-200">{question.example_input}</pre>
                             </div>
 
                             <div className="mt-4">
-                                <h3 className="text-md font-semibold mb-2">Örnek Çıktı</h3>
-                                <pre className="bg-gray-50 p-3 rounded border text-sm whitespace-pre-wrap">{question.example_output}</pre>
+                                <h3 className="text-md font-semibold mb-2 text-gray-800 dark:text-white">Örnek Çıktı</h3>
+                                <pre className="bg-gray-50 dark:bg-gray-700 p-3 rounded border border-gray-200 dark:border-gray-600 text-sm whitespace-pre-wrap dark:text-gray-200">{question.example_output}</pre>
                             </div>
 
-                            <div className="mt-6 text-sm text-gray-600">
-                                <p>Fonksiyon adı: <code className="bg-gray-100 px-1 py-0.5 rounded font-mono">{question.function_name}</code></p>
+                            <div className="mt-6 text-sm text-gray-600 dark:text-gray-300">
+                                <p>Fonksiyon adı: <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded font-mono">{question.function_name}</code></p>
                             </div>
                         </div>
 
                         {/* Sağ taraf: Kod editörü ve sonuçlar */}
                         <div>
-                            <div className="bg-white shadow-md rounded-lg p-6">
-                                <h2 className="text-lg font-semibold mb-4">Çözümünüz</h2>
+                            <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+                                <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Çözümünüz</h2>
 
                                 <form action={urls.submitSolution} method="post" className="space-y-4">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -433,7 +489,7 @@
 
                                         <button
                                             type="submit"
-                                            className={`px-4 py-2 text-white rounded ${testResult && testResult.is_correct ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'}`}
+                                            className={`px-4 py-2 text-white rounded ${testResult && testResult.is_correct ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'}`}
                                             disabled={!testResult || !testResult.is_correct}
                                         >
                                             Çözümü Gönder
@@ -454,21 +510,22 @@
         const App = () => {
             // Flash mesajları
             const flashMessages = window.APP_DATA.flashMessages || [];
+            const { darkMode } = window.useTheme();
 
             return (
-                <React.Fragment>
+                <div className={`${darkMode ? "text-white" : "text-black"} flex flex-col min-h-screen`}>
                     <Header />
 
-                    <main className="flex-grow p-4">
+                    <main className="flex-grow p-4 bg-gray-50 dark:bg-gray-900">
                         {/* Flash Mesajları */}
                         {flashMessages.length > 0 && (
                             <div className="container mx-auto max-w-8xl mb-4">
                                 {flashMessages.map((flash, index) => (
                                     <div key={index} className={`mb-4 p-4 rounded-lg ${
-                                        flash.category === 'success' ? 'bg-green-100 text-green-800' :
-                                        flash.category === 'warning' ? 'bg-yellow-100 text-yellow-800' :
-                                        flash.category === 'error' ? 'bg-red-100 text-red-800' :
-                                        'bg-blue-100 text-blue-800'
+                                        flash.category === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300' :
+                                        flash.category === 'warning' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300' :
+                                        flash.category === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300' :
+                                        'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
                                     }`}>
                                         {flash.message}
                                     </div>
@@ -480,11 +537,16 @@
                     </main>
 
                     <Footer />
-                </React.Fragment>
+                </div>
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+     ReactDOM.render(
+    <window.ThemeProvider>
+        <App />
+    </window.ThemeProvider>,
+    document.getElementById('root')
+);
     </script>
 </body>
 </html>

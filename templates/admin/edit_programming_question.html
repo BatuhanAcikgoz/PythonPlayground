@@ -1,76 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Programlama Sorusu Düzenle - Admin Panel</title>
+    <title>{{ _('edit_user') }} - {{ _('admin_panel') }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <!-- Babel for JSX -->
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <!-- CodeMirror for code editing -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
     <style>
         html, body, #root {
             height: 100%;
-            margin: 0;
-            padding: 0;
         }
         #root {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
-        .CodeMirror {
-            height: auto;
-            min-height: 200px;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.375rem;
-            font-family: monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            padding: 4px;
-        }
-        .form-label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: #374151;
-        }
-        .form-input {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.375rem;
-            background-color: #fff;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        .error-text {
-            color: #dc2626;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
     <script>
         window.APP_DATA = {
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
-            userData: {
-                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
-                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
-            },
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
@@ -81,397 +43,238 @@
                 logout: {{ _('logout')|tojson|safe }},
                 login: {{ _('login')|tojson|safe }},
                 register: {{ _('register')|tojson|safe }},
-                profile: "Profil",
-                settings: "Ayarlar"
+                profile: {{ _('profile')|tojson|safe }},
+                settings: {{ _('settings')|tojson|safe }}
             },
-            flashMessages: [
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% for category, message in messages %}
-                        {
-                            "category": "{{ category }}",
-                            "message": {{ message|tojson|safe }}
-                        }{% if not loop.last %},{% endif %}
-                    {% endfor %}
-                {% endwith %}
-            ],
-            formData: {
-                csrf_token: "{{ form.csrf_token._value() }}",
-                title: {{ question.title|tojson|safe }},
-                description: {{ question.description|tojson|safe }},
-                difficulty: {{ question.difficulty|tojson }},
-                points: {{ question.points|tojson }},
-                topic: {{ question.topic|tojson|safe }},
-                function_name: {{ question.function_name|tojson|safe }},
-                example_input: {{ question.example_input|tojson|safe }},
-                example_output: {{ question.example_output|tojson|safe }},
-                solution_code: {{ question.solution_code|tojson|safe }},
-                test_inputs: {{ question.test_inputs|tojson|safe }}
-            },
-            formErrors: {
-                {% for field, errors in form.errors.items() %}
-                    "{{ field }}": {{ errors|tojson }},
-                {% endfor %}
-            },
-            questionId: {{ question.id }},
             footerTrans: {
                 allRights: {{ _('all_rights')|tojson|safe }},
                 platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
             currentLang: {{ session.get('language', 'tr')|tojson }},
-            // URL'leri doğrudan string olarak tanımlayarak Flask konvertör hatasını önleme
-            urls: {
-                adminIndex: "{{ url_for('admin.index') }}",
-                programmingQuestions: "{{ url_for('admin.programming_questions') }}",
-                viewQuestion: "/admin/programming-questions/",
-                deleteQuestion: "/admin/programming-questions/",
-                testQuestion: "/admin/programming-questions/",
-                questionSubmissions: "/admin/programming-questions/"
+            userData: {
+                username: {{ user.username|tojson }},
+                email: {{ user.email|tojson }},
+                roles: {{ user.roles|map(attribute='id')|list|tojson }}
+            },
+            formData: {
+                csrf_token: "{{ form.csrf_token._value() }}",
+                roles: {{ roles|tojson }}
             }
         };
     </script>
 
+    <!-- Önce ThemeContext.js yükleniyor -->
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
+    <!-- Sonra diğer bileşenler yükleniyor -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
 
     <script type="text/babel">
-        const FormField = ({ label, id, error, children }) => {
-            return (
-                <div className="mb-6">
-                    <label htmlFor={id} className="form-label text-sm font-medium text-gray-700 mb-1">{label}</label>
-                    {children}
-                    {error && <p className="error-text">{error}</p>}
-                </div>
-            );
-        };
+        const App = () => {
+            const { darkMode } = window.useTheme();
 
-        const CodeEditor = ({ id, name, defaultValue, onChange }) => {
-            const textareaRef = React.useRef(null);
-            const editorRef = React.useRef(null);
+            // Çeviri metinleri
+            const translations = {
+                edit_user: {{ _('edit_user')|tojson|safe }} || "Kullanıcı Düzenle",
+                back_to_users: {{ _('back_to_users')|tojson|safe }} || "Kullanıcılara Dön",
+                username_label: {{ form.username.label.text|tojson|safe }} || "Kullanıcı Adı",
+                email_label: {{ form.email.label.text|tojson|safe }} || "E-posta",
+                password_label: {{ form.password.label.text|tojson|safe }} || "Şifre",
+                roles_label: {{ form.roles.label.text|tojson|safe }} || "Roller",
+                leave_blank: {{ _('leave_blank_to_keep_current')|tojson|safe }} || "Mevcut şifreyi korumak için boş bırakın",
+                submit_label: {{ form.submit.label.text|tojson|safe }} || "Kaydet"
+            };
 
-            React.useEffect(() => {
-                if (textareaRef.current) {
-                    editorRef.current = CodeMirror.fromTextArea(textareaRef.current, {
-                        mode: "python",
-                        theme: "default",
-                        lineNumbers: true,
-                        indentUnit: 4,
-                        tabSize: 4,
-                        lineWrapping: true
+            // Form state'i
+            const [formData, setFormData] = React.useState({
+                username: window.APP_DATA.userData.username,
+                email: window.APP_DATA.userData.email,
+                password: "",
+                roles: window.APP_DATA.userData.roles || []
+            });
+
+            // Form hataları state'i
+            const [errors, setErrors] = React.useState({
+                username: [],
+                email: [],
+                password: [],
+                roles: []
+            });
+
+            const handleInputChange = (e) => {
+                const { name, value } = e.target;
+                setFormData({
+                    ...formData,
+                    [name]: value
+                });
+            };
+
+            const handleRoleChange = (roleId) => {
+                const roleIdInt = parseInt(roleId);
+
+                if (formData.roles.includes(roleIdInt)) {
+                    setFormData({
+                        ...formData,
+                        roles: formData.roles.filter(id => id !== roleIdInt)
                     });
-
-                    editorRef.current.on('change', (editor) => {
-                        const value = editor.getValue();
-                        textareaRef.current.value = value;
-                        if (onChange) {
-                            onChange(value);
-                        }
+                } else {
+                    setFormData({
+                        ...formData,
+                        roles: [...formData.roles, roleIdInt]
                     });
                 }
+            };
 
-                return () => {
-                    if (editorRef.current) {
-                        editorRef.current.toTextArea();
-                    }
-                };
-            }, []);
-
-            return (
-                <textarea
-                    id={id}
-                    name={name}
-                    ref={textareaRef}
-                    defaultValue={defaultValue}
-                    className="hidden"
-                />
-            );
-        };
-
-        const ProgrammingQuestionForm = () => {
-            const formData = window.APP_DATA.formData;
-            const formErrors = window.APP_DATA.formErrors;
-            const questionId = window.APP_DATA.questionId;
-
-            return (
-                <form method="post" className="bg-white shadow-md rounded-lg p-6">
-                    <input type="hidden" name="csrf_token" value={formData.csrf_token} />
-
-                    <FormField
-                        label="Soru Başlığı"
-                        id="title"
-                        error={formErrors.title ? formErrors.title.join(', ') : ''}
-                    >
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            defaultValue={formData.title}
-                            className="form-input"
-                            required
-                        />
-                    </FormField>
-
-                    <FormField
-                        label="Açıklama"
-                        id="description"
-                        error={formErrors.description ? formErrors.description.join(', ') : ''}
-                    >
-                        <textarea
-                            id="description"
-                            name="description"
-                            defaultValue={formData.description}
-                            rows="4"
-                            className="form-input"
-                            required
-                        ></textarea>
-                    </FormField>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        <FormField
-                            label="Zorluk"
-                            id="difficulty"
-                            error={formErrors.difficulty ? formErrors.difficulty.join(', ') : ''}
-                        >
-                            <select
-                                id="difficulty"
-                                name="difficulty"
-                                defaultValue={formData.difficulty}
-                                className="form-input"
-                                required
-                            >
-                                <option value="1">Kolay</option>
-                                <option value="2">Orta</option>
-                                <option value="3">Zor</option>
-                            </select>
-                        </FormField>
-
-                        <FormField
-                            label="Konu"
-                            id="topic"
-                            error={formErrors.topic ? formErrors.topic.join(', ') : ''}
-                        >
-                            <select
-                                id="topic"
-                                name="topic"
-                                defaultValue={formData.topic}
-                                className="form-input"
-                                required
-                            >
-                                <option value="veri yapıları">Veri Yapıları</option>
-                                <option value="algoritmalar">Algoritmalar</option>
-                                <option value="string işleme">String İşleme</option>
-                                <option value="matematik">Matematik</option>
-                                <option value="sayı teorisi">Sayı Teorisi</option>
-                                <option value="arama">Arama</option>
-                                <option value="sıralama">Sıralama</option>
-                                <option value="dinamik programlama">Dinamik Programlama</option>
-                                <option value="graf teorisi">Graf Teorisi</option>
-                                <option value="olasılık">Olasılık</option>
-                                <option value="istatistik">İstatistik</option>
-                            </select>
-                        </FormField>
-
-                        <FormField
-                            label="Puan"
-                            id="points"
-                            error={formErrors.points ? formErrors.points.join(', ') : ''}
-                        >
-                            <input
-                                type="number"
-                                id="points"
-                                name="points"
-                                defaultValue={formData.points}
-                                min="1"
-                                max="100"
-                                className="form-input"
-                                required
-                            />
-                        </FormField>
-                    </div>
-
-                    <FormField
-                        label="Fonksiyon Adı"
-                        id="function_name"
-                        error={formErrors.function_name ? formErrors.function_name.join(', ') : ''}
-                    >
-                        <input
-                            type="text"
-                            id="function_name"
-                            name="function_name"
-                            defaultValue={formData.function_name}
-                            className="form-input"
-                            required
-                        />
-                    </FormField>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <FormField
-                            label="Örnek Girdi (JSON dizisi)"
-                            id="example_input"
-                            error={formErrors.example_input ? formErrors.example_input.join(', ') : ''}
-                        >
-                            <input
-                                type="text"
-                                id="example_input"
-                                name="example_input"
-                                defaultValue={formData.example_input}
-                                className="form-input"
-                                required
-                            />
-                        </FormField>
-
-                        <FormField
-                            label="Örnek Çıktı"
-                            id="example_output"
-                            error={formErrors.example_output ? formErrors.example_output.join(', ') : ''}
-                        >
-                            <input
-                                type="text"
-                                id="example_output"
-                                name="example_output"
-                                defaultValue={formData.example_output}
-                                className="form-input"
-                                required
-                            />
-                        </FormField>
-                    </div>
-
-                    <FormField
-                        label="Çözüm Kodu"
-                        id="solution_code"
-                        error={formErrors.solution_code ? formErrors.solution_code.join(', ') : ''}
-                    >
-                        <CodeEditor
-                            id="solution_code"
-                            name="solution_code"
-                            defaultValue={formData.solution_code}
-                        />
-                    </FormField>
-
-                    <FormField
-                        label="Test Girdileri (JSON dizisi)"
-                        id="test_inputs"
-                        error={formErrors.test_inputs ? formErrors.test_inputs.join(', ') : ''}
-                    >
-                        <textarea
-                            id="test_inputs"
-                            name="test_inputs"
-                            defaultValue={formData.test_inputs}
-                            rows="4"
-                            className="form-input"
-                            required
-                        ></textarea>
-                    </FormField>
-
-                    <div className="flex flex-wrap justify-between gap-3 mt-8">
-                        <div className="flex gap-2">
-                            <a
-                                href={window.APP_DATA.urls.programmingQuestions}
-                                className="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 transition-colors"
-                            >
-                                İptal
-                            </a>
-                            <button
-                                type="submit"
-                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                            >
-                                Kaydet
-                            </button>
-                        </div>
-                        <div className="flex gap-2">
-                            <a
-                                href={`${window.APP_DATA.urls.testQuestion}${questionId}/test`}
-                                className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
-                            >
-                                Test Et
-                            </a>
-                            <a
-                                href={`${window.APP_DATA.urls.viewQuestion}${questionId}`}
-                                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-                            >
-                                Görüntüle
-                            </a>
-                            <a
-                                href={`${window.APP_DATA.urls.questionSubmissions}${questionId}/submissions`}
-                                className="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors"
-                            >
-                                Çözümler
-                            </a>
-                            <a
-                                href="#"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    if (confirm('Bu soruyu silmek istediğinizden emin misiniz?')) {
-                                        const form = document.createElement('form');
-                                        form.method = 'POST';
-                                        form.action = `${window.APP_DATA.urls.deleteQuestion}${questionId}/delete`;
-
-                                        const csrfToken = document.createElement('input');
-                                        csrfToken.type = 'hidden';
-                                        csrfToken.name = 'csrf_token';
-                                        csrfToken.value = formData.csrf_token;
-
-                                        form.appendChild(csrfToken);
-                                        document.body.appendChild(form);
-                                        form.submit();
-                                    }
-                                }}
-                                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                            >
-                                Sil
-                            </a>
-                        </div>
-                    </div>
-                </form>
-            );
-        };
-
-        const App = () => {
             return (
                 <React.Fragment>
                     <Header />
                     <div className="flex flex-grow">
                         <AdminSidebar />
-                        <div className="flex-1 p-6 overflow-auto">
-                            <div className="container mx-auto max-w-8xl">
+                        <main className="flex-grow p-6 bg-gray-50 dark:bg-gray-900">
+                            <div className="max-w-4xl mx-auto">
                                 <div className="flex justify-between items-center mb-6">
-                                    <h1 className="text-2xl font-bold">Programlama Sorusu Düzenle</h1>
-                                    <nav className="text-sm" aria-label="Breadcrumb">
-                                        <ol className="flex space-x-2">
-                                            <li><a href={window.APP_DATA.urls.adminIndex} className="text-blue-600 hover:text-blue-800">Dashboard</a></li>
-                                            <li>/</li>
-                                            <li><a href={window.APP_DATA.urls.programmingQuestions} className="text-blue-600 hover:text-blue-800">Programlama Soruları</a></li>
-                                            <li>/</li>
-                                            <li className="text-gray-700">Düzenle</li>
-                                        </ol>
-                                    </nav>
+                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{translations.edit_user}</h1>
+                                    <a href="/admin/users" className="text-blue-600 dark:text-blue-400 hover:underline">
+                                        {translations.back_to_users}
+                                    </a>
                                 </div>
-                                <ProgrammingQuestionForm />
+
+                                <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+                                    <form method="post" action="">
+                                        <input type="hidden" name="csrf_token" value={window.APP_DATA.formData.csrf_token} />
+
+                                        <div className="mb-4">
+                                            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                {translations.username_label}
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="username"
+                                                name="username"
+                                                value={formData.username}
+                                                onChange={handleInputChange}
+                                                className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                                required
+                                            />
+                                            {errors.username && errors.username.map((error, idx) => (
+                                                <p key={idx} className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
+                                            ))}
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                {translations.email_label}
+                                            </label>
+                                            <input
+                                                type="email"
+                                                id="email"
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={handleInputChange}
+                                                className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                                required
+                                            />
+                                            {errors.email && errors.email.map((error, idx) => (
+                                                <p key={idx} className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
+                                            ))}
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                {translations.password_label}
+                                            </label>
+                                            <input
+                                                type="password"
+                                                id="password"
+                                                name="password"
+                                                value={formData.password}
+                                                onChange={handleInputChange}
+                                                className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                            />
+                                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{translations.leave_blank}</p>
+                                            {errors.password && errors.password.map((error, idx) => (
+                                                <p key={idx} className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
+                                            ))}
+                                        </div>
+
+                                        <div className="mb-6">
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                {translations.roles_label}
+                                            </label>
+                                            <div className="space-y-2">
+                                                {window.APP_DATA.formData.roles.map((role) => (
+                                                    <div key={role.id} className="flex items-start">
+                                                        <div className="flex items-center h-5">
+                                                            <input
+                                                                id={`role-${role.id}`}
+                                                                name="roles"
+                                                                type="checkbox"
+                                                                value={role.id}
+                                                                checked={formData.roles.includes(role.id)}
+                                                                onChange={() => handleRoleChange(role.id)}
+                                                                className="h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 dark:bg-gray-600 rounded focus:ring-blue-500"
+                                                            />
+                                                        </div>
+                                                        <div className="ml-3 text-sm">
+                                                            <label htmlFor={`role-${role.id}`} className="font-medium text-gray-700 dark:text-gray-300">
+                                                                {role.name}
+                                                            </label>
+                                                            <p className="text-gray-500 dark:text-gray-400">{role.description}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {errors.roles && errors.roles.map((error, idx) => (
+                                                <p key={idx} className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
+                                            ))}
+                                        </div>
+
+                                        <div className="flex justify-end">
+                                            <button
+                                                type="submit"
+                                                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                            >
+                                                {translations.submit_label}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
+                        </main>
                     </div>
                     <Footer />
                 </React.Fragment>
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(
+            <window.ThemeProvider>
+                <App />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
     </script>
-
     <!-- Flash mesajları için script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    const container = document.querySelector('.container');
-                    const formElement = document.querySelector('form');
+                    const container = document.querySelector('.max-w-4xl');
+                    const flashContainer = document.createElement('div');
+                    flashContainer.className = 'mb-6';
 
                     {% for category, message in messages %}
                         const messageDiv = document.createElement('div');
-                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+                        messageDiv.className = '{% if category == "success" %}bg-green-100 border-l-4 border-green-500 text-green-700 dark:bg-green-800/30 dark:border-green-500 dark:text-green-300{% else %}bg-red-100 border-l-4 border-red-500 text-red-700 dark:bg-red-800/30 dark:border-red-500 dark:text-red-300{% endif %} p-4 mb-2';
                         messageDiv.textContent = '{{ message }}';
-                        container.insertBefore(messageDiv, formElement);
+                        flashContainer.appendChild(messageDiv);
                     {% endfor %}
+
+                    if (container) {
+                        const firstChild = container.firstChild;
+                        container.insertBefore(flashContainer, firstChild);
+                    }
                 {% endif %}
             {% endwith %}
         });

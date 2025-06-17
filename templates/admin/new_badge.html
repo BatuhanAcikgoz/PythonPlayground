@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -47,7 +52,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
     <script>
@@ -83,6 +88,7 @@
         };
     </script>
 
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
@@ -96,6 +102,7 @@
             const [activeCategory, setActiveCategory] = React.useState('all');
             const [searchQuery, setSearchQuery] = React.useState('');
             const [loading, setLoading] = React.useState(true);
+            const { darkMode } = window.useTheme(); // Tema durumunu al
 
             React.useEffect(() => {
                 const fetchEmojis = async () => {
@@ -204,7 +211,7 @@
                         <input
                             type="text"
                             placeholder="Emoji ara..."
-                            className="flex-1 p-2 border border-gray-300 rounded-md"
+                            className="flex-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -214,7 +221,7 @@
                         {categories.map(category => (
                             <button
                                 key={category}
-                                className={`emoji-category px-3 py-1 text-sm rounded-md ${activeCategory === category ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}
+                                className={`emoji-category px-3 py-1 text-sm rounded-md ${activeCategory === category ? 'bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200' : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'}`}
                                 onClick={() => setActiveCategory(category)}
                             >
                                 {category}
@@ -224,25 +231,25 @@
 
                     {loading ? (
                         <div className="p-4 text-center">
-                            <div className="inline-block animate-spin rounded-full h-6 w-6 border-4 border-gray-300 border-t-blue-600"></div>
-                            <p className="mt-1 text-gray-500">Emojiler yükleniyor...</p>
+                            <div className="inline-block animate-spin rounded-full h-6 w-6 border-4 border-gray-300 dark:border-gray-600 border-t-blue-600"></div>
+                            <p className="mt-1 text-gray-500 dark:text-gray-400">Emojiler yükleniyor...</p>
                         </div>
                     ) : (
-                        <div className="p-3 border border-gray-300 rounded-md emoji-list">
+                        <div className="p-3 border border-gray-300 dark:border-gray-600 rounded-md emoji-list bg-white dark:bg-gray-700">
                             {filteredEmojis.length > 0 ? (
                                 filteredEmojis.map((item, index) => (
                                     <button
                                         key={index}
                                         type="button"
                                         onClick={() => onSelect(item.emoji)}
-                                        className={`p-2 rounded-md flex items-center justify-center ${selectedEmoji === item.emoji ? 'bg-blue-100' : 'hover:bg-gray-100'}`}
+                                        className={`p-2 rounded-md flex items-center justify-center ${selectedEmoji === item.emoji ? 'bg-blue-100 dark:bg-blue-800' : 'hover:bg-gray-100 dark:hover:bg-gray-600'}`}
                                         title={item.name}
                                     >
                                         <span className="emoji">{item.emoji}</span>
                                     </button>
                                 ))
                             ) : (
-                                <p className="p-2 text-center text-gray-500">Eşleşen emoji bulunamadı.</p>
+                                <p className="p-2 text-center text-gray-500 dark:text-gray-400">Eşleşen emoji bulunamadı.</p>
                             )}
                         </div>
                     )}
@@ -256,6 +263,7 @@
             const [selectedColor, setSelectedColor] = React.useState('#3b82f6');
             const [nameErrors] = React.useState([]);
             const [descriptionErrors] = React.useState([]);
+            const { darkMode } = window.useTheme(); // Tema durumunu al
 
             // Kriter türleri ve açıklamaları
             const [criteriaType, setCriteriaType] = React.useState('registration');
@@ -301,7 +309,7 @@
                     case 'point_threshold':
                         return (
                             <div className="mt-2">
-                                <label htmlFor="criteria_value" className="block text-sm font-medium text-gray-700 mb-1">
+                                <label htmlFor="criteria_value" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                     Gereken Minimum Puan
                                 </label>
                                 <input
@@ -310,7 +318,7 @@
                                     name="criteria_value"
                                     value={criteriaValue}
                                     onChange={handleCriteriaValueChange}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
+                                    className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                                     min="1"
                                     required={criteriaType !== 'registration'}
                                 />
@@ -319,7 +327,7 @@
                     case 'question_solved':
                         return (
                             <div className="mt-2">
-                                <label htmlFor="criteria_value" className="block text-sm font-medium text-gray-700 mb-1">
+                                <label htmlFor="criteria_value" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                     Soru ID
                                 </label>
                                 <input
@@ -328,7 +336,7 @@
                                     name="criteria_value"
                                     value={criteriaValue}
                                     onChange={handleCriteriaValueChange}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
+                                    className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                                     min="1"
                                     required={criteriaType !== 'registration'}
                                 />
@@ -337,7 +345,7 @@
                     case 'questions_count':
                         return (
                             <div className="mt-2">
-                                <label htmlFor="criteria_value" className="block text-sm font-medium text-gray-700 mb-1">
+                                <label htmlFor="criteria_value" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                     Gereken Soru Sayısı
                                 </label>
                                 <input
@@ -346,7 +354,7 @@
                                     name="criteria_value"
                                     value={criteriaValue}
                                     onChange={handleCriteriaValueChange}
-                                    className="w-full p-2 border border-gray-300 rounded-md"
+                                    className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                                     min="1"
                                     required={criteriaType !== 'registration'}
                                 />
@@ -355,7 +363,7 @@
                     case 'registration':
                     default:
                         return (
-                            <p className="text-sm text-gray-500 mt-2">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                                 Bu kriter için ek parametre gerekmemektedir.
                             </p>
                         );
@@ -363,49 +371,49 @@
             };
 
             return (
-                <form method="post" className="bg-white shadow-md rounded-lg p-6">
+                <form method="post" className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
                     <input type="hidden" name="csrf_token" value={window.APP_DATA.formCsrfToken} />
                     <div className="mb-6">
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Rozet Adı</label>
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Rozet Adı</label>
                         <input
                             type="text"
                             name="name"
                             id="name"
-                            className="w-full p-2 border border-gray-300 rounded-md"
+                            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                             required
                         />
                         {nameErrors.map((error, index) => (
-                            <p key={index} className="text-sm text-red-600 mt-1">{error}</p>
+                            <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error}</p>
                         ))}
                     </div>
 
                     <div className="mb-6">
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Açıklama</label>
+                        <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Açıklama</label>
                         <input
                             type="text"
                             name="description"
                             id="description"
-                            className="w-full p-2 border border-gray-300 rounded-md"
+                            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                             required
                         />
                         {descriptionErrors.map((error, index) => (
-                            <p key={index} className="text-sm text-red-600 mt-1">{error}</p>
+                            <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error}</p>
                         ))}
                     </div>
 
                     <div className="mb-6">
-                        <label htmlFor="icon" className="block text-sm font-medium text-gray-700 mb-1">Emoji</label>
+                        <label htmlFor="icon" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Emoji</label>
                         <div className="flex items-center gap-3">
                             <input type="hidden" name="icon" id="icon" value={selectedEmoji} />
 
-                            <div className="border border-gray-300 rounded-md p-2 flex items-center justify-center w-12 h-12">
+                            <div className="border border-gray-300 dark:border-gray-600 rounded-md p-2 flex items-center justify-center w-12 h-12 bg-white dark:bg-gray-700">
                                 <span className="emoji-lg">{selectedEmoji}</span>
                             </div>
 
                             <button
                                 type="button"
                                 onClick={() => setShowEmojiSelector(!showEmojiSelector)}
-                                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+                                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
                             >
                                 {showEmojiSelector ? 'Kapat' : 'Emoji Seç'}
                             </button>
@@ -420,7 +428,7 @@
                     </div>
 
                     <div className="mb-6">
-                        <label htmlFor="color" className="block text-sm font-medium text-gray-700 mb-1">Arka Plan Rengi</label>
+                        <label htmlFor="color" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Arka Plan Rengi</label>
                         <div className="flex items-center gap-3">
                             <input type="hidden" name="color" id="color" value={selectedColor} />
 
@@ -428,16 +436,16 @@
                                 type="color"
                                 value={selectedColor}
                                 onChange={handleColorChange}
-                                className="w-12 h-10 rounded-md cursor-pointer"
+                                className="w-12 h-10 rounded-md cursor-pointer bg-transparent"
                             />
-                            <span className="text-sm text-gray-600">{selectedColor}</span>
+                            <span className="text-sm text-gray-600 dark:text-gray-300">{selectedColor}</span>
 
                             <div className="flex flex-wrap gap-2 ml-4">
                                 {['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#6366f1', '#71717a'].map(color => (
                                     <button
                                         key={color}
                                         type="button"
-                                        className="w-6 h-6 rounded-full border border-gray-300"
+                                        className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600"
                                         style={{backgroundColor: color}}
                                         onClick={() => handleColorChange({target: {value: color}})}
                                     />
@@ -447,11 +455,11 @@
                     </div>
 
                     {/* Yeni eklenen Rozet Kriterleri bölümü */}
-                    <div className="mb-6 border-t pt-6">
-                        <h3 className="text-lg font-medium text-gray-800 mb-3">Rozet Kazanma Koşulu</h3>
+                    <div className="mb-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+                        <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-3">Rozet Kazanma Koşulu</h3>
 
                         <div className="mb-4">
-                            <label htmlFor="criteria_type" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="criteria_type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Koşul Türü
                             </label>
                             <select
@@ -459,13 +467,13 @@
                                 name="criteria_type"
                                 value={criteriaType}
                                 onChange={handleCriteriaTypeChange}
-                                className="w-full p-2 border border-gray-300 rounded-md"
+                                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                             >
                                 {criteriaTypes.map(type => (
                                     <option key={type.id} value={type.id}>{type.label}</option>
                                 ))}
                             </select>
-                            <p className="text-sm text-gray-500 mt-1">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                 {(criteriaTypes.find(t => t.id === criteriaType) || {}).description || ''}
                             </p>
                         </div>
@@ -473,32 +481,32 @@
                         {renderCriteriaValueInput()}
 
                         {criteriaErrors.map((error, index) => (
-                            <p key={index} className="text-sm text-red-600 mt-1">{error}</p>
+                            <p key={index} className="text-sm text-red-600 dark:text-red-400 mt-1">{error}</p>
                         ))}
                     </div>
 
                     <div className="mb-6">
-                        <div className="p-4 border border-gray-300 rounded-md bg-gray-50">
-                            <p className="text-sm font-medium text-gray-700 mb-2">Rozet Önizleme</p>
+                        <div className="p-4 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700">
+                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Rozet Önizleme</p>
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{backgroundColor: selectedColor}}>
                                     <span className="emoji-lg">{selectedEmoji}</span>
                                 </div>
                                 <div>
-                                    <p className="font-medium" id="namePreview">Rozet Adı</p>
-                                    <p className="text-sm text-gray-600" id="descPreview">Rozet açıklaması burada gösterilir</p>
+                                    <p className="font-medium text-gray-800 dark:text-gray-200" id="namePreview">Rozet Adı</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400" id="descPreview">Rozet açıklaması burada gösterilir</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="flex justify-end space-x-3">
-                        <a href={window.APP_DATA.urls.adminBadges} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">
+                        <a href={window.APP_DATA.urls.adminBadges} className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600">
                             İptal
                         </a>
                         <button
                             type="submit"
-                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700"
+                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 border border-transparent rounded-md shadow-sm hover:bg-blue-700 dark:hover:bg-blue-600"
                         >
                             Rozeti Kaydet
                         </button>
@@ -508,6 +516,7 @@
         };
 
         const App = () => {
+            const { darkMode } = window.useTheme(); // Tema durumunu al
             const translations = {
                 badges: window.APP_DATA.headerTrans.badges || "Rozetler",
                 new_badge: "Yeni Rozet",
@@ -536,17 +545,17 @@
                     <Header />
                     <div className="flex flex-grow">
                         <AdminSidebar />
-                        <main className="flex-grow p-6">
+                        <main className="flex-grow p-6 bg-gray-50 dark:bg-gray-900">
                             <div className="container mx-auto max-w-8xl">
                                 <div className="flex justify-between items-center mb-6">
-                                    <h1 className="text-2xl font-bold">{translations.new_badge}</h1>
+                                    <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{translations.new_badge}</h1>
                                     <nav className="text-sm" aria-label="Breadcrumb">
                                         <ol className="flex space-x-2">
-                                            <li><a href={window.APP_DATA.urls.adminIndex} className="text-blue-600 hover:text-blue-800">{translations.dashboard}</a></li>
-                                            <li>/</li>
-                                            <li><a href={window.APP_DATA.urls.adminBadges} className="text-blue-600 hover:text-blue-800">{translations.badges}</a></li>
-                                            <li>/</li>
-                                            <li className="text-gray-700">{translations.new_badge}</li>
+                                            <li><a href={window.APP_DATA.urls.adminIndex} className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">{translations.dashboard}</a></li>
+                                            <li className="text-gray-500 dark:text-gray-400">/</li>
+                                            <li><a href={window.APP_DATA.urls.adminBadges} className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">{translations.badges}</a></li>
+                                            <li className="text-gray-500 dark:text-gray-400">/</li>
+                                            <li className="text-gray-700 dark:text-gray-300">{translations.new_badge}</li>
                                         </ol>
                                     </nav>
                                 </div>
@@ -559,7 +568,12 @@
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(
+            <window.ThemeProvider>
+                <App />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
         {% endraw %}
     </script>
 
@@ -573,7 +587,7 @@
 
                     {% for category, message in messages %}
                         const messageDiv = document.createElement('div');
-                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 dark:bg-green-800/30 text-green-800 dark:text-green-300' : 'bg-red-100 dark:bg-red-800/30 text-red-800 dark:text-red-300'}`;
                         messageDiv.textContent = '{{ message }}';
                         container.insertBefore(messageDiv, formElement);
                     {% endfor %}

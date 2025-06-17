@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -17,12 +22,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 <style>
+    html, body, #root {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+    #root {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
     /* Temel prose stilleri korunuyor */
     .prose {
         max-width: 65ch;
         font-size: 1.05rem;
         line-height: 1.7;
         color: rgba(55, 65, 81, 1);
+    }
+
+    /* Dark mode için prose stilleri */
+    .dark .prose {
+        color: rgba(229, 231, 235, 1);
     }
 
     /* Daha süslü başlık stilleri */
@@ -35,11 +57,20 @@
         letter-spacing: -0.025em;
     }
 
+    .dark .prose h1, .dark .prose h2, .dark .prose h3, .dark .prose h4 {
+        color: rgba(243, 244, 246, 1);
+    }
+
     .prose h1 {
         font-size: 1.8em;
         color: rgba(37, 99, 235, 1);
         border-bottom: 2px solid rgba(37, 99, 235, 0.2);
         padding-bottom: 0.3em;
+    }
+
+    .dark .prose h1 {
+        color: rgba(96, 165, 250, 1);
+        border-bottom-color: rgba(96, 165, 250, 0.2);
     }
 
     .prose h2 {
@@ -49,8 +80,16 @@
         color: rgba(31, 41, 55, 0.9);
     }
 
+    .dark .prose h2 {
+        color: rgba(209, 213, 219, 1);
+        border-bottom-color: rgba(96, 165, 250, 0.1);
+    }
+
     .prose h3 { font-size: 1.4em; color: rgba(59, 130, 246, 0.9); }
+    .dark .prose h3 { color: rgba(147, 197, 253, 0.9); }
+
     .prose h4 { font-size: 1.2em; font-style: italic; }
+    .dark .prose h4 { color: rgba(209, 213, 219, 1); }
 
     /* Süslü listeler */
     .prose ul, .prose ol {
@@ -76,6 +115,10 @@
         width: 1em;
         margin-left: -1.5em;
         margin-right: 0.5em;
+    }
+
+    .dark .prose ul li::before {
+        color: rgba(96, 165, 250, 1);
     }
 
     .prose ol {
@@ -104,6 +147,11 @@
         font-size: 0.9em;
     }
 
+    .dark .prose code {
+        color: rgba(252, 165, 165, 1);
+        background-color: rgba(31, 41, 55, 1);
+    }
+
     .prose pre {
         background-color: rgba(243, 244, 246, 1);
         border-radius: 0.5em;
@@ -114,11 +162,21 @@
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
+    .dark .prose pre {
+        background-color: rgba(31, 41, 55, 1);
+        border-left-color: rgba(96, 165, 250, 0.7);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
     .prose pre code {
         background-color: transparent;
         color: rgba(31, 41, 55, 0.9);
         padding: 0;
         font-size: 0.9em;
+    }
+
+    .dark .prose pre code {
+        color: rgba(229, 231, 235, 0.9);
     }
 
     /* Paragraflar ve alıntılar */
@@ -139,6 +197,12 @@
         border-radius: 0.5em;
     }
 
+    .dark .prose blockquote {
+        border-left-color: rgba(96, 165, 250, 0.5);
+        color: rgba(209, 213, 219, 1);
+        background-color: rgba(55, 65, 81, 0.8);
+    }
+
     /* Tablolar için süslü görünüm */
     .prose table {
         width: 100%;
@@ -151,6 +215,10 @@
         overflow: hidden;
     }
 
+    .dark .prose table {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
     .prose th {
         background-color: rgba(59, 130, 246, 0.1);
         color: rgba(31, 41, 55, 1);
@@ -160,9 +228,20 @@
         border-bottom: 2px solid rgba(59, 130, 246, 0.2);
     }
 
+    .dark .prose th {
+        background-color: rgba(59, 130, 246, 0.2);
+        color: rgba(243, 244, 246, 1);
+        border-bottom-color: rgba(96, 165, 250, 0.3);
+    }
+
     .prose td {
         padding: 0.75em 1em;
         border-bottom: 1px solid rgba(229, 231, 235, 1);
+    }
+
+    .dark .prose td {
+        border-bottom-color: rgba(75, 85, 99, 1);
+        color: rgba(229, 231, 235, 1);
     }
 
     .prose tr:last-child td {
@@ -173,6 +252,14 @@
         background-color: rgba(249, 250, 251, 1);
     }
 
+    .dark .prose tr:nth-child(even) {
+        background-color: rgba(55, 65, 81, 1);
+    }
+
+    .dark .prose tr:nth-child(odd) {
+        background-color: rgba(31, 41, 55, 1);
+    }
+
     /* Bağlantılar */
     .prose a {
         color: rgba(37, 99, 235, 1);
@@ -181,9 +268,19 @@
         transition: border-bottom 0.2s, color 0.2s;
     }
 
+    .dark .prose a {
+        color: rgba(96, 165, 250, 1);
+        border-bottom-color: rgba(96, 165, 250, 0.4);
+    }
+
     .prose a:hover {
         border-bottom: 1px solid rgba(37, 99, 235, 0.8);
         color: rgba(30, 64, 175, 1);
+    }
+
+    .dark .prose a:hover {
+        border-bottom-color: rgba(96, 165, 250, 0.8);
+        color: rgba(147, 197, 253, 1);
     }
 
     /* Özel vurgulamalar */
@@ -192,9 +289,17 @@
         color: rgba(31, 41, 55, 1);
     }
 
+    .dark .prose strong {
+        color: rgba(243, 244, 246, 1);
+    }
+
     .prose em {
         font-style: italic;
         color: rgba(55, 65, 81, 0.9);
+    }
+
+    .dark .prose em {
+        color: rgba(209, 213, 219, 0.9);
     }
 
     /* Yatay çizgiler */
@@ -204,10 +309,22 @@
         background-image: linear-gradient(to right, rgba(209, 213, 219, 0), rgba(107, 114, 128, 0.5), rgba(209, 213, 219, 0));
         margin: 2.5em 0;
     }
+
+    .dark .prose hr {
+        background-image: linear-gradient(to right, rgba(55, 65, 81, 0), rgba(156, 163, 175, 0.5), rgba(55, 65, 81, 0));
+    }
 </style>
 </head>
-<body class="bg-gray-50">
-    <div id="root"></div>
+<body class="relative overflow-hidden bg-gray-200 dark:bg-gray-900">
+    <!-- Arka plan daireleri -->
+    <div class="absolute top-[-50px] left-[-50px] w-[150px] h-[150px] bg-gradient-to-br from-black to-gray-700 rounded-full opacity-30"></div>
+    <div class="absolute top-[150px] right-[-75px] w-[200px] h-[200px] bg-gradient-to-tl from-gray-800 to-gray-500 rounded-full opacity-20"></div>
+    <div class="absolute bottom-[-100px] left-[50%] translate-x-[-50%] w-[250px] h-[250px] bg-gradient-to-tr from-black to-gray-600 rounded-full opacity-25"></div>
+    <div class="absolute top-[50px] left-[30%] w-[120px] h-[120px] bg-gradient-to-bl from-gray-700 to-gray-500 rounded-full opacity-15"></div>
+    <div class="absolute bottom-[50px] right-[20%] w-[180px] h-[180px] bg-gradient-to-br from-black to-gray-700 rounded-full opacity-10"></div>
+    <div class="absolute top-[60%] left-[10%] w-[100px] h-[100px] bg-gradient-to-tr from-gray-800 to-gray-600 rounded-full opacity-20"></div>
+
+    <div id="root" class="relative z-10"></div>
 
     <script>
         window.APP_DATA = {
@@ -231,10 +348,16 @@
             // Header çevirileri
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
-                home: "Ana Sayfa",
-                profile: "Profil",
-                settings: "Ayarlar",
-                logout: "Çıkış"
+                tagline: {{ _('app_tagline')|tojson|safe }},
+                home: {{ _('home')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
+                leaderboard: {{ _('leaderboard')|tojson|safe }},
+                about: {{ _('about')|tojson|safe }},
+                logout: {{ _('logout')|tojson|safe }},
+                login: {{ _('login')|tojson|safe }},
+                register: {{ _('register')|tojson|safe }},
+                profile: "Profile",
+                settings: "Settings"
             },
             // Footer çevirileri
             footerTrans: {
@@ -254,7 +377,7 @@
             summaryData: {{ summary_data|tojson|safe }}
         };
     </script>
-
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
@@ -265,6 +388,7 @@
             const urls = window.APP_DATA.urls;
             const notebookPath = window.APP_DATA.notebookPath;
             const summaryData = window.APP_DATA.summaryData || {};
+            const { darkMode } = window.useTheme();
 
             // Sayfa yüklendiğinde kod bloklarını highlight et
             React.useEffect(() => {
@@ -277,8 +401,8 @@
                 <div className="container mx-auto max-w-8xl px-4 py-8">
                     <div className="mb-6 flex flex-col md:flex-row md:justify-between md:items-center">
                         <div>
-                            <h1 className="text-3xl font-bold mb-2">Notebook Özeti</h1>
-                            <p className="text-gray-600">{notebookPath}</p>
+                            <h1 className="text-3xl font-bold mb-2 text-gray-800 dark:text-white">Notebook Özeti</h1>
+                            <p className="text-gray-600 dark:text-gray-300">{notebookPath}</p>
                         </div>
 
                         <div className="flex mt-4 md:mt-0 space-x-4">
@@ -310,37 +434,35 @@
                     ) : (
                         <div>
                             <div className="mb-6">
-                                <div className="flex border-b border-gray-200">
+                                <div className="flex border-b border-gray-200 dark:border-gray-700">
                                     <button
                                         onClick={() => setTabIndex(0)}
-                                        className={`px-4 py-2 font-medium ${tabIndex === 0 ? 'text-blue-600 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'}`}>
+                                        className={`px-4 py-2 font-medium ${tabIndex === 0 ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500' : 'text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400'}`}>
                                         Özet
                                     </button>
                                     <button
                                         onClick={() => setTabIndex(1)}
-                                        className={`px-4 py-2 font-medium ${tabIndex === 1 ? 'text-blue-600 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'}`}>
+                                        className={`px-4 py-2 font-medium ${tabIndex === 1 ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-500' : 'text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400'}`}>
                                         Kod Açıklaması
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="bg-white shadow-md rounded-lg overflow-hidden p-6">
+                            <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden p-6">
                                 {tabIndex === 0 && (
-
-                                    <div className="prose max-w-none"
+                                    <div className="prose max-w-none dark:prose-invert"
                                          dangerouslySetInnerHTML={{ __html: marked.parse(summaryData.summary || 'Özet bulunamadı.') }}>
                                     </div>
-
                                 )}
 
                                 {tabIndex === 1 && (
-                                    <div className="prose max-w-none"
+                                    <div className="prose max-w-none dark:prose-invert"
                                          dangerouslySetInnerHTML={{ __html: marked.parse(summaryData.code_explanation || 'Kod açıklaması bulunamadı.') }}>
                                     </div>
                                 )}
                             </div>
 
-                            <div className="mt-6 text-sm text-gray-500">
+                            <div className="mt-6 text-sm text-gray-500 dark:text-gray-400">
                                 <p>Son güncelleme: {new Date(summaryData.last_updated || Date.now()).toLocaleString()}</p>
                             </div>
                         </div>
@@ -350,18 +472,25 @@
         };
 
         const App = () => {
+            const { darkMode } = window.useTheme();
+
             return (
-                <React.Fragment>
+                <div className={`${darkMode ? "text-white" : "text-black"} flex flex-col min-h-screen`}>
                     <Header />
-                    <main className="min-h-screen pb-16">
+                    <main className="flex-grow">
                         <SummaryView />
                     </main>
                     <Footer />
-                </React.Fragment>
+                </div>
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(
+            <window.ThemeProvider>
+                <App />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
         {% endraw %}
     </script>
 </body>

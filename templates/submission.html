@@ -8,6 +8,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -17,6 +22,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
     <!-- Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- DOMPurify for HTML sanitization -->
@@ -39,9 +45,39 @@
         .cm-readonly .CodeMirror {
             background-color: #f8f9fa;
         }
+        .dark .CodeMirror {
+            border-color: #4b5563;
+            background-color: #1f2937;
+        }
+        .dark .cm-readonly .CodeMirror {
+            background-color: #374151;
+        }
+        .dark .CodeMirror {
+            color: #e5e7eb;
+        }
+
+        /* Seçicileri düzelt - tema seçicisini değiştir */
+        .dark .cm-s-dracula .cm-keyword { color: #CC7832; }
+        .dark .cm-s-dracula .cm-operator { color: #A9B7C6; }
+        .dark .cm-s-dracula .cm-variable { color: #A9B7C6; }
+        .dark .cm-s-dracula .cm-variable-2 { color: #A9B7C6; }
+        .dark .cm-s-dracula .cm-variable-3 { color: #9876AA; }
+        .dark .cm-s-dracula .cm-builtin { color: #8888C6; }
+        .dark .cm-s-dracula .cm-atom { color: #9876AA; }
+        .dark .cm-s-dracula .cm-number { color: #6897BB; }
+        .dark .cm-s-dracula .cm-def { color: #FFC66D; }
+        .dark .cm-s-dracula .cm-string { color: #6A8759; }
+        .dark .cm-s-dracula .cm-string-2 { color: #6A8759; }
+        .dark .cm-s-dracula .cm-comment { color: #808080; }
+        .dark .cm-s-dracula .cm-tag { color: #BBB529; }
+        .dark .cm-s-dracula .cm-meta { color: #BBB529; }
+        .dark .cm-s-dracula .cm-attribute { color: #BABABA; }
+        .dark .cm-s-dracula .cm-property { color: #FFC66D; }
+        .dark .cm-s-dracula .cm-qualifier { color: #A9B7C6; }
+        .dark .cm-s-dracula .cm-error { color: #FF0000; }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
     <script>
@@ -105,7 +141,7 @@
             }
         };
     </script>
-
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
@@ -113,24 +149,33 @@
         const CodeEditor = ({ id, name, value, onChange, readOnly }) => {
             const editorRef = React.useRef(null);
             const textareaRef = React.useRef(null);
+            const { darkMode } = window.useTheme();
 
             React.useEffect(() => {
                 if (textareaRef.current) {
-                    const editor = CodeMirror.fromTextArea(textareaRef.current, {
+                    const options = {
                         mode: 'python',
-                        theme: 'default',
                         lineNumbers: true,
-                        indentWithTabs: false,
-                        tabSize: 4,
+                        theme: darkMode ? 'dracula' : 'default',
+                        readOnly: readOnly,
+                        lineWrapping: true,
                         indentUnit: 4,
-                        readOnly: readOnly || false
-                    });
+                        indentWithTabs: false,
+                        extraKeys: {
+                            "Tab": function(cm) {
+                                const spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
+                                cm.replaceSelection(spaces);
+                            }
+                        }
+                    };
 
-                    editor.on('change', (cm) => {
-                        if (onChange) onChange(cm.getValue());
-                    });
+                    editorRef.current = CodeMirror.fromTextArea(textareaRef.current, options);
 
-                    editorRef.current = editor;
+                    if (onChange) {
+                        editorRef.current.on('change', (editor) => {
+                            onChange(editor.getValue());
+                        });
+                    }
                 }
 
                 return () => {
@@ -138,7 +183,7 @@
                         editorRef.current.toTextArea();
                     }
                 };
-            }, []);
+            }, [darkMode]); // darkMode değiştiğinde tekrar çalıştır
 
             React.useEffect(() => {
                 if (editorRef.current && value) {
@@ -164,6 +209,7 @@
         // Test Result component
         const TestResultDisplay = ({ result }) => {
             if (!result) return null;
+            const { darkMode } = window.useTheme();
 
             // Test sonuçları istatistikleri
             const passedTests = result.passed_tests || 0;
@@ -179,10 +225,12 @@
                 !syntaxErrors.includes(e) && !runtimeErrors.includes(e) && !logicErrors.includes(e)) : [];
 
             return (
-                <div className={`mt-4 p-4 rounded-md ${result.is_correct ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                <div className={`mt-4 p-4 rounded-md ${result.is_correct
+                    ? 'bg-green-50 border border-green-200 dark:bg-green-900/30 dark:border-green-800'
+                    : 'bg-red-50 border border-red-200 dark:bg-red-900/30 dark:border-red-800'}`}>
                     <div className="flex items-center mb-4">
                         <span className={`mr-2 flex-shrink-0 h-5 w-5 rounded-full ${result.is_correct ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                        <span className="font-medium">{result.is_correct ? 'Tüm testler başarılı.' : 'Bazı testlerden geçilemedi.'}</span>
+                        <span className="font-medium dark:text-gray-100">{result.is_correct ? 'Tüm testler başarılı.' : 'Bazı testlerden geçilemedi.'}</span>
                     </div>
 
                     {/* Test istatistikleri (dairesel gösterge) */}
@@ -192,7 +240,7 @@
                                 <path
                                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                                     fill="none"
-                                    stroke="#eee"
+                                    stroke={darkMode ? "#4b5563" : "#eee"}
                                     strokeWidth="3"
                                     strokeDasharray="100, 100"
                                 />
@@ -203,16 +251,16 @@
                                     strokeWidth="3"
                                     strokeDasharray={`${passRate}, 100`}
                                 />
-                                <text x="18" y="20.5" textAnchor="middle" fontSize="10" fill="#444">
+                                <text x="18" y="20.5" textAnchor="middle" fontSize="10" fill={darkMode ? "#e5e7eb" : "#444"}>
                                     {passRate}%
                                 </text>
                             </svg>
                         </div>
                         <div className="flex-1 ml-4">
-                            <div className="text-sm">
+                            <div className="text-sm dark:text-gray-300">
                                 <p>Toplam test: <span className="font-medium">{totalTests}</span></p>
-                                <p>Başarılı test: <span className="font-medium text-green-600">{passedTests}</span></p>
-                                <p>Başarısız test: <span className="font-medium text-red-600">{failedTests}</span></p>
+                                <p>Başarılı test: <span className="font-medium text-green-600 dark:text-green-400">{passedTests}</span></p>
+                                <p>Başarısız test: <span className="font-medium text-red-600 dark:text-red-400">{failedTests}</span></p>
                                 {result.execution_time !== undefined && (
                                     <p>Çalışma süresi: <span className="font-medium">
                                         {(result.execution_time === 0 ? "0.00" : result.execution_time.toFixed(2))} ms
@@ -224,13 +272,13 @@
 
                     {/* Hata kategorileri */}
                     {!result.is_correct && (
-                        <div className="mt-3 pt-3 border-t border-red-200">
-                            <h4 className="font-medium mb-2">Hatalar</h4>
+                        <div className="mt-3 pt-3 border-t border-red-200 dark:border-red-800">
+                            <h4 className="font-medium mb-2 dark:text-gray-200">Hatalar</h4>
 
                             {syntaxErrors.length > 0 && (
                                 <div className="mb-3">
-                                    <h5 className="text-sm font-medium text-orange-600">Sözdizimi Hataları:</h5>
-                                    <ul className="list-disc pl-5 text-sm text-orange-700">
+                                    <h5 className="text-sm font-medium text-orange-600 dark:text-orange-400">Sözdizimi Hataları:</h5>
+                                    <ul className="list-disc pl-5 text-sm text-orange-700 dark:text-orange-300">
                                         {syntaxErrors.map((error, index) => (
                                             <li key={`syntax-${index}`}>{error}</li>
                                         ))}
@@ -240,8 +288,8 @@
 
                             {runtimeErrors.length > 0 && (
                                 <div className="mb-3">
-                                    <h5 className="text-sm font-medium text-red-600">Çalışma Zamanı Hataları:</h5>
-                                    <ul className="list-disc pl-5 text-sm text-red-700">
+                                    <h5 className="text-sm font-medium text-red-600 dark:text-red-400">Çalışma Zamanı Hataları:</h5>
+                                    <ul className="list-disc pl-5 text-sm text-red-700 dark:text-red-300">
                                         {runtimeErrors.map((error, index) => (
                                             <li key={`runtime-${index}`}>{error}</li>
                                         ))}
@@ -251,8 +299,8 @@
 
                             {logicErrors.length > 0 && (
                                 <div className="mb-3">
-                                    <h5 className="text-sm font-medium text-blue-600">Mantık Hataları:</h5>
-                                    <ul className="list-disc pl-5 text-sm text-blue-700">
+                                    <h5 className="text-sm font-medium text-blue-600 dark:text-blue-400">Mantık Hataları:</h5>
+                                    <ul className="list-disc pl-5 text-sm text-blue-700 dark:text-blue-300">
                                         {logicErrors.map((error, index) => (
                                             <li key={`logic-${index}`}>{error}</li>
                                         ))}
@@ -262,8 +310,8 @@
 
                             {otherErrors.length > 0 && (
                                 <div>
-                                    <h5 className="text-sm font-medium text-gray-600">Diğer Hatalar:</h5>
-                                    <ul className="list-disc pl-5 text-sm text-gray-700">
+                                    <h5 className="text-sm font-medium text-gray-600 dark:text-gray-400">Diğer Hatalar:</h5>
+                                    <ul className="list-disc pl-5 text-sm text-gray-700 dark:text-gray-300">
                                         {otherErrors.map((error, index) => (
                                             <li key={`other-${index}`}>{error}</li>
                                         ))}
@@ -284,6 +332,7 @@
             const [code, setCode] = React.useState(submission.code);
             const [testResult, setTestResult] = React.useState(null);
             const [loading, setLoading] = React.useState(false);
+            const { darkMode } = window.useTheme();
 
             // Test the code
         const testCode = async () => {
@@ -319,10 +368,9 @@
             const getDifficultyText = (level) => {
                 const levels = {
                     1: 'Kolay',
-                    2: 'Orta-Kolay',
-                    3: 'Orta',
-                    4: 'Orta-Zor',
-                    5: 'Zor'
+                    2: 'Orta',
+                    3: 'Zor',
+                    4: 'Çok Zor',
                 };
                 return levels[level] || 'Bilinmiyor';
             };
@@ -345,10 +393,10 @@
                         <div className="mb-6">
                             {window.APP_DATA.flashMessages.map((flash, index) => (
                                 <div key={index} className={`mb-4 p-4 rounded-lg ${
-                                    flash.category === 'success' ? 'bg-green-100 text-green-800' :
-                                    flash.category === 'warning' ? 'bg-yellow-100 text-yellow-800' :
-                                    flash.category === 'error' ? 'bg-red-100 text-red-800' :
-                                    'bg-blue-100 text-blue-800'
+                                    flash.category === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                                    flash.category === 'warning' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                                    flash.category === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                                    'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
                                 }`}>
                                     {flash.message}
                                 </div>
@@ -358,28 +406,30 @@
 
                     <div className="mb-6">
                         <div className="flex justify-between items-center">
-                            <h1 className="text-2xl font-bold">{question.title}</h1>
+                            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{question.title}</h1>
                             <div>
                                 <a
                                     href={urls.questions}
-                                    className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md bg-white hover:bg-gray-100"
+                                    className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-800 dark:text-white"
                                 >
                                     Tüm Sorular
                                 </a>
                             </div>
                         </div>
                         <div className="flex flex-wrap gap-2 mt-2">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
                                 {getDifficultyText(question.difficulty)}
                             </span>
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300">
                                 {question.points} Puan
                             </span>
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
                                 Fonksiyon: {question.function_name}()
                             </span>
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                submission.is_correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                submission.is_correct
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300'
+                                : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300'
                             }`}>
                                 {submission.is_correct ? 'Başarılı' : 'Başarısız'}
                             </span>
@@ -388,22 +438,22 @@
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2">
-                            <div className="bg-white shadow rounded-lg overflow-hidden">
+                            <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
                                 <div className="p-6">
-                                    <h2 className="text-lg font-medium mb-4">Soru Açıklaması</h2>
-                                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={renderDescription(question.description)} />
+                                    <h2 className="text-lg font-medium mb-4 dark:text-white">Soru Açıklaması</h2>
+                                    <div className="prose prose-sm max-w-none dark:prose-invert" dangerouslySetInnerHTML={renderDescription(question.description)} />
 
                                     {(question.example_input || question.example_output) && (
-                                        <div className="mt-4 pt-4 border-t">
-                                            <h3 className="font-medium mb-2">Örnek</h3>
+                                        <div className="mt-4 pt-4 border-t dark:border-gray-700">
+                                            <h3 className="font-medium mb-2 dark:text-white">Örnek</h3>
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div>
-                                                    <h4 className="text-sm font-medium mb-1">Girdi:</h4>
-                                                    <pre className="bg-gray-50 p-2 rounded text-sm">{question.example_input}</pre>
+                                                    <h4 className="text-sm font-medium mb-1 dark:text-gray-300">Girdi:</h4>
+                                                    <pre className="bg-gray-50 dark:bg-gray-700 p-2 rounded text-sm dark:text-gray-200">{question.example_input}</pre>
                                                 </div>
                                                 <div>
-                                                    <h4 className="text-sm font-medium mb-1">Çıktı:</h4>
-                                                    <pre className="bg-gray-50 p-2 rounded text-sm">{question.example_output}</pre>
+                                                    <h4 className="text-sm font-medium mb-1 dark:text-gray-300">Çıktı:</h4>
+                                                    <pre className="bg-gray-50 dark:bg-gray-700 p-2 rounded text-sm dark:text-gray-200">{question.example_output}</pre>
                                                 </div>
                                             </div>
                                         </div>
@@ -411,9 +461,9 @@
                                 </div>
                             </div>
 
-                            <div className="mt-6 bg-white shadow rounded-lg overflow-hidden">
+                            <div className="mt-6 bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
                                 <div className="p-6">
-                                    <h2 className="text-lg font-medium mb-4">Gönderilen Kod</h2>
+                                    <h2 className="text-lg font-medium mb-4 dark:text-white">Gönderilen Kod</h2>
                                     <div className="mb-4">
                                         <CodeEditor
                                             id="code"
@@ -427,7 +477,7 @@
                                     <div className="flex space-x-2">
                                         <button
                                             type="button"
-                                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
+                                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 flex items-center"
                                             onClick={testCode}
                                             disabled={loading}
                                         >
@@ -451,19 +501,21 @@
                         </div>
 
                         <div>
-                            <div className="bg-white shadow rounded-lg overflow-hidden">
+                            <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
                                 <div className="p-6">
-                                    <h2 className="text-lg font-medium mb-4">Gönderim Bilgileri</h2>
+                                    <h2 className="text-lg font-medium mb-4 dark:text-white">Gönderim Bilgileri</h2>
                                     <dl className="space-y-4">
                                         <div>
-                                            <dt className="text-sm font-medium text-gray-500">Gönderim Tarihi</dt>
-                                            <dd className="mt-1 text-sm">{formatDate(submission.created_at)}</dd>
+                                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Gönderim Tarihi</dt>
+                                            <dd className="mt-1 text-sm dark:text-gray-300">{formatDate(submission.created_at)}</dd>
                                         </div>
                                         <div>
-                                            <dt className="text-sm font-medium text-gray-500">Durum</dt>
+                                            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">Durum</dt>
                                             <dd className="mt-1">
                                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                                    submission.is_correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                                    submission.is_correct
+                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300'
+                                                    : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300'
                                                 }`}>
                                                     {submission.is_correct ? 'Başarılı' : 'Başarısız'}
                                                 </span>
@@ -473,19 +525,19 @@
                                 </div>
                             </div>
 
-                            <div className="mt-6 bg-white shadow rounded-lg overflow-hidden">
+                            <div className="mt-6 bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
                                 <div className="p-6">
-                                    <h2 className="text-lg font-medium mb-4">İşlemler</h2>
+                                    <h2 className="text-lg font-medium mb-4 dark:text-white">İşlemler</h2>
                                     <div className="flex flex-col space-y-2">
                                         <a
                                             href={urls.question.replace("QUESTION_ID", question.id)}
-                                            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium bg-white hover:bg-gray-50"
+                                            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-800 dark:text-white"
                                         >
                                             Soruya Dön
                                         </a>
                                         <a
                                             href={urls.mySubmissions}
-                                            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium bg-white hover:bg-gray-50"
+                                            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-800 dark:text-white"
                                         >
                                             Tüm Gönderimlerim
                                         </a>
@@ -499,10 +551,12 @@
         };
 
         const App = () => {
+            const { darkMode } = window.useTheme();
+
             return (
                 <React.Fragment>
                     <Header />
-                    <div className="flex-grow bg-gray-50">
+                    <div className="flex-grow bg-gray-50 dark:bg-gray-900">
                         <SubmissionView />
                     </div>
                     <Footer />
@@ -510,7 +564,12 @@
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+      ReactDOM.render(
+    <window.ThemeProvider>
+        <App />
+    </window.ThemeProvider>,
+    document.getElementById('root')
+);
     </script>
 </body>
 </html>

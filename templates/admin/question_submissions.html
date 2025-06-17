@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -13,6 +18,7 @@
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <!-- Highlight.js for code highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" id="dark-highlightjs-theme" disabled>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/javascript.min.js"></script>
@@ -35,9 +41,19 @@
             padding: 1rem;
             border-radius: 0.375rem;
         }
+
+        /* Dark mode için highlight.js stilleri */
+        .dark .hljs {
+            background: #1e293b;
+        }
+
+        /* Dark mode için diğer stiller */
+        .dark .code-container {
+            border-color: #4b5563;
+        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
     <script>
@@ -107,6 +123,7 @@
         };
     </script>
 
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
@@ -114,35 +131,48 @@
     <script type="text/babel">
         const SubmissionItem = ({ submission }) => {
             const [showCode, setShowCode] = React.useState(false);
+            const { darkMode } = window.useTheme();
 
             React.useEffect(() => {
                 if (showCode) {
+                    // Highlight.js temalarını dark mode'a göre değiştir
+                    const lightTheme = document.querySelector('link[href*="github.min.css"]');
+                    const darkTheme = document.getElementById('dark-highlightjs-theme');
+
+                    if (darkMode) {
+                        lightTheme.disabled = true;
+                        darkTheme.disabled = false;
+                    } else {
+                        lightTheme.disabled = false;
+                        darkTheme.disabled = true;
+                    }
+
                     document.querySelectorAll('pre code').forEach((block) => {
                         hljs.highlightBlock(block);
                     });
                 }
-            }, [showCode]);
+            }, [showCode, darkMode]);
 
             return (
-                <div className="bg-white shadow-md rounded-lg p-4 mb-4 border-l-4 border-l-solid border-l-blue-500">
+                <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 mb-4 border-l-4 border-l-solid border-l-blue-500">
                     <div className="flex flex-col md:flex-row justify-between mb-2">
                         <div>
-                            <h3 className="text-lg font-semibold">
+                            <h3 className="text-lg font-semibold dark:text-gray-200">
                                 <span className="mr-2">{submission.user.username}</span>
                                 {submission.is_correct ? (
-                                    <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full text-green-800 bg-green-100">
+                                    <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full text-green-800 dark:text-green-300 bg-green-100 dark:bg-green-800/30">
                                         Doğru
                                     </span>
                                 ) : (
-                                    <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full text-red-800 bg-red-100">
+                                    <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full text-red-800 dark:text-red-300 bg-red-100 dark:bg-red-800/30">
                                         Hatalı
                                     </span>
                                 )}
                             </h3>
-                            <p className="text-gray-600 text-sm">Tarih: {submission.created_at}</p>
+                            <p className="text-gray-600 dark:text-gray-400 text-sm">Tarih: {submission.created_at}</p>
                         </div>
                         <div className="mt-2 md:mt-0">
-                            <span className="text-gray-600 text-sm mr-3">
+                            <span className="text-gray-600 dark:text-gray-400 text-sm mr-3">
                                 Çalışma Süresi: {submission.execution_time ?
                                     `${submission.execution_time.toFixed(2)} ms` :
                                     'Hesaplanmadı'}
@@ -157,12 +187,12 @@
 
                     {showCode && (
                         <div className="mt-4">
-                            <div className="code-container">
+                            <div className="code-container dark:border dark:border-gray-700">
                                 <pre><code className="language-python">{submission.code}</code></pre>
                             </div>
 
                             {submission.error_message && (
-                                <div className="mt-3 p-3 bg-red-50 text-red-800 rounded border border-red-200">
+                                <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 rounded border border-red-200 dark:border-red-800">
                                     <h4 className="font-semibold mb-1">Hatalar:</h4>
                                     <pre className="whitespace-pre-wrap text-sm">{submission.error_message}</pre>
                                 </div>
@@ -174,16 +204,18 @@
         };
 
         const App = () => {
+            const { darkMode } = window.useTheme();
+
             return (
                 <React.Fragment>
                     <Header />
                     <div className="flex flex-grow">
                         <AdminSidebar />
 
-                        <main className="flex-grow p-6">
+                        <main className={`flex-grow p-6 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-black"}`}>
                             <div className="container mx-auto">
                                 <div className="flex justify-between items-center mb-6">
-                                    <h1 className="text-2xl font-bold">
+                                    <h1 className="text-2xl font-bold dark:text-white">
                                         "{APP_DATA.question.title}" Sorusu - Çözümler
                                     </h1>
                                     <a href={window.APP_DATA.urls.viewQuestion.replace('0', APP_DATA.question.id)}
@@ -192,35 +224,35 @@
                                     </a>
                                 </div>
 
-                                <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+                                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                         <div>
-                                            <p className="text-gray-600 font-medium">Zorluk</p>
-                                            <p>{['Kolay', 'Orta', 'Zor', 'Çok Zor'][APP_DATA.question.difficulty]}</p>
+                                            <p className="text-gray-600 dark:text-gray-400 font-medium">Zorluk</p>
+                                            <p className="dark:text-white">{['Kolay', 'Orta', 'Zor', 'Çok Zor'][APP_DATA.question.difficulty]}</p>
                                         </div>
                                         <div>
-                                            <p className="text-gray-600 font-medium">Kategori</p>
-                                            <p>{APP_DATA.question.topic ? APP_DATA.question.topic : 'Belirtilmemiş'}</p>
+                                            <p className="text-gray-600 dark:text-gray-400 font-medium">Kategori</p>
+                                            <p className="dark:text-white">{APP_DATA.question.topic ? APP_DATA.question.topic : 'Belirtilmemiş'}</p>
                                         </div>
                                         <div>
-                                            <p className="text-gray-600 font-medium">Fonksiyon Adı</p>
-                                            <p className="font-mono">{APP_DATA.question.function_name}</p>
+                                            <p className="text-gray-600 dark:text-gray-400 font-medium">Fonksiyon Adı</p>
+                                            <p className="font-mono dark:text-white">{APP_DATA.question.function_name}</p>
                                         </div>
                                         <div>
-                                            <p className="text-gray-600 font-medium">Puan</p>
-                                            <p>{APP_DATA.question.points}</p>
+                                            <p className="text-gray-600 dark:text-gray-400 font-medium">Puan</p>
+                                            <p className="dark:text-white">{APP_DATA.question.points}</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="mb-4">
-                                    <h2 className="text-xl font-semibold mb-2">Toplam Çözümler: {APP_DATA.submissions.length}</h2>
-                                    <div className="border-b border-gray-200 mb-4"></div>
+                                    <h2 className="text-xl font-semibold mb-2 dark:text-white">Toplam Çözümler: {APP_DATA.submissions.length}</h2>
+                                    <div className="border-b border-gray-200 dark:border-gray-700 mb-4"></div>
                                 </div>
 
                                 {APP_DATA.submissions.length === 0 ? (
-                                    <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
-                                        <p className="text-yellow-700">Bu soru için henüz çözüm gönderimi yapılmamış.</p>
+                                    <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-md p-4">
+                                        <p className="text-yellow-700 dark:text-yellow-200">Bu soru için henüz çözüm gönderimi yapılmamış.</p>
                                     </div>
                                 ) : (
                                     APP_DATA.submissions.map(submission => (
@@ -235,22 +267,27 @@
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(
+            <window.ThemeProvider>
+                <App />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
     </script>
 
-        <!-- Flash mesajları için script -->
+    <!-- Flash mesajları için script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    const container = document.querySelector('.container');
-                    const formElement = document.querySelector('form');
+                    const container = document.querySelector('main > div');
+                    const titleElement = container.querySelector('h1').parentNode;
 
                     {% for category, message in messages %}
                         const messageDiv = document.createElement('div');
-                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 dark:bg-green-800/30 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-700' : 'bg-red-100 dark:bg-red-800/30 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-700'}`;
                         messageDiv.textContent = '{{ message }}';
-                        container.insertBefore(messageDiv, formElement);
+                        container.insertBefore(messageDiv, titleElement.nextSibling);
                     {% endfor %}
                 {% endif %}
             {% endwith %}
