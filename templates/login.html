@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -14,6 +19,9 @@
     <style>
         html, body, #root {
             height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
         #root {
             display: flex;
@@ -22,8 +30,16 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <div id="root"></div>
+<body class="relative overflow-hidden bg-gray-200 dark:bg-gray-900">
+    <!-- Arka plan daireleri -->
+    <div class="absolute top-[-50px] left-[-50px] w-[150px] h-[150px] bg-gradient-to-br from-black to-gray-700 rounded-full opacity-30"></div>
+    <div class="absolute top-[150px] right-[-75px] w-[200px] h-[200px] bg-gradient-to-tl from-gray-800 to-gray-500 rounded-full opacity-20"></div>
+    <div class="absolute bottom-[-100px] left-[50%] translate-x-[-50%] w-[250px] h-[250px] bg-gradient-to-tr from-black to-gray-600 rounded-full opacity-25"></div>
+    <div class="absolute top-[50px] left-[30%] w-[120px] h-[120px] bg-gradient-to-bl from-gray-700 to-gray-500 rounded-full opacity-15"></div>
+    <div class="absolute bottom-[50px] right-[20%] w-[180px] h-[180px] bg-gradient-to-br from-black to-gray-700 rounded-full opacity-10"></div>
+    <div class="absolute top-[60%] left-[10%] w-[100px] h-[100px] bg-gradient-to-tr from-gray-800 to-gray-600 rounded-full opacity-20"></div>
+
+    <div id="root" class="relative z-10"></div>
 
     <!-- Flash mesajları için ayrı div - React dışında işlenecek -->
     <div id="flash-messages" style="display: none;">
@@ -43,20 +59,20 @@
         <form method="POST">
             {{ form.csrf_token }}
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="username">
                     {{ _('username') }}
                 </label>
-                {{ form.username(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+                {{ form.username(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600 leading-tight focus:outline-none focus:shadow-outline") }}
             </div>
             <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="password">
                     {{ _('password') }}
                 </label>
-                {{ form.password(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline") }}
+                {{ form.password(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600 mb-3 leading-tight focus:outline-none focus:shadow-outline") }}
             </div>
             <div class="mb-4">
                 {{ form.remember_me(class="mr-2") }}
-                <label class="text-sm text-gray-700" for="remember_me">{{ _('remember_me') }}</label>
+                <label class="text-sm text-gray-700 dark:text-gray-300" for="remember_me">{{ _('remember_me') }}</label>
             </div>
             <div class="flex items-center justify-between">
                 <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
@@ -64,8 +80,8 @@
                 </button>
             </div>
             <div class="text-center mt-4">
-                <p class="text-sm text-gray-600">
-                    {{ _('no_account') }} <a href="{{ url_for('auth.register') }}" class="text-blue-600 hover:text-blue-800">{{ _('register') }}</a>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ _('no_account') }} <a href="{{ url_for('auth.register') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">{{ _('register') }}</a>
                 </p>
             </div>
         </form>
@@ -101,6 +117,8 @@
 
     <script type="text/babel">
         const App = () => {
+            const { darkMode } = window.useTheme();
+
             // Form içeriğini kopyalama işlemi
             React.useEffect(() => {
                 // Form içeriğini kopyala
@@ -121,38 +139,30 @@
             }, []);
 
             return (
-                <React.Fragment>
+                <div className={`${darkMode ? "text-white" : "text-black"} flex flex-col min-h-screen`}>
                     <Header />
                     <main className="flex-grow container mx-auto px-4 py-8">
-                        <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-md">
-                            <div className="md:flex">
-                                <div className="p-8 w-full">
-                                    <div className="text-center mb-6">
-                                        <h2 className="text-2xl font-bold text-gray-800">{{ _('login_title') }}</h2>
-                                        <p className="text-sm text-gray-500">{{ _('login_subtitle') }}</p>
-                                    </div>
-
-                                    {/* Flash mesajları buraya gelecek */}
-                                    <div id="flash-container"></div>
-
-                                    {/* Form buraya gelecek */}
-                                    <div id="login-form-container"></div>
-                                </div>
+                        <div className="max-w-md mx-auto">
+                            <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
+                                <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">
+                                    {window.APP_DATA.headerTrans.login}
+                                </h2>
+                                <div id="flash-container"></div>
+                                <div id="login-form-container"></div>
                             </div>
                         </div>
                     </main>
                     <Footer />
-                </React.Fragment>
+                </div>
             );
         };
 
-       ReactDOM.render(
-  <window.ThemeProvider>
-    <App />
-  </window.ThemeProvider>,
-  document.getElementById('root')
-);
-
+        ReactDOM.render(
+            <window.ThemeProvider>
+                <App />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
     </script>
 </body>
 </html>

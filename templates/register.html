@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -22,146 +27,145 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
     <!-- Flash mesajları için ayrı div - React dışında işlenecek -->
     <div id="flash-messages" style="display: none;">
         {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 flash-message">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        [...]
     </div>
 
     <!-- Form içeriği için ayrı div - React dışında işlenecek -->
     <div id="form-content" style="display: none;">
-        <form method="POST">
-            {{ form.csrf_token }}
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                    {{ _('username') }}
-                </label>
-                {{ form.username(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
-                    {{ _('email') }}
-                </label>
-                {{ form.email(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                    {{ _('password') }}
-                </label>
-                {{ form.password(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline") }}
-            </div>
-            <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm_password">
-                    {{ _('confirm_password') }}
-                </label>
-                {{ form.confirm_password(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline") }}
-            </div>
-            <div class="flex items-center justify-between">
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
-                    {{ _('register') }}
-                </button>
-            </div>
-            <div class="text-center mt-4">
-                <p class="text-sm text-gray-600">
-                    {{ _('already_account') }} <a href="{{ url_for('auth.login') }}" class="text-blue-600 hover:text-blue-800">{{ _('login') }}</a>
-                </p>
-            </div>
-        </form>
+        [...]
     </div>
     <script>
-        window.APP_DATA = {
-            isLoggedIn: {{ current_user.is_authenticated|tojson }},
-            userData: {
-                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
-                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
-            },
-            headerTrans: {
-                appName: {{ _('app_name')|tojson|safe }},
-                tagline: {{ _('app_tagline')|tojson|safe }},
-                home: {{ _('home')|tojson|safe }},
-                questions: {{ _('questions')|tojson|safe }},
-                leaderboard: {{ _('leaderboard')|tojson|safe }},
-                about: {{ _('about')|tojson|safe }},
-                logout: {{ _('logout')|tojson|safe }},
-                login: {{ _('login')|tojson|safe }},
-                register: {{ _('register')|tojson|safe }},
-                profile: "Profile",
-                settings: "Settings"
-            },
-            footerTrans: {
-                allRights: {{ _('all_rights')|tojson|safe }},
-                platformDesc: {{ _('platform_desc')|tojson|safe }}
-            },
-            currentLang: {{ session.get('language', 'tr')|tojson }}
-        };
+        [...]
     </script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
 
     <script type="text/babel">
-        const App = () => {
-            // Form içeriğini kopyalama işlemi
-            React.useEffect(() => {
-                // Form içeriğini kopyala
-                const formContent = document.getElementById('form-content');
-                const registerFormContainer = document.getElementById('register-form-container');
-                if (formContent && registerFormContainer) {
-                    registerFormContainer.innerHTML = formContent.innerHTML;
-                    formContent.remove();
-                }
-
-                // Flash mesajlarını kopyala
-                const flashMessages = document.getElementById('flash-messages');
-                const flashContainer = document.getElementById('flash-container');
-                if (flashMessages && flashContainer) {
-                    flashContainer.innerHTML = flashMessages.innerHTML;
-                    flashMessages.remove();
-                }
-            }, []);
+        const RegisterPage = () => {
+            const { darkMode } = window.useTheme();
 
             return (
-                <React.Fragment>
+                <div className={`flex flex-col min-h-screen`}>
                     <Header />
-                    <main className="flex-grow container mx-auto px-4 py-8">
-                        <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-md">
-                            <div className="md:flex">
-                                <div className="p-8 w-full">
-                                    <div className="text-center mb-6">
-                                        <h2 className="text-2xl font-bold text-gray-800">{{ _('register_title') }}</h2>
-                                        <p className="text-sm text-gray-500">{{ _('register_subtitle') }}</p>
+                    <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900">
+                        <div className="max-w-md w-full space-y-8">
+                            <div>
+                                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+                                    {TRANSLATIONS.register_title}
+                                </h2>
+                                <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
+                                    {TRANSLATIONS.register_subtitle}
+                                </p>
+                            </div>
+
+                            {/* Flash mesajlar */}
+                            {FLASH_MESSAGES.length > 0 && (
+                                <div className="bg-red-100 dark:bg-red-900/30 border-l-4 border-red-500 text-red-700 dark:text-red-300 p-4">
+                                    {FLASH_MESSAGES.map((msg, index) => (
+                                        <p key={index}>{msg}</p>
+                                    ))}
+                                </div>
+                            )}
+
+                            <form className="mt-8 space-y-6 bg-white dark:bg-gray-800 p-8 shadow-md rounded-lg" method="POST" action="">
+                                <input type="hidden" name="csrf_token" value={FORM_DATA.csrf_token} />
+
+                                <div className="rounded-md shadow-sm -space-y-px">
+                                    <div className="mb-4">
+                                        <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            {TRANSLATIONS.username}
+                                        </label>
+                                        <input
+                                            id="username"
+                                            name="username"
+                                            type="text"
+                                            required
+                                            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                            placeholder={TRANSLATIONS.username_placeholder}
+                                        />
                                     </div>
 
-                                    {/* Flash mesajları buraya gelecek */}
-                                    <div id="flash-container"></div>
+                                    <div className="mb-4">
+                                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            {TRANSLATIONS.email}
+                                        </label>
+                                        <input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            autoComplete="email"
+                                            required
+                                            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                            placeholder={TRANSLATIONS.email_placeholder}
+                                        />
+                                    </div>
 
-                                    {/* Form buraya gelecek */}
-                                    <div id="register-form-container"></div>
+                                    <div className="mb-4">
+                                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            {TRANSLATIONS.password}
+                                        </label>
+                                        <input
+                                            id="password"
+                                            name="password"
+                                            type="password"
+                                            autoComplete="new-password"
+                                            required
+                                            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                            placeholder={TRANSLATIONS.password_placeholder}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            {TRANSLATIONS.confirm_password}
+                                        </label>
+                                        <input
+                                            id="confirm_password"
+                                            name="confirm_password"
+                                            type="password"
+                                            autoComplete="new-password"
+                                            required
+                                            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                            placeholder={TRANSLATIONS.confirm_password_placeholder}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+
+                                <div>
+                                    <button
+                                        type="submit"
+                                        className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                    >
+                                        {TRANSLATIONS.register_button}
+                                    </button>
+                                </div>
+
+                                <div className="text-sm text-center">
+                                    <a href="/login" className="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
+                                        {TRANSLATIONS.already_have_account}
+                                    </a>
+                                </div>
+                            </form>
                         </div>
                     </main>
                     <Footer />
-                </React.Fragment>
+                </div>
             );
         };
 
         ReactDOM.render(
-  <window.ThemeProvider>
-    <App />
-  </window.ThemeProvider>,
-  document.getElementById('root')
-);
+            <window.ThemeProvider>
+                <RegisterPage />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
     </script>
 </body>
 </html>

@@ -4,14 +4,12 @@
     <title>{{ _('settings') }} - {{ _('app_name') }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-        };
-    </script>
+    <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <style>
         html, body, #root {
@@ -24,12 +22,12 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-black dark:bg-gray-900 dark:text-white">
+<body class="bg-gray-50">
     <div id="root"></div>
 
     <script>
         window.APP_DATA = {
-            isLoggedIn: {{ current_user.is_authenticated|tojson if current_user.is_authenticated else 'false'|safe }},
+            isLoggedIn: {{ current_user.is_authenticated|tojson }},
             userData: {
                 username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
                 email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
@@ -39,8 +37,8 @@
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                questions: {{ _('Questions')|tojson|safe }},
-                leaderboard: {{ _('Leaderboard')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
+                leaderboard: {{ _('leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
                 login: {{ _('login')|tojson|safe }},
@@ -106,287 +104,247 @@
             }
         };
     </script>
-    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
 
     <script type="text/babel">
         const App = () => {
-           const { darkMode } = useTheme();
-
-           // Değişken tanımlamaları burada, return ifadesinden önce olmalı
-           const translations = window.APP_DATA.translations;
-           const flashMessages = window.APP_DATA.flashMessages || [];
-           const formData = window.APP_DATA.formData || {};
+            const translations = window.APP_DATA.translations;
+            const flashMessages = window.APP_DATA.flashMessages || [];
+            const formData = window.APP_DATA.formData || {};
 
             return (
-                // Ana div'in dark mode sınıfları: light modda bg-gray-50 (body'den geliyor), text-black olarak override ettik.
-                // dark modda bg-gray-900 (body'den geliyor), text-white olarak override ettik.
-                <div className={darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50 text-black'}>
+                <React.Fragment>
                     <Header />
-                    <React.Fragment>
-                        {/* Header zaten üstte render edildiği için burada tekrar çağırmaya gerek yok,
-                            ancak layoutunuzun yapısına göre değişebilir. Eğer sadece <App> içinde
-                            tek bir Header olmasını istiyorsanız yukarıdaki <Header /> kalmalı,
-                            buradaki React.Fragment içindeki kaldırılmalı.
-                            Mevcut kodunuzda App bileşeninin dışına bir <Header /> koymuşsunuz,
-                            sonra App bileşeninin içinde bir daha koymuşsunuz. Bu çift Header demek.
-                            Bir tanesini kaldırmanızı öneririm.
-                            Ben aşağıdaki React.Fragment içindeki Header'ı yorum satırı yaptım.
-                        */}
-                        {/* <Header /> */}
-                        <div className="flex flex-grow">
-                            <AdminSidebar />
-                            {/* main etiketi ve içindeki container'lar için dark mode sınıfları */}
-                            {/* main etiketi zaten body ve App div'inden metin rengini devralacağı için doğrudan text-black dark:text-white ekliyoruz */}
-                            <main className="flex-grow p-6 bg-gray-50 dark:bg-gray-900 text-black dark:text-white">
-                                <div className="container mx-auto">
-                                    {flashMessages.length > 0 && (
-                                        <div className="mb-6">
-                                            {flashMessages.map((flash, index) => (
-                                                <div key={index} className={`mb-4 p-4 rounded-lg shadow ${
-                                                    flash.category === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' :
-                                                    flash.category === 'warning' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
-                                                    flash.category === 'error' ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' :
-                                                    'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100'
-                                                }`}>
-                                                    {flash.message}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    <div className="flex justify-between items-center mb-6">
-                                        {/* Başlık için metin rengi: light modda siyah, dark modda beyaz */}
-                                        <h1 className="text-3xl font-bold text-black dark:text-white">{translations.settings}</h1>
-                                        <a href={window.APP_DATA.urls.adminIndex} className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600">
-                                            {translations.back_to_admin}
-                                        </a>
+                    <div className="flex flex-grow">
+                        <AdminSidebar />
+                        <main className="flex-grow p-6">
+                            <div className="container mx-auto">
+                                {flashMessages.length > 0 && (
+                                    <div className="mb-6">
+                                        {flashMessages.map((flash, index) => (
+                                            <div key={index} className={`mb-4 p-4 rounded-lg shadow ${
+                                                flash.category === 'success' ? 'bg-green-100 text-green-800' :
+                                                flash.category === 'warning' ? 'bg-yellow-100 text-yellow-800' :
+                                                flash.category === 'error' ? 'bg-red-100 text-red-800' :
+                                                'bg-blue-100 text-blue-800'
+                                            }`}>
+                                                {flash.message}
+                                            </div>
+                                        ))}
                                     </div>
+                                )}
 
-                                    {/* Genel kutular için dark mode sınıfları */}
-                                    {/* İçindeki metinler otomatik olarak üst div'den rengi alacaktır. */}
-                                    <div className="bg-white shadow-md rounded-lg p-6 dark:bg-gray-800 dark:shadow-xl">
-                                        <form method="post" action={window.APP_DATA.urls.settings}>
-                                            <input type="hidden" name="csrf_token" value={formData.csrf_token} />
+                                <div className="flex justify-between items-center mb-6">
+                                    <h1 className="text-3xl font-bold">{translations.settings}</h1>
+                                    <a href={window.APP_DATA.urls.adminIndex} className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                                        {translations.back_to_admin}
+                                    </a>
+                                </div>
 
-                                            <div className="mb-6">
-                                                {/* Başlık için metin rengi: light modda siyah, dark modda beyaz */}
-                                                <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">{translations.general_settings}</h2>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <div className="form-group">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="site_name" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            Site Adı
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            name="site_name"
-                                                            id="site_name"
-                                                            defaultValue={formData.site_name}
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
-                                                            required
-                                                        />
-                                                    </div>
+                                <div className="bg-white shadow-md rounded-lg p-6">
+                                    <form method="post" action={window.APP_DATA.urls.settings}>
+                                        <input type="hidden" name="csrf_token" value={formData.csrf_token} />
 
-                                                    <div className="form-group">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="default_language" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            Varsayılan Dil
-                                                        </label>
-                                                        <select
-                                                            name="default_language"
-                                                            id="default_language"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
-                                                            defaultValue={formData.default_language}
-                                                        >
-                                                            <option value="tr">Türkçe</option>
-                                                            <option value="en">English</option>
-                                                        </select>
-                                                    </div>
+                                        <div className="mb-6">
+                                            <h2 className="text-xl font-semibold mb-4">{translations.general_settings}</h2>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="form-group">
+                                                    <label htmlFor="site_name" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Site Adı
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="site_name"
+                                                        id="site_name"
+                                                        defaultValue={formData.site_name}
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        required
+                                                    />
+                                                </div>
 
-                                                    <div className="form-group md:col-span-2">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="site_description" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            Site Açıklaması
-                                                        </label>
-                                                        <textarea
-                                                            name="site_description"
-                                                            id="site_description"
-                                                            rows="3"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
-                                                            defaultValue={formData.site_description}
-                                                        ></textarea>
-                                                    </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="default_language" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Varsayılan Dil
+                                                    </label>
+                                                    <select
+                                                        name="default_language"
+                                                        id="default_language"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        defaultValue={formData.default_language}
+                                                    >
+                                                        <option value="tr">Türkçe</option>
+                                                        <option value="en">English</option>
+                                                    </select>
+                                                </div>
+
+                                                <div className="form-group md:col-span-2">
+                                                    <label htmlFor="site_description" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Site Açıklaması
+                                                    </label>
+                                                    <textarea
+                                                        name="site_description"
+                                                        id="site_description"
+                                                        rows="3"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        defaultValue={formData.site_description}
+                                                    ></textarea>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            <div className="mb-6">
-                                                {/* Başlık için metin rengi: light modda siyah, dark modda beyaz */}
-                                                <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">{translations.user_settings}</h2>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <div className="form-group">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="allow_registration" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            Kayıt İzni
-                                                        </label>
-                                                        <select
-                                                            name="allow_registration"
-                                                            id="allow_registration"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
-                                                            defaultValue={formData.allow_registration}
-                                                        >
-                                                            <option value="1">Açık</option>
-                                                            <option value="0">Kapalı</option>
-                                                        </select>
-                                                    </div>
+                                        <div className="mb-6">
+                                            <h2 className="text-xl font-semibold mb-4">{translations.user_settings}</h2>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="form-group">
+                                                    <label htmlFor="allow_registration" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Kayıt İzni
+                                                    </label>
+                                                    <select
+                                                        name="allow_registration"
+                                                        id="allow_registration"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        defaultValue={formData.allow_registration}
+                                                    >
+                                                        <option value="1">Açık</option>
+                                                        <option value="0">Kapalı</option>
+                                                    </select>
+                                                </div>
 
-                                                    <div className="form-group">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="enable_user_activation" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            Hesap Aktivasyonu
-                                                        </label>
-                                                        <select
-                                                            name="enable_user_activation"
-                                                            id="enable_user_activation"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
-                                                            defaultValue={formData.enable_user_activation}
-                                                        >
-                                                            <option value="1">Gerekli</option>
-                                                            <option value="0">Gerekli Değil</option>
-                                                        </select>
-                                                    </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="enable_user_activation" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Hesap Aktivasyonu
+                                                    </label>
+                                                    <select
+                                                        name="enable_user_activation"
+                                                        id="enable_user_activation"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        defaultValue={formData.enable_user_activation}
+                                                    >
+                                                        <option value="1">Gerekli</option>
+                                                        <option value="0">Gerekli Değil</option>
+                                                    </select>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            <div className="mb-6">
-                                                {/* Başlık için metin rengi: light modda siyah, dark modda beyaz */}
-                                                <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">{translations.mail_settings}</h2>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <div className="form-group">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="mail_server" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            Mail Sunucusu
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            name="mail_server"
-                                                            id="mail_server"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
-                                                            defaultValue={formData.mail_server}
-                                                        />
-                                                    </div>
+                                        <div className="mb-6">
+                                            <h2 className="text-xl font-semibold mb-4">{translations.mail_settings}</h2>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="form-group">
+                                                    <label htmlFor="mail_server" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Mail Sunucusu
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="mail_server"
+                                                        id="mail_server"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        defaultValue={formData.mail_server}
+                                                    />
+                                                </div>
 
-                                                    <div className="form-group">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="mail_port" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            Mail Port
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            name="mail_port"
-                                                            id="mail_port"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
-                                                            defaultValue={formData.mail_port}
-                                                        />
-                                                    </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="mail_port" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Mail Port
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="mail_port"
+                                                        id="mail_port"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        defaultValue={formData.mail_port}
+                                                    />
+                                                </div>
 
-                                                    <div className="form-group">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="mail_username" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            Mail Kullanıcı Adı
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            name="mail_username"
-                                                            id="mail_username"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
-                                                            defaultValue={formData.mail_username}
-                                                        />
-                                                    </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="mail_username" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Mail Kullanıcı Adı
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        name="mail_username"
+                                                        id="mail_username"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        defaultValue={formData.mail_username}
+                                                    />
+                                                </div>
 
-                                                    <div className="form-group">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="mail_password" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            Mail Şifresi
-                                                        </label>
-                                                        <input
-                                                            type="password"
-                                                            name="mail_password"
-                                                            id="mail_password"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
-                                                            defaultValue={formData.mail_password}
-                                                        />
-                                                    </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="mail_password" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Mail Şifresi
+                                                    </label>
+                                                    <input
+                                                        type="password"
+                                                        name="mail_password"
+                                                        id="mail_password"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        defaultValue={formData.mail_password}
+                                                    />
+                                                </div>
 
-                                                    <div className="form-group">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="mail_use_tls" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            Mail TLS
-                                                        </label>
-                                                        <select
-                                                            name="mail_use_tls"
-                                                            id="mail_use_tls"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
-                                                            defaultValue={formData.mail_use_tls}
-                                                        >
-                                                            <option value="1">Evet</option>
-                                                            <option value="0">Hayır</option>
-                                                        </select>
-                                                    </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="mail_use_tls" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Mail TLS
+                                                    </label>
+                                                    <select
+                                                        name="mail_use_tls"
+                                                        id="mail_use_tls"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        defaultValue={formData.mail_use_tls}
+                                                    >
+                                                        <option value="1">Evet</option>
+                                                        <option value="0">Hayır</option>
+                                                    </select>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            <div className="mb-6">
-                                                {/* Başlık için metin rengi: light modda siyah, dark modda beyaz */}
-                                                <h2 className="text-xl font-semibold mb-4 text-black dark:text-white">{translations.ai_settings}</h2>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <div className="form-group">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="enable_ai_features" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            {translations.enable_ai_features}
-                                                        </label>
-                                                        <select
-                                                            name="enable_ai_features"
-                                                            id="enable_ai_features"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
-                                                            defaultValue="1"
-                                                        >
-                                                            <option value="1">Açık</option>
-                                                            <option value="0">Kapalı</option>
-                                                        </select>
-                                                    </div>
+                                        <div className="mb-6">
+                                            <h2 className="text-xl font-semibold mb-4">{translations.ai_settings}</h2>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="form-group">
+                                                    <label htmlFor="enable_ai_features" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        {translations.enable_ai_features}
+                                                    </label>
+                                                    <select
+                                                        name="enable_ai_features"
+                                                        id="enable_ai_features"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        defaultValue="1"
+                                                    >
+                                                        <option value="1">Açık</option>
+                                                        <option value="0">Kapalı</option>
+                                                    </select>
+                                                </div>
 
-                                                    <div className="form-group">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="api_provider" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            {translations.api_provider}
-                                                        </label>
+                                                <div className="form-group">
+                                                    <label htmlFor="api_provider" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        {translations.api_provider}
+                                                    </label>
                                                         <select
                                                             name="api_provider"
                                                             id="api_provider"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                             defaultValue="gemini"
                                                             disabled
                                                         >
                                                             <option value="gemini">Google Gemini</option>
                                                         </select>
-                                                        {/* Yardımcı metin için metin rengi: light modda gray-500, dark modda gray-400 */}
-                                                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                        <p className="mt-1 text-xs text-gray-500">
                                                             Bu uygulamada yalnızca Google Gemini AI desteklenmektedir.
                                                         </p>
-                                                    </div>
+                                                </div>
 
-                                                    <div className="form-group">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="default_ai_model" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            {translations.default_ai_model}
-                                                        </label>
+                                                <div className="form-group">
+                                                    <label htmlFor="default_ai_model" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        {translations.default_ai_model}
+                                                    </label>
                                                         <select
                                                             name="default_ai_model"
                                                             id="default_ai_model"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                             defaultValue={formData.default_ai_model}
                                                         >
                                                             <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro</option>
@@ -395,51 +353,42 @@
                                                             <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
                                                             <option value="gemini-2.0-pro">Gemini 2.0 Pro</option>
                                                         </select>
-                                                    </div>
+                                                </div>
 
-                                                    <div className="form-group md:col-span-2">
-                                                        {/* Label için metin rengi: light modda siyah, dark modda beyaz */}
-                                                        <label htmlFor="api_key" className="block text-sm font-medium text-black dark:text-white mb-1">
-                                                            API Anahtarı
-                                                        </label>
-                                                        <input
-                                                            type="password"
-                                                            name="api_key"
-                                                            id="api_key"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:focus:ring-blue-400"
-                                                            defaultValue={formData.api_key}
-                                                        />
-                                                        {/* Yardımcı metin için metin rengi: light modda gray-500, dark modda gray-400 */}
-                                                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                                            Bu anahtar tüm kullanıcıların ortak kullanımı için ayarlanır. Kullanıcılar kendi API anahtarlarını da ekleyebilir.
-                                                        </p>
-                                                    </div>
+                                                <div className="form-group md:col-span-2">
+                                                    <label htmlFor="api_key" className="block text-sm font-medium text-gray-700 mb-1">
+                                                        API Anahtarı
+                                                    </label>
+                                                    <input
+                                                        type="password"
+                                                        name="api_key"
+                                                        id="api_key"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        defaultValue={formData.api_key}
+                                                    />
+                                                    <p className="mt-1 text-xs text-gray-500">
+                                                        Bu anahtar tüm kullanıcıların ortak kullanımı için ayarlanır. Kullanıcılar kendi API anahtarlarını da ekleyebilir.
+                                                    </p>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            <div className="mt-6">
-                                                {/* Butonun metin rengi beyaz kalacak (bg-blue-600 ile iyi gider) */}
-                                                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600">
-                                                    {translations.save_settings}
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
+                                        <div className="mt-6">
+                                            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                                                {translations.save_settings}
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
-                            </main>
-                        </div>
-                        <Footer />
-                    </React.Fragment>
-                </div>
+                            </div>
+                        </main>
+                    </div>
+                    <Footer />
+                </React.Fragment>
             );
         };
 
-        const root = document.getElementById('root');
-        ReactDOM.createRoot(root).render(
-            <window.ThemeProvider>
-                <App />
-            </window.ThemeProvider>
-        );
+        ReactDOM.render(<App />, document.getElementById('root'));
     </script>
 </body>
 </html>

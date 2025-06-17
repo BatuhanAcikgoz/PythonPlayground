@@ -85,8 +85,8 @@
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                questions: {{ _('Questions')|tojson|safe }},
-                leaderboard: {{ _('Leaderboard')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
+                leaderboard: {{ _('leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
                 login: {{ _('login')|tojson|safe }},
@@ -436,7 +436,7 @@
     };
 
     return (
-        <div className={darkMode ? "text-white min-h-screen" : "text-black min-h-screen"}>
+        <div className={`${darkMode ? "text-white" : "text-black"} flex flex-col min-h-screen`}>
 
             <Header />
             <main className="flex-grow container mx-auto px-4 py-8">
@@ -492,7 +492,7 @@
                                                         </a>
                                                         <a
                                                             href={`${urls.viewNotebookSummary}`.replace("NOTEBOOK_PATH", notebook)}
-                                                            className="text-sm px-3 py-1 bg-slate-100 dark:bg-gray-800 text-slate-700 dark:text-gray-200 rounded-full hover:bg-slate-200 dark:hover:bg-gray-700 flex items-center"
+                                                            className="text-sm px-3 py-1 bg-slate-100 dark:bg-gray-600 text-slate-700 dark:text-gray-200 rounded-full hover:bg-slate-200 dark:hover:bg-gray-700 flex items-center"
                                                         >
                                                             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>

@@ -19,6 +19,9 @@
     <style>
         html, body, #root {
             height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
         #root {
             display: flex;
@@ -34,20 +37,29 @@
         .rank-3 {
             background-color: rgba(234, 179, 8, 0.2);
         }
-html.dark .rank-1 {
-    background-color: rgba(253, 224, 71, 0.1);
-}
-html.dark .rank-2 {
-    background-color: rgba(209, 213, 219, 0.1);
-}
-html.dark .rank-3 {
-    background-color: rgba(234, 179, 8, 0.1);
-}
-
+        html.dark .rank-1 {
+            background-color: rgba(253, 224, 71, 0.1);
+        }
+        html.dark .rank-2 {
+            background-color: rgba(209, 213, 219, 0.1);
+        }
+        html.dark .rank-3 {
+            background-color: rgba(234, 179, 8, 0.1);
+        }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-950">
-    <div id="root"></div>
+<body class="relative overflow-hidden bg-gray-200 dark:bg-gray-900">
+    <!-- Arka plan daireleri -->
+    <div class="absolute top-[-50px] left-[-50px] w-[150px] h-[150px] bg-gradient-to-br from-black to-gray-700 rounded-full opacity-30"></div>
+    <div class="absolute top-[150px] right-[-75px] w-[200px] h-[200px] bg-gradient-to-tl from-gray-800 to-gray-500 rounded-full opacity-20"></div>
+    <div class="absolute bottom-[-100px] left-[50%] translate-x-[-50%] w-[250px] h-[250px] bg-gradient-to-tr from-black to-gray-600 rounded-full opacity-25"></div>
+    <div class="absolute top-[50px] left-[30%] w-[120px] h-[120px] bg-gradient-to-bl from-gray-700 to-gray-500 rounded-full opacity-15"></div>
+    <div class="absolute bottom-[50px] right-[20%] w-[180px] h-[180px] bg-gradient-to-br from-black to-gray-700 rounded-full opacity-10"></div>
+    <div class="absolute top-[60%] left-[10%] w-[100px] h-[100px] bg-gradient-to-tr from-gray-800 to-gray-600 rounded-full opacity-20"></div>
+
+    <!-- Uygulama içeriği -->
+    <div id="root" class="relative z-10"></div>
+
     <script>
         window.APP_DATA = {
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
@@ -97,7 +109,7 @@ html.dark .rank-3 {
 
     <script type="text/babel">
         const App = () => {
-            const { darkMode, toggleTheme } = useTheme();
+            const { darkMode, toggleTheme } = window.useTheme();
             // Flask şablonundan veri al
             const urls = window.APP_DATA.urls;
 
@@ -155,17 +167,17 @@ html.dark .rank-3 {
                                         }
 
                                         return (
-                                            <tr key={index} className={`${rankClass} hover:bg-blue-50 transition-colors`}>
+                                            <tr key={index} className={`${rankClass} hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors`}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    {rankBadge || <span className="text-gray-700">{user.rank}</span>}
+                                                    {rankBadge || <span className="text-gray-700 dark:text-gray-300">{user.rank}</span>}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <a href={window.APP_DATA.urls.viewProfile.replace('0', user.username)}
-                                                       className="text-blue-600 hover:text-blue-900 font-medium">
+                                                       className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
                                                         {user.username}
                                                     </a>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap font-medium">
+                                                <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-800 dark:text-gray-200">
                                                     {user.points}
                                                 </td>
                                             </tr>
@@ -180,6 +192,7 @@ html.dark .rank-3 {
 
             return (
                 <React.Fragment>
+                <div className={`${darkMode ? "text-white" : "text-black"} flex flex-col min-h-screen`}>
                     <Header />
                     <main className="flex-grow container mx-auto px-4 py-8">
                         <div className="max-w-4xl mx-auto">
@@ -190,16 +203,17 @@ html.dark .rank-3 {
                         </div>
                     </main>
                     <Footer />
+                </div>
                 </React.Fragment>
             );
         };
 
         ReactDOM.render(
-    <window.ThemeProvider>
-        <App />
-    </window.ThemeProvider>,
-    document.getElementById('root')
-);
+            <window.ThemeProvider>
+                <App />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
     </script>
 </body>
 </html>

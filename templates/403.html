@@ -88,7 +88,7 @@
             const { darkMode } = window.useTheme(); // Tema durumunu al
 
             return (
-                <div className={darkMode ? "text-white min-h-screen" : "text-black min-h-screen"}>
+                <div className={`${darkMode ? "text-white" : "text-black"} flex flex-col min-h-screen`}>
                     <Header />
                     <main className="flex-grow container mx-auto px-4 py-8 flex items-center justify-center">
                         <div className="text-center bg-white dark:bg-gray-800 p-12 rounded-lg shadow-lg">

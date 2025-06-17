@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ notebook.metadata.title if notebook.metadata and 'title' in notebook.metadata else notebook.path }} - {{ _('app_name') }}</title>    <meta charset="UTF-8">
+    <title>{{ notebook.metadata.title if notebook.metadata and 'title' in notebook.metadata else notebook.path }} - {{ _('app_name') }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -34,9 +39,33 @@
         .code-bg {
             background-color: #282a36;
         }
+        /* Dark mode için prose sınıfı için ek stiller */
+        .dark .prose {
+            color: #d1d5db;
+        }
+        .dark .prose h1, .dark .prose h2, .dark .prose h3, .dark .prose h4 {
+            color: #e5e7eb;
+        }
+        .dark .prose a {
+            color: #60a5fa;
+        }
+        .dark .prose strong {
+            color: #f3f4f6;
+        }
+        .dark .prose code {
+            color: #e5e7eb;
+            background-color: rgba(55, 65, 81, 0.5);
+        }
+        .dark .prose blockquote {
+            color: #9ca3af;
+            border-left-color: rgba(75, 85, 99, 0.5);
+        }
+        .hljs-meta .hljs-string, .hljs-regexp, .hljs-string {
+            color: #9eaebd;
+        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
     <script>
@@ -50,8 +79,8 @@
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
                 home: {{ _('home')|tojson|safe }},
-                questions: {{ _('Questions')|tojson|safe }},
-                leaderboard: {{ _('Leaderboard')|tojson|safe }},
+                questions: {{ _('questions')|tojson|safe }},
+                leaderboard: {{ _('leaderboard')|tojson|safe }},
                 about: {{ _('about')|tojson|safe }},
                 logout: {{ _('logout')|tojson|safe }},
                 login: {{ _('login')|tojson|safe }},
@@ -79,6 +108,7 @@
             notebook: {{ notebook|tojson }}
         };
     </script>
+
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
@@ -87,12 +117,13 @@
         const CodeMirrorEditor = ({ value, onChange, disabled, readOnly }) => {
             const editorRef = React.useRef(null);
             const cmRef = React.useRef(null);
+            const { darkMode } = window.useTheme();
 
             React.useEffect(() => {
                 if (editorRef.current && !cmRef.current) {
                     cmRef.current = CodeMirror.fromTextArea(editorRef.current, {
                         mode: "python",
-                        theme: "dracula",
+                        theme: "dracula", // Hem light hem dark mode için koyu tema kullanıyoruz
                         lineNumbers: true,
                         indentUnit: 4,
                         tabSize: 4,
@@ -134,20 +165,17 @@
         const App = () => {
             const notebook = window.APP_DATA.notebook;
             const translations = {
-                run: {{ _('run')|tojson|safe }},
-                console_output: {{ _('console_output')|tojson|safe }} || "Çıktı Konsolu",
-                waiting_for_input: {{ _('waiting_for_input')|tojson|safe }} || "Girdi Bekleniyor...",
-                enter_command: {{ _('enter_command')|tojson|safe }} || "Komut Gir",
-                send: {{ _('send')|tojson|safe }} || "Gönder"
+                run: {{ _('run')|tojson|safe }}
             };
             const urls = window.APP_DATA.urls;
+            const { darkMode } = window.useTheme();
 
             return (
-                <React.Fragment>
+                <div className={`${darkMode ? "text-white" : "text-black"} flex flex-col min-h-screen`}>
                     <Header />
                     <NotebookViewer notebook={notebook} translations={translations} urls={urls} />
                     <Footer />
-                </React.Fragment>
+                </div>
             );
         };
 
@@ -159,6 +187,7 @@
             const [commandHistory, setCommandHistory] = React.useState([]);
             const [, setHistoryIndex] = React.useState(-1);
             const [isExecuting, setIsExecuting] = React.useState(false);
+            const { darkMode } = window.useTheme();
 
             const consoleOutputRef = React.useRef(null);
 
@@ -221,115 +250,102 @@
             };
 
             return (
-                <div className="flex flex-col md:flex-row h-[calc(100vh-220px)] bg-white rounded-lg shadow-md overflow-hidden p-5">
+                <div className="flex flex-col md:flex-row h-[calc(100vh-220px)] bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden p-5">
                     {/* Notebook İçeriği */}
-                   {/* Notebook İçeriği */}
-<div className="w-full md:w-1/2 overflow-y-auto p-6 bg-white dark:bg-gray-900 border-r border-gray-300 dark:border-gray-800 rounded-lg">
-    {notebook.cells.map((cell, index) => (
-        <div
-            key={index}
-            className={`mb-6 p-4 rounded-md shadow
-                ${cell.cell_type === 'code'
-                    ? 'bg-gray-50 dark:bg-gray-800 border-l-4 border-blue-500'
-                    : 'bg-green-50 dark:bg-gray-700 border-l-4 border-green-500'
-                }`}
-        >
-            {cell.cell_type === 'code' ? (
-                <React.Fragment>
-                    <pre className="overflow-x-auto text-sm text-gray-800 dark:text-gray-200">
-                        <code>{cell.source}</code>
-                    </pre>
-                    <button
-                        className="mt-3 bg-blue-600 hover:bg-blue-700 text-white py-1 px-4 rounded text-sm transition"
-                        onClick={() => runCode(cell.source)}
-                    >
-                        {translations.run}
-                    </button>
-                    {cell.outputs && cell.outputs.length > 0 && (
-                        <div className="mt-3 bg-yellow-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 p-3 rounded-md border-l-4 border-yellow-500">
-                            {cell.outputs.map((output, i) => (
-                                <pre key={i} className="whitespace-pre-wrap text-sm">
-                                    {output.output_type === 'stream' && output.text}
-                                    {output.output_type === 'execute_result' && output.data['text/plain']}
-                                </pre>
+                    <div className="w-full md:w-1/2 overflow-y-auto p-6 border-r border-gray-200 dark:border-gray-700">
+                        {notebook.cells.map((cell, index) => (
+                            <div key={index} className={`mb-6 pl-4 ${cell.cell_type === 'code' ? 'border-l-4 border-blue-500' : 'border-l-4 border-green-500'}`}>
+                                {cell.cell_type === 'code' ? (
+                                    <React.Fragment>
+                                        <pre className="bg-gray-50 dark:bg-gray-700 p-4 rounded-md overflow-x-auto">
+                                            <code>{cell.source}</code>
+                                        </pre>
+                                        <button
+                                            className="mt-2 bg-blue-600 hover:bg-blue-700 text-white py-1 px-4 rounded text-sm"
+                                            onClick={() => runCode(cell.source)}
+                                        >
+                                            {translations.run}
+                                        </button>
+                                        {cell.outputs && cell.outputs.length > 0 && (
+                                            <div className="mt-2 bg-gray-50 dark:bg-gray-700 p-4 rounded-md border-l-4 border-yellow-500">
+                                                {cell.outputs.map((output, i) => (
+                                                    <pre key={i} className="text-gray-800 dark:text-gray-200">
+                                                        {output.output_type === 'stream' && output.text}
+                                                        {output.output_type === 'execute_result' && output.data['text/plain']}
+                                                    </pre>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </React.Fragment>
+                                ) : (
+                                    <div
+                                        className="markdown-content prose dark:prose-invert"
+                                        dangerouslySetInnerHTML={renderMarkdown(cell.source)}
+                                    ></div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Console Kısmı */}
+                    <div className="w-full md:w-1/2 flex flex-col">
+                        <div className="flex-1 bg-gray-900 text-gray-100 overflow-y-auto" ref={consoleOutputRef}>
+                            {consoleOutput.map((item, index) => (
+                                <div
+                                    key={index}
+                                    className={`px-4 py-2 border-l-4 ${
+                                        item.type === 'output' ? 'border-yellow-500' :
+                                        item.type === 'input' ? 'border-green-500' : 'border-blue-500'
+                                    }`}
+                                >
+                                    <pre className="whitespace-pre-wrap font-mono text-sm">{item.content}</pre>
+                                </div>
                             ))}
                         </div>
-                    )}
-                </React.Fragment>
-            ) : (
-                <div
-                    className="prose dark:prose-invert max-w-none"
-                    dangerouslySetInnerHTML={renderMarkdown(cell.source)}
-                ></div>
-            )}
-        </div>
-    ))}
-</div>
-
-{/* Console Kısmı */}
-<div className="w-full md:w-1/2 flex flex-col rounded-lg shadow-inner bg-[#1e1e2f] border border-gray-700 overflow-hidden">
-    {/* Başlık */}
-    <div className="text-white font-bold px-4 py-2 border-b border-gray-700 bg-[#1e1e2f]">
-        {translations.console_output || "Çıktı Konsolu"}
-    </div>
-
-    {/* Çıktılar */}
-    <div className="flex-1 overflow-y-auto px-4 py-2" ref={consoleOutputRef}>
-        {consoleOutput.map((item, index) => (
-            <div
-                key={index}
-                className={`mb-2 px-4 py-2 border-l-4 rounded bg-[#2a2a40] ${
-                    item.type === 'output' ? 'border-yellow-500' :
-                    item.type === 'input' ? 'border-green-500' : 'border-blue-500'
-                }`}
-            >
-                <pre className="whitespace-pre-wrap font-mono text-sm text-green-300">{item.content}</pre>
-            </div>
-        ))}
-    </div>
-
-    {/* Girdi alanı */}
-    <div className="border-t border-gray-700 px-4 py-3 bg-[#1e1e2f]">
-        <div className="mb-2 text-sm text-gray-400 font-mono">
-            {isInputMode ? (translations.waiting_for_input || "Girdi Bekleniyor...") : (translations.enter_command || "Komut Gir")}
-        </div>
-        <div className="w-full mb-2 border border-slate-600 rounded-md p-2 bg-[#2a2a40]">
-            <CodeMirrorEditor
-                value={inputValue}
-                onChange={handleInputChange}
-                disabled={isExecuting}
-            />
-        </div>
-        <div className="flex justify-end">
-            <button
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-1.5 px-4 rounded-md transition duration-200"
-                onClick={() => {
-                    if (isInputMode) {
-                        const value = inputValue;
-                        setConsoleOutput(prev => [...prev, { type: 'input', content: value }]);
-                        socket.emit('input_response', { value });
-                        setIsInputMode(false);
-                    } else {
-                        runCode(inputValue);
-                    }
-                    setInputValue('');
-                }}
-                disabled={isExecuting}
-            >
-               {isInputMode ? (translations.send || "Gönder") : (translations.run || "Çalıştır")}
-            </button>
-        </div>
-    </div>
-</div>
+                        <div className="flex flex-col border-t border-gray-700 p-2 code-bg">
+                            <div className="flex items-center mb-2">
+                                <span className="text-green-400 mr-2 font-mono">
+                                    {isInputMode ? "Girdi>" : ""}
+                                </span>
+                                <div className="w-full">
+                                    <CodeMirrorEditor
+                                        value={inputValue}
+                                        onChange={handleInputChange}
+                                        disabled={isExecuting}
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex justify-end">
+                                <button
+                                    className="bg-blue-600 hover:bg-blue-700 text-white py-1 px-4 rounded text-sm"
+                                    onClick={() => {
+                                        if (isInputMode) {
+                                            const value = inputValue;
+                                            setConsoleOutput(prev => [...prev, { type: 'input', content: value }]);
+                                            socket.emit('input_response', { value });
+                                            setIsInputMode(false);
+                                        } else {
+                                            runCode(inputValue);
+                                        }
+                                        setInputValue('');
+                                    }}
+                                    disabled={isExecuting}
+                                >
+                                    {isInputMode ? "Gönder" : "Çalıştır"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             );
         };
+
         ReactDOM.render(
-  <window.ThemeProvider>
-    <App />
-  </window.ThemeProvider>,
-  document.getElementById('root')
-);
+            <window.ThemeProvider>
+                <App />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
     </script>
 </body>
 </html>
