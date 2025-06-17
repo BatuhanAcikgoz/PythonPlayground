@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Programlama Sorusu Düzenle - Admin Panel</title>
+    <title>{{ _('edit_user') }} - {{ _('admin_panel') }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
@@ -16,93 +16,15 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <!-- Babel for JSX -->
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <!-- CodeMirror for code editing -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
     <style>
         html, body, #root {
             height: 100%;
-            margin: 0;
-            padding: 0;
         }
         #root {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
-        .CodeMirror {
-            height: auto;
-            min-height: 200px;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.375rem;
-            font-family: monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            padding: 4px;
-        }
-        .dark .CodeMirror {
-            border-color: #4b5563;
-        }
-        .form-label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: #374151;
-        }
-        .dark .form-label {
-            color: #e5e7eb;
-        }
-        .form-input {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.375rem;
-            background-color: #fff;
-        }
-        .dark .form-input {
-            border-color: #4b5563;
-            background-color: #374151;
-            color: #e5e7eb;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        .dark .form-input:focus {
-            border-color: #60a5fa;
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
-        }
-        .error-text {
-            color: #dc2626;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-        .dark .error-text {
-            color: #f87171;
-        }
-
-        /* PyCharm Darcula benzeri syntax highlighting renkleri */
-        .dark .cm-s-dracula .cm-keyword { color: #CC7832; } /* if, def, import gibi anahtar kelimeler */
-        .dark .cm-s-dracula .cm-operator { color: #A9B7C6; } /* operatörler: +, -, *, / */
-        .dark .cm-s-dracula .cm-variable { color: #A9B7C6; } /* değişkenler */
-        .dark .cm-s-dracula .cm-variable-2 { color: #A9B7C6; } /* ikincil değişkenler */
-        .dark .cm-s-dracula .cm-variable-3 { color: #9876AA; } /* üçüncül değişkenler */
-        .dark .cm-s-dracula .cm-builtin { color: #8888C6; } /* built-in fonksiyonlar: len(), print() */
-        .dark .cm-s-dracula .cm-atom { color: #9876AA; } /* atomlar: True, False, None */
-        .dark .cm-s-dracula .cm-number { color: #6897BB; } /* sayılar */
-        .dark .cm-s-dracula .cm-def { color: #FFC66D; } /* fonksiyon tanımlamaları */
-        .dark .cm-s-dracula .cm-string { color: #6A8759; } /* string'ler */
-        .dark .cm-s-dracula .cm-string-2 { color: #6A8759; } /* diğer string'ler */
-        .dark .cm-s-dracula .cm-comment { color: #808080; } /* yorumlar */
-        .dark .cm-s-dracula .cm-tag { color: #BBB529; } /* tag'ler (decorator'lar) */
-        .dark .cm-s-dracula .cm-meta { color: #BBB529; } /* meta bilgiler */
-        .dark .cm-s-dracula .cm-attribute { color: #BABABA; } /* öznitelikler */
-        .dark .cm-s-dracula .cm-property { color: #FFC66D; } /* property'ler */
-        .dark .cm-s-dracula .cm-qualifier { color: #A9B7C6; } /* niteleyiciler */
-        .dark .cm-s-dracula .cm-error { color: #FF0000; } /* hatalar */
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
@@ -111,10 +33,6 @@
     <script>
         window.APP_DATA = {
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
-            userData: {
-                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
-                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
-            },
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},
@@ -125,121 +43,88 @@
                 logout: {{ _('logout')|tojson|safe }},
                 login: {{ _('login')|tojson|safe }},
                 register: {{ _('register')|tojson|safe }},
-                profile: "Profil",
-                settings: "Ayarlar"
+                profile: {{ _('profile')|tojson|safe }},
+                settings: {{ _('settings')|tojson|safe }}
             },
-            flashMessages: [
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% for category, message in messages %}
-                        {
-                            "category": "{{ category }}",
-                            "message": {{ message|tojson|safe }}
-                        }{% if not loop.last %},{% endif %}
-                    {% endfor %}
-                {% endwith %}
-            ],
-            formData: {
-                csrf_token: "{{ form.csrf_token._value() }}",
-                title: {{ question.title|tojson|safe }},
-                description: {{ question.description|tojson|safe }},
-                difficulty: {{ question.difficulty|tojson }},
-                points: {{ question.points|tojson }},
-                topic: {{ question.topic|tojson|safe }},
-                function_name: {{ question.function_name|tojson|safe }},
-                example_input: {{ question.example_input|tojson|safe }},
-                example_output: {{ question.example_output|tojson|safe }},
-                solution_code: {{ question.solution_code|tojson|safe }},
-                test_inputs: {{ question.test_inputs|tojson|safe }}
-            },
-            formErrors: {
-                /* Formdan gelen hatalar burada olacak */
-            },
-            questionId: {{ question.id }},
             footerTrans: {
-                /* Footer çevirileri burada olacak */
+                allRights: {{ _('all_rights')|tojson|safe }},
+                platformDesc: {{ _('platform_desc')|tojson|safe }}
             },
             currentLang: {{ session.get('language', 'tr')|tojson }},
-            urls: {
-                /* URL'ler burada olacak */
+            userData: {
+                username: {{ user.username|tojson }},
+                email: {{ user.email|tojson }},
+                roles: {{ user.roles|map(attribute='id')|list|tojson }}
+            },
+            formData: {
+                csrf_token: "{{ form.csrf_token._value() }}",
+                roles: {{ roles|tojson }}
             }
         };
     </script>
 
+    <!-- Önce ThemeContext.js yükleniyor -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
+    <!-- Sonra diğer bileşenler yükleniyor -->
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
 
     <script type="text/babel">
-        const CodeEditor = ({ id, name, defaultValue, onChange }) => {
-            const editorRef = React.useRef(null);
-            const textareaRef = React.useRef(null);
-            const { darkMode } = window.useTheme();
-
-            React.useEffect(() => {
-                if (textareaRef.current && !editorRef.current) {
-                    const editor = CodeMirror.fromTextArea(textareaRef.current, {
-                        mode: "python",
-                        lineNumbers: true,
-                        indentUnit: 4,
-                        lineWrapping: true,
-                        tabSize: 4,
-                        autofocus: false,
-                        theme: darkMode ? "dracula" : "default"
-                    });
-
-                    if (onChange) {
-                        editor.on("change", () => {
-                            const value = editor.getValue();
-                            onChange(value);
-                        });
-                    }
-
-                    editorRef.current = editor;
-                }
-
-                // Dark mode değiştiğinde editör temasını güncelle
-                if (editorRef.current) {
-                    editorRef.current.setOption("theme", darkMode ? "dracula" : "default");
-                }
-
-                return () => {
-                    if (editorRef.current) {
-                        editorRef.current.toTextArea();
-                        editorRef.current = null;
-                    }
-                };
-            }, [darkMode]);
-
-            return (
-                <div className="w-full">
-                    <textarea
-                        id={id}
-                        name={name}
-                        ref={textareaRef}
-                        defaultValue={defaultValue}
-                        className="hidden"
-                    />
-                </div>
-            );
-        };
-
         const App = () => {
             const { darkMode } = window.useTheme();
-            const formData = window.APP_DATA.formData;
-            const formErrors = window.APP_DATA.formErrors || {};
-            const questionId = window.APP_DATA.questionId;
 
-            const [title, setTitle] = React.useState(formData.title || "");
-            const [description, setDescription] = React.useState(formData.description || "");
-            const [difficulty, setDifficulty] = React.useState(formData.difficulty || 1);
-            const [points, setPoints] = React.useState(formData.points || 10);
-            const [topic, setTopic] = React.useState(formData.topic || "");
-            const [functionName, setFunctionName] = React.useState(formData.function_name || "");
-            const [exampleInput, setExampleInput] = React.useState(formData.example_input || "");
-            const [exampleOutput, setExampleOutput] = React.useState(formData.example_output || "");
-            const [solutionCode, setSolutionCode] = React.useState(formData.solution_code || "def solution():\n    # Çözüm kodunuzu buraya yazın\n    pass");
-            const [testInputs, setTestInputs] = React.useState(formData.test_inputs || "");
+            // Çeviri metinleri
+            const translations = {
+                edit_user: {{ _('edit_user')|tojson|safe }} || "Kullanıcı Düzenle",
+                back_to_users: {{ _('back_to_users')|tojson|safe }} || "Kullanıcılara Dön",
+                username_label: {{ form.username.label.text|tojson|safe }} || "Kullanıcı Adı",
+                email_label: {{ form.email.label.text|tojson|safe }} || "E-posta",
+                password_label: {{ form.password.label.text|tojson|safe }} || "Şifre",
+                roles_label: {{ form.roles.label.text|tojson|safe }} || "Roller",
+                leave_blank: {{ _('leave_blank_to_keep_current')|tojson|safe }} || "Mevcut şifreyi korumak için boş bırakın",
+                submit_label: {{ form.submit.label.text|tojson|safe }} || "Kaydet"
+            };
+
+            // Form state'i
+            const [formData, setFormData] = React.useState({
+                username: window.APP_DATA.userData.username,
+                email: window.APP_DATA.userData.email,
+                password: "",
+                roles: window.APP_DATA.userData.roles || []
+            });
+
+            // Form hataları state'i
+            const [errors, setErrors] = React.useState({
+                username: [],
+                email: [],
+                password: [],
+                roles: []
+            });
+
+            const handleInputChange = (e) => {
+                const { name, value } = e.target;
+                setFormData({
+                    ...formData,
+                    [name]: value
+                });
+            };
+
+            const handleRoleChange = (roleId) => {
+                const roleIdInt = parseInt(roleId);
+
+                if (formData.roles.includes(roleIdInt)) {
+                    setFormData({
+                        ...formData,
+                        roles: formData.roles.filter(id => id !== roleIdInt)
+                    });
+                } else {
+                    setFormData({
+                        ...formData,
+                        roles: [...formData.roles, roleIdInt]
+                    });
+                }
+            };
 
             return (
                 <React.Fragment>
@@ -247,163 +132,110 @@
                     <div className="flex flex-grow">
                         <AdminSidebar />
                         <main className="flex-grow p-6 bg-gray-50 dark:bg-gray-900">
-                            <div className="container mx-auto max-w-4xl">
-                                <div className="mb-8">
-                                    <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">Programlama Sorusu Düzenle</h1>
-                                    <p className="text-gray-600 dark:text-gray-300">Soru #ID: {questionId}</p>
+                            <div className="max-w-4xl mx-auto">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{translations.edit_user}</h1>
+                                    <a href="/admin/users" className="text-blue-600 dark:text-blue-400 hover:underline">
+                                        {translations.back_to_users}
+                                    </a>
                                 </div>
 
-                                <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-6">
+                                <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
                                     <form method="post" action="">
-                                        <input type="hidden" name="csrf_token" value={formData.csrf_token} />
+                                        <input type="hidden" name="csrf_token" value={window.APP_DATA.formData.csrf_token} />
 
                                         <div className="mb-4">
-                                            <label htmlFor="title" className="form-label">Başlık</label>
+                                            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                {translations.username_label}
+                                            </label>
                                             <input
                                                 type="text"
-                                                id="title"
-                                                name="title"
-                                                value={title}
-                                                onChange={(e) => setTitle(e.target.value)}
-                                                className="form-input"
+                                                id="username"
+                                                name="username"
+                                                value={formData.username}
+                                                onChange={handleInputChange}
+                                                className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                                                 required
                                             />
-                                            {formErrors.title && <p className="error-text">{formErrors.title}</p>}
+                                            {errors.username && errors.username.map((error, idx) => (
+                                                <p key={idx} className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
+                                            ))}
                                         </div>
 
                                         <div className="mb-4">
-                                            <label htmlFor="description" className="form-label">Açıklama</label>
-                                            <textarea
-                                                id="description"
-                                                name="description"
-                                                value={description}
-                                                onChange={(e) => setDescription(e.target.value)}
-                                                className="form-input h-24"
-                                                required
-                                            ></textarea>
-                                            {formErrors.description && <p className="error-text">{formErrors.description}</p>}
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                            <div>
-                                                <label htmlFor="difficulty" className="form-label">Zorluk (1-5)</label>
-                                                <input
-                                                    type="number"
-                                                    id="difficulty"
-                                                    name="difficulty"
-                                                    value={difficulty}
-                                                    onChange={(e) => setDifficulty(e.target.value)}
-                                                    min="1"
-                                                    max="5"
-                                                    className="form-input"
-                                                    required
-                                                />
-                                                {formErrors.difficulty && <p className="error-text">{formErrors.difficulty}</p>}
-                                            </div>
-                                            <div>
-                                                <label htmlFor="points" className="form-label">Puan</label>
-                                                <input
-                                                    type="number"
-                                                    id="points"
-                                                    name="points"
-                                                    value={points}
-                                                    onChange={(e) => setPoints(e.target.value)}
-                                                    min="1"
-                                                    className="form-input"
-                                                    required
-                                                />
-                                                {formErrors.points && <p className="error-text">{formErrors.points}</p>}
-                                            </div>
-                                        </div>
-
-                                        <div className="mb-4">
-                                            <label htmlFor="topic" className="form-label">Konu (opsiyonel)</label>
+                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                {translations.email_label}
+                                            </label>
                                             <input
-                                                type="text"
-                                                id="topic"
-                                                name="topic"
-                                                value={topic}
-                                                onChange={(e) => setTopic(e.target.value)}
-                                                className="form-input"
-                                            />
-                                            {formErrors.topic && <p className="error-text">{formErrors.topic}</p>}
-                                        </div>
-
-                                        <div className="mb-4">
-                                            <label htmlFor="function_name" className="form-label">Fonksiyon Adı</label>
-                                            <input
-                                                type="text"
-                                                id="function_name"
-                                                name="function_name"
-                                                value={functionName}
-                                                onChange={(e) => setFunctionName(e.target.value)}
-                                                className="form-input"
+                                                type="email"
+                                                id="email"
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={handleInputChange}
+                                                className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                                                 required
                                             />
-                                            {formErrors.function_name && <p className="error-text">{formErrors.function_name}</p>}
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                            <div>
-                                                <label htmlFor="example_input" className="form-label">Örnek Girdi</label>
-                                                <textarea
-                                                    id="example_input"
-                                                    name="example_input"
-                                                    value={exampleInput}
-                                                    onChange={(e) => setExampleInput(e.target.value)}
-                                                    className="form-input h-24"
-                                                    required
-                                                ></textarea>
-                                                {formErrors.example_input && <p className="error-text">{formErrors.example_input}</p>}
-                                            </div>
-                                            <div>
-                                                <label htmlFor="example_output" className="form-label">Örnek Çıktı</label>
-                                                <textarea
-                                                    id="example_output"
-                                                    name="example_output"
-                                                    value={exampleOutput}
-                                                    onChange={(e) => setExampleOutput(e.target.value)}
-                                                    className="form-input h-24"
-                                                    required
-                                                ></textarea>
-                                                {formErrors.example_output && <p className="error-text">{formErrors.example_output}</p>}
-                                            </div>
+                                            {errors.email && errors.email.map((error, idx) => (
+                                                <p key={idx} className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
+                                            ))}
                                         </div>
 
                                         <div className="mb-4">
-                                            <label htmlFor="solution_code" className="form-label">Çözüm Kodu</label>
-                                            <CodeEditor
-                                                id="solution_code"
-                                                name="solution_code"
-                                                defaultValue={solutionCode}
-                                                onChange={(value) => setSolutionCode(value)}
+                                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                {translations.password_label}
+                                            </label>
+                                            <input
+                                                type="password"
+                                                id="password"
+                                                name="password"
+                                                value={formData.password}
+                                                onChange={handleInputChange}
+                                                className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                                             />
-                                            {formErrors.solution_code && <p className="error-text">{formErrors.solution_code}</p>}
+                                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{translations.leave_blank}</p>
+                                            {errors.password && errors.password.map((error, idx) => (
+                                                <p key={idx} className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
+                                            ))}
                                         </div>
 
                                         <div className="mb-6">
-                                            <label htmlFor="test_inputs" className="form-label">Test Girdileri (JSON formatında)</label>
-                                            <CodeEditor
-                                                id="test_inputs"
-                                                name="test_inputs"
-                                                defaultValue={testInputs}
-                                                onChange={(value) => setTestInputs(value)}
-                                            />
-                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                                Test verilerini JSON dizi formatında girin. Her bir test örneği için bir dizi eleman kullanın.
-                                            </p>
-                                            {formErrors.test_inputs && <p className="error-text">{formErrors.test_inputs}</p>}
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                {translations.roles_label}
+                                            </label>
+                                            <div className="space-y-2">
+                                                {window.APP_DATA.formData.roles.map((role) => (
+                                                    <div key={role.id} className="flex items-start">
+                                                        <div className="flex items-center h-5">
+                                                            <input
+                                                                id={`role-${role.id}`}
+                                                                name="roles"
+                                                                type="checkbox"
+                                                                value={role.id}
+                                                                checked={formData.roles.includes(role.id)}
+                                                                onChange={() => handleRoleChange(role.id)}
+                                                                className="h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 dark:bg-gray-600 rounded focus:ring-blue-500"
+                                                            />
+                                                        </div>
+                                                        <div className="ml-3 text-sm">
+                                                            <label htmlFor={`role-${role.id}`} className="font-medium text-gray-700 dark:text-gray-300">
+                                                                {role.name}
+                                                            </label>
+                                                            <p className="text-gray-500 dark:text-gray-400">{role.description}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {errors.roles && errors.roles.map((error, idx) => (
+                                                <p key={idx} className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
+                                            ))}
                                         </div>
 
-                                        <div className="flex justify-end space-x-3">
-                                            <a href="/admin/programming-questions" className="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600">
-                                                İptal
-                                            </a>
+                                        <div className="flex justify-end">
                                             <button
                                                 type="submit"
-                                                className="px-4 py-2 text-sm text-white bg-blue-600 dark:bg-blue-700 border border-transparent rounded-md shadow-sm hover:bg-blue-700 dark:hover:bg-blue-600"
+                                                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                                             >
-                                                Kaydet
+                                                {translations.submit_label}
                                             </button>
                                         </div>
                                     </form>
@@ -423,32 +255,28 @@
             document.getElementById('root')
         );
     </script>
-
     <!-- Flash mesajları için script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const flashMessages = window.APP_DATA.flashMessages || [];
-            if (flashMessages.length > 0) {
-                const container = document.querySelector('.container');
-                if (container) {
-                    const messageContainer = document.createElement('div');
-                    messageContainer.className = "mb-6";
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    const container = document.querySelector('.max-w-4xl');
+                    const flashContainer = document.createElement('div');
+                    flashContainer.className = 'mb-6';
 
-                    flashMessages.forEach(message => {
+                    {% for category, message in messages %}
                         const messageDiv = document.createElement('div');
-                        messageDiv.className = `p-4 mb-2 rounded-md ${message.category === 'success' ? 'bg-green-100 text-green-700 dark:bg-green-800/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-800/30 dark:text-red-400'}`;
-                        messageDiv.textContent = message.message;
-                        messageContainer.appendChild(messageDiv);
-                    });
+                        messageDiv.className = '{% if category == "success" %}bg-green-100 border-l-4 border-green-500 text-green-700 dark:bg-green-800/30 dark:border-green-500 dark:text-green-300{% else %}bg-red-100 border-l-4 border-red-500 text-red-700 dark:bg-red-800/30 dark:border-red-500 dark:text-red-300{% endif %} p-4 mb-2';
+                        messageDiv.textContent = '{{ message }}';
+                        flashContainer.appendChild(messageDiv);
+                    {% endfor %}
 
-                    const formElement = container.querySelector('form');
-                    if (formElement) {
-                        container.insertBefore(messageContainer, formElement);
-                    } else {
-                        container.appendChild(messageContainer);
+                    if (container) {
+                        const firstChild = container.firstChild;
+                        container.insertBefore(flashContainer, firstChild);
                     }
-                }
-            }
+                {% endif %}
+            {% endwith %}
         });
     </script>
 </body>

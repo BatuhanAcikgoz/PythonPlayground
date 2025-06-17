@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -22,7 +27,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
     <script>
@@ -68,6 +73,8 @@
 
     <script type="text/babel">
         const App = () => {
+            const { darkMode } = window.useTheme();
+
             // Çeviri metinleri
             const translations = {
                 edit_user: {{ _('edit_user')|tojson|safe }} || "Kullanıcı Düzenle",
@@ -106,7 +113,7 @@
 
             const handleRoleChange = (roleId) => {
                 const roleIdInt = parseInt(roleId);
-                
+
                 if (formData.roles.includes(roleIdInt)) {
                     setFormData({
                         ...formData,
@@ -128,70 +135,70 @@
                         <AdminSidebar />
 
                         {/* Main Content */}
-                        <main className="flex-grow p-6">
+                        <main className="flex-grow p-6 bg-gray-50 dark:bg-gray-900">
                             <div className="container mx-auto">
                                 <div className="flex justify-between items-center mb-6">
-                                    <h1 className="text-3xl font-bold">{translations.edit_user}: {formData.username}</h1>
-                                    <a href="/admin/users" className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                                    <h1 className="text-3xl font-bold text-gray-800 dark:text-white">{translations.edit_user}: {formData.username}</h1>
+                                    <a href="/admin/users" className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600">
                                         {translations.back_to_users}
                                     </a>
                                 </div>
 
-                                <div className="bg-white p-6 rounded-lg shadow-md">
+                                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
                                     <form method="POST" action={`/admin/users/${window.APP_DATA.userData.id}`}>
                                         <input type="hidden" name="csrf_token" value={window.APP_DATA.formData.csrf_token} />
 
                                         <div className="mb-4">
-                                            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">{translations.username_label}</label>
+                                            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{translations.username_label}</label>
                                             <input
                                                 type="text"
                                                 id="username"
                                                 name="username"
                                                 value={formData.username}
                                                 onChange={handleInputChange}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                                             />
                                             {errors.username.map((error, index) => (
-                                                <p key={index} className="mt-2 text-sm text-red-600">{error}</p>
+                                                <p key={index} className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
                                             ))}
                                         </div>
 
                                         <div className="mb-4">
-                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">{translations.email_label}</label>
+                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{translations.email_label}</label>
                                             <input
                                                 type="email"
                                                 id="email"
                                                 name="email"
                                                 value={formData.email}
                                                 onChange={handleInputChange}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                                             />
                                             {errors.email.map((error, index) => (
-                                                <p key={index} className="mt-2 text-sm text-red-600">{error}</p>
+                                                <p key={index} className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
                                             ))}
                                         </div>
 
                                         <div className="mb-4">
-                                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">{translations.password_label}</label>
+                                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{translations.password_label}</label>
                                             <input
                                                 type="password"
                                                 id="password"
                                                 name="password"
                                                 value={formData.password}
                                                 onChange={handleInputChange}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                                             />
-                                            <p className="mt-1 text-sm text-gray-500">{translations.leave_blank}</p>
+                                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{translations.leave_blank}</p>
                                             {errors.password.map((error, index) => (
-                                                <p key={index} className="mt-2 text-sm text-red-600">{error}</p>
+                                                <p key={index} className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
                                             ))}
                                         </div>
 
                                     <div className="mb-4">
-                                    <label htmlFor="roles" className="block text-sm font-medium text-gray-700 mb-2">{translations.roles_label}</label>
+                                    <label htmlFor="roles" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{translations.roles_label}</label>
 
                                     {/* Birleştirilmiş rol seçme ve gösterme alanı */}
-                                    <div className="border border-gray-300 rounded-md p-3">
+                                    <div className="border border-gray-300 dark:border-gray-600 rounded-md p-3 dark:bg-gray-700">
                                         {/* Seçili roller */}
                                         <div className="flex flex-wrap gap-2 mb-3 min-h-8">
                                             {window.APP_DATA.formData.roles
@@ -219,7 +226,7 @@
                                             }
 
                                             {formData.roles.length === 0 &&
-                                                <div className="text-gray-400 text-sm">Henüz rol seçilmedi</div>
+                                                <div className="text-gray-400 dark:text-gray-300 text-sm">Henüz rol seçilmedi</div>
                                             }
                                         </div>
 
@@ -231,7 +238,7 @@
                                                     e.target.value = ""; // Seçimi sıfırla
                                                 }
                                             }}
-                                            className="block w-full mt-2 pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md"
+                                            className="block w-full mt-2 pl-3 pr-10 py-2 text-base border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md dark:bg-gray-600 dark:text-white"
                                             defaultValue=""
                                         >
                                             <option value="" disabled>Rol ekle...</option>
@@ -247,14 +254,14 @@
                                     </div>
 
                                     {errors.roles.map((error, index) => (
-                                        <p key={index} className="mt-2 text-sm text-red-600">{error}</p>
+                                        <p key={index} className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
                                     ))}
                                     </div>
 
                                         <div>
-                                            <button 
-                                                type="submit" 
-                                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                            <button
+                                                type="submit"
+                                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                                 {translations.submit_label}
                                             </button>
                                         </div>
@@ -268,9 +275,14 @@
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(
+            <window.ThemeProvider>
+                <App />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
     </script>
-        <!-- Flash mesajları için script -->
+    <!-- Flash mesajları için script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -280,7 +292,7 @@
 
                     {% for category, message in messages %}
                         const messageDiv = document.createElement('div');
-                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-800/30 dark:text-red-300'}`;
                         messageDiv.textContent = '{{ message }}';
                         container.insertBefore(messageDiv, formElement);
                     {% endfor %}

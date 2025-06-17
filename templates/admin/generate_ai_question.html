@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
     <!-- Markdown Editor -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
@@ -37,6 +38,30 @@
             min-height: 200px;
             border: 1px solid #e5e7eb;
             border-radius: 0.375rem;
+        }
+
+        /* Dark mode için CodeMirror stilleri */
+        .dark .CodeMirror {
+            border-color: #4b5563;
+        }
+
+        /* Dark mode için markdown önizleme stilleri */
+        .dark .prose {
+            color: #e5e7eb;
+        }
+        .dark .prose h1, .dark .prose h2, .dark .prose h3,
+        .dark .prose h4, .dark .prose h5, .dark .prose h6 {
+            color: #f3f4f6;
+        }
+        .dark .prose p, .dark .prose li {
+            color: #d1d5db;
+        }
+        .dark .prose code {
+            background-color: #374151;
+            color: #e5e7eb;
+        }
+        .dark .prose pre {
+            background-color: #1f2937;
         }
     </style>
 </head>
@@ -83,10 +108,10 @@
         const FormField = ({ label, id, error, children, hint }) => {
             return (
                 <div className="mb-5">
-                    <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                    <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
                     {children}
-                    {hint && <div className="mt-1 text-xs text-gray-500">{hint}</div>}
-                    {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+                    {hint && <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">{hint}</div>}
+                    {error && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>}
                 </div>
             );
         };
@@ -94,6 +119,7 @@
         const CodeEditor = ({ id, name, value, onChange }) => {
             const textareaRef = React.useRef(null);
             const editorRef = React.useRef(null);
+            const { darkMode } = window.useTheme();
 
             React.useEffect(() => {
                 if (textareaRef.current && !editorRef.current) {
@@ -101,7 +127,8 @@
                         mode: "python",
                         lineNumbers: true,
                         indentUnit: 4,
-                        lineWrapping: true
+                        lineWrapping: true,
+                        theme: darkMode ? "dracula" : "default"
                     });
 
                     editorRef.current.on('change', (instance) => {
@@ -117,6 +144,13 @@
                     }
                 };
             }, []);
+
+            // Dark mode değiştiğinde tema güncellenir
+            React.useEffect(() => {
+                if (editorRef.current) {
+                    editorRef.current.setOption("theme", darkMode ? "dracula" : "default");
+                }
+            }, [darkMode]);
 
             React.useEffect(() => {
                 if (editorRef.current && value !== undefined) {
@@ -144,6 +178,7 @@
             const [generatedQuestion, setGeneratedQuestion] = React.useState(null);
             const [savedSuccess, setSavedSuccess] = React.useState(false);
             const editorRef = React.useRef(null);
+            const { darkMode } = window.useTheme();
 
             // forceUpdate için basit bir reducer ekleyin yeniden render için
             const [, forceUpdate] = React.useReducer(x => x + 1, 0);
@@ -459,18 +494,18 @@
             };
 
             return (
-                <div className="bg-white shadow-md rounded-lg p-6">
+                <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
                     {!generatedQuestion ? (
                         // Soru oluşturma formu
                         <div>
-                            <h2 className="text-xl font-semibold mb-4">Yapay Zeka ile Soru Oluştur</h2>
+                            <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">Yapay Zeka ile Soru Oluştur</h2>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                 <FormField label="Zorluk Seviyesi" id="difficulty_level">
                                     <select
                                         id="difficulty_level"
                                         name="difficulty_level"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         value={formData.difficulty_level}
                                         onChange={handleChange}
                                     >
@@ -485,7 +520,7 @@
                                     <select
                                         id="topic"
                                         name="topic"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         value={formData.topic}
                                         onChange={handleChange}
                                     >
@@ -502,7 +537,7 @@
                                     id="description_hint"
                                     name="description_hint"
                                     rows="3"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                     value={formData.description_hint}
                                     onChange={handleChange}
                                 ></textarea>
@@ -514,7 +549,7 @@
                                     type="text"
                                     id="function_name_hint"
                                     name="function_name_hint"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                     value={formData.function_name_hint}
                                     onChange={handleChange}
                                 />
@@ -529,7 +564,7 @@
                                             className={`px-3 py-1 rounded-full text-sm ${
                                                 formData.tags.includes(tag)
                                                     ? 'bg-blue-500 text-white'
-                                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                                    : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
                                             }`}
                                             onClick={() => handleTagToggle(tag)}
                                         >
@@ -540,7 +575,7 @@
                             </FormField>
 
                             {error && (
-                                <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
+                                <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 rounded-md">
                                     <p className="font-medium">Hata!</p>
                                     <p>{error}</p>
                                 </div>
@@ -561,10 +596,10 @@
                         // Oluşturulan soruyu düzenleme formu
                         <div>
                             <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-xl font-semibold">Oluşturulan Soru</h2>
+                                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Oluşturulan Soru</h2>
                                 <button
                                     type="button"
-                                    className="px-4 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md"
+                                    className="px-4 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md"
                                     onClick={() => setGeneratedQuestion(null)}
                                 >
                                     Yeni Soru Oluştur
@@ -576,7 +611,7 @@
                                     type="text"
                                     id="title"
                                     name="title"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                     value={questionData.title}
                                     onChange={handleQuestionDataChange}
                                     required
@@ -588,7 +623,7 @@
                                     id="description"
                                     name="description"
                                     rows="6"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                     value={questionData.description}
                                     onChange={handleQuestionDataChange}
                                     required
@@ -597,8 +632,8 @@
 
                             {% raw %}
                             <div className="my-4">
-                                <h3 className="font-medium mb-2">Önizleme:</h3>
-                                <div className="p-4 border border-gray-300 rounded-md bg-gray-50 prose max-w-none"
+                                <h3 className="font-medium mb-2 text-gray-700 dark:text-gray-300">Önizleme:</h3>
+                                <div className="p-4 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 prose max-w-none"
                                      dangerouslySetInnerHTML={{ __html: marked.parse(questionData.description) }}>
                                 </div>
                             </div>
@@ -609,7 +644,7 @@
                                     <select
                                         id="difficulty"
                                         name="difficulty"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         value={questionData.difficulty}
                                         onChange={handleQuestionDataChange}
                                         required
@@ -626,7 +661,7 @@
                                         type="text"
                                         id="topic"
                                         name="topic"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         value={questionData.topic}
                                         onChange={handleQuestionDataChange}
                                         required
@@ -640,7 +675,7 @@
                                         name="points"
                                         min="1"
                                         max="100"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         value={questionData.points}
                                         onChange={handleQuestionDataChange}
                                         required
@@ -652,7 +687,7 @@
                                         type="text"
                                         id="function_name"
                                         name="function_name"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         value={questionData.function_name}
                                         onChange={handleQuestionDataChange}
                                         required
@@ -666,7 +701,7 @@
                                         id="example_input"
                                         name="example_input"
                                         rows="3"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         value={questionData.example_input}
                                         onChange={handleQuestionDataChange}
                                         required
@@ -678,7 +713,7 @@
                                         id="example_output"
                                         name="example_output"
                                         rows="3"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         value={questionData.example_output}
                                         onChange={handleQuestionDataChange}
                                         required
@@ -687,7 +722,7 @@
                             </div>
 
                             <FormField label="Çözüm Kodu (Python)" id="solution_code">
-                                <div className="mb-1 text-xs text-gray-600">
+                                <div className="mb-1 text-xs text-gray-600 dark:text-gray-400">
                                     Öğrencilerin görevi tamamlaması için gereken Python kodu
                                 </div>
                                 <CodeEditor
@@ -699,7 +734,7 @@
                             </FormField>
 
                             <FormField label="Test Girdileri (JSON)" id="test_inputs">
-                                <div className="mb-1 text-xs text-gray-600">
+                                <div className="mb-1 text-xs text-gray-600 dark:text-gray-400">
                                     Test girdilerini JSON formatında belirtin. Örnek: '[
     [1, 2, 3],
     [5, 3],
@@ -711,7 +746,7 @@
                                     id="test_inputs"
                                     name="test_inputs"
                                     rows="5"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                     value={questionData.test_inputs}
                                     onChange={handleQuestionDataChange}
                                     required
@@ -719,14 +754,14 @@
                             </FormField>
 
                             {error && (
-                                <div className="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">
+                                <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 rounded-md">
                                     <p className="font-medium">Hata!</p>
                                     <p>{error}</p>
                                 </div>
                             )}
 
                             {savedSuccess && (
-                                <div className="mb-4 p-3 bg-green-100 border border-green-300 text-green-700 rounded-md">
+                                <div className="mb-4 p-3 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-800 text-green-700 dark:text-green-300 rounded-md">
                                     <p className="font-medium">Başarılı!</p>
                                     <p>Soru başarıyla kaydedildi.</p>
                                 </div>
@@ -788,7 +823,7 @@
 
                     {% for category, message in messages %}
                         const messageDiv = document.createElement('div');
-                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'}`;
                         messageDiv.textContent = '{{ message }}';
                         container.insertBefore(messageDiv, formElement);
                     {% endfor %}
@@ -798,4 +833,3 @@
     </script>
 </body>
 </html>
-

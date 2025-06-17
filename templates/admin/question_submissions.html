@@ -18,6 +18,7 @@
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <!-- Highlight.js for code highlighting -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" id="dark-highlightjs-theme" disabled>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/javascript.min.js"></script>
@@ -40,9 +41,19 @@
             padding: 1rem;
             border-radius: 0.375rem;
         }
+
+        /* Dark mode için highlight.js stilleri */
+        .dark .hljs {
+            background: #1e293b;
+        }
+
+        /* Dark mode için diğer stiller */
+        .dark .code-container {
+            border-color: #4b5563;
+        }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
     <script>
@@ -120,27 +131,40 @@
     <script type="text/babel">
         const SubmissionItem = ({ submission }) => {
             const [showCode, setShowCode] = React.useState(false);
+            const { darkMode } = window.useTheme();
 
             React.useEffect(() => {
                 if (showCode) {
+                    // Highlight.js temalarını dark mode'a göre değiştir
+                    const lightTheme = document.querySelector('link[href*="github.min.css"]');
+                    const darkTheme = document.getElementById('dark-highlightjs-theme');
+
+                    if (darkMode) {
+                        lightTheme.disabled = true;
+                        darkTheme.disabled = false;
+                    } else {
+                        lightTheme.disabled = false;
+                        darkTheme.disabled = true;
+                    }
+
                     document.querySelectorAll('pre code').forEach((block) => {
                         hljs.highlightBlock(block);
                     });
                 }
-            }, [showCode]);
+            }, [showCode, darkMode]);
 
             return (
                 <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 mb-4 border-l-4 border-l-solid border-l-blue-500">
                     <div className="flex flex-col md:flex-row justify-between mb-2">
                         <div>
-                            <h3 className="text-lg font-semibold">
+                            <h3 className="text-lg font-semibold dark:text-gray-200">
                                 <span className="mr-2">{submission.user.username}</span>
                                 {submission.is_correct ? (
-                                    <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full text-green-800 bg-green-100">
+                                    <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full text-green-800 dark:text-green-300 bg-green-100 dark:bg-green-800/30">
                                         Doğru
                                     </span>
                                 ) : (
-                                    <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full text-red-800 bg-red-100">
+                                    <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full text-red-800 dark:text-red-300 bg-red-100 dark:bg-red-800/30">
                                         Hatalı
                                     </span>
                                 )}
@@ -163,12 +187,12 @@
 
                     {showCode && (
                         <div className="mt-4">
-                            <div className="code-container">
+                            <div className="code-container dark:border dark:border-gray-700">
                                 <pre><code className="language-python">{submission.code}</code></pre>
                             </div>
 
                             {submission.error_message && (
-                                <div className="mt-3 p-3 bg-red-50 text-red-800 rounded border border-red-200">
+                                <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 rounded border border-red-200 dark:border-red-800">
                                     <h4 className="font-semibold mb-1">Hatalar:</h4>
                                     <pre className="whitespace-pre-wrap text-sm">{submission.error_message}</pre>
                                 </div>
@@ -180,7 +204,7 @@
         };
 
         const App = () => {
-            const { darkMode } = window.useTheme(); // Tema durumunu al
+            const { darkMode } = window.useTheme();
 
             return (
                 <React.Fragment>
@@ -227,7 +251,7 @@
                                 </div>
 
                                 {APP_DATA.submissions.length === 0 ? (
-                                    <div className="bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-800 rounded-md p-4">
+                                    <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-md p-4">
                                         <p className="text-yellow-700 dark:text-yellow-200">Bu soru için henüz çözüm gönderimi yapılmamış.</p>
                                     </div>
                                 ) : (
@@ -251,19 +275,19 @@
         );
     </script>
 
-        <!-- Flash mesajları için script -->
+    <!-- Flash mesajları için script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    const container = document.querySelector('.container');
-                    const formElement = document.querySelector('form');
+                    const container = document.querySelector('main > div');
+                    const titleElement = container.querySelector('h1').parentNode;
 
                     {% for category, message in messages %}
                         const messageDiv = document.createElement('div');
-                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+                        messageDiv.className = `p-4 mb-4 rounded-lg ${category === 'success' ? 'bg-green-100 dark:bg-green-800/30 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-700' : 'bg-red-100 dark:bg-red-800/30 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-700'}`;
                         messageDiv.textContent = '{{ message }}';
-                        container.insertBefore(messageDiv, formElement);
+                        container.insertBefore(messageDiv, titleElement.nextSibling);
                     {% endfor %}
                 {% endif %}
             {% endwith %}

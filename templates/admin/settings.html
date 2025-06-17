@@ -27,7 +27,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <div id="root"></div>
 
     <script>
@@ -48,8 +48,8 @@
                 logout: {{ _('logout')|tojson|safe }},
                 login: {{ _('login')|tojson|safe }},
                 register: {{ _('register')|tojson|safe }},
-                profile: "Profile",
-                settings: "Settings"
+                profile: {{ _('profile')|tojson|safe }},
+                settings: {{ _('settings')|tojson|safe }}
             },
             footerTrans: {
                 allRights: {{ _('all_rights')|tojson|safe }},
@@ -59,53 +59,60 @@
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% for category, message in messages %}
                         {
-                            "category": "{{ category }}",
-                            "message": {{ message|tojson|safe }}
-                        }{% if not loop.last %},{% endif %}
+                            category: "{{ category }}",
+                            message: "{{ message }}"
+                        },
                     {% endfor %}
                 {% endwith %}
             ],
             translations: {
-                "settings": {{ _('settings')|tojson|safe }} || "Ayarlar",
-                "back_to_admin": {{ _('back_to_admin')|tojson|safe }} || "Yönetim Paneline Dön",
-                "general_settings": {{ _('general_settings')|tojson|safe }} || "Genel Ayarlar",
-                "user_settings": {{ _('user_settings')|tojson|safe }} || "Kullanıcı Ayarları",
-                "mail_settings": {{ _('mail_settings')|tojson|safe }} || "E-Posta Ayarları",
-                "save_settings": {{ _('save_settings')|tojson|safe }} || "Ayarları Kaydet",
-                "ai_settings": {{ _('ai_settings')|tojson|safe }} || "AI Ayarları",
-                "default_ai_model": {{ _('default_ai_model')|tojson|safe }} || "Varsayılan AI Modeli",
-                "jupyter_ai_integration": {{ _('jupyter_ai_integration')|tojson|safe }} || "Jupyter AI Entegrasyonu",
-                "enable_ai_features": {{ _('enable_ai_features')|tojson|safe }} || "AI Özelliklerini Etkinleştir",
-                "api_provider": {{ _('api_provider')|tojson|safe }} || "API Sağlayıcı"
+                settings: {{ _('settings')|tojson|safe }},
+                back_to_admin: {{ _('back_to_admin')|tojson|safe }},
+                general_settings: {{ _('general_settings')|tojson|safe }},
+                user_settings: {{ _('user_settings')|tojson|safe }},
+                mail_settings: {{ _('mail_settings')|tojson|safe }},
+                ai_settings: {{ _('ai_settings')|tojson|safe }},
+                save_settings: {{ _('save_settings')|tojson|safe }},
+                site_name: {{ _('site_name')|tojson|safe }},
+                site_url: {{ _('site_url')|tojson|safe }},
+                admin_email: {{ _('admin_email')|tojson|safe }},
+                default_locale: {{ _('default_locale')|tojson|safe }},
+                registration_enabled: {{ _('registration_enabled')|tojson|safe }},
+                email_verification: {{ _('email_verification')|tojson|safe }},
+                smtp_server: {{ _('smtp_server')|tojson|safe }},
+                smtp_port: {{ _('smtp_port')|tojson|safe }},
+                smtp_username: {{ _('smtp_username')|tojson|safe }},
+                smtp_password: {{ _('smtp_password')|tojson|safe }},
+                smtp_use_tls: {{ _('smtp_use_tls')|tojson|safe }},
+                enable_ai_features: {{ _('enable_ai_features')|tojson|safe }},
+                api_provider: {{ _('api_provider')|tojson|safe }},
+                default_ai_model: {{ _('default_ai_model')|tojson|safe }},
+                api_key: {{ _('api_key')|tojson|safe }},
+                api_key_desc: {{ _('api_key_desc')|tojson|safe }},
+                enabled: {{ _('enabled')|tojson|safe }},
+                disabled: {{ _('disabled')|tojson|safe }}
             },
             formData: {
-                {% if form %}
-                csrf_token: "{{ form.csrf_token._value() }}",
-                site_name: "{{ form.site_name.data }}",
-                site_description: "{{ form.site_description.data }}",
-                default_language: "{{ form.default_language.data }}",
-                allow_registration: "{{ form.allow_registration.data }}",
-                enable_user_activation: "{{ form.enable_user_activation.data }}",
-                mail_server: "{{ form.mail_server.data }}",
-                mail_port: "{{ form.mail_port.data }}",
-                mail_username: "{{ form.mail_username.data }}",
-                mail_password: "{{ form.mail_password.data }}",
-                mail_use_tls: "{{ form.mail_use_tls.data }}",
-                enable_ai_features: "{{ form.enable_ai_features.data }}",
-                api_provider: "{{ form.api_provider.data }}",
-                default_ai_model: "{{ form.default_ai_model.data }}",
-                api_key: "{{ form.api_key.data }}",
-                {% endif %}
+                csrf_token: "{{ csrf_token() }}",
+                site_name: "{{ settings.site_name }}",
+                site_url: "{{ settings.site_url }}",
+                admin_email: "{{ settings.admin_email }}",
+                default_locale: "{{ settings.default_locale }}",
+                registration_enabled: {{ settings.registration_enabled|tojson }},
+                email_verification: {{ settings.email_verification|tojson }},
+                smtp_server: "{{ settings.smtp_server }}",
+                smtp_port: "{{ settings.smtp_port }}",
+                smtp_username: "{{ settings.smtp_username }}",
+                smtp_password: "{{ settings.smtp_password }}",
+                smtp_use_tls: {{ settings.smtp_use_tls|tojson }},
+                enable_ai_features: {{ settings.enable_ai_features|tojson }},
+                api_provider: "{{ settings.api_provider }}",
+                default_ai_model: "{{ settings.default_ai_model }}",
+                api_key: "{{ settings.api_key }}"
             },
             urls: {
                 adminIndex: "{{ url_for('admin.index') }}",
-                programmingQuestions: "{{ url_for('admin.programming_questions') }}",
-                newProgrammingQuestion: "{{ url_for('admin.new_programming_question') }}",
-                users: "{{ url_for('admin.users') }}",
-                badges: "{{ url_for('admin.badges') }}",
-                newBadge: "{{ url_for('admin.new_badge') }}",
-                settings: "{{ url_for('admin.settings') }}",
-                leaderboard: "{{ url_for('main.leaderboard') }}"
+                settings: "{{ url_for('admin.settings') }}"
             }
         };
     </script>
@@ -126,17 +133,19 @@
                     <Header />
                     <div className="flex flex-grow">
                         <AdminSidebar />
-                        <main className={`flex-grow p-6 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-black"}`}>
+                        <main className="flex-grow p-6 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
                             <div className="container mx-auto">
                                 {flashMessages.length > 0 && (
                                     <div className="mb-6">
                                         {flashMessages.map((flash, index) => (
-                                            <div key={index} className={`mb-4 p-4 rounded-lg shadow ${
-                                                flash.category === 'success' ? 'bg-green-100 text-green-800' :
-                                                flash.category === 'warning' ? 'bg-yellow-100 text-yellow-800' :
-                                                flash.category === 'error' ? 'bg-red-100 text-red-800' :
-                                                'bg-blue-100 text-blue-800'
-                                            }`}>
+                                            <div
+                                                key={index}
+                                                className={`p-4 mb-4 rounded-lg ${
+                                                    flash.category === 'success'
+                                                    ? 'bg-green-100 dark:bg-green-800/30 text-green-800 dark:text-green-300 border border-green-300 dark:border-green-700'
+                                                    : 'bg-red-100 dark:bg-red-800/30 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-700'
+                                                }`}
+                                            >
                                                 {flash.message}
                                             </div>
                                         ))}
@@ -144,8 +153,8 @@
                                 )}
 
                                 <div className="flex justify-between items-center mb-6">
-                                    <h1 className="text-3xl font-bold dark:text-white">{translations.settings}</h1>
-                                    <a href={window.APP_DATA.urls.adminIndex} className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{translations.settings}</h1>
+                                    <a href={window.APP_DATA.urls.adminIndex} className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600">
                                         {translations.back_to_admin}
                                     </a>
                                 </div>
@@ -155,174 +164,171 @@
                                         <input type="hidden" name="csrf_token" value={formData.csrf_token} />
 
                                         <div className="mb-6">
-                                            <h2 className="text-xl font-semibold mb-4 dark:text-white">{translations.general_settings}</h2>
+                                            <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">{translations.general_settings}</h2>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="form-group">
                                                     <label htmlFor="site_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                        Site Adı
+                                                        {translations.site_name}
                                                     </label>
                                                     <input
                                                         type="text"
-                                                        name="site_name"
                                                         id="site_name"
+                                                        name="site_name"
                                                         defaultValue={formData.site_name}
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        required
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                                                     />
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="default_language" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                        Varsayılan Dil
+                                                    <label htmlFor="site_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                        {translations.site_url}
                                                     </label>
-                                                    <select
-                                                        name="default_language"
-                                                        id="default_language"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        defaultValue={formData.default_language}
-                                                    >
-                                                        <option value="tr">Türkçe</option>
-                                                        <option value="en">English</option>
-                                                    </select>
+                                                    <input
+                                                        type="text"
+                                                        id="site_url"
+                                                        name="site_url"
+                                                        defaultValue={formData.site_url}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                                                    />
                                                 </div>
 
                                                 <div className="form-group md:col-span-2">
-                                                    <label htmlFor="site_description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                        Site Açıklaması
+                                                    <label htmlFor="admin_email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                        {translations.admin_email}
                                                     </label>
-                                                    <textarea
-                                                        name="site_description"
-                                                        id="site_description"
-                                                        rows="3"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        defaultValue={formData.site_description}
-                                                    ></textarea>
+                                                    <input
+                                                        type="email"
+                                                        id="admin_email"
+                                                        name="admin_email"
+                                                        defaultValue={formData.admin_email}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div className="mb-6">
-                                            <h2 className="text-xl font-semibold mb-4 dark:text-white">{translations.user_settings}</h2>
+                                            <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">{translations.user_settings}</h2>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="form-group">
-                                                    <label htmlFor="allow_registration" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                        Kayıt İzni
+                                                    <label htmlFor="registration_enabled" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                        {translations.registration_enabled}
                                                     </label>
                                                     <select
-                                                        name="allow_registration"
-                                                        id="allow_registration"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        defaultValue={formData.allow_registration}
+                                                        id="registration_enabled"
+                                                        name="registration_enabled"
+                                                        defaultValue={formData.registration_enabled ? "true" : "false"}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                                                     >
-                                                        <option value="1">Açık</option>
-                                                        <option value="0">Kapalı</option>
+                                                        <option value="true">{translations.enabled}</option>
+                                                        <option value="false">{translations.disabled}</option>
                                                     </select>
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="enable_user_activation" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                        Hesap Aktivasyonu
+                                                    <label htmlFor="email_verification" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                        {translations.email_verification}
                                                     </label>
                                                     <select
-                                                        name="enable_user_activation"
-                                                        id="enable_user_activation"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        defaultValue={formData.enable_user_activation}
+                                                        id="email_verification"
+                                                        name="email_verification"
+                                                        defaultValue={formData.email_verification ? "true" : "false"}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                                                     >
-                                                        <option value="1">Gerekli</option>
-                                                        <option value="0">Gerekli Değil</option>
+                                                        <option value="true">{translations.enabled}</option>
+                                                        <option value="false">{translations.disabled}</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div className="mb-6">
-                                            <h2 className="text-xl font-semibold mb-4 dark:text-white">{translations.mail_settings}</h2>
+                                            <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">{translations.mail_settings}</h2>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="form-group">
-                                                    <label htmlFor="mail_server" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                        Mail Sunucusu
+                                                    <label htmlFor="smtp_server" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                        {translations.smtp_server}
                                                     </label>
                                                     <input
                                                         type="text"
-                                                        name="mail_server"
-                                                        id="mail_server"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        defaultValue={formData.mail_server}
+                                                        id="smtp_server"
+                                                        name="smtp_server"
+                                                        defaultValue={formData.smtp_server}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                                                     />
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="mail_port" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                        Mail Port
+                                                    <label htmlFor="smtp_port" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                        {translations.smtp_port}
                                                     </label>
                                                     <input
                                                         type="text"
-                                                        name="mail_port"
-                                                        id="mail_port"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        defaultValue={formData.mail_port}
+                                                        id="smtp_port"
+                                                        name="smtp_port"
+                                                        defaultValue={formData.smtp_port}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                                                     />
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="mail_username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                        Mail Kullanıcı Adı
+                                                    <label htmlFor="smtp_username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                        {translations.smtp_username}
                                                     </label>
                                                     <input
                                                         type="text"
-                                                        name="mail_username"
-                                                        id="mail_username"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        defaultValue={formData.mail_username}
+                                                        id="smtp_username"
+                                                        name="smtp_username"
+                                                        defaultValue={formData.smtp_username}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                                                     />
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="mail_password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                        Mail Şifresi
+                                                    <label htmlFor="smtp_password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                        {translations.smtp_password}
                                                     </label>
                                                     <input
                                                         type="password"
-                                                        name="mail_password"
-                                                        id="mail_password"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        defaultValue={formData.mail_password}
+                                                        id="smtp_password"
+                                                        name="smtp_password"
+                                                        defaultValue={formData.smtp_password}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                                                     />
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="mail_use_tls" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                        Mail TLS
+                                                    <label htmlFor="smtp_use_tls" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                        {translations.smtp_use_tls}
                                                     </label>
                                                     <select
-                                                        name="mail_use_tls"
-                                                        id="mail_use_tls"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        defaultValue={formData.mail_use_tls}
+                                                        id="smtp_use_tls"
+                                                        name="smtp_use_tls"
+                                                        defaultValue={formData.smtp_use_tls ? "true" : "false"}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                                                     >
-                                                        <option value="1">Evet</option>
-                                                        <option value="0">Hayır</option>
+                                                        <option value="true">{translations.enabled}</option>
+                                                        <option value="false">{translations.disabled}</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div className="mb-6">
-                                            <h2 className="text-xl font-semibold mb-4 dark:text-white">{translations.ai_settings}</h2>
+                                            <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">{translations.ai_settings}</h2>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="form-group">
                                                     <label htmlFor="enable_ai_features" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         {translations.enable_ai_features}
                                                     </label>
                                                     <select
-                                                        name="enable_ai_features"
                                                         id="enable_ai_features"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                        defaultValue="1"
+                                                        name="enable_ai_features"
+                                                        defaultValue={formData.enable_ai_features ? "true" : "false"}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                                                     >
-                                                        <option value="1">Açık</option>
-                                                        <option value="0">Kapalı</option>
+                                                        <option value="true">{translations.enabled}</option>
+                                                        <option value="false">{translations.disabled}</option>
                                                     </select>
                                                 </div>
 
@@ -330,58 +336,56 @@
                                                     <label htmlFor="api_provider" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         {translations.api_provider}
                                                     </label>
-                                                        <select
-                                                            name="api_provider"
-                                                            id="api_provider"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                            defaultValue="gemini"
-                                                            disabled
-                                                        >
-                                                            <option value="gemini">Google Gemini</option>
-                                                        </select>
-                                                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                                            Bu uygulamada yalnızca Google Gemini AI desteklenmektedir.
-                                                        </p>
+                                                    <select
+                                                        id="api_provider"
+                                                        name="api_provider"
+                                                        defaultValue={formData.api_provider}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                                                    >
+                                                        <option value="openai">OpenAI</option>
+                                                        <option value="anthropic">Anthropic</option>
+                                                        <option value="gemini">Gemini</option>
+                                                    </select>
                                                 </div>
 
                                                 <div className="form-group">
                                                     <label htmlFor="default_ai_model" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         {translations.default_ai_model}
                                                     </label>
-                                                        <select
-                                                            name="default_ai_model"
-                                                            id="default_ai_model"
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                            defaultValue={formData.default_ai_model}
-                                                        >
-                                                            <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro</option>
-                                                            <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash</option>
-                                                            <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite</option>
-                                                            <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-                                                            <option value="gemini-2.0-pro">Gemini 2.0 Pro</option>
-                                                        </select>
+                                                    <select
+                                                        id="default_ai_model"
+                                                        name="default_ai_model"
+                                                        defaultValue={formData.default_ai_model}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                                                    >
+                                                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                                                        <option value="gpt-4">GPT-4</option>
+                                                        <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                                                        <option value="claude-3-opus">Claude 3 Opus</option>
+                                                        <option value="gemini-pro">Gemini Pro</option>
+                                                    </select>
                                                 </div>
 
                                                 <div className="form-group md:col-span-2">
                                                     <label htmlFor="api_key" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                        API Anahtarı
+                                                        {translations.api_key}
                                                     </label>
                                                     <input
                                                         type="password"
-                                                        name="api_key"
                                                         id="api_key"
-                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        name="api_key"
                                                         defaultValue={formData.api_key}
+                                                        className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
                                                     />
                                                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                                        Bu anahtar tüm kullanıcıların ortak kullanımı için ayarlanır. Kullanıcılar kendi API anahtarlarını da ekleyebilir.
+                                                        {translations.api_key_desc}
                                                     </p>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div className="mt-6">
-                                            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                                            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-700 dark:hover:bg-blue-600 dark:focus:ring-offset-gray-800">
                                                 {translations.save_settings}
                                             </button>
                                         </div>
