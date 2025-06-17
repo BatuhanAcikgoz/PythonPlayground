@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -35,7 +40,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900">
     <div id="root"></div>
 
     <script>
@@ -69,6 +74,7 @@
         };
     </script>
 
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
@@ -744,15 +750,17 @@
         };
 
         const App = () => {
+            const { darkMode } = window.useTheme(); // Tema durumunu al
+
             return (
                 <React.Fragment>
                     <Header />
                     <div className="flex flex-grow">
                         <AdminSidebar />
 
-                        <main className="flex-grow p-6">
+                        <main className={`flex-grow p-6 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-black"}`}>
                             <div className="container mx-auto max-w-6xl">
-                                <h1 className="text-2xl font-bold mb-6">Yapay Zeka ile Soru Oluştur</h1>
+                                <h1 className="text-2xl font-bold mb-6 dark:text-white">Yapay Zeka ile Soru Oluştur</h1>
 
                                 <AIQuestionGenerator />
                             </div>
@@ -763,7 +771,12 @@
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(
+            <window.ThemeProvider>
+                <App />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
     </script>
         <!-- Flash mesajları için script -->
     <script>
@@ -785,3 +798,4 @@
     </script>
 </body>
 </html>
+

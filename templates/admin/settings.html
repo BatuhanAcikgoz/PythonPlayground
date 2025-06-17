@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <!-- React -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -22,7 +27,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900">
     <div id="root"></div>
 
     <script>
@@ -104,6 +109,7 @@
             }
         };
     </script>
+    <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='AdminSidebar.jsx') }}"></script>
@@ -113,13 +119,14 @@
             const translations = window.APP_DATA.translations;
             const flashMessages = window.APP_DATA.flashMessages || [];
             const formData = window.APP_DATA.formData || {};
+            const { darkMode } = window.useTheme(); // Tema durumunu al
 
             return (
                 <React.Fragment>
                     <Header />
                     <div className="flex flex-grow">
                         <AdminSidebar />
-                        <main className="flex-grow p-6">
+                        <main className={`flex-grow p-6 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-black"}`}>
                             <div className="container mx-auto">
                                 {flashMessages.length > 0 && (
                                     <div className="mb-6">
@@ -137,21 +144,21 @@
                                 )}
 
                                 <div className="flex justify-between items-center mb-6">
-                                    <h1 className="text-3xl font-bold">{translations.settings}</h1>
+                                    <h1 className="text-3xl font-bold dark:text-white">{translations.settings}</h1>
                                     <a href={window.APP_DATA.urls.adminIndex} className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
                                         {translations.back_to_admin}
                                     </a>
                                 </div>
 
-                                <div className="bg-white shadow-md rounded-lg p-6">
+                                <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
                                     <form method="post" action={window.APP_DATA.urls.settings}>
                                         <input type="hidden" name="csrf_token" value={formData.csrf_token} />
 
                                         <div className="mb-6">
-                                            <h2 className="text-xl font-semibold mb-4">{translations.general_settings}</h2>
+                                            <h2 className="text-xl font-semibold mb-4 dark:text-white">{translations.general_settings}</h2>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="form-group">
-                                                    <label htmlFor="site_name" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="site_name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         Site Adı
                                                     </label>
                                                     <input
@@ -165,7 +172,7 @@
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="default_language" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="default_language" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         Varsayılan Dil
                                                     </label>
                                                     <select
@@ -180,7 +187,7 @@
                                                 </div>
 
                                                 <div className="form-group md:col-span-2">
-                                                    <label htmlFor="site_description" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="site_description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         Site Açıklaması
                                                     </label>
                                                     <textarea
@@ -195,10 +202,10 @@
                                         </div>
 
                                         <div className="mb-6">
-                                            <h2 className="text-xl font-semibold mb-4">{translations.user_settings}</h2>
+                                            <h2 className="text-xl font-semibold mb-4 dark:text-white">{translations.user_settings}</h2>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="form-group">
-                                                    <label htmlFor="allow_registration" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="allow_registration" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         Kayıt İzni
                                                     </label>
                                                     <select
@@ -213,7 +220,7 @@
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="enable_user_activation" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="enable_user_activation" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         Hesap Aktivasyonu
                                                     </label>
                                                     <select
@@ -230,10 +237,10 @@
                                         </div>
 
                                         <div className="mb-6">
-                                            <h2 className="text-xl font-semibold mb-4">{translations.mail_settings}</h2>
+                                            <h2 className="text-xl font-semibold mb-4 dark:text-white">{translations.mail_settings}</h2>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="form-group">
-                                                    <label htmlFor="mail_server" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="mail_server" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         Mail Sunucusu
                                                     </label>
                                                     <input
@@ -246,7 +253,7 @@
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="mail_port" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="mail_port" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         Mail Port
                                                     </label>
                                                     <input
@@ -259,7 +266,7 @@
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="mail_username" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="mail_username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         Mail Kullanıcı Adı
                                                     </label>
                                                     <input
@@ -272,7 +279,7 @@
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="mail_password" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="mail_password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         Mail Şifresi
                                                     </label>
                                                     <input
@@ -285,7 +292,7 @@
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="mail_use_tls" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="mail_use_tls" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         Mail TLS
                                                     </label>
                                                     <select
@@ -302,10 +309,10 @@
                                         </div>
 
                                         <div className="mb-6">
-                                            <h2 className="text-xl font-semibold mb-4">{translations.ai_settings}</h2>
+                                            <h2 className="text-xl font-semibold mb-4 dark:text-white">{translations.ai_settings}</h2>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="form-group">
-                                                    <label htmlFor="enable_ai_features" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="enable_ai_features" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         {translations.enable_ai_features}
                                                     </label>
                                                     <select
@@ -320,7 +327,7 @@
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="api_provider" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="api_provider" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         {translations.api_provider}
                                                     </label>
                                                         <select
@@ -332,13 +339,13 @@
                                                         >
                                                             <option value="gemini">Google Gemini</option>
                                                         </select>
-                                                        <p className="mt-1 text-xs text-gray-500">
+                                                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                                             Bu uygulamada yalnızca Google Gemini AI desteklenmektedir.
                                                         </p>
                                                 </div>
 
                                                 <div className="form-group">
-                                                    <label htmlFor="default_ai_model" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="default_ai_model" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         {translations.default_ai_model}
                                                     </label>
                                                         <select
@@ -356,7 +363,7 @@
                                                 </div>
 
                                                 <div className="form-group md:col-span-2">
-                                                    <label htmlFor="api_key" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    <label htmlFor="api_key" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                         API Anahtarı
                                                     </label>
                                                     <input
@@ -366,7 +373,7 @@
                                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                         defaultValue={formData.api_key}
                                                     />
-                                                    <p className="mt-1 text-xs text-gray-500">
+                                                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                                         Bu anahtar tüm kullanıcıların ortak kullanımı için ayarlanır. Kullanıcılar kendi API anahtarlarını da ekleyebilir.
                                                     </p>
                                                 </div>
@@ -388,7 +395,12 @@
             );
         };
 
-        ReactDOM.render(<App />, document.getElementById('root'));
+        ReactDOM.render(
+            <window.ThemeProvider>
+                <App />
+            </window.ThemeProvider>,
+            document.getElementById('root')
+        );
     </script>
 </body>
 </html>
