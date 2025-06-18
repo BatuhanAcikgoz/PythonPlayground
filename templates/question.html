@@ -253,6 +253,7 @@ html, body, #root {
 };
 
         const TestResultDisplay = ({ result }) => {
+            const { darkMode } = window.useTheme(); // Theme hook'unu ekledik
             if (!result) return null;
 
             // Test sonuçları istatistikleri
