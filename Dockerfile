@@ -18,6 +18,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
 EXPOSE 7923
+EXPOSE 80
+EXPOSE 443
 
 ENV FLASK_APP=app.py
 ENV PYTHONUNBUFFERED=1
