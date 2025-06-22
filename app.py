@@ -451,7 +451,7 @@ def run_web_server_and_background_tasks(app, socketio):
             app,
             host="0.0.0.0",
             debug=True,
-            port=5000,
+            port=Config.WEB_PORT,
             allow_unsafe_werkzeug=True,
             use_reloader=False,
             log_output=True
