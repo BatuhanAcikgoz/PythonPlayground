@@ -1,22 +1,6 @@
 version: '3.10'
 
 services:
-  traefik:
-    image: traefik:v2.10
-    container_name: traefik
-    restart: unless-stopped
-    ports:
-      - "80:80"     # HTTP
-      - "443:443"   # HTTPS
-      - "8080:8080" # Traefik dashboard (isteğe bağlı)
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
-      - ./traefik/config:/etc/traefik/config:ro
-      - ./traefik/certificates:/etc/traefik/certificates
-    networks:
-      - web
-
   web:
     build:
       context: .
@@ -37,19 +21,20 @@ services:
       - GIT_COMMIT=${SOURCE_COMMIT}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.web.rule=Host(`python.batuhanacikgoz.com.tr`)"
-      - "traefik.http.routers.web.entrypoints=https"
-      - "traefik.http.routers.web.tls=true"
-      - "traefik.http.routers.web.tls.certresolver=letsencrypt"
-      - "traefik.http.services.web.loadbalancer.server.port=5000"
+      - "traefik.http.routers.python-app.rule=Host(`python.batuhanacikgoz.com.tr`)"
+      - "traefik.http.routers.python-app.entrypoints=https"
+      - "traefik.http.routers.python-app.tls=true"
+      - "traefik.http.routers.python-app.tls.certresolver=letsencrypt"
+      - "traefik.http.services.python-app.loadbalancer.server.port=5000"
+      - "coolify.managed=true"
     working_dir: /code
     command: python app.py
     networks:
-      - web
+      - coolify
 
 networks:
-  web:
-    external: false
+  coolify:
+    external: true
 
 volumes:
   notebooks_repo:
