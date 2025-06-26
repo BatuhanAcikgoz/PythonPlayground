@@ -1882,68 +1882,129 @@ Yanıtını JSON formatında oluştur:
                 except Exception as e:
                     debug_info["ayrıştırma_denemeleri"].append(f"JSON bloğu {i+1} hatası: {str(e)}")
 
-        # Strateji 3: Kod blokları içinde ara
+        # Strateji 3: Kod blokları içinde ara - GÜNCELLENMİŞ VERSİYON
         if not json_data:
             code_blocks = re.findall(r'```(?:json)?\s*([\s\S]*?)```', response_text)
             debug_info["code_blocks_count"] = len(code_blocks)
 
             for i, block in enumerate(code_blocks):
                 try:
-                    # Temizleme işlemi (sadece gerekli temizleme)
+                    # Temizleme işlemi
                     cleaned_block = block.strip()
 
-                    # JSON'u doğrudan ayrıştırmayı dene
+                    # Unicode escape karakterlerini çöz
+                    try:
+                        # Python'un decode fonksiyonunu kullanarak Unicode karakterleri çöz
+                        decoded_block = cleaned_block.encode().decode('unicode_escape')
+                        json_data = json.loads(decoded_block)
+                        debug_info["ayrıştırma_denemeleri"].append(f"Unicode decode başarılı - blok {i + 1}")
+                        break
+                    except UnicodeDecodeError:
+                        # Unicode decode hatası varsa, doğrudan JSON parse dene
+                        pass
+
+                    # Doğrudan JSON parse
                     json_data = json.loads(cleaned_block)
                     debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i + 1} başarılı")
                     break
-                except Exception as e:
-                    debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i + 1} hatası: {str(e)}")
 
+                except json.JSONDecodeError as e:
+                    debug_info["ayrıştırma_denemeleri"].append(f"Kod bloğu {i + 1} JSON hatası: {str(e)}")
+
+                    # Manuel Unicode replacement yaklaşımı
                     try:
-                        # Unicode karakterleri çözümle
-                        decoded_block = bytes(cleaned_block, 'utf-8').decode('unicode_escape')
-                        json_data = json.loads(decoded_block)
-                        debug_info["ayrıştırma_denemeleri"].append(f"Unicode çözümleme başarılı")
-                        break
-                    except Exception as e2:
-                        debug_info["ayrıştırma_denemeleri"].append(f"Unicode çözümleme hatası: {str(e2)}")
+                        # Unicode escape karakterlerini manuel olarak değiştir
+                        unicode_fixed = cleaned_block
 
+                        # Yaygın Türkçe karakterler için manuel değiştirme
+                        unicode_replacements = {
+                            '\\u00c7': 'Ç', '\\u0131': 'ı', '\\u011f': 'ğ', '\\u015f': 'ş',
+                            '\\u00fc': 'ü', '\\u00f6': 'ö', '\\u00e7': 'ç', '\\u011e': 'Ğ',
+                            '\\u015e': 'Ş', '\\u00dc': 'Ü', '\\u00d6': 'Ö', '\\u0130': 'İ'
+                        }
+
+                        for unicode_char, turkish_char in unicode_replacements.items():
+                            unicode_fixed = unicode_fixed.replace(unicode_char, turkish_char)
+
+                        json_data = json.loads(unicode_fixed)
+                        debug_info["ayrıştırma_denemeleri"].append(f"Manuel Unicode düzeltme başarılı - blok {i + 1}")
+                        break
+
+                    except Exception as e2:
+                        debug_info["ayrıştırma_denemeleri"].append(
+                            f"Manuel Unicode düzeltme hatası - blok {i + 1}: {str(e2)}")
+
+                        # Son çare: Regex ile temel alanları çıkart
                         try:
-                            # Manuel JSON ayrıştırma - anahtar ve değer çiftlerini al
-                            # Önce string değerler
-                            string_pattern = r'"([^"]+)":\s*"([^"]*(?:\\.[^"]*)*)"'
-                            string_matches = re.findall(string_pattern, cleaned_block)
                             parsed_json = {}
 
-                            for key, value in string_matches:
-                                parsed_json[key] = value.replace('\\n', '\n').replace('\\t', '\t')
+                            # Başlık
+                            title_match = re.search(r'"title":\s*"([^"]*(?:\\.[^"]*)*)"', cleaned_block)
+                            if title_match:
+                                parsed_json["title"] = title_match.group(1).replace('\\"', '"')
 
-                            # Sayısal değerler
-                            num_pattern = r'"([^"]+)":\s*(\d+)'
-                            num_matches = re.findall(num_pattern, cleaned_block)
-                            for key, value in num_matches:
-                                if key not in parsed_json:
-                                    parsed_json[key] = int(value)
+                            # Açıklama
+                            desc_match = re.search(r'"description":\s*"([^"]*(?:\\.[^"]*)*)"', cleaned_block, re.DOTALL)
+                            if desc_match:
+                                parsed_json["description"] = desc_match.group(1).replace('\\n', '\n').replace('\\"',
+                                                                                                              '"')
 
-                            # Liste değerleri
-                            list_pattern = r'"([^"]+)":\s*(\[[\s\S]*?\])'
-                            list_matches = re.findall(list_pattern, cleaned_block)
-                            for key, value in list_matches:
-                                if key not in parsed_json:
-                                    try:
-                                        # Liste değerini JSON olarak ayrıştır
-                                        parsed_json[key] = json.loads(value)
-                                    except:
-                                        # Ayrıştırma başarısız olursa original değeri koru
-                                        parsed_json[key] = value
+                            # Fonksiyon adı
+                            func_match = re.search(r'"function_name":\s*"([^"]*)"', cleaned_block)
+                            if func_match:
+                                parsed_json["function_name"] = func_match.group(1)
 
-                            # Gerekli tüm alanların var olduğunu kontrol et
-                            if parsed_json and "title" in parsed_json and "description" in parsed_json:
+                            # Zorluk
+                            diff_match = re.search(r'"difficulty":\s*(\d+)', cleaned_block)
+                            if diff_match:
+                                parsed_json["difficulty"] = int(diff_match.group(1))
+
+                            # Puan
+                            points_match = re.search(r'"points":\s*(\d+)', cleaned_block)
+                            if points_match:
+                                parsed_json["points"] = int(points_match.group(1))
+
+                            # Konu
+                            topic_match = re.search(r'"topic":\s*"([^"]*)"', cleaned_block)
+                            if topic_match:
+                                parsed_json["topic"] = topic_match.group(1)
+
+                            # Örnek girdi
+                            input_match = re.search(r'"example_input":\s*"([^"]*(?:\\.[^"]*)*)"', cleaned_block)
+                            if input_match:
+                                parsed_json["example_input"] = input_match.group(1).replace('\\n', '\n').replace('\\"',
+                                                                                                                 '"')
+
+                            # Örnek çıktı
+                            output_match = re.search(r'"example_output":\s*"([^"]*(?:\\.[^"]*)*)"', cleaned_block)
+                            if output_match:
+                                parsed_json["example_output"] = output_match.group(1).replace('\\n', '\n').replace(
+                                    '\\"', '"')
+
+                            # Test girdileri
+                            test_match = re.search(r'"test_inputs":\s*(\[[\s\S]*?\])', cleaned_block)
+                            if test_match:
+                                try:
+                                    parsed_json["test_inputs"] = json.loads(test_match.group(1))
+                                except:
+                                    parsed_json["test_inputs"] = test_match.group(1)
+
+                            # Çözüm kodu
+                            solution_match = re.search(r'"solution_code":\s*"([^"]*(?:\\.[^"]*)*)"', cleaned_block,
+                                                       re.DOTALL)
+                            if solution_match:
+                                parsed_json["solution_code"] = solution_match.group(1).replace('\\n', '\n').replace(
+                                    '\\"', '"')
+
+                            # En az temel alanlar varsa kabul et
+                            if len(parsed_json) >= 4 and "title" in parsed_json and "description" in parsed_json:
                                 json_data = parsed_json
-                                debug_info["ayrıştırma_denemeleri"].append(f"Manuel ayrıştırma başarılı")
+                                debug_info["ayrıştırma_denemeleri"].append(f"Regex ayrıştırma başarılı - blok {i + 1}")
                                 break
+
                         except Exception as e3:
-                            debug_info["ayrıştırma_denemeleri"].append(f"Manuel ayrıştırma hatası: {str(e3)}")
+                            debug_info["ayrıştırma_denemeleri"].append(
+                                f"Regex ayrıştırma hatası - blok {i + 1}: {str(e3)}")
 
         # Eğer JSON ayrıştırılabildiyse verileri güncelle
         if json_data:
