@@ -1767,11 +1767,11 @@ def generate_programming_question(request: QuestionGenerationRequest, db=Depends
 
         # Konu kontrolü - eğer boş veya "genel" ise rastgele konu seç
         topic = request.topic
+        import random
         if not topic or topic == "genel":
             topics = ["veri yapıları", "algoritmalar", "string işleme", "matematik",
                       "sayı teorisi", "arama", "sıralama", "dinamik programlama",
                       "graf teorisi", "olasılık", "istatistik"]
-            import random
             topic = random.choice(topics)
             data["topic"] = topic
 
