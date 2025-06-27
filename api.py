@@ -1692,6 +1692,10 @@ def get_user_profile(username: str, current_user_id: Optional[int] = "0", db=Dep
         raise HTTPException(status_code=500, detail=str(e))
 
 
+import json
+import re
+
+
 def fix_malformed_json(client, malformed_json: str, debug_info: dict) -> dict:
     """Bozuk JSON verisini AI yardımıyla düzeltir"""
     try:
@@ -1704,8 +1708,9 @@ KURALLAR:
 * Başka açıklama ekleme
 * Tüm string değerler çift tırnak içinde olmalı
 * JSON anahtarları: "title", "description", "function_name", "difficulty", "topic", "points", "example_input", "example_output", "test_inputs", "solution_code"
-* test_inputs bir dizi olmalı: [[1,2], [3,4]] formatında
+* test_inputs bir dizi olmalı: [["1","2"], ["3","4"]] formatında
 * Tüm alanlar doldurulmalı
+* Eğer ki JSON verisi eksik veya hatalıysa, düzeltme yap ve geçerli bir JSON döndür
 
 Sadece geçerli JSON döndür:"""
 
@@ -1720,13 +1725,29 @@ Sadece geçerli JSON döndür:"""
         else:
             fix_text = str(fix_response)
 
+        # Yanıttan sadece JSON kısmını çıkar
+        fix_text = fix_text.strip()
+
+        # ```json kod bloklarını temizle
+        if "```json" in fix_text:
+            fix_text = re.sub(r'^.*?```json\s*', '', fix_text, flags=re.DOTALL)
+            fix_text = re.sub(r'\s*```.*$', '', fix_text, flags=re.DOTALL)
+        elif "```" in fix_text:
+            fix_text = re.sub(r'^.*?```\s*', '', fix_text, flags=re.DOTALL)
+            fix_text = re.sub(r'\s*```.*$', '', fix_text, flags=re.DOTALL)
+
         # Düzeltilmiş JSON'u ayrıştır
-        fixed_json = json.loads(fix_text)
+        fixed_json = json.loads(fix_text.strip())
         debug_info["json_fix_attempt"] = "Başarılı"
+        debug_info["fixed_json_length"] = len(fix_text)
         return fixed_json
 
+    except json.JSONDecodeError as e:
+        debug_info["json_fix_error"] = f"JSON decode hatası: {str(e)}"
+        debug_info["raw_fix_response"] = fix_text[:500] if 'fix_text' in locals() else "No response"
+        return None
     except Exception as e:
-        debug_info["json_fix_error"] = str(e)
+        debug_info["json_fix_error"] = f"Genel hata: {str(e)}"
         return None
 
 @api.post("/api/generate-question", response_model=GeneratedQuestionResponse)
@@ -2050,12 +2071,12 @@ Yanıtını JSON formatında oluştur:
                 except Exception as e:
                     data["test_inputs"] = "[]"
                     data["error"] = f"Test girdileri ayrıştırma hatası: {str(e)}"
-        else:
+                    else:
                     # Son çare: AI ile JSON düzeltme
                     debug_info["son_care_denemesi"] = "AI ile JSON düzeltme başlatılıyor"
                     fixed_json = fix_malformed_json(client, response_text, debug_info)
 
-                    if fixed_json:
+                    if fixed_json and isinstance(fixed_json, dict):
                         json_data = fixed_json
                         debug_info["son_care_sonuc"] = "Başarılı"
 
@@ -2078,12 +2099,11 @@ Yanıtını JSON formatında oluştur:
                                 if isinstance(json_data["test_inputs"], str):
                                     data["test_inputs"] = json_data["test_inputs"]
                                 else:
-                                    data["test_inputs"] = json.dumps(json_data["test_inputs"])
+                                    data["test_inputs"] = json.dumps(json_data["test_inputs"], ensure_ascii=False)
                             except:
                                 data["test_inputs"] = "[]"
                     else:
-                        # JSON ayrıştırılamadıysa hata döndür
-                        debug_info["son_care_sonuc"] = "Başarısız"
+                        debug_info["son_care_sonuc"] = "Başarısız - JSON düzeltilemedi"
                         return {
                             "error": "AI yanıtı JSON formatında ayrıştırılamadı ve düzeltilemedi.",
                             "debug_info": json.dumps(debug_info, ensure_ascii=False, indent=2),
