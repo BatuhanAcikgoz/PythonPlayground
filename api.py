@@ -1691,6 +1691,44 @@ def get_user_profile(username: str, current_user_id: Optional[int] = "0", db=Dep
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+def fix_malformed_json(client, malformed_json: str, debug_info: dict) -> dict:
+    """Bozuk JSON verisini AI yardımıyla düzeltir"""
+    try:
+        fix_prompt = f"""Aşağıdaki bozuk JSON verisini düzelt ve geçerli JSON formatına çevir:
+
+{malformed_json}
+
+KURALLAR:
+* SADECE düzeltilmiş JSON nesnesini döndür
+* Başka açıklama ekleme
+* Tüm string değerler çift tırnak içinde olmalı
+* JSON anahtarları: "title", "description", "function_name", "difficulty", "topic", "points", "example_input", "example_output", "test_inputs", "solution_code"
+* test_inputs bir dizi olmalı: [[1,2], [3,4]] formatında
+* Tüm alanlar doldurulmalı
+
+Sadece geçerli JSON döndür:"""
+
+        fix_response = client.chat_completion([
+            {"role": "system", "content": "Sen JSON düzeltme uzmanısın. SADECE geçerli JSON formatında yanıt ver."},
+            {"role": "user", "content": fix_prompt}
+        ])
+
+        fix_text = ""
+        if isinstance(fix_response, dict):
+            fix_text = fix_response.get("content", "")
+        else:
+            fix_text = str(fix_response)
+
+        # Düzeltilmiş JSON'u ayrıştır
+        fixed_json = json.loads(fix_text)
+        debug_info["json_fix_attempt"] = "Başarılı"
+        return fixed_json
+
+    except Exception as e:
+        debug_info["json_fix_error"] = str(e)
+        return None
+
 @api.post("/api/generate-question", response_model=GeneratedQuestionResponse)
 def generate_programming_question(request: QuestionGenerationRequest, db=Depends(get_db)):
     """
@@ -2013,10 +2051,44 @@ Yanıtını JSON formatında oluştur:
                     data["test_inputs"] = "[]"
                     data["error"] = f"Test girdileri ayrıştırma hatası: {str(e)}"
         else:
-            # JSON ayrıştırılamadıysa hata döndür
-            data["error"] = "JSON ayrıştırma hatası: AI yanıtı beklenen formatta değil"
-            data["debug_info"] = json.dumps(debug_info)
-            return data
+                    # Son çare: AI ile JSON düzeltme
+                    debug_info["son_care_denemesi"] = "AI ile JSON düzeltme başlatılıyor"
+                    fixed_json = fix_malformed_json(client, response_text, debug_info)
+
+                    if fixed_json:
+                        json_data = fixed_json
+                        debug_info["son_care_sonuc"] = "Başarılı"
+
+                        # Düzeltilen JSON verilerini işle
+                        for field in ["title", "description", "function_name", "solution_code"]:
+                            if field in json_data and json_data[field]:
+                                data[field] = json_data[field]
+
+                        if "difficulty" in json_data:
+                            data["difficulty"] = json_data["difficulty"]
+                        if "points" in json_data:
+                            data["points"] = json_data["points"]
+                        if "example_input" in json_data:
+                            data["example_input"] = json_data["example_input"]
+                        if "example_output" in json_data:
+                            data["example_output"] = json_data["example_output"]
+
+                        if "test_inputs" in json_data:
+                            try:
+                                if isinstance(json_data["test_inputs"], str):
+                                    data["test_inputs"] = json_data["test_inputs"]
+                                else:
+                                    data["test_inputs"] = json.dumps(json_data["test_inputs"])
+                            except:
+                                data["test_inputs"] = "[]"
+                    else:
+                        # JSON ayrıştırılamadıysa hata döndür
+                        debug_info["son_care_sonuc"] = "Başarısız"
+                        return {
+                            "error": "AI yanıtı JSON formatında ayrıştırılamadı ve düzeltilemedi.",
+                            "debug_info": json.dumps(debug_info, ensure_ascii=False, indent=2),
+                            **data
+                        }
 
         # Sonuç kontrolü - temel alanlar var mı?
         required_fields = ["title", "description", "function_name", "solution_code"]
