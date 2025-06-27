@@ -2071,44 +2071,44 @@ Yanıtını JSON formatında oluştur:
                 except Exception as e:
                     data["test_inputs"] = "[]"
                     data["error"] = f"Test girdileri ayrıştırma hatası: {str(e)}"
-                    else:
-                    # Son çare: AI ile JSON düzeltme
-                    debug_info["son_care_denemesi"] = "AI ile JSON düzeltme başlatılıyor"
-                    fixed_json = fix_malformed_json(client, response_text, debug_info)
+        else:
+            # Son çare: AI ile JSON düzeltme
+            debug_info["son_care_denemesi"] = "AI ile JSON düzeltme başlatılıyor"
+            fixed_json = fix_malformed_json(client, response_text, debug_info)
 
-                    if fixed_json and isinstance(fixed_json, dict):
-                        json_data = fixed_json
-                        debug_info["son_care_sonuc"] = "Başarılı"
+            if fixed_json and isinstance(fixed_json, dict):
+                json_data = fixed_json
+                debug_info["son_care_sonuc"] = "Başarılı"
 
-                        # Düzeltilen JSON verilerini işle
-                        for field in ["title", "description", "function_name", "solution_code"]:
-                            if field in json_data and json_data[field]:
-                                data[field] = json_data[field]
+                # Düzeltilen JSON verilerini işle
+                for field in ["title", "description", "function_name", "solution_code"]:
+                    if field in json_data and json_data[field]:
+                        data[field] = json_data[field]
 
-                        if "difficulty" in json_data:
-                            data["difficulty"] = json_data["difficulty"]
-                        if "points" in json_data:
-                            data["points"] = json_data["points"]
-                        if "example_input" in json_data:
-                            data["example_input"] = json_data["example_input"]
-                        if "example_output" in json_data:
-                            data["example_output"] = json_data["example_output"]
+                if "difficulty" in json_data:
+                    data["difficulty"] = json_data["difficulty"]
+                if "points" in json_data:
+                    data["points"] = json_data["points"]
+                if "example_input" in json_data:
+                    data["example_input"] = json_data["example_input"]
+                if "example_output" in json_data:
+                    data["example_output"] = json_data["example_output"]
 
-                        if "test_inputs" in json_data:
-                            try:
-                                if isinstance(json_data["test_inputs"], str):
-                                    data["test_inputs"] = json_data["test_inputs"]
-                                else:
-                                    data["test_inputs"] = json.dumps(json_data["test_inputs"], ensure_ascii=False)
-                            except:
-                                data["test_inputs"] = "[]"
-                    else:
-                        debug_info["son_care_sonuc"] = "Başarısız - JSON düzeltilemedi"
-                        return {
-                            "error": "AI yanıtı JSON formatında ayrıştırılamadı ve düzeltilemedi.",
-                            "debug_info": json.dumps(debug_info, ensure_ascii=False, indent=2),
-                            **data
-                        }
+                if "test_inputs" in json_data:
+                    try:
+                        if isinstance(json_data["test_inputs"], str):
+                            data["test_inputs"] = json_data["test_inputs"]
+                        else:
+                            data["test_inputs"] = json.dumps(json_data["test_inputs"], ensure_ascii=False)
+                    except:
+                        data["test_inputs"] = "[]"
+            else:
+                debug_info["son_care_sonuc"] = "Başarısız - JSON düzeltilemedi"
+                return {
+                    "error": "AI yanıtı JSON formatında ayrıştırılamadı ve düzeltilemedi.",
+                    "debug_info": json.dumps(debug_info, ensure_ascii=False, indent=2),
+                    **data
+                }
 
         # Sonuç kontrolü - temel alanlar var mı?
         required_fields = ["title", "description", "function_name", "solution_code"]
