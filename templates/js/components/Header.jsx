@@ -4,6 +4,7 @@ const Header = () => {
     // **GÜNCELLEME BAŞLANGICI**
     const appData = window.APP_DATA || {}; // window.APP_DATA yoksa boş bir obje kullan
     const isLoggedIn = appData.isLoggedIn;
+    const isAdmin = appData.isAdmin;
     const username = (appData.userData && appData.userData.username) || null; // userData yoksa null
     const userEmail = (appData.userData && appData.userData.email) || null; // userData yoksa null
     // **GÜNCELLEME SONU**
@@ -92,6 +93,11 @@ const Header = () => {
                                         {dropdownOpen && (
                                             <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                                                 <div className="py-1" role="menu" aria-orientation="vertical">
+                                                    {isAdmin ?(
+                                                        <React.Fragment>
+                                                            <a href="/admin" className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 items-center" role="menuitem"></a>
+                                                        </React.Fragment>
+                                                     ): null}
                                                     <a href="/profil" className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 items-center" role="menuitem">
                                                         <svg className="h-4 w-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>

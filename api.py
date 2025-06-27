@@ -2040,6 +2040,7 @@ Yanıtını JSON formatında oluştur:
             "title": "",
             "description": "",
             "function_name": "",
+            "description_hint": "",
             "difficulty": request.difficulty_level,
             "topic": request.topic,
             "points": 10 + request.difficulty_level * 5,

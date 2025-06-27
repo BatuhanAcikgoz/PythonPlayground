@@ -33,6 +33,7 @@
     <script>
         window.APP_DATA = {
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
+            isAdmin: {{ 'true' if current_user.is_authenticated and current_user.is_admin() else 'false' }},
             headerTrans: {
                 appName: {{ _('app_name')|tojson|safe }},
                 tagline: {{ _('app_tagline')|tojson|safe }},

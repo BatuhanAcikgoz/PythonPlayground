@@ -86,6 +86,7 @@
                 {% endwith %}
             ],
             isLoggedIn: {{ current_user.is_authenticated|tojson }},
+            isAdmin: {{ 'true' if current_user.is_authenticated and current_user.is_admin() else 'false' }},
             userData: {
                 username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
                 email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
