@@ -10,36 +10,7 @@
   </p>
 </div>
 
-Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görüntülemenizi ve çalıştırmanızı sağlar. Programiz benzeri bir interaktif konsol sunar ve rol tabanlı erişim kontrolü ile kullanıcı yönetimi içerir.
-
-![PythonPlayground Demo](https://via.placeholder.com/800x450.png?text=PythonPlayground+Demo)
-
-## 📑 İçindekiler
-- [🌟 Özellikler](#-özellikler)
-- [🔧 Kurulum](#-kurulum)
-- [🐳 Docker ile Deployment](#-docker-ile-deployment)
-- [🚦 Kullanım](#-kullanım)
-- [📁 Proje Yapısı](#-proje-yapısı)
-- [⚡ FastAPI Entegrasyonu](#-fastapi-entegrasyonu)
-- [🔌 API Endpointleri](#-api-endpointleri)
-- [🛠️ Teknik Gereksinimler](#️-teknik-gereksinimler)
-- [❓ Sık Sorulan Sorular](#-sık-sorulan-sorular)
-- [👥 Katkıda Bulunma](#-katkıda-bulunma)
-- [📄 Lisans](#-lisans)
-
-# 🚀 PythonPlayground: İnteraktif Python Konsolu ve Eğitim Platformu
-
-<div align="center">
-  <p>
-    <img src="https://img.shields.io/badge/Python-3.8+-blue.svg" alt="Python 3.8+"/>
-    <img src="https://img.shields.io/badge/Flask-3.1.0-green.svg" alt="Flask 3.1.0"/>
-    <img src="https://img.shields.io/badge/FastAPI-0.110.0-teal.svg" alt="FastAPI 0.110.0"/>
-    <img src="https://img.shields.io/badge/Docker-Ready-blue.svg" alt="Docker Ready"/>
-    <img src="https://img.shields.io/badge/Status-Geliştiriliyor-orange.svg" alt="Status: Geliştiriliyor"/>
-  </p>
-</div>
-
-Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görüntülemenizi ve çalıştırmanızı sağlar. Programiz benzeri bir interaktif konsol sunar ve rol tabanlı erişim kontrolü ile kullanıcı yönetimi içerir.
+Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görüntülemenizi ve çalıştırmanızı sağlar AI özetleri ile daha hızlı python öğrenmenize yardımcı olur. AI tarafından hazırlanan python sorulari ile bilginizi pekiştirebilirsiniz ve diğer kullanıcılarla yarışabilirsiniz.
 
 ![PythonPlayground Demo](https://via.placeholder.com/800x450.png?text=PythonPlayground+Demo)
 
