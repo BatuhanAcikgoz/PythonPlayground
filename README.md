@@ -66,8 +66,8 @@ Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görünt
 #### AI Destekli İçerik Üretimi
 - **Otomatik Soru Üretimi**: Zorluk seviyelerine göre programlama soruları
 - **Notebook Özetleme**: AI ile ders içeriği özetleri
-- **Kod Analizi**: Otomatik kod kalitesi değerlendirmesi
-- **Öneri Sistemi**: Kişiselleştirilmiş öğrenme önerileri
+- **Kod Analizi**: Otomatik kod kalitesi değerlendirmesi 
+- **Öneri Sistemi**: Kişiselleştirilmiş öğrenme önerileri ( In progress )
 
 ### 🎮 **İnteraktif Kod Çalıştırma**
 
@@ -80,42 +80,42 @@ Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görünt
 #### Gerçek Zamanlı Etkileşim
 - WebSocket ile anında sonuç alma
 - Çoklu kullanıcı desteği
-- Collaborative coding özelliği
-- Live code sharing
+- Collaborative coding özelliği ( In progress )
+- Live code sharing ( In progress )
 
 ### 🏅 **Gelişmiş Gamification**
 
 #### Rozet Sistemi
 - **Başlangıç Rozetleri**: İlk adımlar için
-- **Öğrenme Rozetleri**: Ders tamamlama
+- **Öğrenme Rozetleri**: Soruları tamamlama
 - **Beceri Rozetleri**: Özel yetenekler
-- **Sosyal Rozetler**: Topluluk katkısı
+- **Sosyal Rozetler**: Topluluk katkısı ( In progress )
 
 #### Puan ve Seviye Sistemi
-- Aktivite bazlı puan kazanımı
+- Aktivite bazlı puan kazanımı 
 - Günlük/haftalık hedefler
 - Seviye atlama ödülleri
 - Bonus puan etkinlikleri
 
 #### Liderlik ve Rekabet
 - Genel liderlik tablosu
-- Kategori bazlı sıralamalar
-- Haftalık/aylık turnuvalar
-- Takım bazlı yarışmalar
+- Kategori bazlı sıralamalar ( In progress )
+- Haftalık/aylık turnuvalar ( In progress )
+- Takım bazlı yarışmalar ( In progress )
 
 ### 📊 **Analitik ve Raporlama**
 
 #### Öğrenci Analitiği
 - Detaylı ilerleme raporu
 - Zaman bazlı aktivite analizi
-- Güçlü/zayıf yönler analizi
-- Kişiselleştirilmiş öneriler
+- Güçlü/zayıf yönler analizi ( In progress )
+- Kişiselleştirilmiş öneriler ( In progress )
 
 #### Öğretmen Dashboard'u
 - Sınıf performans analizi
 - Öğrenci ilerleme takibi
-- Eksik konular tespiti
-- Otomatik raporlama
+- Eksik konular tespiti ( In progress )
+- Otomatik raporlama ( In progress )
 
 ## 🔧 Kurulum
 
