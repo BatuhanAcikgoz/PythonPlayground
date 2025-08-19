@@ -10,6 +10,7 @@ from app.models.user import User
 from app.routes import register_routes
 from config import Config
 from colorlog import StreamHandler, ColoredFormatter
+from app.tasks.instagram_tasks import instagram_task_manager
 from app.utils.misc import get_git_info, wait_for_fastapi
 
 
@@ -173,6 +174,7 @@ def init_db(app):
         from app.models.user_badges import UserBadge
         from app.models.user import User, Role
         from app.models.settings import Setting
+        from app.models.cache import Cache
 
         # Tabloları oluştur
         db.create_all()
@@ -210,7 +212,7 @@ def init_db(app):
             {'key': 'default_language', 'value': 'tr', 'type': 'str', 'category': 'general'},
             {'key': 'allow_registration', 'value': 'True', 'type': 'bool', 'category': 'users'},
             {'key': 'enable_user_activation', 'value': 'False', 'type': 'bool', 'category': 'users'},
-        ]
+            {'key': 'tracked_instagram_users', 'value': 'bseu_istatistikvebilgisayar', 'type': 'str', 'category': 'social'},        ]
 
         for setting_data in default_settings:
             setting = Setting.query.filter_by(key=setting_data['key']).first()
@@ -471,6 +473,13 @@ def run_web_server_and_background_tasks(app, socketio):
     if is_fastapi_ready:
         logger.info("FastAPI hazır, background görevler başlatılıyor...")
 
+        # Instagram task manager'ı başlat
+        try:
+            instagram_task_manager.start()
+            logger.info("Instagram task manager başlatıldı")
+        except Exception as e:
+            logger.error(f"Instagram task manager başlatılamadı: {str(e)}")
+
         # Özetleri yükle
         summaries_thread = threading.Thread(
             target=load_summaries_with_app_context,
@@ -493,7 +502,16 @@ def run_web_server_and_background_tasks(app, socketio):
 
     # 7. Ana thread'de web sunucusunun bitmesini bekle
     logger.info("Ana uygulama çalışıyor, web thread bekleniyor...")
-    web_thread.join()
+    try:
+        web_thread.join()
+    except KeyboardInterrupt:
+        logger.info("Uygulama kapatılıyor...")
+        # Instagram task manager'ı durdur
+        try:
+            instagram_task_manager.stop()
+            logger.info("Instagram task manager durduruldu")
+        except Exception as e:
+            logger.error(f"Instagram task manager durdurulurken hata: {str(e)}")
 
 if __name__ == '__main__':
     import time

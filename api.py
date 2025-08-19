@@ -2254,114 +2254,63 @@ def save_question(question: ProgrammingQuestionCreate, db=Depends(get_db)):
         return {"success": False, "message": f"Soru kaydedilirken hata oluştu: {str(e)}"}
 
 
+from app.services.instagram_service import InstagramService
+
+
 @api.get("/api/instagram-posts", response_model=List[InstagramPostResponse])
 def get_instagram_posts(
         instagram_username: str,
         limit: Optional[int] = 10,
-        offset: Optional[int] = 0
+        offset: Optional[int] = 0,
+        force_refresh: Optional[bool] = False,
+        db=Depends(get_db)
 ):
     """
-    Belirtilen Instagram kullanıcısının postlarını HTTP isteği ile JSON verisi olarak çeker.
+    Instagram postlarını cache sistemi ile döndürür.
+    Cache'de veri varsa oradan, yoksa Instagram'dan çeker.
     """
     try:
-        import requests
-        import json
-        import time
-        import random
-        import re
-        import traceback
-        from datetime import datetime
-        from bs4 import BeautifulSoup
+        instagram_service = InstagramService()
+        posts = instagram_service.get_posts(instagram_username, db, force_refresh)
 
-        # Boş posts listesi oluştur
-        posts = []
-
-        # Kullanıcı ajanları listesi
-        user_agents = [
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15",
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0",
-            "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0"
-        ]
-
-        # İsteği hazırla
-        headers = {
-            'User-Agent': random.choice(user_agents),
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Connection': 'keep-alive',
-            'Upgrade-Insecure-Requests': '1',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
-            'Sec-Fetch-User': '?1',
-            'Cache-Control': 'max-age=0'
-        }
-
-        print(f"Instagram verisi çekiliyor: {instagram_username}")
-
-        # Instagram kullanıcı profil sayfasına istek yap
-        profile_url = f'https://www.instagram.com/{instagram_username}/'
-
-        try:
-            response = requests.get(profile_url, headers=headers, timeout=15)
-            print(f"Instagram yanıt kodu: {response.status_code}")
-
-            if response.status_code == 200:
-                # Hiç veri bulunamadıysa API deneme
-                if not posts:
-                    api_url = f"https://www.instagram.com/api/v1/users/web_profile_info/?username={instagram_username}"
-                    api_headers = headers.copy()
-                    api_headers['X-IG-App-ID'] = '936619743392459'  # Instagram web uygulaması ID'si
-
-                    try:
-                        api_response = requests.get(api_url, headers=api_headers, timeout=15)
-                        if api_response.status_code == 200:
-                            api_data = api_response.json()
-                            user_data = api_data.get('data', {}).get('user', {})
-                            media_items = user_data.get('edge_owner_to_timeline_media', {}).get('edges', [])
-
-                            for i, edge in enumerate(media_items):
-                                node = edge.get('node', {})
-                                if node:
-                                    post_id = node.get('id', i)
-                                    image_url = node.get('display_url', '')
-                                    caption_edges = node.get('edge_media_to_caption', {}).get('edges', [])
-                                    caption = caption_edges[0].get('node', {}).get('text', '') if caption_edges else ''
-                                    likes = node.get('edge_liked_by', {}).get('count', 0) or node.get(
-                                        'edge_media_preview_like', {}).get('count', 0)
-                                    timestamp = node.get('taken_at_timestamp', 0)
-                                    post_date = datetime.fromtimestamp(timestamp).strftime(
-                                        '%Y-%m-%d') if timestamp else 'Bilinmiyor'
-                                    shortcode = node.get('shortcode', '')
-                                    post_url = f'https://www.instagram.com/p/{shortcode}/'
-
-                                    posts.append({
-                                        'id': post_id,
-                                        'image_url': image_url,
-                                        'caption': caption,
-                                        'likes': likes,
-                                        'post_date': post_date,
-                                        'post_url': post_url
-                                    })
-                    except Exception as api_err:
-                        print(f"API hatası: {str(api_err)}")
-
-            else:
-                print(f"Instagram yanıtı başarısız: {response.status_code}")
-
-        except requests.RequestException as req_err:
-            print(f"İstek hatası: {str(req_err)}")
-
-        # Veri varsa limit ve offset ile döndür
+        # Limit ve offset uygula
         return posts[offset:offset + limit]
 
     except Exception as e:
         print(f"Instagram postları alınırken hata: {str(e)}")
-        traceback.print_exc()
         return []
+
+
+@api.delete("/api/instagram-cache/{username}")
+def clear_instagram_cache(username: str, db=Depends(get_db)):
+    """Belirli kullanıcının Instagram cache'ini temizler"""
+    try:
+        from app.utils.cache_helper import CacheManager
+
+        cache_key = CacheManager.get_cache_key("instagram_posts", username)
+        CacheManager.delete_cache(cache_key, db)
+
+        return {"success": True, "message": f"{username} kullanıcısının cache'i temizlendi"}
+    except Exception as e:
+        return {"success": False, "message": f"Cache temizlenirken hata: {str(e)}"}
+
+
+@api.post("/api/instagram-cache/refresh/{username}")
+def refresh_instagram_cache(username: str, db=Depends(get_db)):
+    """Belirli kullanıcının Instagram cache'ini zorla yeniler"""
+    try:
+        from app.services.instagram_service import InstagramService
+
+        instagram_service = InstagramService()
+        posts = instagram_service.get_posts(username, db, force_refresh=True)
+
+        return {
+            "success": True,
+            "message": f"{username} kullanıcısının cache'i yenilendi",
+            "posts_count": len(posts)
+        }
+    except Exception as e:
+        return {"success": False, "message": f"Cache yenilenirken hata: {str(e)}"}
 
 @api.get('/api/proxy-image')
 async def proxy_image(request: Request):
