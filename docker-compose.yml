@@ -26,6 +26,9 @@ services:
       - "traefik.http.routers.python-app.tls=true"
       - "traefik.http.routers.python-app.tls.certresolver=letsencrypt"
       - "traefik.http.services.python-app.loadbalancer.server.port=5000"
+      - "traefik.http.routers.python-app-redirect.rule=Host(`python.batuhanacikgoz.com.tr`)"
+      - "traefik.http.routers.python-app-redirect.entrypoints=http"
+      - "traefik.http.routers.python-app-redirect.middlewares=redirect-to-https"
       - "coolify.managed=true"
     working_dir: /code
     command: python app.py
