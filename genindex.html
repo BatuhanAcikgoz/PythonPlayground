@@ -389,8 +389,6 @@
           <li><a href="app.models.html#module-app.models.notebook_summary">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     app.models.programming_question
 
@@ -398,6 +396,8 @@
           <li><a href="app.models.html#module-app.models.programming_question">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     app.models.settings
 
@@ -480,6 +480,20 @@
 
         <ul>
           <li><a href="app.services.html#module-app.services.notebook_service">module</a>
+</li>
+        </ul></li>
+        <li>
+    app.tasks
+
+        <ul>
+          <li><a href="app.tasks.html#module-app.tasks">module</a>
+</li>
+        </ul></li>
+        <li>
+    app.tasks.instagram_tasks
+
+        <ul>
+          <li><a href="app.tasks.html#module-app.tasks.instagram_tasks">module</a>
 </li>
         </ul></li>
         <li>
@@ -698,11 +712,13 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="app.routes.html#app.routes.programming.generate_starter_code">generate_starter_code() (app.routes.programming modülü içinde)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="app.models.html#app.models.settings.Setting.get">get() (app.models.settings.Setting sınıf yöntemi)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="app.services.html#app.services.notebook_service.NotebookService.get_notebook">get_notebook() (app.services.notebook_service.NotebookService yöntemi)</a>
+</li>
+        <li><a href="app.tasks.html#app.tasks.instagram_tasks.InstagramTaskManager.get_tracked_usernames">get_tracked_usernames() (app.tasks.instagram_tasks.InstagramTaskManager yöntemi)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -754,6 +770,8 @@
           <li><a href="app.routes.html#app.routes.main.index">(app.routes.main modülü içinde)</a>
 </li>
         </ul></li>
+        <li><a href="app.tasks.html#app.tasks.instagram_tasks.InstagramTaskManager">InstagramTaskManager (app.tasks.instagram_tasks içindeki sınıf)</a>
+</li>
         <li><a href="app.models.html#app.models.user.User.is_admin">is_admin() (app.models.user.User yöntemi)</a>
 </li>
         <li><a href="app.models.html#app.models.submission.Submission.is_correct">is_correct (app.models.submission.Submission özniteliği)</a>, <a href="app.models.html#id26">[1]</a>
@@ -865,6 +883,10 @@
           <li><a href="app.services.html#module-app.services">app.services</a>
 </li>
           <li><a href="app.services.html#module-app.services.notebook_service">app.services.notebook_service</a>
+</li>
+          <li><a href="app.tasks.html#module-app.tasks">app.tasks</a>
+</li>
+          <li><a href="app.tasks.html#module-app.tasks.instagram_tasks">app.tasks.instagram_tasks</a>
 </li>
           <li><a href="app.utils.html#module-app.utils">app.utils</a>
 </li>
@@ -1041,10 +1063,10 @@
           <li><a href="app.forms.html#app.forms.LoginForm.remember_me">(app.forms.LoginForm özniteliği)</a>, <a href="app.forms.html#id46">[1]</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="app.services.html#app.services.notebook_service.NotebookService.reset_namespace">reset_namespace() (app.services.notebook_service.NotebookService yöntemi)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="app.models.html#id28">result_summary (app.models.submission.Submission property)</a>
 </li>
         <li><a href="app.models.html#app.models.submission.Submission.result_summary">result_summary() (app.models.submission.Submission yöntemi)</a>
@@ -1071,6 +1093,8 @@
 </li>
         <li><a href="app.services.html#app.services.notebook_service.NotebookService.run_code">run_code() (app.services.notebook_service.NotebookService yöntemi)</a>
 </li>
+        <li><a href="app.tasks.html#app.tasks.instagram_tasks.InstagramTaskManager.run_scheduler">run_scheduler() (app.tasks.instagram_tasks.InstagramTaskManager yöntemi)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -1085,6 +1109,8 @@
           <li><a href="app.models.html#app.models.submission.Submission.save_submission">(app.models.submission.Submission yöntemi)</a>
 </li>
         </ul></li>
+        <li><a href="app.tasks.html#app.tasks.instagram_tasks.InstagramTaskManager.schedule_tasks">schedule_tasks() (app.tasks.instagram_tasks.InstagramTaskManager yöntemi)</a>
+</li>
         <li><a href="app.routes.html#app.routes.main.serve_component">serve_component() (app.routes.main modülü içinde)</a>
 </li>
         <li><a href="app.models.html#app.models.settings.Setting.set">set() (app.models.settings.Setting sınıf yöntemi)</a>
@@ -1119,10 +1145,14 @@
         </ul></li>
         <li><a href="app.forms.html#app.forms.programming.SolutionSubmitForm">SolutionSubmitForm (app.forms.programming içindeki sınıf)</a>
 </li>
-        <li><a href="app.models.html#app.models.submission.Submission">Submission (app.models.submission içindeki sınıf)</a>
+        <li><a href="app.tasks.html#app.tasks.instagram_tasks.InstagramTaskManager.start">start() (app.tasks.instagram_tasks.InstagramTaskManager yöntemi)</a>
+</li>
+        <li><a href="app.tasks.html#app.tasks.instagram_tasks.InstagramTaskManager.stop">stop() (app.tasks.instagram_tasks.InstagramTaskManager yöntemi)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="app.models.html#app.models.submission.Submission">Submission (app.models.submission içindeki sınıf)</a>
+</li>
         <li><a href="app.routes.html#app.routes.programming.submission">submission() (app.routes.programming modülü içinde)</a>
 </li>
         <li><a href="app.models.html#app.models.programming_question.ProgrammingQuestion.submissions">submissions (app.models.programming_question.ProgrammingQuestion özniteliği)</a>
@@ -1215,6 +1245,8 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="app.routes.html#app.routes.auth.update_account">update_account() (app.routes.auth modülü içinde)</a>
 </li>
+        <li><a href="app.tasks.html#app.tasks.instagram_tasks.InstagramTaskManager.update_instagram_cache">update_instagram_cache() (app.tasks.instagram_tasks.InstagramTaskManager yöntemi)</a>
+</li>
         <li><a href="app.routes.html#app.routes.auth.update_notifications">update_notifications() (app.routes.auth modülü içinde)</a>
 </li>
         <li><a href="app.routes.html#app.routes.auth.update_privacy">update_privacy() (app.routes.auth modülü içinde)</a>
@@ -1235,10 +1267,10 @@
 </li>
         <li><a href="app.events.html#app.events.event_definitions.EventType.USER_POINTS_UPDATED">USER_POINTS_UPDATED (app.events.event_definitions.EventType özniteliği)</a>
 </li>
-        <li><a href="app.events.html#app.events.event_definitions.EventType.USER_REGISTERED">USER_REGISTERED (app.events.event_definitions.EventType özniteliği)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="app.events.html#app.events.event_definitions.EventType.USER_REGISTERED">USER_REGISTERED (app.events.event_definitions.EventType özniteliği)</a>
+</li>
         <li><a href="app.events.html#app.events.handlers.user_registered_handler">user_registered_handler() (app.events.handlers modülü içinde)</a>
 </li>
         <li><a href="app.forms.html#app.forms.UserForm">UserForm (app.forms içindeki sınıf)</a>

@@ -1,0 +1,21 @@
+app.tasks package
+=================
+
+Submodules
+----------
+
+app.tasks.instagram\_tasks module
+---------------------------------
+
+.. automodule:: app.tasks.instagram_tasks
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: app.tasks
+   :members:
+   :show-inheritance:
+   :undoc-members:
