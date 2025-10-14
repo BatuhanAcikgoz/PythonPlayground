@@ -59,7 +59,7 @@ def create_app():
     login_manager.login_view = 'auth.login'
 
     # SocketIO başlat
-    socketio = SocketIO(app, async_mode='eventlet')
+    socketio = SocketIO(app, async_mode='threading')
 
     @app.context_processor
     def inject_globals():
