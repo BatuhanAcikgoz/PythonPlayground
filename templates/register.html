@@ -33,15 +33,111 @@
     <!-- Flash mesajları için ayrı div - React dışında işlenecek -->
     <div id="flash-messages" style="display: none;">
         {% with messages = get_flashed_messages() %}
-        [...]
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 flash-message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
     </div>
 
     <!-- Form içeriği için ayrı div - React dışında işlenecek -->
     <div id="form-content" style="display: none;">
-        [...]
+        <form method="POST">
+            {{ form.csrf_token }}
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="username">
+                    {{ _('username') }}
+                </label>
+                {{ form.username(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600 leading-tight focus:outline-none focus:shadow-outline") }}
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="email">
+                    {{ _('email') }}
+                </label>
+                {{ form.email(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600 leading-tight focus:outline-none focus:shadow-outline") }}
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="password">
+                    {{ _('password') }}
+                </label>
+                {{ form.password(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600 leading-tight focus:outline-none focus:shadow-outline") }}
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" for="confirm_password">
+                    {{ _('confirm_password') }}
+                </label>
+                {{ form.confirm_password(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 dark:bg-gray-700 dark:border-gray-600 mb-3 leading-tight focus:outline-none focus:shadow-outline") }}
+            </div>
+            <div class="flex items-center justify-between">
+                <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full" type="submit">
+                    {{ _('register_button') }}
+                </button>
+            </div>
+            <div class="text-center mt-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ _('already_have_account') }} <a href="{{ url_for('auth.login') }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">{{ _('login') }}</a>
+                </p>
+            </div>
+        </form>
     </div>
     <script>
-        [...]
+        window.APP_DATA = {
+            isLoggedIn: {{ current_user.is_authenticated|tojson }},
+            isAdmin: {{ 'true' if current_user.is_authenticated and current_user.is_admin() else 'false' }},
+            userData: {
+                username: {{ current_user.username|tojson if current_user.is_authenticated else 'null'|safe }},
+                email: {{ current_user.email|tojson if current_user.is_authenticated else 'null'|safe }}
+            },
+            headerTrans: {
+                appName: {{ _('app_name')|tojson|safe }},
+                tagline: {{ _('app_tagline')|tojson|safe }},
+                home: {{ _('home')|tojson|safe }},
+                questions: {{ _('Questions')|tojson|safe }},
+                leaderboard: {{ _('Leaderboard')|tojson|safe }},
+                about: {{ _('about')|tojson|safe }},
+                logout: {{ _('logout')|tojson|safe }},
+                login: {{ _('login')|tojson|safe }},
+                register: {{ _('register')|tojson|safe }}
+            },
+            footerTrans: {
+                allRights: {{ _('all_rights')|tojson|safe }},
+                platformDesc: {{ _('platform_desc')|tojson|safe }}
+            },
+            currentLang: {{ session.get('language', 'tr')|tojson }}
+        };
+
+        // Flash mesajları ve çeviriler
+        const FLASH_MESSAGES = [
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        {{ message|tojson|safe }}{{ "," if not loop.last else "" }}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        ];
+
+        const TRANSLATIONS = {
+            register_title: {{ _('register_title')|tojson|safe }},
+            register_subtitle: {{ _('register_subtitle')|tojson|safe }},
+            username: {{ _('username')|tojson|safe }},
+            username_placeholder: {{ _('username_placeholder')|tojson|safe }},
+            email: {{ _('email')|tojson|safe }},
+            email_placeholder: {{ _('email_placeholder')|tojson|safe }},
+            password: {{ _('password')|tojson|safe }},
+            password_placeholder: {{ _('password_placeholder')|tojson|safe }},
+            confirm_password: {{ _('confirm_password')|tojson|safe }},
+            confirm_password_placeholder: {{ _('confirm_password_placeholder')|tojson|safe }},
+            register_button: {{ _('register_button')|tojson|safe }},
+            already_have_account: {{ _('already_have_account')|tojson|safe }}
+        };
+
+        const FORM_DATA = {
+            csrf_token: {{ form.csrf_token._value()|tojson|safe }}
+        };
     </script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
