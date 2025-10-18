@@ -16,3 +16,4 @@ notebooks_repo/
 venv/Include/site/python3.12/greenlet/greenlet.h
 /venv
 /app/__pycache__
+/app/tasks/__pycache__

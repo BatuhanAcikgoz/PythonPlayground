@@ -4,7 +4,8 @@ const ThemeContext = React.createContext();
 
 const ThemeProvider = ({ children }) => {
   const [darkMode, setDarkMode] = React.useState(() => {
-    return localStorage.getItem("theme") === "dark";
+    const savedTheme = localStorage.getItem("theme");
+    return savedTheme ? savedTheme === "dark" : true;
   });
 
   React.useEffect(() => {
@@ -23,7 +24,6 @@ const ThemeProvider = ({ children }) => {
 
 const useTheme = () => React.useContext(ThemeContext);
 
-// ❗ Tarayıcıda çalışabilmesi için bu şekilde global window objesine at
 window.ThemeContext = ThemeContext;
 window.ThemeProvider = ThemeProvider;
 window.useTheme = useTheme;
