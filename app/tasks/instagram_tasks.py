@@ -3,7 +3,7 @@ import time
 import threading
 from typing import List
 from sqlalchemy import text
-from api import get_db
+from app.models.base import db
 from app.services.instagram_service import InstagramService
 
 
@@ -13,7 +13,7 @@ class InstagramTaskManager:
         self.running = False
         self.thread = None
 
-    def get_tracked_usernames(self, db) -> List[str]:
+    def get_tracked_usernames(self) -> List[str]:
         """Takip edilen Instagram kullanıcılarını döndürür"""
         try:
             # Settings tablosundan Instagram kullanıcılarını al
@@ -22,7 +22,7 @@ class InstagramTaskManager:
                          FROM settings
                          WHERE `key` = 'tracked_instagram_users'
                          """)
-            result = db.execute(query).first()
+            result = db.session.execute(query).first()
 
             if result and result.value:
                 # Virgülle ayrılmış kullanıcı adları
@@ -40,8 +40,7 @@ class InstagramTaskManager:
         print("Instagram cache güncelleme başlatıldı...")
 
         try:
-            db = next(get_db())
-            tracked_usernames = self.get_tracked_usernames(db)
+            tracked_usernames = self.get_tracked_usernames()
 
             if not tracked_usernames:
                 print("Takip edilen Instagram kullanıcısı bulunamadı")
@@ -51,7 +50,7 @@ class InstagramTaskManager:
             for username in tracked_usernames:
                 try:
                     # Force refresh ile yeni veriyi çek ve cache'e kaydet
-                    posts = self.instagram_service.get_posts(username, db, force_refresh=True)
+                    posts = self.instagram_service.get_posts(username, db.session, force_refresh=True)
                     if posts:
                         updated_count += 1
                         print(f"✓ {username}: {len(posts)} post güncellendi")
@@ -69,9 +68,6 @@ class InstagramTaskManager:
 
         except Exception as e:
             print(f"Instagram cache güncelleme genel hatası: {str(e)}")
-        finally:
-            if 'db' in locals():
-                db.close()
 
     def schedule_tasks(self):
         """Görevleri zamanlar"""

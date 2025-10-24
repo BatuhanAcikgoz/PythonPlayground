@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # Main Flask Application
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=mysql://user:password@db:3306/pythonplayground
+      - PYTHON_EXECUTOR_URL=python-executor:50051
+      - R_EXECUTOR_URL=r-executor:50052
+      - MATLAB_EXECUTOR_URL=matlab-executor:50053
+    depends_on:
+      - db
+      - python-executor
+      - r-executor
+      - matlab-executor
+    volumes:
+      - ./notebooks_repo:/app/notebooks_repo
+    networks:
+      - app-network
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=pythonplayground
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # Python Code Executor Service (gRPC)
+  python-executor:
+    build:
+      context: .
+      dockerfile: Dockerfile.python-executor
+    ports:
+      - "50051:50051"
+    environment:
+      - EXECUTOR_PORT=50051
+      - MAX_WORKERS=10
+      - MEMORY_LIMIT_MB=256
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    networks:
+      - app-network
+    restart: always
+
+  # R Code Executor Service (gRPC)
+  r-executor:
+    build:
+      context: .
+      dockerfile: Dockerfile.r-executor
+    ports:
+      - "50052:50052"
+    environment:
+      - EXECUTOR_PORT=50052
+      - MAX_WORKERS=10
+      - MEMORY_LIMIT_MB=256
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+    networks:
+      - app-network
+    restart: always
+
+  # MATLAB/Octave Code Executor Service (gRPC)
+  matlab-executor:
+    build:
+      context: .
+      dockerfile: Dockerfile.matlab-executor
+    ports:
+      - "50053:50053"
+    environment:
+      - EXECUTOR_PORT=50053
+      - MAX_WORKERS=10
+      - MEMORY_LIMIT_MB=512
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1024M
+    networks:
+      - app-network
+    restart: always
+
+  # Redis for caching (optional but recommended)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    restart: always
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge
+

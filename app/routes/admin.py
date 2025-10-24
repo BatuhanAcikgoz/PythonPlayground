@@ -10,8 +10,7 @@ from app.models.base import db
 from app.models.user import User, Role
 from app.forms import UserForm
 from flask_wtf import FlaskForm
-
-from config import Config
+from app.services.code_execution_service import get_code_execution_service
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -502,52 +501,34 @@ def view_programming_question(id):
 def test_programming_question(id):
     """
     admin_bp altındaki bir route işlevidir. Bu işlev, programlama sorusu testi yapılmasına olanak sağlar.
-    Bir GET isteği alındığında, form sayfası döndürülür ve POST isteği ile test kodu FastAPI servisine
-    gönderilerek değerlendirilir.
+    CodeExecutionService kullanarak multi-language desteği ile kod değerlendirmesi yapar.
 
     Args:
         id (int): Testi yapılacak programlama sorusunun veritabanındaki ID'si.
-
-    Raises:
-        requests.RequestException: FastAPI değerlendirme servisi ile yapılan istek sırasında hata oluşursa yükseltilir.
 
     Returns:
         str: HTTP Yanıtı ve şablon render edilerek döndürülen HTML çıktısı.
     """
     from app.models.programming_question import ProgrammingQuestion
-    import requests
 
     question = ProgrammingQuestion.query.get_or_404(id)
 
     if request.method == 'POST':
         test_code = request.form.get('test_code')
+        code_service = get_code_execution_service()
 
-        # FastAPI servisine istek gönder
         try:
-            evaluation_request = {
-                "code": test_code,
-                "function_name": question.function_name,
-                "test_inputs": question.test_inputs,
-                "solution_code": question.solution_code
-            }
-
-            response = requests.post(
-                Config.FASTAPI_DOMAIN+":"+Config.FASTAPI_PORT+"/api/evaluate",
-                json=evaluation_request,
-                timeout=5
+            # NEW: Use multi-language execution service
+            result = code_service.execute_solution(
+                language=question.language,
+                code=test_code,
+                function_name=question.function_name,
+                test_inputs=question.test_inputs,
+                solution_code=question.solution_code
             )
 
-            if response.status_code == 200:
-                result = response.json()
-            else:
-                flash('Kod değerlendirme servisi geçici olarak kullanılamıyor.', 'error')
-                return render_template('admin/test_programming_question.html',
-                                       question=question,
-                                       test_code=test_code,
-                                       error="API Hatası")
-
-        except requests.RequestException as e:
-            flash('Kod değerlendirme servisi geçici olarak kullanılamıyor.', 'error')
+        except Exception as e:
+            flash(f'Kod değerlendirme hatası: {str(e)}', 'error')
             return render_template('admin/test_programming_question.html',
                                    question=question,
                                    test_code=test_code,

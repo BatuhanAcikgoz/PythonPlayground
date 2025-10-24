@@ -3,8 +3,6 @@ import hashlib
 from datetime import datetime, timedelta
 from typing import Optional, Any
 from sqlalchemy import text
-from api import get_db
-
 
 class CacheManager:
     @staticmethod

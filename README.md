@@ -1,4 +1,4 @@
-# 🚀 PythonPlayground: İnteraktif Python Konsolu ve Eğitim Platformu
+# 🚀 ProgrammingPlayground: İnteraktif Python Konsolu ve Eğitim Platformu
 
 <div align="center">
   <p>
@@ -12,7 +12,7 @@
 
 Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görüntülemenizi ve çalıştırmanızı sağlar AI özetleri ile daha hızlı python öğrenmenize yardımcı olur. AI tarafından hazırlanan python sorulari ile bilginizi pekiştirebilirsiniz ve diğer kullanıcılarla yarışabilirsiniz.
 
-![PythonPlayground Demo](https://via.placeholder.com/800x450.png?text=PythonPlayground+Demo)
+![ProgrammingPlayground Demo](https://via.placeholder.com/800x450.png?text=ProgrammingPlayground+Demo)
 
 ## 📑 İçindekiler
 - [🌟 Özellikler](#-özellikler)
@@ -128,8 +128,8 @@ Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görünt
 
 1. Depoyu klonlayın:
    ```bash
-   git clone https://github.com/BatuhanAcikgoz/PythonPlayground.git
-   cd PythonPlayground
+   git clone https://github.com/BatuhanAcikgoz/ProgrammingPlayground.git
+   cd ProgrammingPlayground
    ```
 
 2. Sanal ortam oluşturun (opsiyonel ama önerilir):
@@ -175,7 +175,7 @@ Bu web uygulaması, GitHub deposunda saklanan Jupyter notebook'larını görünt
 
 ## 🐳 Docker ile Deployment
 
-PythonPlayground'u hızlıca ve tutarlı bir şekilde deploy etmek için Docker kullanabilirsiniz:
+ProgrammingPlayground'u hızlıca ve tutarlı bir şekilde deploy etmek için Docker kullanabilirsiniz:
 
 ### Docker Compose ile Kurulum
 
@@ -237,7 +237,7 @@ volumes:
 
 ### Docker Optimizasyonu
 
-PythonPlayground Docker container'ları, üretim ortamı için optimize edilmiştir:
+ProgrammingPlayground Docker container'ları, üretim ortamı için optimize edilmiştir:
 
 - Multi-stage builds ile küçük image boyutu
 - Health check ile container durumu izleme
@@ -269,7 +269,7 @@ PythonPlayground Docker container'ları, üretim ortamı için optimize edilmiş
 ## 📁 Proje Yapısı
 
 ```
-PythonPlayground/
+ProgrammingPlayground/
 ├── app/                          # Ana uygulama paketi
 │   ├── models/                   # Veritabanı modelleri
 │   │   ├── user.py              # Kullanıcı ve rol modelleri
@@ -315,7 +315,7 @@ PythonPlayground/
 
 ## ⚡ FastAPI Entegrasyonu
 
-PythonPlayground, Flask'in yanı sıra hızlı ve modern bir API çerçevesi olan FastAPI'yi de kullanmaktadır. Bu hibrit yaklaşım, geleneksel web uygulamasının gücünü, yüksek performanslı API hizmetleriyle birleştirir.
+ProgrammingPlayground, Flask'in yanı sıra hızlı ve modern bir API çerçevesi olan FastAPI'yi de kullanmaktadır. Bu hibrit yaklaşım, geleneksel web uygulamasının gücünü, yüksek performanslı API hizmetleriyle birleştirir.
 
 ### FastAPI'nin Avantajları
 
@@ -327,7 +327,7 @@ PythonPlayground, Flask'in yanı sıra hızlı ve modern bir API çerçevesi ola
 
 ## 🔌 API Endpointleri
 
-PythonPlayground, çeşitli işlevleri için kullanılabilecek kapsamlı bir API sunar:
+ProgrammingPlayground, çeşitli işlevleri için kullanılabilecek kapsamlı bir API sunar:
 
 ### 🔍 Sistem Durumu ve İzleme
 - **GET /api/server-status**: Sunucu durumunu ve temel metrikleri döndürür
@@ -379,7 +379,7 @@ PythonPlayground, çeşitli işlevleri için kullanılabilecek kapsamlı bir API
 ## ❓ Sık Sorulan Sorular
 
 <details>
-<summary><strong>PythonPlayground'u Docker ile nasıl çalıştırırım?</strong></summary>
+<summary><strong>ProgrammingPlayground'u Docker ile nasıl çalıştırırım?</strong></summary>
 
 Depo içinde Dockerfile ve docker-compose.yml dosyaları bulunmaktadır. Aşağıdaki komutlarla Docker'da çalıştırabilirsiniz:
 

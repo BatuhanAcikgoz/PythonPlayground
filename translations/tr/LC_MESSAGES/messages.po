@@ -20,7 +20,7 @@ msgstr ""
 
 # App name and common elements
 msgid "app_name"
-msgstr "PythonPlayground"
+msgstr "ProgrammingPlayground"
 
 msgid "app_tagline"
 msgstr "Etkileşimli Python defterleriyle öğrenin"
@@ -276,7 +276,7 @@ msgid "about_platform"
 msgstr "Platform Hakkında"
 
 msgid "about_platform_desc"
-msgstr "PythonPlayground öğrenmenizi kolaylaştırır."
+msgstr "ProgrammingPlayground öğrenmenizi kolaylaştırır."
 
 msgid "about_platform_features"
 msgstr "İnteraktif defterler, anında çalıştırma, Türkçe içerik"

@@ -20,7 +20,7 @@ msgstr ""
 
 # App name and common elements
 msgid "app_name"
-msgstr "PythonPlayground"
+msgstr "ProgrammingPlayground"
 
 msgid "app_tagline"
 msgstr "Learn with interactive Python notebooks"

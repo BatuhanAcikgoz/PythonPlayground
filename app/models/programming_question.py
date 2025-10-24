@@ -8,13 +8,14 @@ class ProgrammingQuestion(db.Model):
 
     Bu sınıf, bir programlama sorusunun özelliklerini ve bu soruya bağlı diğer verileri
     depolamak için tasarlanmıştır. Sorunun başlığı, zorluk seviyesi, örnek giriş-çıkış
-    verileri, çözüm kodu gibi bilgileri içerir. Bu sınıf genellikle veritabanında
-    programlama sorularını saklamak ve ilgili kayıtları ilişkilendirmek için kullanılır.
+    verileri, çözüm kodu gibi bilgileri içerir. Artık multi-language desteği ile
+    Python, R ve MATLAB sorularını destekler.
 
     Attributes:
         id (int): Soru için benzersiz bir tanımlayıcı.
         title (str): Sorunun başlığı.
         description (str): Sorunun tam açıklaması.
+        language (str): Sorunun programlama dili ('python', 'r', 'matlab').
         difficulty (int): Sorunun zorluk seviyesi, varsayılan olarak 1'dir.
         topic (str): Sorunun ele aldığı konu/başlık.
         points (int): Sorunun çözümü için verilecek puan, varsayılan olarak 10'dur.
@@ -32,6 +33,7 @@ class ProgrammingQuestion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=False)
+    language = db.Column(db.String(20), nullable=False, default='python')  # NEW: Language field
     difficulty = db.Column(db.Integer, default=1)
     topic = db.Column(db.String(100), nullable=False)
     points = db.Column(db.Integer, default=10)
@@ -57,4 +59,13 @@ class ProgrammingQuestion(db.Model):
             str: A string representation of the ProgrammingQuestion instance
             in the format "<ProgrammingQuestion {self.title}>".
         """
-        return f'<ProgrammingQuestion {self.title}>'
+        return f'<ProgrammingQuestion [{self.language.upper()}] {self.title}>'
+
+    def get_language_display(self):
+        """Get display name for language"""
+        language_map = {
+            'python': 'Python',
+            'r': 'R',
+            'matlab': 'MATLAB'
+        }
+        return language_map.get(self.language, self.language.title())

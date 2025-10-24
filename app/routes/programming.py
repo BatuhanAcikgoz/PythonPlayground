@@ -1,18 +1,18 @@
 # app/routes/programming.py
 import json
 
-import requests
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_required, current_user
 
-from api import evaluate_solution, EvaluationRequest
+# Remove old import
+# from api import evaluate_solution, EvaluationRequest
+from app.services.code_execution_service import get_code_execution_service
 from app.events import event_manager
 from app.events.event_definitions import EventType
 from app.forms.programming import SolutionSubmitForm, CodeEvaluationForm
 from app.models.base import db
 from app.models.programming_question import ProgrammingQuestion
 from app.models.submission import Submission
-from config import Config
 
 programming_bp = Blueprint('programming', __name__)
 
@@ -45,95 +45,12 @@ def questions():
     return render_template('questions.html', questions=questions)
 
 
-def generate_starter_code(question):
-    """
-    generate_starter_code fonksiyonu, verilen bir soruya dayalı olarak Python başlatıcı kodu üreten bir yardımcı
-    fonksiyondur. Fonksiyon, soru verilerini analiz ederek otomatik bir şablon oluşturur. Özellikle, test girdileri,
-    çözüm kodu ve beklenen dönüş türleri gibi parametrelerden yararlanır.
-
-    Parameters:
-        question (Any):
-            Fonksiyona geçtiğiniz soru nesnesi. Bu nesne aşağıdaki özellikleri içermelidir:
-            - function_name: String, oluşturulacak fonksiyonun adı.
-            - test_inputs: JSON formatında, test giriş verileri.
-            - solution_code: String, kabul edilen çözüm kodu.
-
-    Returns:
-        str:
-            Verilen kurallara göre Python başlangıç şablon kodunu içeren bir metin döndürür.
-
-    Raises:
-        None
-    """
-    import json
-
-    function_name = question.function_name
-
-    # Varsayılan parametreler
-    parameters = []
-    param_types = []
-    return_type = "any"
-
-    try:
-        # Test girdilerini JSON olarak parse et
-        test_inputs = json.loads(question.test_inputs)
-        if test_inputs and len(test_inputs) > 0:
-            # İlk test girdisini kullanarak parametre sayısını ve türlerini belirle
-            first_test = test_inputs[0]
-
-            for i, param_value in enumerate(first_test):
-                param_name = f"param{i + 1}"
-                param_type = type(param_value).__name__
-                parameters.append(param_name)
-                param_types.append(param_type)
-
-            # Dönüş tipini belirleyen kısım (admin çözümünü çalıştırarak kontrol sağlanır)
-            try:
-                admin_namespace = {}
-                exec(question.solution_code, admin_namespace)
-                admin_func = admin_namespace.get(function_name)
-
-                if admin_func:
-                    result = admin_func(*first_test)
-                    return_type = type(result).__name__
-            except:
-                # Dönüş tipini belirleyemezsek varsayılan olarak "any" kullan
-                pass
-    except:
-        # Hata durumunda varsayılan olarak tek parametre kullan
-        parameters = ["x"]
-        param_types = ["any"]
-
-    # Parametre listesi oluştur
-    params_str = ", ".join(parameters)
-
-    # Parametre açıklamalarını yorum satırları olarak ekle
-    param_docs = []
-    for param, typ in zip(parameters, param_types):
-        param_docs.append(f"# @param {param} ({typ})")
-
-    param_docs_str = "\n    ".join(param_docs)
-
-    # Başlangıç kodu şablonu
-    return \
-    f"""def {function_name}({params_str}):
-    \"\"\"
-    {question.title} için çözüm fonksiyonu
-
-    {param_docs_str}
-
-    @return: ({return_type})
-    \"\"\"
-    # Çözümünüzü buraya yazın
-    """
-
 @programming_bp.route('/questions/<int:id>')
 @login_required
 def question(id):
     """
     Görselleştirme ve kullanıcı etkileşimleri için bir programlama sorusunun detaylarını içeren bir
-    sayfanın görüntülenmesini sağlayan bir fonksiyon. Soruları çözme durumu ve önceki gönderimler
-    kontrol edilerek kullanıcı deneyimi optimize edilir.
+    sayfanın görüntülenmesini sağlayan bir fonksiyon. Multi-language desteği ile çalışır.
 
     Arguments:
         id (int): Görüntülenecek programlama sorusunun kimliği.
@@ -145,6 +62,7 @@ def question(id):
         404 Not Found: Eğer verilen id ile eşleşen bir programlama sorusu bulunamazsa hata yükselir.
     """
     question = ProgrammingQuestion.query.get_or_404(id)
+    code_service = get_code_execution_service()
 
     # Kullanıcının bu soruyu daha önce doğru çözüp çözmediğini kontrol et
     if Submission.has_correct_submission(current_user.id, id):
@@ -161,20 +79,19 @@ def question(id):
     if last_submission:
         default_code = last_submission.code
     else:
-        default_code = generate_starter_code(question)
+        default_code = code_service.get_starter_code(question)
 
     return render_template('question.html',
                            question=question,
                            default_code=default_code)
 
-# submit_solution route'u güncellenir
+
 @programming_bp.route('/questions/<int:id>/submit', methods=['POST'])
 @login_required
 def submit_solution(id):
     """
-    submit_solution fonksiyonu bir programlama sorusuna yönelik kod çözümünün gönderilmesine olanak tanıyan bir HTTP POST route'udur.
-    Kullanıcıdan gelen çözüm kodunu, ilgili sorunun işlev ismini ve test verilerini değerlendirerek,
-    sonuçları veritabanına kaydeder ve başarı durumuna göre kullanıcıyı bilgilendirir ya da hata mesajları döner.
+    submit_solution fonksiyonu bir programlama sorusuna yönelik kod çözümünün gönderilmesine olanak tanır.
+    Multi-language desteği ile Python, R ve MATLAB kodlarını değerlendirir.
 
     Args:
         id (int): Değerlendirilecek sorunun kimlik numarası.
@@ -191,15 +108,16 @@ def submit_solution(id):
 
     if form.validate_on_submit():
         code = form.code.data
+        code_service = get_code_execution_service()
 
-        # Doğru çağrı:
-        request = EvaluationRequest(
+        # NEW: Use multi-language execution service
+        result = code_service.execute_solution(
+            language=question.language,
             code=code,
             function_name=question.function_name,
             test_inputs=question.test_inputs,
             solution_code=question.solution_code
         )
-        result = evaluate_solution(request)
 
         # Başarı durumu ve sonuçları kaydetme
         submission = Submission(
@@ -207,7 +125,7 @@ def submit_solution(id):
             question_id=question.id,
             code=code,
             is_correct=result.get('is_correct', False),
-            test_results=json.dumps(result.get('test_results', [])),  # JSON formatında sakla
+            test_results=json.dumps(result.get('test_results', [])),
             execution_time=result.get('execution_time', 0),
             error_message=json.dumps(result.get('error_message', []))
         )
@@ -291,16 +209,11 @@ def my_submissions():
 @login_required
 def evaluate_code(id):
     """
-    Bu işlev, belirli bir soru için kullanıcının gönderdiği kodu değerlendirmek amacıyla bir API'ye
-    istekte bulunur. Kodun doğruluğunu kontrol eder, test girdilerine göre sonucu işler ve API'den
-    alınan yanıtı kullanıcıya döner. API bağlantı hataları ve geçersiz form verileri gibi durumlar
-    için hataları JSON formatında döner.
+    Bu işlev, belirli bir soru için kullanıcının gönderdiği kodu değerlendirmek amacıyla
+    CodeExecutionService kullanır. Multi-language desteği ile Python, R ve MATLAB kodlarını değerlendirir.
 
     Args:
         id (int): Değerlendirilecek sorunun benzersiz kimliği.
-
-    Raises:
-        requests.RequestException: Eğer API bağlantısında bir sorun olursa hata fırlatır.
 
     Returns:
         flask.Response: Kod doğruluğu ve ilişkili sonuçları içeren JSON formatındaki yanıt. Olası
@@ -319,40 +232,36 @@ def evaluate_code(id):
 
     if form.validate():
         code = form.code.data
+        code_service = get_code_execution_service()
 
         try:
-            evaluation_request = {
-                "code": code,
-                "function_name": question.function_name,
-                "test_inputs": question.test_inputs,
-                "solution_code": question.solution_code
-            }
-
-            response = requests.post(
-                Config.FASTAPI_DOMAIN+":"+Config.FASTAPI_PORT+"/api/evaluate",
-                json=evaluation_request,
-                timeout=30
+            # NEW: Use multi-language execution service
+            result = code_service.execute_solution(
+                language=question.language,
+                code=code,
+                function_name=question.function_name,
+                test_inputs=question.test_inputs,
+                solution_code=question.solution_code
             )
 
-            if response.status_code == 200:
-                return jsonify(response.json())
-            else:
-                return jsonify({
-                    "is_correct": False,
-                    "execution_time": 0,
-                    "errors": ["Kod değerlendirme servisi geçici olarak kullanılamıyor."]
-                }), 500
+            return jsonify(result)
 
-        except requests.RequestException as e:
-            current_app.logger.error(f"API bağlantı hatası: {str(e)}")
+        except Exception as e:
+            current_app.logger.error(f"Kod değerlendirme hatası: {str(e)}")
             return jsonify({
                 "is_correct": False,
                 "execution_time": 0,
-                "errors": ["Kod değerlendirme servisi geçici olarak kullanılamıyor."]
+                "test_count": 0,
+                "passed_tests": 0,
+                "failed_tests": 0,
+                "errors": [f"Kod değerlendirme hatası: {str(e)}"]
             }), 500
 
     return jsonify({
         "is_correct": False,
         "execution_time": 0,
+        "test_count": 0,
+        "passed_tests": 0,
+        "failed_tests": 0,
         "errors": ["Geçersiz form verileri"]
     }), 400

@@ -105,7 +105,7 @@ const Footer = () => {
 
                     {/* Footer Text */}
                     <div className="order-1 md:order-2 mb-4 md:mb-0 text-center flex-grow">
-                        <p className="text-white dark:text-gray-200">&copy; {new Date().getFullYear()} PythonPlayground. {footerTrans.allRights}</p>
+                        <p className="text-white dark:text-gray-200">&copy; {new Date().getFullYear()} ProgrammingPlayground. {footerTrans.allRights}</p>
                         <p className="text-gray-400 text-xs mt-1 dark:text-gray-400">{footerTrans.platformDesc}</p>
                     </div>
 

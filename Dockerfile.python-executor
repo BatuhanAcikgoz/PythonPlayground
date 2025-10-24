@@ -1,0 +1,39 @@
+# Dockerfile for Python Executor Service
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir grpcio grpcio-tools
+
+# Copy proto files and generate Python code
+COPY protos/ ./protos/
+RUN python -m grpc_tools.protoc \
+    -I./protos \
+    --python_out=. \
+    --grpc_python_out=. \
+    ./protos/code_executor.proto
+
+# Copy executor service
+COPY grpc_services/python_executor.py ./grpc_services/
+
+# Expose gRPC port
+EXPOSE 50051
+
+# Set resource limits
+ENV PYTHONUNBUFFERED=1
+ENV MAX_WORKERS=10
+ENV MEMORY_LIMIT_MB=256
+
+# Run the service
+CMD ["python", "-m", "grpc_services.python_executor"]
+

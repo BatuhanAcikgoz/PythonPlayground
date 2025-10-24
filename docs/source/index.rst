@@ -1,9 +1,9 @@
-PythonPlayground Dokümantasyonu
+ProgrammingPlayground Dokümantasyonu
 ===============================
 
 .. container:: wagtail-intro
 
-   PythonPlayground, Python kodlarını çalıştırmanıza, yönetmenize ve paylaşmanıza olanak tanıyan bir platformdur.
+   ProgrammingPlayground, Python kodlarını çalıştırmanıza, yönetmenize ve paylaşmanıza olanak tanıyan bir platformdur.
 
 .. container:: wagtail-features
 

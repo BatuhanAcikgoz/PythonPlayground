@@ -1,0 +1,407 @@
+syntax = "proto3";
+
+package code_executor;
+
+// =============================================================================
+// Code Execution Service - Multi-language code execution
+// =============================================================================
+
+service CodeExecutorService {
+  // Execute code with test cases
+  rpc ExecuteCode(ExecutionRequest) returns (ExecutionResponse);
+
+  // Validate code syntax without execution
+  rpc ValidateSyntax(ValidationRequest) returns (ValidationResponse);
+
+  // Get language runtime information
+  rpc GetLanguageInfo(LanguageInfoRequest) returns (LanguageInfoResponse);
+}
+
+// Language enum
+enum Language {
+  LANGUAGE_UNSPECIFIED = 0;
+  PYTHON = 1;
+  R = 2;
+  MATLAB = 3;
+}
+
+// Execution Request
+message ExecutionRequest {
+  Language language = 1;
+  string code = 2;
+  string function_name = 3;
+  repeated TestCase test_cases = 4;
+  string solution_code = 5;
+  int32 memory_limit_mb = 6;
+  int32 cpu_limit_percent = 7;
+}
+
+message TestCase {
+  string input_json = 1;
+  string expected_output = 2;
+  int32 timeout_ms = 3;
+}
+
+// Execution Response
+message ExecutionResponse {
+  bool success = 1;
+  bool all_tests_passed = 2;
+  int32 total_tests = 3;
+  int32 passed_tests = 4;
+  int32 failed_tests = 5;
+  repeated TestResult test_results = 6;
+  double total_execution_time_ms = 7;
+  repeated string errors = 8;
+  string stdout = 9;
+  string stderr = 10;
+}
+
+message TestResult {
+  bool passed = 1;
+  string input = 2;
+  string expected_output = 3;
+  string actual_output = 4;
+  string error_message = 5;
+  double execution_time_ms = 6;
+  double memory_used_mb = 7;
+}
+
+// Validation Request
+message ValidationRequest {
+  Language language = 1;
+  string code = 2;
+}
+
+// Validation Response
+message ValidationResponse {
+  bool is_valid = 1;
+  repeated string syntax_errors = 2;
+  repeated string warnings = 3;
+}
+
+// Language Info Request
+message LanguageInfoRequest {
+  Language language = 1;
+}
+
+// Language Info Response
+message LanguageInfoResponse {
+  Language language = 1;
+  string version = 2;
+  repeated string available_packages = 3;
+  bool is_available = 4;
+}
+
+// =============================================================================
+// Application Service - Main application endpoints
+// =============================================================================
+
+service ApplicationService {
+  // Server status and health
+  rpc GetServerStatus(Empty) returns (ServerStatusResponse);
+  rpc HealthCheck(Empty) returns (HealthCheckResponse);
+
+  // User management
+  rpc GetRecentUsers(RecentUsersRequest) returns (RecentUsersResponse);
+  rpc GetUserProfile(UserProfileRequest) returns (UserProfileResponse);
+
+  // Questions
+  rpc GetLastQuestionsDetail(LastQuestionsRequest) returns (LastQuestionsResponse);
+  rpc GenerateQuestion(GenerateQuestionRequest) returns (GenerateQuestionResponse);
+  rpc SaveQuestion(SaveQuestionRequest) returns (SaveQuestionResponse);
+
+  // Submissions
+  rpc GetLastSubmissions(LastSubmissionsRequest) returns (LastSubmissionsResponse);
+
+  // Leaderboard
+  rpc GetLeaderboard(LeaderboardRequest) returns (LeaderboardResponse);
+
+  // Charts and statistics
+  rpc GetRegistrationChart(ChartRequest) returns (ChartResponse);
+  rpc GetSolvedQuestionsChart(ChartRequest) returns (ChartResponse);
+  rpc GetActivityStats(ActivityStatsRequest) returns (ActivityStatsResponse);
+
+  // Notebook processing
+  rpc ProcessNotebookSummary(NotebookSummaryRequest) returns (NotebookSummaryResponse);
+
+  // Event system
+  rpc TriggerEvent(TriggerEventRequest) returns (TriggerEventResponse);
+
+  // Instagram integration
+  rpc GetInstagramPosts(InstagramPostsRequest) returns (InstagramPostsResponse);
+  rpc RefreshInstagramCache(RefreshCacheRequest) returns (RefreshCacheResponse);
+  rpc ProxyImage(ProxyImageRequest) returns (ProxyImageResponse);
+}
+
+// Empty message for requests without parameters
+message Empty {}
+
+// Server Status
+message ServerStatusResponse {
+  string python_version = 1;
+  string flask_version = 2;
+  string mysql_version = 3;
+  double ram_used = 4;
+  double ram_total = 5;
+  double cpu_usage = 6;
+  double process_ram_used = 7;
+  double process_ram_allocated = 8;
+}
+
+// Health Check
+message HealthCheckResponse {
+  string status = 1;
+  string timestamp = 2;
+}
+
+// Recent Users
+message RecentUsersRequest {
+  int32 limit = 1;
+}
+
+message RecentUsersResponse {
+  repeated UserData users = 1;
+}
+
+message UserData {
+  int32 id = 1;
+  string username = 2;
+  string email = 3;
+  string created_at = 4;
+  repeated UserRole roles = 5;
+}
+
+message UserRole {
+  int32 id = 1;
+  string name = 2;
+}
+
+// User Profile
+message UserProfileRequest {
+  string username = 1;
+}
+
+message UserProfileResponse {
+  int32 id = 1;
+  string username = 2;
+  string email = 3;
+  string created_at = 4;
+  int32 total_submissions = 5;
+  int32 correct_submissions = 6;
+  int32 total_points = 7;
+  repeated UserRole roles = 8;
+  repeated BadgeData badges = 9;
+  repeated SubmissionData recent_submissions = 10;
+}
+
+message BadgeData {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  string icon = 4;
+  string color = 5;
+  string earned_at = 6;
+}
+
+message SubmissionData {
+  int32 id = 1;
+  int32 question_id = 2;
+  string question_title = 3;
+  bool is_correct = 4;
+  string created_at = 5;
+  double execution_time = 6;
+}
+
+// Questions
+message LastQuestionsRequest {
+  int32 limit = 1;
+}
+
+message LastQuestionsResponse {
+  repeated DetailedQuestion questions = 1;
+}
+
+message DetailedQuestion {
+  int32 id = 1;
+  string title = 2;
+  string description = 3;
+  int32 difficulty = 4;
+  int32 points = 5;
+  string created_at = 6;
+  int32 submission_count = 7;
+  int32 success_rate = 8;
+  string language = 9;
+}
+
+// Generate Question (AI)
+message GenerateQuestionRequest {
+  string topic = 1;
+  string difficulty = 2;
+  string language = 3;
+  string additional_requirements = 4;
+}
+
+message GenerateQuestionResponse {
+  bool success = 1;
+  string title = 2;
+  string description = 3;
+  string function_name = 4;
+  string solution_code = 5;
+  string test_inputs = 6;
+  string example_input = 7;
+  string example_output = 8;
+  repeated string errors = 9;
+}
+
+// Save Question
+message SaveQuestionRequest {
+  string title = 1;
+  string description = 2;
+  int32 difficulty = 3;
+  int32 points = 4;
+  string function_name = 5;
+  string solution_code = 6;
+  string test_inputs = 7;
+  string example_input = 8;
+  string example_output = 9;
+  string language = 10;
+}
+
+message SaveQuestionResponse {
+  bool success = 1;
+  int32 question_id = 2;
+  string message = 3;
+}
+
+// Submissions
+message LastSubmissionsRequest {
+  int32 limit = 1;
+}
+
+message LastSubmissionsResponse {
+  repeated SubmissionDetail submissions = 1;
+}
+
+message SubmissionDetail {
+  int32 id = 1;
+  int32 user_id = 2;
+  string username = 3;
+  int32 question_id = 4;
+  string question_title = 5;
+  bool is_correct = 6;
+  string created_at = 7;
+  double execution_time = 8;
+  string language = 9;
+}
+
+// Leaderboard
+message LeaderboardRequest {
+  int32 limit = 1;
+}
+
+message LeaderboardResponse {
+  repeated LeaderboardEntry entries = 1;
+}
+
+message LeaderboardEntry {
+  int32 rank = 1;
+  int32 user_id = 2;
+  string username = 3;
+  int32 total_points = 4;
+  int32 solved_questions = 5;
+  int32 total_submissions = 6;
+  double success_rate = 7;
+}
+
+// Charts
+message ChartRequest {
+  int32 days = 1;
+}
+
+message ChartResponse {
+  repeated string labels = 1;
+  repeated int32 data = 2;
+}
+
+message ActivityStatsRequest {
+  int32 days = 1;
+}
+
+message ActivityStatsResponse {
+  repeated string dates = 1;
+  repeated int32 submissions = 2;
+  repeated int32 successful_submissions = 3;
+  repeated int32 unique_users = 4;
+}
+
+// Notebook Summary
+message NotebookSummaryRequest {
+  string notebook_path = 1;
+  string language = 2;
+}
+
+message NotebookSummaryResponse {
+  bool success = 1;
+  string summary = 2;
+  repeated string code_cells = 3;
+  repeated string markdown_cells = 4;
+  int32 total_cells = 5;
+  repeated string errors = 6;
+}
+
+// Event System
+message TriggerEventRequest {
+  string event_type = 1;
+  string event_data_json = 2;
+}
+
+message TriggerEventResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// Instagram Integration
+message InstagramPostsRequest {
+  string username = 1;
+  int32 limit = 2;
+}
+
+message InstagramPostsResponse {
+  repeated InstagramPost posts = 1;
+  bool success = 2;
+  string error = 3;
+}
+
+message InstagramPost {
+  string id = 1;
+  string shortcode = 2;
+  string caption = 3;
+  string thumbnail_url = 4;
+  string display_url = 5;
+  int32 likes = 6;
+  int32 comments = 7;
+  string timestamp = 8;
+  bool is_video = 9;
+}
+
+message RefreshCacheRequest {
+  string username = 1;
+}
+
+message RefreshCacheResponse {
+  bool success = 1;
+  string message = 2;
+  int32 posts_count = 3;
+}
+
+message ProxyImageRequest {
+  string url = 1;
+}
+
+message ProxyImageResponse {
+  bytes image_data = 1;
+  string content_type = 2;
+  bool success = 3;
+  string error = 4;
+}
+
