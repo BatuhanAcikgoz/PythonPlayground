@@ -17,3 +17,7 @@ venv/Include/site/python3.12/greenlet/greenlet.h
 /venv
 /app/__pycache__
 /app/tasks/__pycache__
+/app/grpc_services/__pycache__
+/app/grpc_services/generated/__pycache__
+/app/grpc_services/generated/__pycache__
+/app/grpc_services/generated/__pycache__

@@ -127,7 +127,6 @@
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='ThemeContext.js') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Header.jsx') }}"></script>
     <script type="text/babel" src="{{ url_for('main.serve_component', filename='Footer.jsx') }}"></script>
-    <script type="text/babel" src="{{ url_for('main.serve_component', filename='App.jsx') }}"></script>
 
     <script type="text/babel">
         const InstagramCarousel = () => {
@@ -155,7 +154,8 @@
                         return response.json();
                     })
                     .then(data => {
-                        setPosts(data);
+                        // API yanıtı {posts: [...]} formatında geliyor
+                        setPosts(data.posts || []);
                         setIsLoading(false);
                     })
                     .catch(err => {
@@ -351,7 +351,7 @@
                     if (!response.ok) throw new Error('Sorular yüklenirken hata oluştu');
                     return response.json();
                 })
-                .then(data => {
+                .then((data) => {
                     const threeDay = 3 * 24 * 60 * 60 * 1000;
                     const processed = data.map(q => ({
                         id: q.id,
@@ -541,3 +541,4 @@ ReactDOM.render(
 );
     </script>
 </html>
+

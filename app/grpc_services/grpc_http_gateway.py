@@ -6,7 +6,7 @@ Converts HTTP/JSON requests to gRPC calls and vice versa
 import grpc
 import json
 import logging
-from flask import Flask, request, jsonify
+from flask import Blueprint, request, jsonify
 from flask_cors import CORS
 import sys
 import os
@@ -19,10 +19,6 @@ import code_executor_pb2_grpc
 
 from google.protobuf.json_format import MessageToDict, Parse, ParseError
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
 logger = logging.getLogger(__name__)
 
 
@@ -41,9 +37,8 @@ class GrpcHttpGateway:
         self.executor_stub = code_executor_pb2_grpc.CodeExecutorServiceStub(self.executor_channel)
         self.app_stub = code_executor_pb2_grpc.ApplicationServiceStub(self.app_channel)
         
-        logger.info(f"✅ Connected to Code Executor gRPC: {grpc_executor_host}")
-        logger.info(f"✅ Connected to Application gRPC: {grpc_app_host}")
-    
+        logger.info(f"✅ gRPC Gateway bağlandı - Executor: {grpc_executor_host}, App: {grpc_app_host}")
+
     def __del__(self):
         """Close channels on cleanup"""
         try:
@@ -53,9 +48,8 @@ class GrpcHttpGateway:
             pass
 
 
-# Create Flask app for HTTP gateway
-gateway_app = Flask(__name__)
-CORS(gateway_app)
+# Create Blueprint instead of Flask app
+api_gateway_bp = Blueprint('api_gateway', __name__)
 
 # Global gateway instance
 gateway = None
@@ -73,7 +67,7 @@ def init_gateway():
 # CODE EXECUTOR ENDPOINTS
 # =============================================================================
 
-@gateway_app.route('/api/v1/executor/execute', methods=['POST'])
+@api_gateway_bp.route('/api/v1/executor/execute', methods=['POST'])
 def execute_code():
     """Execute code with test cases"""
     try:
@@ -102,7 +96,7 @@ def execute_code():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/executor/validate', methods=['POST'])
+@api_gateway_bp.route('/api/v1/executor/validate', methods=['POST'])
 def validate_syntax():
     """Validate code syntax"""
     try:
@@ -121,7 +115,7 @@ def validate_syntax():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/executor/language-info', methods=['POST'])
+@api_gateway_bp.route('/api/v1/executor/language-info', methods=['POST'])
 def get_language_info():
     """Get language runtime information"""
     try:
@@ -144,7 +138,7 @@ def get_language_info():
 # APPLICATION SERVICE ENDPOINTS
 # =============================================================================
 
-@gateway_app.route('/api/v1/status', methods=['GET'])
+@api_gateway_bp.route('/api/v1/status', methods=['GET'])
 def get_server_status():
     """Get server status"""
     try:
@@ -161,7 +155,7 @@ def get_server_status():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/health', methods=['GET'])
+@api_gateway_bp.route('/api/v1/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
     try:
@@ -178,7 +172,7 @@ def health_check():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/users/recent', methods=['GET'])
+@api_gateway_bp.route('/api/v1/users/recent', methods=['GET'])
 def get_recent_users():
     """Get recent users"""
     try:
@@ -197,7 +191,7 @@ def get_recent_users():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/users/<username>/profile', methods=['GET'])
+@api_gateway_bp.route('/api/v1/users/<username>/profile', methods=['GET'])
 def get_user_profile(username):
     """Get user profile"""
     try:
@@ -214,7 +208,7 @@ def get_user_profile(username):
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/questions/recent', methods=['GET'])
+@api_gateway_bp.route('/api/v1/questions/recent', methods=['GET'])
 def get_recent_questions():
     """Get recent questions"""
     try:
@@ -233,7 +227,7 @@ def get_recent_questions():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/questions/generate', methods=['POST'])
+@api_gateway_bp.route('/api/v1/questions/generate', methods=['POST'])
 def generate_question():
     """Generate AI question"""
     try:
@@ -252,7 +246,7 @@ def generate_question():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/questions/save', methods=['POST'])
+@api_gateway_bp.route('/api/v1/questions/save', methods=['POST'])
 def save_question():
     """Save question"""
     try:
@@ -271,7 +265,7 @@ def save_question():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/submissions/recent', methods=['GET'])
+@api_gateway_bp.route('/api/v1/submissions/recent', methods=['GET'])
 def get_recent_submissions():
     """Get recent submissions"""
     try:
@@ -290,7 +284,7 @@ def get_recent_submissions():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/leaderboard', methods=['GET'])
+@api_gateway_bp.route('/api/v1/leaderboard', methods=['GET'])
 def get_leaderboard():
     """Get leaderboard"""
     try:
@@ -309,7 +303,7 @@ def get_leaderboard():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/charts/registrations', methods=['GET'])
+@api_gateway_bp.route('/api/v1/charts/registrations', methods=['GET'])
 def get_registration_chart():
     """Get registration chart data"""
     try:
@@ -328,7 +322,7 @@ def get_registration_chart():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/charts/solved-questions', methods=['GET'])
+@api_gateway_bp.route('/api/v1/charts/solved-questions', methods=['GET'])
 def get_solved_questions_chart():
     """Get solved questions chart data"""
     try:
@@ -347,7 +341,7 @@ def get_solved_questions_chart():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/charts/activity', methods=['GET'])
+@api_gateway_bp.route('/api/v1/charts/activity', methods=['GET'])
 def get_activity_stats():
     """Get activity statistics"""
     try:
@@ -366,7 +360,7 @@ def get_activity_stats():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/notebook/summary', methods=['POST'])
+@api_gateway_bp.route('/api/v1/notebook/summary', methods=['POST'])
 def process_notebook():
     """Process notebook summary"""
     try:
@@ -385,7 +379,7 @@ def process_notebook():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/events/trigger', methods=['POST'])
+@api_gateway_bp.route('/api/v1/events/trigger', methods=['POST'])
 def trigger_event():
     """Trigger event"""
     try:
@@ -404,76 +398,199 @@ def trigger_event():
         return jsonify({"error": str(e)}), 500
 
 
-@gateway_app.route('/api/v1/instagram/posts', methods=['GET'])
+@api_gateway_bp.route('/api/instagram-posts', methods=['GET'])
+@api_gateway_bp.route('/api/v1/instagram-posts', methods=['GET'])
 def get_instagram_posts():
-    """Get Instagram posts"""
+    """Get Instagram posts - backward compatible endpoint"""
     try:
         gw = init_gateway()
-        username = request.args.get('username', '')
+        username = request.args.get('instagram_username', '')
         limit = request.args.get('limit', 10, type=int)
         
-        grpc_request = code_executor_pb2.InstagramPostsRequest(username=username, limit=limit)
+        grpc_request = code_executor_pb2.InstagramPostsRequest(
+            username=username,
+            limit=limit
+        )
         response = gw.app_stub.GetInstagramPosts(grpc_request)
         result = MessageToDict(response, preserving_proto_field_name=True)
         
         return jsonify(result), 200
         
     except grpc.RpcError as e:
+        logger.error(f"gRPC error in Instagram posts: {e.code()} - {e.details()}")
+        return jsonify({"error": e.details(), "code": e.code().name, "success": False}), 500
+    except Exception as e:
+        logger.error(f"Error in Instagram posts: {str(e)}")
+        return jsonify({"error": str(e), "success": False}), 500
+
+
+@api_gateway_bp.route('/api/last-questions-detail', methods=['GET'])
+@api_gateway_bp.route('/api/v1/last-questions-detail', methods=['GET'])
+def get_last_questions_detail():
+    """Get last questions detail - backward compatible endpoint"""
+    try:
+        gw = init_gateway()
+        limit = request.args.get('limit', 10, type=int)
+
+        grpc_request = code_executor_pb2.LastQuestionsRequest(limit=limit)
+        response = gw.app_stub.GetLastQuestionsDetail(grpc_request)
+        result = MessageToDict(response, preserving_proto_field_name=True)
+
+        return jsonify(result), 200
+
+    except grpc.RpcError as e:
+        logger.error(f"gRPC error in last questions: {e.code()} - {e.details()}")
+        return jsonify({"error": e.details(), "code": e.code().name}), 500
+    except Exception as e:
+        logger.error(f"Error in last questions: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+@api_gateway_bp.route('/api/v1/instagram/refresh', methods=['POST'])
+def refresh_instagram_cache():
+    """Refresh Instagram cache"""
+    try:
+        gw = init_gateway()
+        data = request.get_json() or {}
+        username = data.get('username', '')
+
+        grpc_request = code_executor_pb2.RefreshCacheRequest(username=username)
+        response = gw.app_stub.RefreshInstagramCache(grpc_request)
+        result = MessageToDict(response, preserving_proto_field_name=True)
+
+        return jsonify(result), 200
+
+    except grpc.RpcError as e:
         return jsonify({"error": e.details(), "code": e.code().name}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
-# Root endpoint
-@gateway_app.route('/')
-def index():
-    """API documentation"""
-    return jsonify({
-        "name": "Python Playground gRPC-HTTP Gateway",
-        "version": "1.0.0",
-        "description": "HTTP/JSON REST API for gRPC services",
-        "endpoints": {
-            "executor": {
-                "POST /api/v1/executor/execute": "Execute code with test cases",
-                "POST /api/v1/executor/validate": "Validate code syntax",
-                "POST /api/v1/executor/language-info": "Get language info"
-            },
-            "application": {
-                "GET /api/v1/status": "Get server status",
-                "GET /api/v1/health": "Health check",
-                "GET /api/v1/users/recent": "Get recent users",
-                "GET /api/v1/users/<username>/profile": "Get user profile",
-                "GET /api/v1/questions/recent": "Get recent questions",
-                "POST /api/v1/questions/generate": "Generate AI question",
-                "POST /api/v1/questions/save": "Save question",
-                "GET /api/v1/submissions/recent": "Get recent submissions",
-                "GET /api/v1/leaderboard": "Get leaderboard",
-                "GET /api/v1/charts/registrations": "Registration chart",
-                "GET /api/v1/charts/solved-questions": "Solved questions chart",
-                "GET /api/v1/charts/activity": "Activity statistics",
-                "POST /api/v1/notebook/summary": "Process notebook",
-                "POST /api/v1/events/trigger": "Trigger event",
-                "GET /api/v1/instagram/posts": "Get Instagram posts"
-            }
-        },
-        "docs": "Visit endpoints for automatic JSON response"
-    })
+@api_gateway_bp.route('/api/proxy-image', methods=['GET'])
+@api_gateway_bp.route('/api/v1/proxy-image', methods=['GET'])
+def proxy_image():
+    """Proxy image - backward compatible endpoint"""
+    try:
+        from flask import Response
+        gw = init_gateway()
+        url = request.args.get('url', '')
 
+        grpc_request = code_executor_pb2.ProxyImageRequest(url=url)
+        response = gw.app_stub.ProxyImage(grpc_request)
+
+        if response.success:
+            return Response(
+                response.image_data,
+                mimetype=response.content_type or 'image/jpeg',
+                headers={'Cache-Control': 'public, max-age=3600'}
+            )
+        else:
+            return jsonify({"error": response.error}), 500
+
+    except grpc.RpcError as e:
+        return jsonify({"error": e.details(), "code": e.code().name}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# =============================================================================
+# API DOCUMENTATION ENDPOINTS
+# =============================================================================
+
+@api_gateway_bp.route('/api/v1/docs', methods=['GET'])
+@api_gateway_bp.route('/api/docs', methods=['GET'])
+def api_docs():
+    """Get API documentation in OpenAPI format"""
+    from app.grpc_services.api_documentation import APIDocumentationGenerator
+
+    doc_gen = APIDocumentationGenerator()
+    return jsonify(doc_gen.get_openapi_spec()), 200
+
+
+@api_gateway_bp.route('/api/v1/docs/endpoints', methods=['GET'])
+@api_gateway_bp.route('/api/docs/endpoints', methods=['GET'])
+def api_endpoints_list():
+    """Get simplified list of all endpoints"""
+    from app.grpc_services.api_documentation import APIDocumentationGenerator
+
+    doc_gen = APIDocumentationGenerator()
+    return jsonify({
+        "endpoints": doc_gen.get_endpoints_list(),
+        "total": len(doc_gen.endpoints)
+    }), 200
+
+
+@api_gateway_bp.route('/api/v1/docs/ui', methods=['GET'])
+@api_gateway_bp.route('/api/docs/ui', methods=['GET'])
+def api_docs_ui():
+    """Swagger UI for API documentation"""
+    from flask import render_template_string
+
+    swagger_html = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Python Playground API Documentation</title>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.0/swagger-ui.min.css">
+        <style>
+            body { margin: 0; padding: 0; }
+            .topbar { display: none; }
+        </style>
+    </head>
+    <body>
+        <div id="swagger-ui"></div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.0/swagger-ui-bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.0/swagger-ui-standalone-preset.min.js"></script>
+        <script>
+            window.onload = function() {
+                SwaggerUIBundle({
+                    url: "/api/v1/docs",
+                    dom_id: '#swagger-ui',
+                    presets: [
+                        SwaggerUIBundle.presets.apis,
+                        SwaggerUIStandalonePreset
+                    ],
+                    layout: "BaseLayout",
+                    deepLinking: true,
+                    showExtensions: true,
+                    showCommonExtensions: true
+                });
+            };
+        </script>
+    </body>
+    </html>
+    """
+    return render_template_string(swagger_html)
+
+
+# =============================================================================
+# GATEWAY SERVER
+# =============================================================================
 
 def start_gateway(host='0.0.0.0', port=8080):
-    """Start the HTTP gateway server"""
-    logger.info("=" * 60)
-    logger.info("🌉 Starting gRPC-HTTP Gateway")
-    logger.info("=" * 60)
-    logger.info(f"🌐 HTTP Server: http://{host}:{port}")
-    logger.info(f"📡 gRPC Executor: {gateway.grpc_executor_host if gateway else 'localhost:50051'}")
-    logger.info(f"📡 gRPC Application: {gateway.grpc_app_host if gateway else 'localhost:50060'}")
-    logger.info("=" * 60)
-    
-    gateway_app.run(host=host, port=port, debug=False)
+    """Start the HTTP/JSON Gateway server"""
+    logger.info("=" * 70)
+    logger.info("🌉 gRPC-HTTP Gateway Server Starting")
+    logger.info("=" * 70)
+    logger.info(f"📡 HTTP Server: http://{host}:{port}")
+    logger.info(f"📚 API Docs: http://{host}:{port}/api/docs/ui")
+    logger.info(f"📋 OpenAPI Spec: http://{host}:{port}/api/v1/docs")
+    logger.info(f"📍 Endpoints List: http://{host}:{port}/api/docs/endpoints")
+    logger.info("=" * 70)
+
+    # Initialize gateway on startup
+    init_gateway()
+
+    from flask import Flask
+    app = Flask(__name__)
+    CORS(app)
+
+    # Register the blueprint
+    app.register_blueprint(api_gateway_bp)
+
+    app.run(host=host, port=port, debug=False, threaded=True)
 
 
 if __name__ == '__main__':
-    init_gateway()
     start_gateway()
-

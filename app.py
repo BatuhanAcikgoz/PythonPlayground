@@ -113,6 +113,15 @@ def create_app():
     # Rotaları kaydet
     register_routes(app, socketio)
 
+    # gRPC API Gateway Blueprint'i kaydet
+    from app.grpc_services.grpc_http_gateway import api_gateway_bp, init_gateway
+    app.register_blueprint(api_gateway_bp)
+
+    # gRPC Gateway'i başlat (sadece connection kuruyoruz)
+    with app.app_context():
+        init_gateway()
+        logging.getLogger('app').info("✅ gRPC API Gateway blueprint kaydedildi")
+
     # Hata sayfaları
     @app.errorhandler(403)
     def forbidden(error):
@@ -229,31 +238,60 @@ _summaries_loaded = False
 
 def run_web_server_and_background_tasks(app, socketio):
     """
-    Web sunucusu ve arka plan görevleri başlatıcı.
+    Web sunucusu, gRPC servisleri ve arka plan görevleri başlatıcı.
 
     Bu fonksiyon:
-    1. Web sunucusunu başlatır
-    2. Background görevleri başlatır (Instagram, vb.)
+    1. gRPC servislerini başlatır (arka planda)
+    2. Instagram task manager'ı başlatır (app context ile)
+    3. Web sunucusunu başlatır (API Gateway dahil)
     """
     import logging
+    import subprocess
+    import sys
     logger = logging.getLogger('app')
 
     # Git commit numarasını ve tarihini oku ve göster
     commit_hash, commit_date = get_git_info()
     logger.info(f"Uygulama başlatılıyor - Commit: {commit_hash} ({commit_date})")
 
-    # Instagram task manager'ı başlat
+    # 1. gRPC servislerini başlat (arka planda)
+    logger.info("=" * 70)
+    logger.info("🚀 gRPC servisleri başlatılıyor...")
+    logger.info("=" * 70)
+
     try:
-        instagram_task_manager.start()
+        grpc_process = subprocess.Popen(
+            [sys.executable, '-m', 'app.grpc_services.server'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True
+        )
+        logger.info("✅ gRPC Code Executor & Application Service başlatıldı (Port 50051, 50060)")
+        time.sleep(2)  # gRPC servislerinin başlaması için bekle
+    except Exception as e:
+        logger.error(f"❌ gRPC servisleri başlatılamadı: {str(e)}")
+
+    # 2. Instagram task manager'ı başlat (app context ile)
+    try:
+        with app.app_context():
+            instagram_task_manager.start()
         logger.info("✅ Instagram task manager başlatıldı")
     except Exception as e:
         logger.error(f"❌ Instagram task manager başlatılamadı: {str(e)}")
 
     logger.info("=" * 70)
-    logger.info(f"🌐 Flask Web Server başlatılıyor: http://0.0.0.0:{Config.WEB_PORT}")
+    logger.info(f"🌐 Flask Web Server başlatılıyor (API Gateway dahil)")
+    logger.info("=" * 70)
+    logger.info("")
+    logger.info("📍 Erişilebilir Servisler:")
+    logger.info(f"   🌐 Web Uygulaması:    http://localhost:{Config.WEB_PORT}")
+    logger.info(f"   📡 API Gateway:       http://localhost:{Config.WEB_PORT}/api/v1/*")
+    logger.info(f"   📚 API Dokümantasyon: http://localhost:{Config.WEB_PORT}/api/docs/ui")
+    logger.info(f"   🔧 gRPC Executor:     localhost:50051")
+    logger.info(f"   🔧 gRPC Application:  localhost:50060")
     logger.info("=" * 70)
 
-    # Web sunucusunu başlat
+    # 3. Web sunucusunu başlat (API Gateway blueprint dahil - tek Flask instance)
     socketio.run(
         app,
         host="0.0.0.0",
