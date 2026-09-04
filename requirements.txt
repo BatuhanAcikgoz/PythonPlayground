@@ -16,15 +16,15 @@ SQLAlchemy~=2.0.40
 PyMySQL==1.1.1
 
 # WebSocket
-python-socketio==5.10.0
-eventlet==0.35.2
+python-socketio==5.16.2
+eventlet==0.40.3
 
 # Jupyter Notebook
 nbformat~=5.10.4
-nbconvert==7.9.2
+nbconvert==7.17.1
 
 # Git Entegrasyonu
-GitPython==3.1.41
+GitPython==3.1.58
 
 # Sistem Bilgisi
 psutil~=7.0.0
@@ -32,7 +32,7 @@ psutil~=7.0.0
 #Misc
 requests~=2.32.3
 email_validator==2.2.0
-cryptography==44.0.1
+cryptography==50.0.0
 colorlog~=6.9.0
 schedule~=1.2.0
 
